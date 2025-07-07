@@ -31,9 +31,9 @@ import {
   CompanionResponseMessageType,
   type CompanionAppMessage,
 } from '@zodiac/messages'
+import { createMockExecutionRoute } from '@zodiac/modules/test-utils'
 import { encode } from '@zodiac/schema'
 import {
-  createMockExecutionRoute,
   expectRouteToBe,
   randomAddress,
   randomEoaAddress,

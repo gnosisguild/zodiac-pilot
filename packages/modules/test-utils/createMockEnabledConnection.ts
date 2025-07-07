@@ -1,6 +1,6 @@
 import type { Connection } from '@zodiac/schema'
+import { randomPrefixedAddress } from '@zodiac/test-utils'
 import { ConnectionType, type PrefixedAddress } from 'ser-kit'
-import { randomPrefixedAddress } from './randomHex'
 
 export const createMockEnabledConnection = (
   from: PrefixedAddress = randomPrefixedAddress(),

@@ -13,11 +13,8 @@ import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
 } from '@zodiac/messages'
-import {
-  createMockExecutionRoute,
-  expectRouteToBe,
-  randomAddress,
-} from '@zodiac/test-utils'
+import { createMockExecutionRoute } from '@zodiac/modules/test-utils'
+import { expectRouteToBe, randomAddress } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { prefixAddress } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'

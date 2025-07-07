@@ -1,4 +1,5 @@
 import { getChainId } from '@zodiac/chains'
+import { randomAddress, randomPrefixedAddress } from '@zodiac/test-utils'
 import { randomUUID } from 'crypto'
 import { prefixAddress, unprefixAddress, type Route } from 'ser-kit'
 import { createMockEndWaypoint } from './createMockEndWaypoint'
@@ -7,7 +8,6 @@ import { createMockOwnsConnection } from './createMockOwnsConnection'
 import { createMockSafeAccount } from './createMockSafeAccount'
 import { createMockStartingWaypoint } from './createMockStartingWaypoint'
 import { createMockWaypoints } from './createMockWaypoints'
-import { randomAddress, randomPrefixedAddress } from './randomHex'
 
 export const createMockSerRoute = ({
   initiator = prefixAddress(undefined, randomAddress()),

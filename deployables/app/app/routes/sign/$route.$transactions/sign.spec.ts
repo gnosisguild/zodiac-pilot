@@ -2,11 +2,13 @@ import { simulateTransactionBundle } from '@/simulation-server'
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import { Chain } from '@zodiac/chains'
-import { encode } from '@zodiac/schema'
 import {
   createMockExecutionRoute,
   createMockSerRoute,
   createMockTransactionRequest,
+} from '@zodiac/modules/test-utils'
+import { encode } from '@zodiac/schema'
+import {
   randomAddress,
   randomEoaAddress,
   randomPrefixedAddress,

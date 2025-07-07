@@ -5,7 +5,6 @@ import userEvent from '@testing-library/user-event'
 import { Chain, CHAIN_NAME, verifyChainId } from '@zodiac/chains'
 import { CompanionAppMessageType } from '@zodiac/messages'
 import { createBlankRoute, updateAvatar, updateChainId } from '@zodiac/modules'
-import { encode } from '@zodiac/schema'
 import {
   createMockEndWaypoint,
   createMockEoaAccount,
@@ -14,6 +13,9 @@ import {
   createMockSafeAccount,
   createMockStartingWaypoint,
   createMockWaypoints,
+} from '@zodiac/modules/test-utils'
+import { encode } from '@zodiac/schema'
+import {
   expectRouteToBe,
   randomAddress,
   randomPrefixedAddress,

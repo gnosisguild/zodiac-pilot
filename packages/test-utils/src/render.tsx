@@ -4,7 +4,6 @@ import {
   RouterProvider,
   type RouteObject,
 } from 'react-router'
-import { expect } from 'vitest'
 import { InspectRoute } from './InspectRoute'
 import { TestElement, waitForTestElement } from './TestElement'
 import { sleepTillIdle } from './sleepTillIdle'
@@ -65,10 +64,13 @@ export const render = async (
   return result
 }
 
-export const expectRouteToBe = (expectedPathName: string) =>
-  waitFor(() => {
+export const expectRouteToBe = async (expectedPathName: string) => {
+  const { expect } = await import('vitest')
+
+  return waitFor(() => {
     const testElement = screen.getByTestId('test-route-element-id')
     const foundPathName = testElement.getAttribute('data-pathname')
 
     expect(foundPathName).toEqual(expectedPathName)
   })
+}

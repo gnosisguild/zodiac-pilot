@@ -23,9 +23,8 @@ import {
   createMockRoute,
   createMockStartingWaypoint,
   createMockWaypoints,
-  expectRouteToBe,
-  randomAddress,
-} from '@zodiac/test-utils'
+} from '@zodiac/modules/test-utils'
+import { expectRouteToBe, randomAddress } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { queryInitiators, queryRoutes } from 'ser-kit'
 import { getAddress } from 'viem'

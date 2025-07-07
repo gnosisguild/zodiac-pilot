@@ -7,7 +7,7 @@ import {
   createMockSafeAccount,
   createMockStartingWaypoint,
   createMockWaypoints,
-} from '@zodiac/test-utils'
+} from '@/test-utils'
 import { describe, expect, it } from 'vitest'
 import { getStartingWaypoint } from './getStartingWaypoint'
 import { getWaypoints } from './getWaypoints'

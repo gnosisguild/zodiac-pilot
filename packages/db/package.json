@@ -58,6 +58,7 @@
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/test-utils": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
+    "@zodiac/modules": "workspace:*",
     "date-fns": "4.1.0",
     "drizzle-kit": "0.31.4",
     "eslint": "9.30.1",

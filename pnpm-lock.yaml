@@ -675,6 +675,9 @@ importers:
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
+      '@zodiac/modules':
+        specifier: workspace:*
+        version: link:../modules
       '@zodiac/test-utils':
         specifier: workspace:*
         version: link:../test-utils

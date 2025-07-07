@@ -19,8 +19,8 @@ import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
 } from '@zodiac/messages'
+import { createMockExecutionRoute } from '@zodiac/modules/test-utils'
 import {
-  createMockExecutionRoute,
   expectRouteToBe,
   randomAddress,
   randomPrefixedAddress,

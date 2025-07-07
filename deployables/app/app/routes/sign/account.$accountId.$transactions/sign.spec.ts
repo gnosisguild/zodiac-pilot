@@ -9,11 +9,9 @@ import {
   walletFactory,
   workspaceFactory,
 } from '@zodiac/db/test-utils'
+import { createMockTransactionRequest } from '@zodiac/modules/test-utils'
 import { encode } from '@zodiac/schema'
-import {
-  createMockTransactionRequest,
-  expectRouteToBe,
-} from '@zodiac/test-utils'
+import { expectRouteToBe } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { planExecution, queryRoutes } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'

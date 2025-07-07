@@ -1,6 +1,6 @@
 import { CompanionResponseMessageType } from '@zodiac/messages'
+import { createMockExecutionRoute } from '@zodiac/modules/test-utils'
 import type { ExecutionRoute } from '@zodiac/schema'
-import { createMockExecutionRoute } from '@zodiac/test-utils'
 import { postMessage } from './postMessage'
 
 export const loadRoutes = async (...routes: Partial<ExecutionRoute>[]) => {

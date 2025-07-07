@@ -6,8 +6,8 @@ import {
   type Tenant,
   type User,
 } from '@zodiac/db/schema'
+import { createMockTransactionRequest } from '@zodiac/modules/test-utils'
 import { jsonStringify } from '@zodiac/schema'
-import { createMockTransactionRequest } from '@zodiac/test-utils'
 import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 

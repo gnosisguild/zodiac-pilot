@@ -1,4 +1,3 @@
-import { Chain, getChainId } from '@zodiac/chains'
 import {
   createMockDelayWaypoint,
   createMockEndWaypoint,
@@ -8,9 +7,9 @@ import {
   createMockSafeAccount,
   createMockStartingWaypoint,
   createMockWaypoints,
-  randomAddress,
-  randomEoaAddress,
-} from '@zodiac/test-utils'
+} from '@/test-utils'
+import { Chain, getChainId } from '@zodiac/chains'
+import { randomAddress, randomEoaAddress } from '@zodiac/test-utils'
 import { AccountType, prefixAddress, splitPrefixedAddress } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
 import { getStartingWaypoint } from './getStartingWaypoint'
