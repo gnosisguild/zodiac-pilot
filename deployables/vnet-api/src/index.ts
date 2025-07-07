@@ -1,5 +1,3 @@
-import type { Env } from './types'
-
 // Headers that should be filtered out to prevent sensitive data leakage
 const SENSITIVE_HEADERS = new Set([
   'authorization',
@@ -70,7 +68,7 @@ function addCorsHeaders(response: Response): Response {
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url)
     const pathParts = url.pathname.split('/').filter(Boolean)
 
