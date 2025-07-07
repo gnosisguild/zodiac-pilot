@@ -50,7 +50,7 @@
     "zod": "3.25.75"
   },
   "devDependencies": {
-    "@dotenvx/dotenvx": "1.45.2",
+    "@dotenvx/dotenvx": "1.46.0",
     "@faker-js/faker": "9.9.0",
     "@types/node": "22.14.1",
     "@types/react": "19.1.8",
