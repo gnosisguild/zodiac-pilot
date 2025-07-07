@@ -135,7 +135,7 @@ describe('New SafeAccount', () => {
     })
 
     describe('Save', () => {
-      it.only('redirects to the accounts page', async () => {
+      it('redirects to the accounts page', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
         const workspace = await workspaceFactory.create(tenant, user)
