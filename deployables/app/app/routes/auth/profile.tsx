@@ -1,6 +1,7 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { Widgets } from '@/workOS/client'
+import { useWorkspaceId } from '@/workspaces'
 import { signOut } from '@workos-inc/authkit-react-router'
 import { UserProfile, UserSecurity, UserSessions } from '@workos-inc/widgets'
 import { dbClient, getWallets, updateWalletLabel } from '@zodiac/db'
@@ -78,6 +79,7 @@ export const action = async (args: Route.ActionArgs) =>
 
 const Profile = ({
   loaderData: { accessToken, sessionId, wallets },
+  params: { workspaceId },
 }: Route.ComponentProps) => {
   const signingOut = useIsPending(Intent.SignOut)
 
@@ -128,7 +130,11 @@ const Profile = ({
               </Table>
 
               <div className="flex justify-end">
-                <SecondaryLinkButton to={href('/profile/add-wallet')}>
+                <SecondaryLinkButton
+                  to={href('/workspace/:workspaceId/profile/add-wallet', {
+                    workspaceId,
+                  })}
+                >
                   Add Wallet
                 </SecondaryLinkButton>
               </div>
@@ -217,9 +223,13 @@ const Wallet = ({ wallet }: { wallet: Wallet }) => {
 
           <GhostLinkButton
             iconOnly
-            to={href('/profile/delete-wallet/:walletId', {
-              walletId: wallet.id,
-            })}
+            to={href(
+              '/workspace/:workspaceId/profile/delete-wallet/:walletId',
+              {
+                walletId: wallet.id,
+                workspaceId: useWorkspaceId(),
+              },
+            )}
             size="small"
             icon={Trash2}
             style="critical"

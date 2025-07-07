@@ -70,18 +70,23 @@ export const action = (args: Route.ActionArgs) =>
 
 const DeleteWallet = ({
   loaderData: { wallet, accounts },
+  params: { workspaceId },
 }: Route.ComponentProps) => {
   const navigate = useNavigate()
 
   const accountListId = useId()
 
-  useAfterSubmit(Intent.Delete, () => navigate(href('/profile')))
+  useAfterSubmit(Intent.Delete, () =>
+    navigate(href('/workspace/:workspaceId/profile', { workspaceId })),
+  )
 
   return (
     <Modal
       open
       title="Remove wallet"
-      onClose={() => navigate(href('/profile'))}
+      onClose={() =>
+        navigate(href('/workspace/:workspaceId/profile', { workspaceId }))
+      }
     >
       <div className="flex flex-col gap-4">
         <p>

@@ -60,8 +60,8 @@ describe('Edit local account', () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
       await render(
-        href('/edit/:routeId/:data', {
-          routeId: route.id,
+        href('/offline/account/:accountId/:data', {
+          accountId: route.id,
           data: encode(route),
         }),
       )
@@ -77,8 +77,8 @@ describe('Edit local account', () => {
       })
 
       await render(
-        href('/edit/:routeId/:data', {
-          routeId: route.id,
+        href('/offline/account/:accountId/:data', {
+          accountId: route.id,
           data: encode(route),
         }),
       )
@@ -112,8 +112,8 @@ describe('Edit local account', () => {
         )
 
         await render(
-          href('/edit/:routeId/:data', {
-            routeId: route.id,
+          href('/offline/account/:accountId/:data', {
+            accountId: route.id,
             data: encode(route),
           }),
         )
@@ -131,8 +131,8 @@ describe('Edit local account', () => {
       })
 
       await render(
-        href('/edit/:routeId/:data', {
-          routeId: route.id,
+        href('/offline/account/:accountId/:data', {
+          accountId: route.id,
           data: encode(route),
         }),
       )
@@ -163,8 +163,8 @@ describe('Edit local account', () => {
       mockQueryRoutes.mockResolvedValue([newRoute])
 
       await render(
-        href('/edit/:routeId/:data', {
-          routeId: route.id,
+        href('/offline/account/:accountId/:data', {
+          accountId: route.id,
           data: encode(route),
         }),
       )
@@ -188,8 +188,8 @@ describe('Edit local account', () => {
       const route = createMockExecutionRoute()
 
       await render(
-        href('/edit/:routeId/:data', {
-          routeId: route.id,
+        href('/offline/account/:accountId/:data', {
+          accountId: route.id,
           data: encode(route),
         }),
       )
@@ -221,8 +221,8 @@ describe('Edit local account', () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
       await render(
-        href('/edit/:routeId/:data', {
-          routeId: route.id,
+        href('/offline/account/:accountId/:data', {
+          accountId: route.id,
           data: encode(route),
         }),
       )

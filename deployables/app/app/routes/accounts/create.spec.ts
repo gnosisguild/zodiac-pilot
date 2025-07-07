@@ -10,7 +10,11 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, CHAIN_NAME } from '@zodiac/chains'
 import { dbClient, getAccounts } from '@zodiac/db'
-import { tenantFactory, userFactory } from '@zodiac/db/test-utils'
+import {
+  tenantFactory,
+  userFactory,
+  workspaceFactory,
+} from '@zodiac/db/test-utils'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
@@ -22,7 +26,6 @@ import {
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
-import { prefixAddress } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('@/utils', async (importOriginal) => {
@@ -59,87 +62,54 @@ describe('New SafeAccount', () => {
     mockIsSmartContractAddress.mockResolvedValue(true)
   })
 
-  describe('Logged in', () => {
-    it('creates a new account in the DB', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
+  it('creates a new account in the DB', async () => {
+    const user = await userFactory.create()
+    const tenant = await tenantFactory.create(user)
+    const workspace = await workspaceFactory.create(tenant, user)
 
-      const { waitForPendingActions } = await render('/create', {
+    const { waitForPendingActions } = await render(
+      href('/workspace/:workspaceId/accounts/create/:prefixedAddress?', {
+        workspaceId: workspace.id,
+      }),
+      {
         tenant,
         user,
         connected: false,
-      })
+      },
+    )
 
-      const address = randomAddress()
+    const address = randomAddress()
 
-      await userEvent.type(
-        screen.getByRole('textbox', { name: 'Address' }),
-        address,
-      )
+    await userEvent.type(
+      screen.getByRole('textbox', { name: 'Address' }),
+      address,
+    )
 
-      await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
-      await waitForPendingActions()
+    await waitForPendingActions()
 
-      const [account] = await getAccounts(dbClient(), {
-        tenantId: tenant.id,
-        userId: user.id,
-      })
-
-      expect(account).toHaveProperty('address', address)
-      expect(account).toHaveProperty('chainId', Chain.ETH)
-      expect(account).toHaveProperty('createdById', user.id)
-    })
-  })
-
-  describe('Logged out', () => {
-    it('creates a new route with a given avatar', async () => {
-      await render('/create')
-
-      const address = randomAddress()
-
-      await userEvent.type(
-        screen.getByRole('textbox', { name: 'Address' }),
-        address,
-      )
-
-      await userEvent.click(screen.getByRole('button', { name: 'Create' }))
-
-      await expectMessage({
-        type: CompanionAppMessageType.SAVE_AND_LAUNCH,
-        data: expect.objectContaining({
-          avatar: prefixAddress(Chain.ETH, address),
-        }),
-      })
+    const [account] = await getAccounts(dbClient(), {
+      tenantId: tenant.id,
+      userId: user.id,
     })
 
-    it('uses the selected chain', async () => {
-      await render('/create')
-
-      const address = randomAddress()
-
-      await userEvent.type(
-        screen.getByRole('textbox', { name: 'Address' }),
-        address,
-      )
-
-      await userEvent.click(screen.getByRole('combobox', { name: 'Chain' }))
-      await userEvent.click(screen.getByRole('option', { name: 'Gnosis' }))
-
-      await userEvent.click(screen.getByRole('button', { name: 'Create' }))
-
-      await expectMessage({
-        type: CompanionAppMessageType.SAVE_AND_LAUNCH,
-        data: expect.objectContaining({
-          avatar: prefixAddress(Chain.GNO, address),
-        }),
-      })
-    })
+    expect(account).toHaveProperty('address', address)
+    expect(account).toHaveProperty('chainId', Chain.ETH)
+    expect(account).toHaveProperty('createdById', user.id)
   })
 
   describe('Label', () => {
     it('is possible to give label the account', async () => {
-      await render('/create')
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+      const workspace = await workspaceFactory.create(tenant, user)
+
+      await render(
+        href('/workspace/:workspaceId/accounts/create/:prefixedAddress?', {
+          workspaceId: workspace.id,
+        }),
+      )
 
       const address = randomAddress()
 
@@ -165,7 +135,15 @@ describe('New SafeAccount', () => {
 
     describe('Save', () => {
       it('redirects to the accounts page', async () => {
-        await render('/create')
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+        const workspace = await workspaceFactory.create(tenant, user)
+
+        await render(
+          href('/workspace/:workspaceId/accounts/create/:prefixedAddress?', {
+            workspaceId: workspace.id,
+          }),
+        )
 
         const address = randomAddress()
 
@@ -181,7 +159,11 @@ describe('New SafeAccount', () => {
           route: createMockExecutionRoute(),
         })
 
-        await expectRouteToBe(href('/edit'))
+        await expectRouteToBe(
+          href('/workspace/:workspaceId/accounts', {
+            workspaceId: workspace.id,
+          }),
+        )
       })
     })
   })
@@ -190,13 +172,20 @@ describe('New SafeAccount', () => {
     it('is possible to preset the chain', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
+      const workspace = await workspaceFactory.create(tenant, user)
 
       const prefixedAddress = randomPrefixedAddress({ chainId: Chain.GNO })
 
-      await render(href('/create/:prefixedAddress?', { prefixedAddress }), {
-        user,
-        tenant,
-      })
+      await render(
+        href('/workspace/:workspaceId/accounts/create/:prefixedAddress?', {
+          prefixedAddress,
+          workspaceId: workspace.id,
+        }),
+        {
+          user,
+          tenant,
+        },
+      )
 
       expect(await screen.findByText('Gnosis')).toBeInTheDocument()
     })
@@ -204,12 +193,14 @@ describe('New SafeAccount', () => {
     it('is possible to preset the address', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
+      const workspace = await workspaceFactory.create(tenant, user)
 
       const address = randomAddress()
 
       await render(
-        href('/create/:prefixedAddress?', {
+        href('/workspace/:workspaceId/accounts/create/:prefixedAddress?', {
           prefixedAddress: randomPrefixedAddress({ address }),
+          workspaceId: workspace.id,
         }),
         {
           user,
