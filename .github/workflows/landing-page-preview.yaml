@@ -2,6 +2,7 @@ name: Landing Page Preview
 
 on:
   pull_request:
+    paths: ['deployables/landing-page/**', '**/landing-page-preview.yaml']
 
 jobs:
   deploy:
