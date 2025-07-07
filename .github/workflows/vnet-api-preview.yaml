@@ -29,12 +29,6 @@ jobs:
           accountId: ${{ secrets.CF_ACCOUNT_ID }}
           workingDirectory: ./deployables/vnet-api
           command: versions upload
-          secrets: |
-            TENDERLY_ACCESS_KEY
-        env:
-          TENDERLY_ACCESS_KEY: ${{ secrets.TENDERLY_ACCESS_KEY }}
-          TENDERLY_USER: gnosisguild
-          TENDERLY_PROJECT: zodiac-pilot
 
       - uses: peter-evans/find-comment@v3
         id: find-comment
