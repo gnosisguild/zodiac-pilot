@@ -38,7 +38,7 @@ export default [
 
   route(
     '/launch/:prefixedAvatarAddress/:accountLabel',
-    'routes/launch/$prefixedAvatarAddress.$accountLabel.tsx',
+    'routes/launch/$prefixedAvatarAddress.$accountLabel/launch.tsx',
   ),
 
   // BEGIN LEGACY REDIRECTS
