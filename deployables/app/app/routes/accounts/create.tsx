@@ -112,7 +112,9 @@ export const clientAction = async ({
         type: CompanionAppMessageType.SAVE_AND_LAUNCH,
         data: route,
       },
-      () => resolve(),
+      () => {
+        resolve()
+      },
     )
 
     await promise

@@ -154,7 +154,17 @@ describe('New SafeAccount', () => {
           address,
         )
 
+        const { promise, resolve } = Promise.withResolvers<void>()
+
         await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+        window.addEventListener('message', (message) => {
+          if (message.data.type === CompanionAppMessageType.SAVE_AND_LAUNCH) {
+            resolve()
+          }
+        })
+
+        await promise
 
         await postMessage({
           type: CompanionResponseMessageType.PROVIDE_ROUTE,
