@@ -64,7 +64,7 @@
     "@types/node": "22.14.1",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
-    "@vercel/react-router": "1.1.2",
+    "@vercel/react-router": "1.2.0",
     "@wagmi/core": "2.17.3",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/test-utils": "workspace:*",
