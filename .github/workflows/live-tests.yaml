@@ -51,7 +51,7 @@ jobs:
           E2E_TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_USER_PASSWORD }}
 
       - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+        if: ${{ false && !cancelled() }}
         with:
           name: playwright-report
           path: ${{ github.workspace }}/**/playwright-report/**/*
@@ -127,7 +127,7 @@ jobs:
           E2E_TEST_USER_PASSWORD: ${{ secrets.E2E_TEST_USER_PASSWORD }}
 
       - uses: actions/upload-artifact@v4
-        if: ${{  !cancelled() }}
+        if: ${{ false && !cancelled() }}
         with:
           name: playwright-report-local
           path: ${{ github.workspace }}/latest-release/${{ steps.extract-folder.outputs.folder-name }}/**/playwright-report/**/*
