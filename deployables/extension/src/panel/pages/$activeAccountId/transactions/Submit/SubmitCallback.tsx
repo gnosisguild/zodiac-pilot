@@ -2,7 +2,7 @@ import { useAccount } from '@/accounts'
 import { useWindowId } from '@/port-handling'
 import { useTransactions } from '@/transactions'
 import { invariant } from '@epic-web/invariant'
-import { toMetaTransactionRequest } from '@zodiac/schema'
+import { jsonStringify, toMetaTransactionRequest } from '@zodiac/schema'
 import { errorToast, Modal, PrimaryButton, Spinner } from '@zodiac/ui'
 import { useState } from 'react'
 
@@ -23,7 +23,7 @@ export const SubmitCallback = () => {
 
     fetch(callback, {
       method: 'POST',
-      body: JSON.stringify({
+      body: jsonStringify({
         accountId: account.id,
         windowId,
         transactions: transactions.map(toMetaTransactionRequest),
@@ -45,7 +45,11 @@ export const SubmitCallback = () => {
 
   return (
     <>
-      <PrimaryButton fluid onClick={submit}>
+      <PrimaryButton
+        fluid
+        disabled={transactions.length === 0}
+        onClick={submit}
+      >
         Submit
       </PrimaryButton>
 
