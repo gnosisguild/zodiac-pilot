@@ -1,9 +1,8 @@
-import { Page } from '@/components'
 import { Widgets } from '@/workOS/client'
 import { invariantResponse } from '@epic-web/invariant'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
 import { UsersManagement } from '@workos-inc/widgets'
-import type { Route } from './+types/admin'
+import type { Route } from './+types/users'
 
 export const loader = (args: Route.LoaderArgs) =>
   authkitLoader(
@@ -20,14 +19,9 @@ const OrganizationAdmin = ({
   loaderData: { accessToken },
 }: Route.ComponentProps) => {
   return (
-    <Page>
-      <Page.Header>User Management</Page.Header>
-      <Page.Main>
-        <Widgets>
-          <UsersManagement authToken={accessToken} />
-        </Widgets>
-      </Page.Main>
-    </Page>
+    <Widgets>
+      <UsersManagement authToken={accessToken} />
+    </Widgets>
   )
 }
 

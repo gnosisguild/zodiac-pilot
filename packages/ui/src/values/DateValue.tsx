@@ -1,5 +1,7 @@
+import { Empty } from '../Empty'
+
 type DateValueProps = {
-  children: Date
+  children: Date | null | undefined
 }
 
 const dateFormatter = new Intl.DateTimeFormat('en-GB', {
@@ -8,6 +10,10 @@ const dateFormatter = new Intl.DateTimeFormat('en-GB', {
 })
 
 export const DateValue = ({ children }: DateValueProps) => {
+  if (children == null) {
+    return <Empty />
+  }
+
   return (
     <span className="text-sm slashed-zero tabular-nums">
       {dateFormatter.format(children)}

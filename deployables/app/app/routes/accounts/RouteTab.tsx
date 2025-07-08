@@ -10,12 +10,12 @@ import {
   Modal,
   Popover,
   PrimaryButton,
+  TabBar,
   TextInput,
 } from '@zodiac/ui'
-import classNames from 'classnames'
 import { Pencil } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { href, NavLink } from 'react-router'
+import { href } from 'react-router'
 import { Intent } from './intents'
 
 type RouteTabProps = {
@@ -29,23 +29,13 @@ export const RouteTab = ({ route, isDefault }: RouteTabProps) => {
   const [editing, setEditing] = useState(false)
 
   return (
-    <NavLink
-      key={route.id}
+    <TabBar.LinkTab
       aria-labelledby={route.id}
       to={href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
         accountId: route.toId,
         routeId: route.id,
         workspaceId: useWorkspaceId(),
       })}
-      role="tab"
-      className={({ isActive }) =>
-        classNames(
-          'flex items-center gap-2 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium',
-          isActive
-            ? 'border-indigo-500 text-indigo-600 dark:border-teal-300 dark:text-teal-500'
-            : 'border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 dark:text-zinc-300 dark:hover:text-zinc-50',
-        )
-      }
     >
       {isDefault && (
         <Popover popover={<span className="text-sm">Default route</span>}>
@@ -76,7 +66,7 @@ export const RouteTab = ({ route, isDefault }: RouteTabProps) => {
           Remove
         </ConfirmableAction>
       </MeatballMenu>
-    </NavLink>
+    </TabBar.LinkTab>
   )
 }
 
