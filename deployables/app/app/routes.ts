@@ -12,7 +12,6 @@ export default [
   route('/robots.txt', 'routes/robots.ts'),
 
   route('/callback', 'routes/auth/callback.ts'),
-  route('/welcome', 'routes/welcome.tsx'),
 
   // BEGIN LEGACY REDIRECTS
 

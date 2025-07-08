@@ -206,7 +206,7 @@ describe.sequential('List Accounts', () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const workspace = await workspaceFactory.create(tenant, user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
 
       const avatar = prefixAddress(account.chainId, account.address)
 
@@ -471,7 +471,7 @@ describe.sequential('List Accounts', () => {
       const tenant = await tenantFactory.create(user)
       const workspace = await workspaceFactory.create(tenant, user)
       const wallet = await walletFactory.create(user)
-      const account = await accountFactory.create(tenant, user, {
+      const account = await accountFactory.create(tenant, user, workspace, {
         label: 'Test account',
       })
       const route = await routeFactory.create(account, wallet, {

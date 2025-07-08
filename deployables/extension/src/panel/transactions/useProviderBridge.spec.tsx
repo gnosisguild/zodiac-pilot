@@ -13,6 +13,7 @@ import {
   accountFactory,
   tenantFactory,
   userFactory,
+  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import { InjectedProviderMessageTyp } from '@zodiac/messages'
 import type { Hex } from '@zodiac/schema'
@@ -41,10 +42,13 @@ describe('Bridge', () => {
   const Wrapper = ({ children }: PropsWithChildren) => {
     const user = userFactory.createWithoutDb()
     const tenant = tenantFactory.createWithoutDb(user)
+    const workspace = workspaceFactory.createWithoutDb(tenant, user)
 
     return (
       <ProvideAccount
-        account={toRemoteAccount(accountFactory.createWithoutDb(tenant, user))}
+        account={toRemoteAccount(
+          accountFactory.createWithoutDb(tenant, user, workspace),
+        )}
       >
         <ProvideProvider>
           <ProvideBridgeContext windowId={1}>{children}</ProvideBridgeContext>

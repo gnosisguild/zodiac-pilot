@@ -59,8 +59,10 @@ export const action = async (args: Route.ActionArgs) =>
       context: {
         auth: { user, tenant },
       },
+      params: { workspaceId },
     }) => {
       const data = await request.formData()
+      invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID')
 
       switch (getString(data, 'intent')) {
         case Intent.Upload: {
@@ -78,9 +80,11 @@ export const action = async (args: Route.ActionArgs) =>
             const [, initiator] = splitPrefixedAddress(route.initiator)
 
             const [account, wallet] = await Promise.all([
-              getOrCreateAccount(tx, tenant, user, {
+              getOrCreateAccount(tx, tenant, {
+                workspaceId,
                 chainId,
                 address,
+                ownerId: user.id,
                 label: route.label,
               }),
               getOrCreateWallet(tx, user, {

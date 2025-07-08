@@ -19,10 +19,13 @@ export const action = (args: Route.ActionArgs) =>
 
       const data = await request.formData()
 
+      const account = await getAccount(dbClient(), accountId)
+
       const proposal = await proposeTransaction(dbClient(), {
         userId: user.id,
         tenantId: tenant.id,
         accountId,
+        workspaceId: account.workspaceId,
         transaction: metaTransactionRequestSchema
           .array()
           .parse(JSON.parse(getString(data, 'transaction'))),

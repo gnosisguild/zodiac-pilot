@@ -55,7 +55,7 @@ describe('Routes', () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const workspace = await workspaceFactory.create(tenant, user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
 
       const address = randomAddress()
 
@@ -90,7 +90,7 @@ describe('Routes', () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const workspace = await workspaceFactory.create(tenant, user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
       const wallet = await walletFactory.create(user, {
         label: 'Test Wallet',
       })
@@ -117,7 +117,7 @@ describe('Routes', () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const workspace = await workspaceFactory.create(tenant, user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
       const wallet = await walletFactory.create(user, {
         label: 'Test Wallet',
       })
@@ -160,7 +160,7 @@ describe('Routes', () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const workspace = await workspaceFactory.create(tenant, user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
       const wallet = await walletFactory.create(user)
       const route = await routeFactory.create(account, wallet)
 
@@ -197,7 +197,7 @@ describe('Routes', () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const workspace = await workspaceFactory.create(tenant, user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
       const walletA = await walletFactory.create(user)
       const walletB = await walletFactory.create(user, {
         label: 'Another wallet',
@@ -239,7 +239,7 @@ describe('Routes', () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const workspace = await workspaceFactory.create(tenant, user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
 
       const walletAddress = randomAddress()
 
@@ -284,7 +284,7 @@ describe('Routes', () => {
       const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user, { label: 'Test Wallet' })
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
 
       mockQueryInitiators.mockResolvedValue([wallet.address])
 
@@ -326,7 +326,7 @@ describe('Routes', () => {
 
       const walletA = await walletFactory.create(user, { label: 'Wallet A' })
       const walletB = await walletFactory.create(user, { label: 'Wallet B' })
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
 
       const routeA = await routeFactory.create(account, walletA)
       const routeB = await routeFactory.create(account, walletB)
@@ -368,7 +368,7 @@ describe('Routes', () => {
       const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
       const route = await routeFactory.create(account, wallet)
 
       const { waitForPendingActions } = await render(
@@ -406,7 +406,7 @@ describe('Routes', () => {
       const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
 
       const routeA = await routeFactory.create(account, wallet)
       const routeB = await routeFactory.create(account, wallet, {
@@ -455,7 +455,7 @@ describe('Routes', () => {
       const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
 
       const route = await routeFactory.create(account, wallet, {
         label: 'Route',
@@ -494,7 +494,7 @@ describe('Routes', () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const workspace = await workspaceFactory.create(tenant, user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
       const wallet = await walletFactory.create(user, {
         label: 'Test wallet',
       })
@@ -542,7 +542,7 @@ describe('Routes', () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const workspace = await workspaceFactory.create(tenant, user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
       const wallet = await walletFactory.create(user, {
         label: 'Test wallet',
       })
@@ -601,7 +601,7 @@ describe('Routes', () => {
       const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
 
       const routeA = await routeFactory.create(account, wallet, {
         label: 'Route A',
@@ -650,7 +650,7 @@ describe('Routes', () => {
       const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
 
       const route = await routeFactory.create(account, wallet, {
         label: 'Route B',
@@ -681,7 +681,7 @@ describe('Routes', () => {
         const workspace = await workspaceFactory.create(tenant, user)
 
         const wallet = await walletFactory.create(user)
-        const account = await accountFactory.create(tenant, user)
+        const account = await accountFactory.create(tenant, user, workspace)
         const route = await routeFactory.create(account, wallet, {
           label: 'Test route',
         })
@@ -729,7 +729,7 @@ describe('Routes', () => {
         const workspace = await workspaceFactory.create(tenant, user)
 
         const wallet = await walletFactory.create(user, { label: 'New wallet' })
-        const account = await accountFactory.create(tenant, user)
+        const account = await accountFactory.create(tenant, user, workspace)
 
         mockQueryInitiators.mockResolvedValue([wallet.address])
         mockQueryRoutes.mockResolvedValue([createMockRoute()])
@@ -795,7 +795,7 @@ describe('Routes', () => {
       const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
       const route = await routeFactory.create(account, wallet, {
         label: 'Test route',
       })
@@ -827,7 +827,7 @@ describe('Routes', () => {
       const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
 
       await routeFactory.create(account, wallet, {
         label: 'Route A',
@@ -867,7 +867,7 @@ describe('Routes', () => {
       const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
 
       const routeA = await routeFactory.create(account, wallet, {
         label: 'Route A',
@@ -907,7 +907,7 @@ describe('Routes', () => {
       const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
 
       const route = await routeFactory.create(account, wallet, {
         label: 'Route A',

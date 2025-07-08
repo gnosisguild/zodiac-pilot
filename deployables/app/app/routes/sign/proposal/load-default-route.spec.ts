@@ -103,7 +103,7 @@ describe('Load default route', () => {
     const workspace = await workspaceFactory.create(tenant, user)
 
     const wallet = await walletFactory.create(user)
-    const account = await accountFactory.create(tenant, user)
+    const account = await accountFactory.create(tenant, user, workspace)
 
     const route = await routeFactory.create(account, wallet)
 
@@ -138,7 +138,7 @@ describe('Load default route', () => {
     const workspace = await workspaceFactory.create(tenant, user)
 
     const wallet = await walletFactory.create(user)
-    const account = await accountFactory.create(tenant, user)
+    const account = await accountFactory.create(tenant, user, workspace)
 
     const routeA = await routeFactory.create(account, wallet, {
       label: 'Route A',
@@ -173,7 +173,7 @@ describe('Load default route', () => {
     const tenant = await tenantFactory.create(user)
     const workspace = await workspaceFactory.create(tenant, user)
 
-    const account = await accountFactory.create(tenant, user)
+    const account = await accountFactory.create(tenant, user, workspace)
 
     const proposal = await transactionProposalFactory.create(
       tenant,

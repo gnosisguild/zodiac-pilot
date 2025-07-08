@@ -27,7 +27,7 @@ describe.sequential('List Accounts', () => {
         const tenant = await tenantFactory.create(user)
         const workspace = await workspaceFactory.create(tenant, user)
 
-        await accountFactory.create(tenant, user, {
+        await accountFactory.create(tenant, user, workspace, {
           label: 'Test account',
         })
 
@@ -51,7 +51,7 @@ describe.sequential('List Accounts', () => {
       const tenant = await tenantFactory.create(user)
       const workspace = await workspaceFactory.create(tenant, user)
 
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
 
       await render(
         href('/workspace/:workspaceId/accounts', { workspaceId: workspace.id }),
@@ -81,7 +81,7 @@ describe.sequential('List Accounts', () => {
       const tenant = await tenantFactory.create(user)
       const workspace = await workspaceFactory.create(tenant, user)
 
-      const account = await accountFactory.create(tenant, user)
+      const account = await accountFactory.create(tenant, user, workspace)
 
       const { waitForPendingActions } = await render(
         href('/workspace/:workspaceId/accounts', { workspaceId: workspace.id }),

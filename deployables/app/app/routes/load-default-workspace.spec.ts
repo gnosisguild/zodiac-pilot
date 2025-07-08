@@ -12,7 +12,7 @@ describe('Load default workspace', () => {
   it('redirects to the welcome page when the user is not logged in', async () => {
     await render(href('/'))
 
-    await expectRouteToBe(href('/welcome'))
+    await expectRouteToBe(href('/offline'))
   })
 
   it('redirects to the first workspace in the system when the user is logged in', async () => {
@@ -22,6 +22,8 @@ describe('Load default workspace', () => {
 
     await render(href('/'), { tenant, user })
 
-    await expectRouteToBe(href('/:workspaceId', { workspaceId: workspace.id }))
+    await expectRouteToBe(
+      href('/workspace/:workspaceId', { workspaceId: workspace.id }),
+    )
   })
 })

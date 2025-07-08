@@ -28,6 +28,7 @@ import {
   tenantFactory,
   userFactory,
   walletFactory,
+  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import { getCompanionAppUrl } from '@zodiac/env'
 import {
@@ -283,8 +284,9 @@ describe('Transactions', () => {
       it('disables the sign button when there are no transactions', async () => {
         const user = userFactory.createWithoutDb()
         const tenant = tenantFactory.createWithoutDb(user)
+        const workspace = workspaceFactory.createWithoutDb(tenant, user)
         const wallet = walletFactory.createWithoutDb(user)
-        const account = accountFactory.createWithoutDb(tenant, user)
+        const account = accountFactory.createWithoutDb(tenant, user, workspace)
 
         const route = routeFactory.createWithoutDb(account, wallet)
 
@@ -304,8 +306,9 @@ describe('Transactions', () => {
       it('links to the logged in sign in page', async () => {
         const user = userFactory.createWithoutDb()
         const tenant = tenantFactory.createWithoutDb(user)
+        const workspace = workspaceFactory.createWithoutDb(tenant, user)
         const wallet = walletFactory.createWithoutDb(user)
-        const account = accountFactory.createWithoutDb(tenant, user)
+        const account = accountFactory.createWithoutDb(tenant, user, workspace)
 
         const route = routeFactory.createWithoutDb(account, wallet)
 
@@ -337,7 +340,8 @@ describe('Transactions', () => {
       it('offers a link to complete the route setup when no active route was found', async () => {
         const user = userFactory.createWithoutDb()
         const tenant = tenantFactory.createWithoutDb(user)
-        const account = accountFactory.createWithoutDb(tenant, user)
+        const workspace = workspaceFactory.createWithoutDb(tenant, user)
+        const account = accountFactory.createWithoutDb(tenant, user, workspace)
 
         mockGetRemoteAccount.mockResolvedValue(account)
 
@@ -558,7 +562,8 @@ describe('Transactions', () => {
     it('is possible to save and launch a remote account', async () => {
       const user = userFactory.createWithoutDb()
       const tenant = tenantFactory.createWithoutDb(user)
-      const account = accountFactory.createWithoutDb(tenant, user)
+      const workspace = workspaceFactory.createWithoutDb(tenant, user)
+      const account = accountFactory.createWithoutDb(tenant, user, workspace)
 
       const { mockedTab } = await render('/')
 

@@ -37,7 +37,7 @@ describe('Edit account', () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const workspace = await workspaceFactory.create(tenant, user)
-      const account = await accountFactory.create(tenant, user, {
+      const account = await accountFactory.create(tenant, user, workspace, {
         label: 'Test label',
       })
 
@@ -61,7 +61,9 @@ describe('Edit account', () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const workspace = await workspaceFactory.create(tenant, user)
-      const account = await accountFactory.create(tenant, user, { label: '' })
+      const account = await accountFactory.create(tenant, user, workspace, {
+        label: '',
+      })
 
       const { waitForPendingActions } = await render(
         href('/workspace/:workspaceId/accounts/:accountId', {

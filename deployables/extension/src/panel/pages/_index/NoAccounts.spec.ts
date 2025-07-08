@@ -13,6 +13,7 @@ import {
   accountFactory,
   tenantFactory,
   userFactory,
+  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import { createMockExecutionRoute } from '@zodiac/modules/test-utils'
 import { expectRouteToBe } from '@zodiac/test-utils'
@@ -46,7 +47,8 @@ describe('No accounts', () => {
       it('redirects to the last used route if one is present', async () => {
         const user = userFactory.createWithoutDb()
         const tenant = tenantFactory.createWithoutDb(user)
-        const account = accountFactory.createWithoutDb(tenant, user)
+        const workspace = workspaceFactory.createWithoutDb(tenant, user)
+        const account = accountFactory.createWithoutDb(tenant, user, workspace)
 
         mockFindRemoteActiveAccount.mockResolvedValue(account)
 
@@ -58,7 +60,8 @@ describe('No accounts', () => {
       it('redirects to the first route if no route was last used', async () => {
         const user = userFactory.createWithoutDb()
         const tenant = tenantFactory.createWithoutDb(user)
-        const account = accountFactory.createWithoutDb(tenant, user)
+        const workspace = workspaceFactory.createWithoutDb(tenant, user)
+        const account = accountFactory.createWithoutDb(tenant, user, workspace)
 
         mockGetRemoteAccounts.mockResolvedValue([account])
 
@@ -98,7 +101,12 @@ describe('No accounts', () => {
         it('redirects the a new account when one is saved', async () => {
           const user = userFactory.createWithoutDb()
           const tenant = tenantFactory.createWithoutDb(user)
-          const account = accountFactory.createWithoutDb(tenant, user)
+          const workspace = workspaceFactory.createWithoutDb(tenant, user)
+          const account = accountFactory.createWithoutDb(
+            tenant,
+            user,
+            workspace,
+          )
 
           const { mockedTab } = await render('/')
 
