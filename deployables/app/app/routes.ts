@@ -143,8 +143,11 @@ export default [
           route('delete-wallet/:walletId', 'routes/auth/delete-wallet.tsx'),
         ]),
 
+        route('accounts', 'routes/accounts/list.tsx', [
+          route('delete/:accountId', 'routes/accounts/delete-account.tsx'),
+        ]),
+
         ...prefix('accounts', [
-          index('routes/accounts/list.tsx'),
           route('create/:prefixedAddress?', 'routes/accounts/create.tsx'),
 
           route(':accountId', 'routes/accounts/edit.tsx', [

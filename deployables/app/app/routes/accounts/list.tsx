@@ -23,7 +23,7 @@ import {
   TableRow,
 } from '@zodiac/ui'
 import { type PropsWithChildren } from 'react'
-import { href } from 'react-router'
+import { href, Outlet } from 'react-router'
 import type { Route } from './+types/list'
 import { Intent } from './intents'
 import { RemoteAccount } from './RemoteAccount'
@@ -186,6 +186,8 @@ const ListRoutes = ({
           </Accounts>
         )}
       </Page.Main>
+
+      <Outlet />
     </Page>
   )
 }

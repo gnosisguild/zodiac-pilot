@@ -1,28 +1,20 @@
 import { Ellipsis } from 'lucide-react'
-import { type PropsWithChildren } from 'react'
+import { useState, type PropsWithChildren } from 'react'
 import { GhostButton, type BaseButtonProps } from './buttons'
 import { Stick } from './overlays/Stick'
 
 type MeatballMenuProps = Pick<BaseButtonProps, 'size'> &
   PropsWithChildren<{
     label: string
-    open: boolean
-    onRequestShow: () => void
-    onRequestHide: () => void
   }>
 
-export const MeatballMenu = ({
-  label,
-  open,
-  size,
-  children,
-  onRequestHide,
-  onRequestShow,
-}: MeatballMenuProps) => {
+export const MeatballMenu = ({ label, size, children }: MeatballMenuProps) => {
+  const [open, setOpen] = useState(false)
+
   return (
     <Stick
       position="bottom right"
-      onClickOutside={onRequestHide}
+      onClickOutside={() => setOpen(false)}
       node={
         open && (
           <div className="flex flex-col gap-1 rounded-md border p-1 shadow-md backdrop-blur dark:border-zinc-200/10 dark:bg-zinc-800/80">
@@ -42,11 +34,7 @@ export const MeatballMenu = ({
           event.preventDefault()
           event.stopPropagation()
 
-          if (open) {
-            onRequestHide()
-          } else {
-            onRequestShow()
-          }
+          setOpen(!open)
         }}
       >
         {label}
