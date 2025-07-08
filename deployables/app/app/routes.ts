@@ -116,7 +116,10 @@ export default [
     layout('routes/errorBoundary.tsx', [
       index('routes/welcome.tsx'),
 
-      route('admin', 'routes/auth/admin.tsx'),
+      route('admin', 'routes/admin/layout.tsx', [
+        index('routes/admin/users.tsx'),
+        route('workspaces', 'routes/admin/workspaces.tsx'),
+      ]),
 
       layout('routes/tokens/index.tsx', [
         ...prefix('tokens', [

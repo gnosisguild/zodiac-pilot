@@ -24,9 +24,9 @@ import {
   ArrowUpFromLine,
   Bookmark,
   BookmarkX,
+  Cog,
   Landmark,
   Shield,
-  ShieldUser,
   Signature,
   User,
 } from 'lucide-react'
@@ -185,9 +185,9 @@ const PageLayout = ({
                         to={href('/workspace/:workspaceId/admin', {
                           workspaceId,
                         })}
-                        icon={ShieldUser}
+                        icon={Cog}
                       >
-                        User Management
+                        Settings
                       </Navigation.Link>
                     </Navigation.Section>
                   )}

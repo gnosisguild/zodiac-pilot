@@ -25,6 +25,7 @@ import {
   Modal,
   PrimaryButton,
   SecondaryButton,
+  TabBar,
   TextInput,
 } from '@zodiac/ui'
 import type { UUID } from 'crypto'
@@ -278,22 +279,15 @@ const Routes = ({
 
   return (
     <>
-      <div
-        role="tablist"
-        className="flex items-center justify-between border-b border-zinc-300 dark:border-zinc-600"
-      >
-        <div className="flex items-center gap-2">
-          {routes.map((route) => (
-            <RouteTab
-              key={route.id}
-              route={route}
-              isDefault={defaultRouteId != null && route.id === defaultRouteId}
-            />
-          ))}
-        </div>
-
-        <AddRoute />
-      </div>
+      <TabBar action={<AddRoute />}>
+        {routes.map((route) => (
+          <RouteTab
+            key={route.id}
+            route={route}
+            isDefault={defaultRouteId != null && route.id === defaultRouteId}
+          />
+        ))}
+      </TabBar>
 
       <input
         type="hidden"
