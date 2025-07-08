@@ -89,11 +89,11 @@ export default {
 }
 
 // CORS configuration – maximum permissiveness
-const corsConfig = {
-  origin: true,
-  methods: ['POST', 'OPTIONS', 'GET'], // GET for WebSocket upgrade
-  maxAge: 86400,
-}
+// const corsConfig = {
+//   origin: true,
+//   methods: ['POST', 'OPTIONS', 'GET'], // GET for WebSocket upgrade
+//   maxAge: 86400,
+// }
 
 function addCorsHeaders(request: Request, response: Response): Response {
   const newResponse = new Response(response.body, {
@@ -103,19 +103,16 @@ function addCorsHeaders(request: Request, response: Response): Response {
   })
 
   // Add CORS headers
-  newResponse.headers.set('Access-Control-Allow-Origin', '*')
-  newResponse.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS, GET')
-  newResponse.headers.set('Access-Control-Allow-Credentials', 'true')
+  // newResponse.headers.set('Access-Control-Allow-Origin', '*')
+  // newResponse.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS, GET')
+  // newResponse.headers.set('Access-Control-Allow-Credentials', 'true')
 
-  // Dynamically reflect ALL request headers in CORS response
+  // // Dynamically reflect ALL request headers in CORS response
+  // newResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type')
   // newResponse.headers.set(
-  //   'Access-Control-Allow-Headers',
-  //   Array.from(request.headers.keys()).join(', '),
+  //   'Access-Control-Max-Age',
+  //   corsConfig.maxAge.toString(),
   // )
-  newResponse.headers.set(
-    'Access-Control-Max-Age',
-    corsConfig.maxAge.toString(),
-  )
 
   return newResponse
 }
