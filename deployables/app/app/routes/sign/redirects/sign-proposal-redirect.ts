@@ -18,7 +18,7 @@ export const loader = (args: Route.LoaderArgs) =>
       },
       params: { proposalId, routeId },
     }) => {
-      const defaultWorkspace = await getDefaultWorkspace(dbClient(), tenant.id)
+      const defaultWorkspace = await getDefaultWorkspace(dbClient(), tenant)
 
       if (routeId == null) {
         return redirect(

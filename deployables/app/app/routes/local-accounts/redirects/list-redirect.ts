@@ -15,7 +15,7 @@ export const loader = (args: Route.LoaderArgs) =>
         return redirect(href('/offline/accounts'))
       }
 
-      const defaultWorkspace = await getDefaultWorkspace(dbClient(), tenant.id)
+      const defaultWorkspace = await getDefaultWorkspace(dbClient(), tenant)
 
       return redirect(
         href('/workspace/:workspaceId/accounts', {

@@ -15,7 +15,7 @@ export const loader = (args: Route.LoaderArgs) =>
         return redirect(href('/offline/tokens/send/:chain?/:token?'))
       }
 
-      const defaultWorkspace = await getDefaultWorkspace(dbClient(), tenant.id)
+      const defaultWorkspace = await getDefaultWorkspace(dbClient(), tenant)
 
       return redirect(
         href('/workspace/:workspaceId/tokens/send/:chain?/:token?', {

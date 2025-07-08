@@ -14,7 +14,7 @@ export const loader = (args: Route.LoaderArgs) =>
       },
       params: { accountId },
     }) => {
-      const workspace = await getDefaultWorkspace(dbClient(), tenant.id)
+      const workspace = await getDefaultWorkspace(dbClient(), tenant)
 
       return redirect(
         href('/workspace/:workspaceId/accounts/:accountId', {
