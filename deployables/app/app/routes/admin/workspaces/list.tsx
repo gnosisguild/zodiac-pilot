@@ -10,6 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  Tag,
 } from '@zodiac/ui'
 import { Plus } from 'lucide-react'
 import { href, Outlet } from 'react-router'
@@ -35,7 +36,10 @@ export const loader = (args: Route.LoaderArgs) =>
     },
   )
 
-const Workspaces = ({ loaderData: { workspaces } }: Route.ComponentProps) => {
+const Workspaces = ({
+  loaderData: { workspaces },
+  params: { workspaceId },
+}: Route.ComponentProps) => {
   return (
     <>
       <div className="flex justify-end">
@@ -63,7 +67,15 @@ const Workspaces = ({ loaderData: { workspaces } }: Route.ComponentProps) => {
         <TableBody>
           {workspaces.map((workspace) => (
             <TableRow key={workspace.id}>
-              <TableCell>{workspace.label}</TableCell>
+              <TableCell>
+                <div className="flex justify-between gap-2">
+                  {workspace.label}
+
+                  {workspace.id === workspaceId && (
+                    <Tag color="green">Current</Tag>
+                  )}
+                </div>
+              </TableCell>
               <TableCell>
                 <DateValue>{workspace.createdAt}</DateValue>
               </TableCell>
