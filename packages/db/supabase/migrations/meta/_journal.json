@@ -281,6 +281,20 @@
       "when": 1751967078875,
       "tag": "0039_add default workspace id to tenant",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1751977181816,
+      "tag": "0040_add workspace index",
+      "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1751977693863,
+      "tag": "0041_add more indexes",
+      "breakpoints": true
     }
   ]
 }

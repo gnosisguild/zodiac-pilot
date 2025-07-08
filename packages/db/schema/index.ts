@@ -60,7 +60,11 @@ export const TenantTable = pgTable(
     ...createdTimestamp,
     ...updatedTimestamp,
   },
-  (table) => [index().on(table.externalId)],
+  (table) => [
+    index().on(table.externalId),
+    index().on(table.createdById),
+    index().on(table.defaultWorkspaceId),
+  ],
 )
 
 const tenantReference = {
@@ -266,7 +270,12 @@ export const AccountTable = pgTable(
     ...updatedTimestamp,
     ...deletable,
   },
-  (table) => [index().on(table.tenantId), index().on(table.createdById)],
+  (table) => [
+    index().on(table.tenantId),
+    index().on(table.createdById),
+    index().on(table.workspaceId),
+    index().on(table.deletedById),
+  ],
 )
 
 const accountReference = {
@@ -306,7 +315,7 @@ export const WalletTable = pgTable(
     ...updatedTimestamp,
     ...deletable,
   },
-  (table) => [index().on(table.belongsToId)],
+  (table) => [index().on(table.belongsToId), index().on(table.deletedById)],
 )
 
 const walletReference = {
@@ -343,6 +352,7 @@ export const RouteTable = pgTable(
     index().on(table.fromId),
     index().on(table.toId),
     index().on(table.tenantId),
+    index().on(table.userId),
   ],
 )
 
@@ -412,9 +422,7 @@ export const ActiveAccountTable = pgTable(
     ...createdTimestamp,
   },
   (table) => [
-    index().on(table.accountId),
-    index().on(table.tenantId),
-    index().on(table.userId),
+    primaryKey({ columns: [table.accountId, table.tenantId, table.userId] }),
   ],
 )
 
@@ -452,6 +460,8 @@ export const ProposedTransactionTable = pgTable(
     index().on(table.tenantId),
     index().on(table.userId),
     index().on(table.signedTransactionId),
+    index().on(table.workspaceId),
+    index().on(table.accountId),
   ],
 )
 
@@ -483,6 +493,7 @@ export const SignedTransactionTable = pgTable(
     index().on(table.tenantId),
     index().on(table.userId),
     index().on(table.walletId),
+    index().on(table.workspaceId),
   ],
 )
 
