@@ -3,6 +3,8 @@ import { useWorkspaceId } from '@/workspaces'
 import { dbClient, getWorkspaces } from '@zodiac/db'
 import {
   DateValue,
+  GhostLinkButton,
+  MeatballMenu,
   SecondaryLinkButton,
   Table,
   TableBody,
@@ -12,7 +14,7 @@ import {
   TableRow,
   Tag,
 } from '@zodiac/ui'
-import { Plus } from 'lucide-react'
+import { Pencil, Plus } from 'lucide-react'
 import { href, Outlet } from 'react-router'
 import type { Route } from './+types/list'
 
@@ -56,7 +58,7 @@ const Workspaces = ({
 
       <Table>
         <TableHead>
-          <TableRow>
+          <TableRow withActions>
             <TableHeader>Name</TableHeader>
             <TableHeader>Created</TableHeader>
             <TableHeader>Created by</TableHeader>
@@ -82,6 +84,23 @@ const Workspaces = ({
               <TableCell>{workspace.createdBy.fullName}</TableCell>
               <TableCell>
                 <DateValue>{workspace.updatedAt}</DateValue>
+              </TableCell>
+              <TableCell>
+                <div className="flex justify-end gap-1 transition-opacity group-hover:opacity-100">
+                  <MeatballMenu size="tiny" label="Workspace options">
+                    <GhostLinkButton
+                      size="tiny"
+                      icon={Pencil}
+                      align="left"
+                      to={href(
+                        '/workspace/:workspaceId/admin/workspaces/edit/:id',
+                        { workspaceId, id: workspace.id },
+                      )}
+                    >
+                      Edit
+                    </GhostLinkButton>
+                  </MeatballMenu>
+                </div>
               </TableCell>
             </TableRow>
           ))}
