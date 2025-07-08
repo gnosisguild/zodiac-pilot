@@ -118,7 +118,9 @@ export default [
 
       route('admin', 'routes/admin/layout.tsx', [
         index('routes/admin/users.tsx'),
-        route('workspaces', 'routes/admin/workspaces.tsx'),
+        route('workspaces', 'routes/admin/workspaces/list.tsx', [
+          route('add', 'routes/admin/workspaces/add-workspace.tsx'),
+        ]),
       ]),
 
       layout('routes/tokens/index.tsx', [

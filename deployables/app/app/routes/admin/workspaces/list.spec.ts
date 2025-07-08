@@ -1,5 +1,6 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import {
   tenantFactory,
   userFactory,
@@ -32,6 +33,35 @@ describe('Workspaces', () => {
       ).toBeInTheDocument()
       expect(
         await screen.findByRole('cell', { name: 'Another workspace' }),
+      ).toBeInTheDocument()
+    })
+  })
+
+  describe('Add workspace', () => {
+    it('is possible to add a new workspace', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user, {
+        defaultWorkspaceLabel: 'Default workspace',
+      })
+
+      await render(
+        href('/workspace/:workspaceId/admin/workspaces', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('link', { name: 'Add new workspace' }),
+      )
+      await userEvent.type(
+        await screen.findByRole('textbox', { name: 'Label' }),
+        'New workspace',
+      )
+      await userEvent.click(await screen.getByRole('button', { name: 'Add' }))
+
+      expect(
+        await screen.findByRole('cell', { name: 'New workspace' }),
       ).toBeInTheDocument()
     })
   })
