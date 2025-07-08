@@ -1,14 +1,17 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { routeTitle } from '@/utils'
+import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
   deleteAccount,
   findActiveAccount,
   getAccount,
   getAccounts,
+  getWorkspace,
 } from '@zodiac/db'
 import { getString, getUUID } from '@zodiac/form-data'
+import { isUUID } from '@zodiac/schema'
 import {
   Info,
   PrimaryLinkButton,
@@ -36,11 +39,15 @@ export const loader = (args: Route.LoaderArgs) =>
       context: {
         auth: { user, tenant },
       },
+      params: { workspaceId },
     }) => {
+      invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID"')
+
       const [accounts, activeAccount] = await Promise.all([
         getAccounts(dbClient(), {
           tenantId: tenant.id,
           userId: user.id,
+          workspaceId,
         }),
         findActiveAccount(dbClient(), tenant, user),
       ])
@@ -50,7 +57,16 @@ export const loader = (args: Route.LoaderArgs) =>
         activeAccountId: activeAccount == null ? null : activeAccount.id,
       }
     },
-    { ensureSignedIn: true },
+    {
+      ensureSignedIn: true,
+      async hasAccess({ tenant, params: { workspaceId } }) {
+        invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID"')
+
+        const workspace = await getWorkspace(dbClient(), workspaceId)
+
+        return workspace.tenantId === tenant.id
+      },
+    },
   )
 
 export const action = async (args: Route.ActionArgs) =>
@@ -74,8 +90,16 @@ export const action = async (args: Route.ActionArgs) =>
     },
     {
       ensureSignedIn: true,
-      async hasAccess({ user, request }) {
+      async hasAccess({ user, tenant, request, params: { workspaceId } }) {
+        invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID"')
+
         const data = await request.formData()
+
+        const workspace = await getWorkspace(dbClient(), workspaceId)
+
+        if (workspace.tenantId === tenant.id) {
+          return false
+        }
 
         switch (getString(data, 'intent')) {
           case Intent.DeleteAccount: {

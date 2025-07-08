@@ -7,6 +7,7 @@ import {
   accountFactory,
   tenantFactory,
   userFactory,
+  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { href } from 'react-router'
@@ -20,26 +21,54 @@ describe.sequential('List Accounts', () => {
   })
 
   describe('List', () => {
-    describe('Logged in', () => {
-      it('lists all accounts', async () => {
-        const user = await userFactory.create()
-        const tenant = await tenantFactory.create(user)
+    it('lists all accounts', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
-        await accountFactory.create(tenant, user, {
-          label: 'Test account',
-        })
-
-        await render(
-          href('/workspace/:workspaceId/accounts', {
-            workspaceId: tenant.defaultWorkspaceId,
-          }),
-          { tenant, user },
-        )
-
-        expect(
-          await screen.findByRole('cell', { name: 'Test account' }),
-        ).toBeInTheDocument()
+      await accountFactory.create(tenant, user, {
+        label: 'Test account',
       })
+
+      await render(
+        href('/workspace/:workspaceId/accounts', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
+        { tenant, user },
+      )
+
+      expect(
+        await screen.findByRole('cell', { name: 'Test account' }),
+      ).toBeInTheDocument()
+    })
+
+    it('lists only accounts from the selected workspace', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+      const workspace = await workspaceFactory.create(tenant, user)
+
+      await accountFactory.create(tenant, user, {
+        label: 'Workspace A',
+        workspaceId: tenant.defaultWorkspaceId,
+      })
+      await accountFactory.create(tenant, user, {
+        label: 'Workspace B',
+        workspaceId: workspace.id,
+      })
+
+      await render(
+        href('/workspace/:workspaceId/accounts', {
+          workspaceId: workspace.id,
+        }),
+        { tenant, user },
+      )
+
+      expect(
+        await screen.findByRole('cell', { name: 'Workspace B' }),
+      ).toBeInTheDocument()
+
+      expect(
+        screen.queryByRole('cell', { name: 'Workspace A' }),
+      ).not.toBeInTheDocument()
     })
   })
 

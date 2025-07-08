@@ -4,19 +4,24 @@ import type { DBClient } from '../../dbClient'
 type GetAccountsOptions = {
   tenantId: UUID
   userId: UUID
+  workspaceId?: UUID
   deleted?: boolean
 }
 
 export const getAccounts = (
   db: DBClient,
-  { tenantId, userId, deleted = false }: GetAccountsOptions,
+  { tenantId, userId, workspaceId, deleted = false }: GetAccountsOptions,
 ) =>
   db.query.account.findMany({
     where(fields, { eq, and }) {
-      const where = and(
+      let where = and(
         eq(fields.tenantId, tenantId),
         eq(fields.deleted, deleted),
       )
+
+      if (workspaceId != null) {
+        where = and(where, eq(fields.workspaceId, workspaceId))
+      }
 
       return where
     },
