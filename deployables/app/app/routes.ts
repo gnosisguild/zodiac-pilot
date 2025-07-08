@@ -36,16 +36,16 @@ export default [
     'routes/sign/redirects/offline-sign-transaction.ts',
   ),
 
-  route(
-    '/launch/:prefixedAvatarAddress/:accountLabel',
-    'routes/launch/$prefixedAvatarAddress.$accountLabel/launch.tsx',
-  ),
-
   // BEGIN LEGACY REDIRECTS
 
   route('/offline', 'routes/offline-layout.tsx', [
     layout('routes/errorBoundary.tsx', { id: 'offline-error-boundary' }, [
       index('routes/welcome.tsx', { id: 'offline-welcome' }),
+
+      route(
+        'launch/:prefixedAvatarAddress/:accountLabel',
+        'routes/launch/$prefixedAvatarAddress.$accountLabel/launch.tsx',
+      ),
 
       ...prefix('sign-up', [
         index('routes/auth/sign-up.tsx'),
