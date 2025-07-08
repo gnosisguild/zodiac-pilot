@@ -30,18 +30,20 @@ export const editAccount = async (windowId: number, account: TaggedAccount) => {
     const existingTab = tabs.find(
       (tab) =>
         tab.url != null &&
-        tab.url.startsWith(`${getCompanionAppUrl()}/edit/${account.id}`),
+        tab.url.startsWith(
+          `${getCompanionAppUrl()}/offline/accounts/${account.id}`,
+        ),
     )
 
     if (existingTab != null && existingTab.id != null) {
       await chrome.tabs.update(existingTab.id, {
         active: true,
-        url: `${getCompanionAppUrl()}/edit/${account.id}/${encode(route)}`,
+        url: `${getCompanionAppUrl()}/offline/accounts/${account.id}/${encode(route)}`,
       })
     } else {
       await chrome.tabs.create({
         active: true,
-        url: `${getCompanionAppUrl()}/edit/${account.id}/${encode(route)}`,
+        url: `${getCompanionAppUrl()}/offline/accounts/${account.id}/${encode(route)}`,
       })
     }
   }
