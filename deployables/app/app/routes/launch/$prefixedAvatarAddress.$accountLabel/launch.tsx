@@ -1,7 +1,6 @@
 import { Page, useConnected } from '@/components'
 import { ChainSelect } from '@/routes-ui'
 import { CompanionAppMessageType } from '@zodiac/messages'
-import { createRouteId } from '@zodiac/modules'
 import { verifyPrefixedAddress, type ExecutionRoute } from '@zodiac/schema'
 import { AddressInput, PrimaryButton, Warning } from '@zodiac/ui'
 import { useState } from 'react'
@@ -42,7 +41,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 
   // Create a route with the provided avatar
   const route: ExecutionRoute = {
-    id: createRouteId(),
+    id: 'ad-hoc',
     label: decodeURIComponent(accountLabel),
     avatar: prefixedAvatarAddress,
   }
@@ -98,7 +97,7 @@ export default function LaunchPage() {
             />
           </div>
 
-          {connected && (
+          {connected && !launching && (
             <Warning title="Switching account">
               Launch will clear any previously recorded calls in the panel.
             </Warning>

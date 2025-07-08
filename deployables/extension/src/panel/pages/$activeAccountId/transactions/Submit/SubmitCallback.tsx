@@ -5,7 +5,6 @@ import { invariant } from '@epic-web/invariant'
 import { toMetaTransactionRequest } from '@zodiac/schema'
 import { errorToast, Modal, PrimaryButton, Spinner } from '@zodiac/ui'
 import { useState } from 'react'
-import { Intent } from '../intents'
 
 export const SubmitCallback = () => {
   const account = useAccount()
@@ -46,7 +45,7 @@ export const SubmitCallback = () => {
 
   return (
     <>
-      <PrimaryButton fluid onClick={submit} intent={Intent.SubmitCallback}>
+      <PrimaryButton fluid onClick={submit}>
         Submit
       </PrimaryButton>
 
