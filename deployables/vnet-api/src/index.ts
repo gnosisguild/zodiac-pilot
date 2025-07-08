@@ -140,27 +140,27 @@ async function handleWebsocketRequest(
 
     // Forward messages from client to Tenderly
     clientSocket.addEventListener('message', (event) => {
-      if (tenderlySocket.readyState === WebSocket.READY_STATE_OPEN) {
+      if (tenderlySocket.readyState === WebSocket.OPEN) {
         tenderlySocket.send(event.data)
       }
     })
 
     // Forward messages from Tenderly to client
     tenderlySocket.addEventListener('message', (event) => {
-      if (clientSocket.readyState === WebSocket.READY_STATE_OPEN) {
+      if (clientSocket.readyState === WebSocket.OPEN) {
         clientSocket.send(event.data)
       }
     })
 
     // Handle WebSocket close events
     clientSocket.addEventListener('close', () => {
-      if (tenderlySocket.readyState === WebSocket.READY_STATE_OPEN) {
+      if (tenderlySocket.readyState === WebSocket.OPEN) {
         tenderlySocket.close()
       }
     })
 
     tenderlySocket.addEventListener('close', () => {
-      if (clientSocket.readyState === WebSocket.READY_STATE_OPEN) {
+      if (clientSocket.readyState === WebSocket.OPEN) {
         clientSocket.close()
       }
     })
@@ -168,14 +168,14 @@ async function handleWebsocketRequest(
     // Handle WebSocket error events
     clientSocket.addEventListener('error', (error) => {
       console.error('Client WebSocket error:', error)
-      if (tenderlySocket.readyState === WebSocket.READY_STATE_OPEN) {
+      if (tenderlySocket.readyState === WebSocket.OPEN) {
         tenderlySocket.close()
       }
     })
 
     tenderlySocket.addEventListener('error', (error) => {
       console.error('Tenderly WebSocket error:', error)
-      if (clientSocket.readyState === WebSocket.READY_STATE_OPEN) {
+      if (clientSocket.readyState === WebSocket.OPEN) {
         clientSocket.close()
       }
     })
