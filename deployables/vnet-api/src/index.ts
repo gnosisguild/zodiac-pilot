@@ -99,20 +99,23 @@ function addCorsHeaders(request: Request, response: Response): Response {
   const newResponse = new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
-    headers: response.headers,
+    headers: {},
   })
 
   // Add CORS headers
-  // newResponse.headers.set('Access-Control-Allow-Origin', '*')
-  // newResponse.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS, GET')
-  // newResponse.headers.set('Access-Control-Allow-Credentials', 'true')
+  newResponse.headers.set('Accept', '*/*')
+  newResponse.headers.set('Access-Control-Allow-Origin', '*')
+  newResponse.headers.set('Access-Control-Allow-Methods', 'POST')
 
-  // // Dynamically reflect ALL request headers in CORS response
-  // newResponse.headers.set('Access-Control-Allow-Headers', 'Content-Type')
-  // newResponse.headers.set(
-  //   'Access-Control-Max-Age',
-  //   corsConfig.maxAge.toString(),
-  // )
+  // Dynamically reflect all requested headers in CORS response (no canonicalization)
+  const acrh = request.headers.get('Access-Control-Request-Headers')
+  if (acrh) {
+    newResponse.headers.set('Access-Control-Allow-Headers', acrh)
+  }
+  newResponse.headers.set(
+    'Vary',
+    'Origin, Access-Control-Request-Method, Access-Control-Request-Headers',
+  )
 
   return newResponse
 }
