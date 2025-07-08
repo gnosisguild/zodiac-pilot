@@ -130,7 +130,7 @@ const ListRoutes = ({
                   { workspaceId },
                 )}
               >
-                Create your first account
+                Create new account
               </PrimaryLinkButton>
             </Info.Actions>
           </Info>
