@@ -5,6 +5,10 @@ import type { RemoteAccount } from './TaggedAccount'
 
 export const toRemoteAccount = ({ id, ...account }: Account): RemoteAccount => {
   invariant(isUUID(id), 'remote accounts must have UUID ids')
+  invariant(
+    'workspaceId' in account,
+    'remote account must specify a workspace id',
+  )
 
   return {
     ...account,

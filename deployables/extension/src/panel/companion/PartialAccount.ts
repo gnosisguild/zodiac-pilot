@@ -5,6 +5,9 @@ type PartialAccount = Pick<Account, 'label' | 'address' | 'chainId'> & {
 }
 
 export type PartialLocalAccount = PartialAccount & { id: string }
-export type PartialRemoteAccount = PartialAccount & { id: UUID }
+export type PartialRemoteAccount = PartialAccount & {
+  id: UUID
+  workspaceId: UUID
+}
 
 export type CompanionAccount = PartialLocalAccount | PartialRemoteAccount
