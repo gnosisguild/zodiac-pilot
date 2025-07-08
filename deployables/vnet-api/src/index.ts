@@ -88,24 +88,28 @@ export default {
   },
 }
 
-// CORS configuration – maximum permissiveness
-// const corsConfig = {
-//   origin: true,
-//   methods: ['POST', 'OPTIONS', 'GET'], // GET for WebSocket upgrade
-//   maxAge: 86400,
-// }
-
 function addCorsHeaders(request: Request, response: Response): Response {
+  // Create a new response with only critical headers preserved
+  const criticalHeaders = new Headers()
+
+  // Preserve only critical headers from the original response
+  const criticalHeaderNames = ['content-type', 'content-length']
+
+  for (const [name, value] of response.headers.entries()) {
+    if (criticalHeaderNames.includes(name.toLowerCase())) {
+      criticalHeaders.set(name, value)
+    }
+  }
+
   const newResponse = new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
-    headers: {},
+    headers: criticalHeaders,
   })
 
   // Add CORS headers
-  newResponse.headers.set('Accept', '*/*')
   newResponse.headers.set('Access-Control-Allow-Origin', '*')
-  newResponse.headers.set('Access-Control-Allow-Methods', 'POST')
+  newResponse.headers.set('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
 
   // Dynamically reflect all requested headers in CORS response (no canonicalization)
   const requestHeaders = request.headers.get('Access-Control-Request-Headers')
