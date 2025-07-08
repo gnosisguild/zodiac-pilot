@@ -145,6 +145,13 @@ export const WorkspaceTable = pgTable(
 export type Workspace = typeof WorkspaceTable.$inferSelect
 export type WorkspaceCreateInput = typeof WorkspaceTable.$inferInsert
 
+const WorkspaceRelations = relations(WorkspaceTable, ({ one }) => ({
+  createdBy: one(UserTable, {
+    fields: [WorkspaceTable.createdById],
+    references: [UserTable.id],
+  }),
+}))
+
 const workspaceReference = {
   workspaceId: uuid()
     .notNull()
@@ -537,4 +544,5 @@ export const schema = {
   ActiveAccountRelations,
   ActiveSubscriptionRelations,
   SignedTransactionRelations,
+  WorkspaceRelations,
 }

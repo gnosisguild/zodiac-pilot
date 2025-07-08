@@ -14,7 +14,7 @@ import { eq } from 'drizzle-orm'
 import { createFactory } from './createFactory'
 
 export const tenantFactory = createFactory<
-  TenantCreateInput,
+  TenantCreateInput & { defaultWorkspaceLabel?: string },
   Tenant,
   [members: User | [User, ...User[]]]
 >({
@@ -61,7 +61,12 @@ export const tenantFactory = createFactory<
         .insert(TenantMembershipTable)
         .values({ tenantId: tenant.id, userId: tenant.createdById })
 
-      return addDefaultWorkspace(tx, tenant.id, members)
+      return addDefaultWorkspace(
+        tx,
+        tenant.id,
+        members,
+        data.defaultWorkspaceLabel,
+      )
     })
   },
   createWithoutDb({ defaultWorkspaceId, ...data }) {
@@ -81,12 +86,13 @@ const addDefaultWorkspace = async (
   db: DBClient,
   tenantId: UUID,
   owner: User,
+  label: string = 'Default workspace',
 ): Promise<Tenant> => {
   const [workspace] = await db
     .insert(WorkspaceTable)
     .values({
       createdById: owner.id,
-      label: 'Default workspace',
+      label,
       tenantId,
     })
     .returning()

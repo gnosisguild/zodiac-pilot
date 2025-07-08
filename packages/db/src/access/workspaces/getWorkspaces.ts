@@ -13,4 +13,5 @@ export const getWorkspaces = (
     where(fields, { eq }) {
       return eq(fields.tenantId, tenantId)
     },
+    with: { createdBy: true },
   })
