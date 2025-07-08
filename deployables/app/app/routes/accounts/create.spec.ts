@@ -1,10 +1,5 @@
 import { getAvailableChains } from '@/balances-server'
-import {
-  createMockChain,
-  expectMessage,
-  postMessage,
-  render,
-} from '@/test-utils'
+import { createMockChain, expectMessage, render } from '@/test-utils'
 import { isSmartContractAddress } from '@/utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -16,6 +11,7 @@ import {
   workspaceFactory,
 } from '@zodiac/db/test-utils'
 import {
+  autoRespondToCompanionRequest,
   CompanionAppMessageType,
   CompanionResponseMessageType,
 } from '@zodiac/messages'
@@ -154,22 +150,15 @@ describe('New SafeAccount', () => {
           address,
         )
 
-        const { promise, resolve } = Promise.withResolvers<void>()
-
         await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
-        window.addEventListener('message', (message) => {
-          if (message.data.type === CompanionAppMessageType.SAVE_AND_LAUNCH) {
-            resolve()
-          }
-        })
-
-        await promise
-
-        await postMessage({
-          type: CompanionResponseMessageType.PROVIDE_ROUTE,
-          route: createMockExecutionRoute(),
-        })
+        await autoRespondToCompanionRequest(
+          CompanionAppMessageType.SAVE_AND_LAUNCH,
+          {
+            type: CompanionResponseMessageType.PROVIDE_ROUTE,
+            route: createMockExecutionRoute(),
+          },
+        )
 
         await expectRouteToBe(
           href('/workspace/:workspaceId/accounts', {

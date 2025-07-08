@@ -1,5 +1,9 @@
 export * from './companionApp'
-export { companionRequest, type RequestResponseTypes } from './companionRequest'
+export {
+  autoRespondToCompanionRequest,
+  companionRequest,
+  type RequestResponseTypes,
+} from './companionRequest'
 export { createClientMessageHandler } from './createClientMessageHandler'
 export { createInternalMessageHandler } from './createInternalMessageHandler'
 export { createTabMessageHandler } from './createTabMessageHandler'
