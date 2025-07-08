@@ -108,9 +108,9 @@ function addCorsHeaders(request: Request, response: Response): Response {
   newResponse.headers.set('Access-Control-Allow-Methods', 'POST')
 
   // Dynamically reflect all requested headers in CORS response (no canonicalization)
-  const acrh = request.headers.get('Access-Control-Request-Headers')
-  if (acrh) {
-    newResponse.headers.set('Access-Control-Allow-Headers', acrh)
+  const requestHeaders = request.headers.get('Access-Control-Request-Headers')
+  if (requestHeaders) {
+    newResponse.headers.set('Access-Control-Allow-Headers', requestHeaders)
   }
   newResponse.headers.set(
     'Vary',
