@@ -65,8 +65,7 @@ describe('Active Account', () => {
     it('lists routes from the zodiac os', async () => {
       const user = userFactory.createWithoutDb()
       const tenant = tenantFactory.createWithoutDb(user)
-      const workspace = workspaceFactory.createWithoutDb(tenant, user)
-      const account = accountFactory.createWithoutDb(tenant, user, workspace, {
+      const account = accountFactory.createWithoutDb(tenant, user, {
         label: 'Remote account',
       })
 
@@ -88,9 +87,8 @@ describe('Active Account', () => {
     it('is possible to activate an account from zodiac os', async () => {
       const user = userFactory.createWithoutDb()
       const tenant = tenantFactory.createWithoutDb(user)
-      const workspace = workspaceFactory.createWithoutDb(tenant, user)
       const wallet = walletFactory.createWithoutDb(user)
-      const account = accountFactory.createWithoutDb(tenant, user, workspace, {
+      const account = accountFactory.createWithoutDb(tenant, user, {
         label: 'Remote account',
       })
       const route = routeFactory.createWithoutDb(account, wallet)
@@ -125,8 +123,7 @@ describe('Active Account', () => {
     it('renders when an account from zodiac os is active', async () => {
       const user = userFactory.createWithoutDb()
       const tenant = tenantFactory.createWithoutDb(user)
-      const workspace = workspaceFactory.createWithoutDb(tenant, user)
-      const account = accountFactory.createWithoutDb(tenant, user, workspace, {
+      const account = accountFactory.createWithoutDb(tenant, user, {
         label: 'Remote account',
       })
 
