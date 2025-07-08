@@ -15,6 +15,7 @@ import {
   accountFactory,
   tenantFactory,
   userFactory,
+  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import { createMockExecutionRoute } from '@zodiac/modules/test-utils'
 import { sleepTillIdle } from '@zodiac/test-utils'
@@ -64,7 +65,8 @@ const mockGetFeatures = vi.mocked(getFeatures)
 beforeEach(() => {
   const user = userFactory.createWithoutDb()
   const tenant = tenantFactory.createWithoutDb(user)
-  const account = accountFactory.createWithoutDb(tenant, user)
+  const workspace = workspaceFactory.createWithoutDb(tenant, user)
+  const account = accountFactory.createWithoutDb(tenant, user, workspace)
 
   mockGetRemoteRoutes.mockResolvedValue([])
   mockFindRemoteDefaultRoute.mockResolvedValue(null)

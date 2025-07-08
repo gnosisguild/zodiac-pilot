@@ -16,7 +16,6 @@ import {
   tenantFactory,
   userFactory,
   walletFactory,
-  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import {
   createMockEoaAccount,
@@ -54,7 +53,7 @@ describe('Routes', () => {
     it('lists all wallets that can be signers on the selected account', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const account = await accountFactory.create(tenant, user)
 
       const address = randomAddress()
@@ -69,7 +68,7 @@ describe('Routes', () => {
       await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           accountId: account.id,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         {
           tenant,
@@ -89,7 +88,7 @@ describe('Routes', () => {
     it('shows the current initiator', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, {
         label: 'Test Wallet',
@@ -100,7 +99,7 @@ describe('Routes', () => {
 
       await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: route.id,
         }),
@@ -116,7 +115,7 @@ describe('Routes', () => {
     it('is possible to add an initiator', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, {
         label: 'Test Wallet',
@@ -127,7 +126,7 @@ describe('Routes', () => {
       const { waitForPendingActions, waitForPendingLoaders } = await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           accountId: account.id,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         { tenant, user },
       )
@@ -159,7 +158,7 @@ describe('Routes', () => {
     it('is possible to remove the initiator', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user)
       const route = await routeFactory.create(account, wallet)
@@ -168,7 +167,7 @@ describe('Routes', () => {
 
       const { waitForPendingActions, waitForPendingLoaders } = await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: route.id,
         }),
@@ -196,7 +195,7 @@ describe('Routes', () => {
     it('is possible to update the initiator', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const account = await accountFactory.create(tenant, user)
       const walletA = await walletFactory.create(user)
       const walletB = await walletFactory.create(user, {
@@ -209,7 +208,7 @@ describe('Routes', () => {
 
       const { waitForPendingActions, waitForPendingLoaders } = await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: route.id,
         }),
@@ -238,7 +237,7 @@ describe('Routes', () => {
     it('is possible to create an initiator wallet on the fly', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const account = await accountFactory.create(tenant, user)
 
       const walletAddress = randomAddress()
@@ -248,7 +247,7 @@ describe('Routes', () => {
       const { waitForPendingActions, waitForPendingLoaders } = await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           accountId: account.id,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         { tenant, user },
       )
@@ -281,7 +280,6 @@ describe('Routes', () => {
     it('marks the first route as the default', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user, { label: 'Test Wallet' })
       const account = await accountFactory.create(tenant, user)
@@ -291,7 +289,7 @@ describe('Routes', () => {
       const { waitForPendingActions, waitForPendingLoaders } = await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           accountId: account.id,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         { tenant, user },
       )
@@ -322,7 +320,6 @@ describe('Routes', () => {
     it('leaves the default route untouched when it has already been defined', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const walletA = await walletFactory.create(user, { label: 'Wallet A' })
       const walletB = await walletFactory.create(user, { label: 'Wallet B' })
@@ -337,7 +334,7 @@ describe('Routes', () => {
 
       const { waitForPendingActions, waitForPendingLoaders } = await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: routeB.id,
         }),
@@ -365,7 +362,6 @@ describe('Routes', () => {
     it('is possible to select a route as the default', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
       const account = await accountFactory.create(tenant, user)
@@ -373,7 +369,7 @@ describe('Routes', () => {
 
       const { waitForPendingActions } = await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: route.id,
         }),
@@ -403,7 +399,6 @@ describe('Routes', () => {
     it('removes the current default route', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
       const account = await accountFactory.create(tenant, user)
@@ -417,7 +412,7 @@ describe('Routes', () => {
 
       const { waitForPendingActions, waitForPendingLoaders } = await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: routeA.id,
         }),
@@ -452,7 +447,6 @@ describe('Routes', () => {
     it('does not crash if the current default route stays the default', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
       const account = await accountFactory.create(tenant, user)
@@ -465,7 +459,7 @@ describe('Routes', () => {
 
       const { waitForPendingActions } = await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: route.id,
         }),
@@ -493,7 +487,7 @@ describe('Routes', () => {
     it('auto-selects the first route', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, {
         label: 'Test wallet',
@@ -511,7 +505,7 @@ describe('Routes', () => {
 
       const { waitForPendingLoaders, waitForPendingActions } = await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
         }),
         { tenant, user },
@@ -541,7 +535,7 @@ describe('Routes', () => {
     it('is possible to change the selected route', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, {
         label: 'Test wallet',
@@ -573,7 +567,7 @@ describe('Routes', () => {
 
       const { waitForPendingActions } = await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: route.id,
         }),
@@ -598,7 +592,6 @@ describe('Routes', () => {
     it('lists all routes', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
       const account = await accountFactory.create(tenant, user)
@@ -613,7 +606,7 @@ describe('Routes', () => {
       await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
           accountId: account.id,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         {
           user,
@@ -627,7 +620,7 @@ describe('Routes', () => {
       ).toHaveAttribute(
         'href',
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: routeA.id,
         }),
@@ -637,7 +630,7 @@ describe('Routes', () => {
       ).toHaveAttribute(
         'href',
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: routeB.id,
         }),
@@ -647,7 +640,6 @@ describe('Routes', () => {
     it('is shows the initiator of the specified route', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
       const account = await accountFactory.create(tenant, user)
@@ -660,7 +652,7 @@ describe('Routes', () => {
 
       await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: route.id,
         }),
@@ -678,7 +670,6 @@ describe('Routes', () => {
       it('is possible to change the label of a route', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
-        const workspace = await workspaceFactory.create(tenant, user)
 
         const wallet = await walletFactory.create(user)
         const account = await accountFactory.create(tenant, user)
@@ -688,7 +679,7 @@ describe('Routes', () => {
 
         const { waitForPendingActions } = await render(
           href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-            workspaceId: workspace.id,
+            workspaceId: tenant.defaultWorkspaceId,
             accountId: account.id,
             routeId: route.id,
           }),
@@ -726,7 +717,6 @@ describe('Routes', () => {
       it('is possible to add a new route to an account', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
-        const workspace = await workspaceFactory.create(tenant, user)
 
         const wallet = await walletFactory.create(user, { label: 'New wallet' })
         const account = await accountFactory.create(tenant, user)
@@ -736,7 +726,7 @@ describe('Routes', () => {
 
         await render(
           href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-            workspaceId: workspace.id,
+            workspaceId: tenant.defaultWorkspaceId,
             accountId: account.id,
           }),
           { user, tenant, features: ['multiple-routes'] },
@@ -792,7 +782,6 @@ describe('Routes', () => {
     it('is possible to remove a route', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
       const account = await accountFactory.create(tenant, user)
@@ -802,7 +791,7 @@ describe('Routes', () => {
 
       const { waitForPendingActions } = await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: route.id,
         }),
@@ -824,7 +813,6 @@ describe('Routes', () => {
     it('redirects to the default route if another route has been removed', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
       const account = await accountFactory.create(tenant, user)
@@ -843,7 +831,7 @@ describe('Routes', () => {
 
       await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: routeC.id,
         }),
@@ -854,7 +842,7 @@ describe('Routes', () => {
 
       await expectRouteToBe(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: routeB.id,
         }),
@@ -864,7 +852,6 @@ describe('Routes', () => {
     it('redirects to the first route when the default route is removed', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
       const account = await accountFactory.create(tenant, user)
@@ -883,7 +870,7 @@ describe('Routes', () => {
 
       await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: routeB.id,
         }),
@@ -894,7 +881,7 @@ describe('Routes', () => {
 
       await expectRouteToBe(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: routeA.id,
         }),
@@ -904,7 +891,6 @@ describe('Routes', () => {
     it('redirects to the empty page when the last route is being removed', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const wallet = await walletFactory.create(user)
       const account = await accountFactory.create(tenant, user)
@@ -917,7 +903,7 @@ describe('Routes', () => {
 
       await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
           routeId: route.id,
         }),
@@ -928,7 +914,7 @@ describe('Routes', () => {
 
       await expectRouteToBe(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
         }),
       )

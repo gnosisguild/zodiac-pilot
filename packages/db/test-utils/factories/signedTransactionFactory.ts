@@ -3,6 +3,7 @@ import {
   type Route,
   type SignedTransaction,
   type SignedTransactionCreateInput,
+  type Tenant,
   type User,
 } from '@zodiac/db/schema'
 import {
@@ -16,14 +17,15 @@ import { createFactory } from './createFactory'
 export const signedTransactionFactory = createFactory<
   SignedTransactionCreateInput,
   SignedTransaction,
-  [route: Route, user: User]
+  [tenant: Tenant, user: User, route: Route]
 >({
-  build(route, user, data) {
+  build(tenant, user, route, data) {
     return {
       routeId: route.id,
       accountId: route.toId,
       walletId: route.fromId,
       tenantId: route.tenantId,
+      workspaceId: tenant.defaultWorkspaceId,
       userId: user.id,
       waypoints: createMockWaypoints(),
 

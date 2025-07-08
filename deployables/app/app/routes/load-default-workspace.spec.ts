@@ -4,14 +4,14 @@ import { expectRouteToBe } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { describe, it } from 'vitest'
 
-describe('Index', () => {
-  it('redirects to the offline index when the user is not signed in', async () => {
+describe('Load default workspace', () => {
+  it('redirects to the welcome page when the user is not logged in', async () => {
     await render(href('/'))
 
     await expectRouteToBe(href('/offline'))
   })
 
-  it('redirects to the default workspace when the user is signed in', async () => {
+  it('redirects to the first workspace in the system when the user is logged in', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
 

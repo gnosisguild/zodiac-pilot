@@ -15,11 +15,13 @@ export const loader = async (args: Route.LoaderArgs) =>
       },
     }) => {
       invariantResponse(isUUID(accountId), `"${accountId}" is not a UUID`)
+      invariantResponse(isUUID(workspaceId), `"${workspaceId}" is not a UUID`)
 
       const proposal = await proposeTransaction(dbClient(), {
         userId: user.id,
         tenantId: tenant.id,
         accountId,
+        workspaceId,
         transaction: parseTransactionData(transactions),
       })
 

@@ -22,6 +22,7 @@ export const accountFactory = createFactory<
       chainId: Chain.ETH,
       createdById: user.id,
       tenantId: tenant.id,
+      workspaceId: tenant.defaultWorkspaceId,
 
       ...account,
     }

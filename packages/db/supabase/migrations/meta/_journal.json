@@ -267,6 +267,20 @@
       "when": 1751545311370,
       "tag": "0037_add workspace model",
       "breakpoints": true
+    },
+    {
+      "idx": 38,
+      "version": "7",
+      "when": 1751548057051,
+      "tag": "0038_add workspace reference to tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 39,
+      "version": "7",
+      "when": 1751967078875,
+      "tag": "0039_add default workspace id to tenant",
+      "breakpoints": true
     }
   ]
 }

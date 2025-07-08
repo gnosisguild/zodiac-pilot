@@ -7,7 +7,7 @@ import {
 } from '@react-router/dev/routes'
 
 export default [
-  index('routes/index.tsx'),
+  index('routes/load-default-workspace.ts'),
 
   route('/robots.txt', 'routes/robots.ts'),
 

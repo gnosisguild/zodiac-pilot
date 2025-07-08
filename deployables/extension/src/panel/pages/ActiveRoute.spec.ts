@@ -13,6 +13,7 @@ import {
   tenantFactory,
   userFactory,
   walletFactory,
+  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { describe, expect, it, vi } from 'vitest'
@@ -25,9 +26,10 @@ describe('Active route', () => {
   it('shows a select for routes when there is more than one route for an account', async () => {
     const user = userFactory.createWithoutDb()
     const tenant = tenantFactory.createWithoutDb(user)
+    const workspace = workspaceFactory.createWithoutDb(tenant, user)
 
     const wallet = walletFactory.createWithoutDb(user)
-    const account = accountFactory.createWithoutDb(tenant, user)
+    const account = accountFactory.createWithoutDb(tenant, user, workspace)
 
     const routeA = routeFactory.createWithoutDb(account, wallet)
     const routeB = routeFactory.createWithoutDb(account, wallet)
@@ -47,9 +49,10 @@ describe('Active route', () => {
   it('pre-selects the default route', async () => {
     const user = userFactory.createWithoutDb()
     const tenant = tenantFactory.createWithoutDb(user)
+    const workspace = workspaceFactory.createWithoutDb(tenant, user)
 
     const wallet = walletFactory.createWithoutDb(user)
-    const account = accountFactory.createWithoutDb(tenant, user)
+    const account = accountFactory.createWithoutDb(tenant, user, workspace)
 
     const routeA = routeFactory.createWithoutDb(account, wallet)
     const routeB = routeFactory.createWithoutDb(account, wallet, {
@@ -75,9 +78,10 @@ describe('Active route', () => {
   it('pre-selects the first route if there is no default route', async () => {
     const user = userFactory.createWithoutDb()
     const tenant = tenantFactory.createWithoutDb(user)
+    const workspace = workspaceFactory.createWithoutDb(tenant, user)
 
     const wallet = walletFactory.createWithoutDb(user)
-    const account = accountFactory.createWithoutDb(tenant, user)
+    const account = accountFactory.createWithoutDb(tenant, user, workspace)
 
     const routeA = routeFactory.createWithoutDb(account, wallet, {
       label: 'Route A',
@@ -103,9 +107,10 @@ describe('Active route', () => {
   it('is possible to change the route', async () => {
     const user = userFactory.createWithoutDb()
     const tenant = tenantFactory.createWithoutDb(user)
+    const workspace = workspaceFactory.createWithoutDb(tenant, user)
 
     const wallet = walletFactory.createWithoutDb(user)
-    const account = accountFactory.createWithoutDb(tenant, user)
+    const account = accountFactory.createWithoutDb(tenant, user, workspace)
 
     const routeA = routeFactory.createWithoutDb(account, wallet, {
       label: 'Route A',

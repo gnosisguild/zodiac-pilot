@@ -1,21 +1,6 @@
-import { invariant } from '@epic-web/invariant'
-import type { UUID } from 'crypto'
+import type { Tenant } from '@zodiac/db/schema'
 import type { DBClient } from '../../dbClient'
+import { getWorkspace } from './getWorkspace'
 
-export const getDefaultWorkspace = async (db: DBClient, tenantId: UUID) => {
-  const defaultWorkspace = await db.query.workspace.findFirst({
-    where(fields, { eq, and }) {
-      return and(eq(fields.tenantId, tenantId), eq(fields.deleted, false))
-    },
-    orderBy(fields, { asc }) {
-      return asc(fields.label)
-    },
-  })
-
-  invariant(
-    defaultWorkspace != null,
-    `Tenant "${tenantId}" does not have a default workspace`,
-  )
-
-  return defaultWorkspace
-}
+export const getDefaultWorkspace = async (db: DBClient, tenant: Tenant) =>
+  getWorkspace(db, tenant.defaultWorkspaceId)

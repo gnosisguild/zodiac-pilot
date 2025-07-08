@@ -23,7 +23,6 @@ import {
   transactionProposalFactory,
   userFactory,
   walletFactory,
-  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import { multisigTransactionUrl } from '@zodiac/safe'
 import { randomAddress, randomHex } from '@zodiac/test-utils'
@@ -125,7 +124,7 @@ describe('Sign', () => {
       it('shows a warning to the user', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
-        const workspace = await workspaceFactory.create(tenant, user)
+
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
@@ -142,7 +141,7 @@ describe('Sign', () => {
         await render(
           href('/workspace/:workspaceId/submit/proposal/:proposalId', {
             proposalId: proposal.id,
-            workspaceId: workspace.id,
+            workspaceId: tenant.defaultWorkspaceId,
           }),
           { tenant, user },
         )
@@ -159,7 +158,7 @@ describe('Sign', () => {
       it('shows the page even when ser-kit cannot query routes', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
-        const workspace = await workspaceFactory.create(tenant, user)
+
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
@@ -177,7 +176,7 @@ describe('Sign', () => {
           render(
             href('/workspace/:workspaceId/submit/proposal/:proposalId', {
               proposalId: proposal.id,
-              workspaceId: workspace.id,
+              workspaceId: tenant.defaultWorkspaceId,
             }),
             { tenant, user },
           ),
@@ -187,7 +186,7 @@ describe('Sign', () => {
       it('shows a warning when ser is unavailable', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
-        const workspace = await workspaceFactory.create(tenant, user)
+
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
@@ -204,7 +203,7 @@ describe('Sign', () => {
         await render(
           href('/workspace/:workspaceId/submit/proposal/:proposalId', {
             proposalId: proposal.id,
-            workspaceId: workspace.id,
+            workspaceId: tenant.defaultWorkspaceId,
           }),
           { tenant, user },
         )
@@ -221,7 +220,7 @@ describe('Sign', () => {
       it('enables the "Sign" button when ser is unavailable', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
-        const workspace = await workspaceFactory.create(tenant, user)
+
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
@@ -238,7 +237,7 @@ describe('Sign', () => {
         await render(
           href('/workspace/:workspaceId/submit/proposal/:proposalId', {
             proposalId: proposal.id,
-            workspaceId: workspace.id,
+            workspaceId: tenant.defaultWorkspaceId,
           }),
           { tenant, user },
         )
@@ -252,7 +251,7 @@ describe('Sign', () => {
     it('uses the passed route', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const wallet = await walletFactory.create(user)
       const account = await accountFactory.create(tenant, user)
 
@@ -273,7 +272,7 @@ describe('Sign', () => {
         href('/workspace/:workspaceId/submit/proposal/:proposalId/:routeId', {
           proposalId: proposal.id,
           routeId: route.id,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         { tenant, user },
       )
@@ -288,7 +287,7 @@ describe('Sign', () => {
     it('shows the permission error', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
@@ -311,7 +310,7 @@ describe('Sign', () => {
       await render(
         href('/workspace/:workspaceId/submit/proposal/:proposalId', {
           proposalId: proposal.id,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         { tenant, user },
       )
@@ -325,7 +324,7 @@ describe('Sign', () => {
       it('shows the page even when ser-kit cannot check permissions', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
-        const workspace = await workspaceFactory.create(tenant, user)
+
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
@@ -346,7 +345,7 @@ describe('Sign', () => {
           render(
             href('/workspace/:workspaceId/submit/proposal/:proposalId', {
               proposalId: proposal.id,
-              workspaceId: workspace.id,
+              workspaceId: tenant.defaultWorkspaceId,
             }),
             { tenant, user },
           ),
@@ -356,7 +355,7 @@ describe('Sign', () => {
       it('shows a warning when ser is unavailable', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
-        const workspace = await workspaceFactory.create(tenant, user)
+
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
@@ -376,7 +375,7 @@ describe('Sign', () => {
         await render(
           href('/workspace/:workspaceId/submit/proposal/:proposalId', {
             proposalId: proposal.id,
-            workspaceId: workspace.id,
+            workspaceId: tenant.defaultWorkspaceId,
           }),
           { tenant, user },
         )
@@ -393,7 +392,7 @@ describe('Sign', () => {
       it('enables the "Sign" button when ser is unavailable', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
-        const workspace = await workspaceFactory.create(tenant, user)
+
         const account = await accountFactory.create(tenant, user)
         const wallet = await walletFactory.create(user, { address: initiator })
         const route = await routeFactory.create(account, wallet)
@@ -413,7 +412,7 @@ describe('Sign', () => {
         await render(
           href('/workspace/:workspaceId/submit/proposal/:proposalId', {
             proposalId: proposal.id,
-            workspaceId: workspace.id,
+            workspaceId: tenant.defaultWorkspaceId,
           }),
           { tenant, user },
         )
@@ -433,7 +432,7 @@ describe('Sign', () => {
     it('does not revoke approvals by default', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
@@ -463,7 +462,7 @@ describe('Sign', () => {
       await render(
         href('/workspace/:workspaceId/submit/proposal/:proposalId', {
           proposalId: proposal.id,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         { tenant, user },
       )
@@ -478,7 +477,7 @@ describe('Sign', () => {
     it('stores a reference to the transaction.', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
@@ -505,7 +504,7 @@ describe('Sign', () => {
       const { waitForPendingActions } = await render(
         href('/workspace/:workspaceId/submit/proposal/:proposalId', {
           proposalId: proposal.id,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         { user, tenant },
       )
@@ -527,7 +526,7 @@ describe('Sign', () => {
     it('stores a reference to the multisig.', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
@@ -555,7 +554,7 @@ describe('Sign', () => {
       const { waitForPendingActions } = await render(
         href('/workspace/:workspaceId/submit/proposal/:proposalId', {
           proposalId: proposal.id,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         { user, tenant },
       )
@@ -576,7 +575,7 @@ describe('Sign', () => {
     it('links the proposal and the signed transaction', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
@@ -603,7 +602,7 @@ describe('Sign', () => {
       const { waitForPendingActions } = await render(
         href('/workspace/:workspaceId/submit/proposal/:proposalId', {
           proposalId: proposal.id,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         { user, tenant },
       )
@@ -626,13 +625,14 @@ describe('Sign', () => {
     it('disables the sign button', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
       const signedTransaction = await signedTransactionFactory.create(
-        route,
+        tenant,
         user,
+        route,
       )
       const proposal = await transactionProposalFactory.create(
         tenant,
@@ -651,7 +651,7 @@ describe('Sign', () => {
       await render(
         href('/workspace/:workspaceId/submit/proposal/:proposalId', {
           proposalId: proposal.id,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         { user, tenant },
       )
@@ -662,13 +662,14 @@ describe('Sign', () => {
     it('shows a message that the proposal has already been signed', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const account = await accountFactory.create(tenant, user)
       const wallet = await walletFactory.create(user, { address: initiator })
       const route = await routeFactory.create(account, wallet)
       const signedTransaction = await signedTransactionFactory.create(
-        route,
+        tenant,
         user,
+        route,
       )
       const proposal = await transactionProposalFactory.create(
         tenant,
@@ -687,7 +688,7 @@ describe('Sign', () => {
       await render(
         href('/workspace/:workspaceId/submit/proposal/:proposalId', {
           proposalId: proposal.id,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         { user, tenant },
       )

@@ -22,6 +22,7 @@ import {
   tenantFactory,
   userFactory,
   walletFactory,
+  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import { getCompanionAppUrl } from '@zodiac/env'
 import {
@@ -150,8 +151,9 @@ describe('Active Account', () => {
     it('tries to store the new active account on the remote', async () => {
       const user = userFactory.createWithoutDb()
       const tenant = tenantFactory.createWithoutDb(user)
+      const workspace = workspaceFactory.createWithoutDb(tenant, user)
 
-      const account = accountFactory.createWithoutDb(tenant, user)
+      const account = accountFactory.createWithoutDb(tenant, user, workspace)
 
       mockGetRemoteAccount.mockResolvedValue(account)
 
@@ -215,7 +217,13 @@ describe('Active Account', () => {
         it('is possible to edit the current account', async () => {
           const user = userFactory.createWithoutDb()
           const tenant = tenantFactory.createWithoutDb(user)
-          const account = accountFactory.createWithoutDb(tenant, user)
+          const workspace = workspaceFactory.createWithoutDb(tenant, user)
+
+          const account = accountFactory.createWithoutDb(
+            tenant,
+            user,
+            workspace,
+          )
 
           mockGetRemoteAccount.mockResolvedValue(account)
           mockGetRemoteAccounts.mockResolvedValue([account])
@@ -240,7 +248,12 @@ describe('Active Account', () => {
         it('activates an existing tab when it already exists', async () => {
           const user = userFactory.createWithoutDb()
           const tenant = tenantFactory.createWithoutDb(user)
-          const account = accountFactory.createWithoutDb(tenant, user)
+          const workspace = workspaceFactory.createWithoutDb(tenant, user)
+          const account = accountFactory.createWithoutDb(
+            tenant,
+            user,
+            workspace,
+          )
 
           mockGetRemoteAccount.mockResolvedValue(account)
           mockGetRemoteAccounts.mockResolvedValue([account])
@@ -314,29 +327,70 @@ describe('Active Account', () => {
   })
 
   describe('Token actions', () => {
-    it('shows a link to view the current balances', async () => {
-      await mockRoute({ id: 'test-route' })
+    describe('Balances', () => {
+      it('shows a link to view the current balances', async () => {
+        await mockRoute({ id: 'test-route' })
 
-      mockCompanionAppUrl('http://localhost')
+        mockCompanionAppUrl('http://localhost')
 
-      await render('/test-route')
+        await render('/test-route')
 
-      expect(
-        screen.getByRole('link', { name: 'View balances' }),
-      ).toHaveAttribute('href', 'http://localhost/tokens/balances')
+        expect(
+          screen.getByRole('link', { name: 'View balances' }),
+        ).toHaveAttribute('href', 'http://localhost/offline/tokens/balances')
+      })
+
+      it('uses the correct workspace for a remote account', async () => {
+        const user = userFactory.createWithoutDb()
+        const tenant = tenantFactory.createWithoutDb(user)
+        const account = accountFactory.createWithoutDb(tenant, user)
+
+        mockGetRemoteAccount.mockResolvedValue(account)
+
+        mockCompanionAppUrl('http://localhost')
+
+        await render('/test-route')
+
+        expect(
+          screen.getByRole('link', { name: 'View balances' }),
+        ).toHaveAttribute(
+          'href',
+          `http://localhost/workspaces/${account.workspaceId}/tokens/balances`,
+        )
+      })
     })
 
-    it('offers to send tokens', async () => {
-      await mockRoute({ id: 'test-route' })
+    describe('Send', () => {
+      it('offers to send tokens', async () => {
+        await mockRoute({ id: 'test-route' })
 
-      mockCompanionAppUrl('http://localhost')
+        mockCompanionAppUrl('http://localhost')
 
-      await render('/test-route')
+        await render('/test-route')
 
-      expect(screen.getByRole('link', { name: 'Send tokens' })).toHaveAttribute(
-        'href',
-        'http://localhost/tokens/send',
-      )
+        expect(
+          screen.getByRole('link', { name: 'Send tokens' }),
+        ).toHaveAttribute('href', 'http://localhost/offline/tokens/send')
+      })
+
+      it('uses the correct workspace for a remote account', async () => {
+        const user = userFactory.createWithoutDb()
+        const tenant = tenantFactory.createWithoutDb(user)
+        const account = accountFactory.createWithoutDb(tenant, user)
+
+        mockGetRemoteAccount.mockResolvedValue(account)
+
+        mockCompanionAppUrl('http://localhost')
+
+        await render('/test-route')
+
+        expect(
+          screen.getByRole('link', { name: 'Send tokens' }),
+        ).toHaveAttribute(
+          'href',
+          `http://localhost/workspaces/${account.workspaceId}/tokens/send`,
+        )
+      })
     })
   })
 

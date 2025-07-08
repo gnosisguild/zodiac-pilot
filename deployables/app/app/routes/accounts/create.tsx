@@ -51,6 +51,7 @@ export const action = (args: Route.ActionArgs) =>
       context: {
         auth: { user, tenant },
       },
+      params: { workspaceId },
     }) => {
       const data = await request.formData()
 
@@ -62,10 +63,14 @@ export const action = (args: Route.ActionArgs) =>
         return { error: 'Account is not a smart contract' }
       }
 
-      const account = await getOrCreateAccount(dbClient(), tenant, user, {
+      invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID')
+
+      const account = await getOrCreateAccount(dbClient(), tenant, {
         label,
         chainId,
         address: avatar,
+        workspaceId,
+        ownerId: user.id,
       })
 
       let route = updateChainId(

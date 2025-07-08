@@ -7,7 +7,6 @@ import {
   accountFactory,
   tenantFactory,
   userFactory,
-  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { href } from 'react-router'
@@ -25,7 +24,6 @@ describe.sequential('List Accounts', () => {
       it('lists all accounts', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
-        const workspace = await workspaceFactory.create(tenant, user)
 
         await accountFactory.create(tenant, user, {
           label: 'Test account',
@@ -33,7 +31,7 @@ describe.sequential('List Accounts', () => {
 
         await render(
           href('/workspace/:workspaceId/accounts', {
-            workspaceId: workspace.id,
+            workspaceId: tenant.defaultWorkspaceId,
           }),
           { tenant, user },
         )
@@ -49,12 +47,13 @@ describe.sequential('List Accounts', () => {
     it('is possible to edit a route', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const account = await accountFactory.create(tenant, user)
 
       await render(
-        href('/workspace/:workspaceId/accounts', { workspaceId: workspace.id }),
+        href('/workspace/:workspaceId/accounts', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
         {
           tenant,
           user,
@@ -68,7 +67,7 @@ describe.sequential('List Accounts', () => {
 
       await expectRouteToBe(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
         }),
       )
@@ -79,12 +78,13 @@ describe.sequential('List Accounts', () => {
     it('is possible to remove an account', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const account = await accountFactory.create(tenant, user)
 
       const { waitForPendingActions } = await render(
-        href('/workspace/:workspaceId/accounts', { workspaceId: workspace.id }),
+        href('/workspace/:workspaceId/accounts', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
         {
           tenant,
           user,

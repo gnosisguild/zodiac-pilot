@@ -121,13 +121,14 @@ export const action = async (args: Route.ActionArgs) =>
     args,
     async ({
       request,
-      params: { proposalId, routeId },
+      params: { proposalId, routeId, workspaceId },
       context: {
         auth: { tenant, user },
       },
     }) => {
       invariantResponse(isUUID(proposalId), `"${proposalId}" is not a UUID`)
       invariantResponse(isUUID(routeId), '"routeId" is not a UUID')
+      invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID')
 
       const proposal = await getProposedTransaction(dbClient(), proposalId)
       const route = await getRoute(dbClient(), routeId)
@@ -172,6 +173,7 @@ export const action = async (args: Route.ActionArgs) =>
             accountId: proposal.accountId,
             walletId: route.fromId,
             routeId: route.id,
+            workspaceId,
 
             transaction: metaTransactions,
 

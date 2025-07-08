@@ -20,6 +20,7 @@ import {
   timestamp,
   unique,
   uuid,
+  type AnyPgColumn,
 } from 'drizzle-orm/pg-core'
 import { createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
@@ -50,6 +51,11 @@ export const TenantTable = pgTable(
       .notNull()
       .$type<UUID>()
       .references(() => UserTable.id, { onDelete: 'cascade' }),
+    defaultWorkspaceId: uuid()
+      .$type<UUID>()
+      .references((): AnyPgColumn => WorkspaceTable.id, {
+        onDelete: 'set null',
+      }),
 
     ...createdTimestamp,
     ...updatedTimestamp,
@@ -64,7 +70,10 @@ const tenantReference = {
     .references(() => TenantTable.id, { onDelete: 'cascade' }),
 }
 
-export type Tenant = typeof TenantTable.$inferSelect
+export type Tenant = Omit<
+  typeof TenantTable.$inferSelect,
+  'defaultWorkspaceId'
+> & { defaultWorkspaceId: UUID }
 export type TenantCreateInput = typeof TenantTable.$inferInsert
 
 export const TenantRelations = relations(TenantTable, ({ many }) => ({
@@ -131,6 +140,13 @@ export const WorkspaceTable = pgTable(
 
 export type Workspace = typeof WorkspaceTable.$inferSelect
 export type WorkspaceCreateInput = typeof WorkspaceTable.$inferInsert
+
+const workspaceReference = {
+  workspaceId: uuid()
+    .notNull()
+    .$type<UUID>()
+    .references(() => WorkspaceTable.id, { onDelete: 'cascade' }),
+}
 
 export const FeatureTable = pgTable(
   'Feature',
@@ -245,6 +261,7 @@ export const AccountTable = pgTable(
     address: text().$type<HexAddress>().notNull(),
 
     ...tenantReference,
+    ...workspaceReference,
     ...createdTimestamp,
     ...updatedTimestamp,
     ...deletable,
@@ -428,6 +445,7 @@ export const ProposedTransactionTable = pgTable(
     ...userReference,
     ...tenantReference,
     ...accountReference,
+    ...workspaceReference,
     ...createdTimestamp,
   },
   (table) => [
@@ -455,6 +473,7 @@ export const SignedTransactionTable = pgTable(
 
     ...walletReference,
     ...accountReference,
+    ...workspaceReference,
     ...userReference,
     ...tenantReference,
     ...createdTimestamp,

@@ -1,7 +1,6 @@
 import { authorizedLoader } from '@/auth-server'
-import { dbClient, getDefaultWorkspace } from '@zodiac/db'
 import { href, redirect } from 'react-router'
-import type { Route } from './+types'
+import type { Route } from './+types/load-default-workspace'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -15,10 +14,10 @@ export const loader = (args: Route.LoaderArgs) =>
         return redirect(href('/offline'))
       }
 
-      const defaultWorkspace = await getDefaultWorkspace(dbClient(), tenant.id)
-
       return redirect(
-        href('/workspace/:workspaceId', { workspaceId: defaultWorkspace.id }),
+        href('/workspace/:workspaceId', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
       )
     },
   )
