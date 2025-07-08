@@ -150,6 +150,8 @@ const ActiveRoute = () => {
     },
   )
 
+  const companionAppUrl = useCompanionAppUrl()
+
   return (
     <>
       <ProvideAccount account={account}>
@@ -180,7 +182,11 @@ const ActiveRoute = () => {
               openInNewWindow
               size="small"
               icon={ArrowUpFromLine}
-              to={`${useCompanionAppUrl()}/tokens/send`}
+              to={
+                account.remote
+                  ? `${companionAppUrl}/workspaces/${account.workspaceId}/tokens/send`
+                  : `${companionAppUrl}/offline/tokens/send`
+              }
             >
               Send tokens
             </GhostLinkButton>
@@ -190,7 +196,11 @@ const ActiveRoute = () => {
               openInNewWindow
               size="small"
               icon={Landmark}
-              to={`${useCompanionAppUrl()}/tokens/balances`}
+              to={
+                account.remote
+                  ? `${companionAppUrl}/workspaces/${account.workspaceId}/tokens/balances`
+                  : `${companionAppUrl}/offline/tokens/balances`
+              }
             >
               View balances
             </GhostLinkButton>
