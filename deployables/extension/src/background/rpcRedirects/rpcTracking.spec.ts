@@ -194,6 +194,12 @@ describe('RPC Tracking', () => {
         requestBody: { jsonrpc: '2.0' },
       })
 
+      await mockWebRequest(tab, {
+        method: 'POST',
+        url: `${getVnetApiUrl('wss')}/rpc/mainnet/some-slug`,
+        requestBody: { jsonrpc: '2.0' },
+      })
+
       expect(handler).not.toHaveBeenCalled()
     })
   })
