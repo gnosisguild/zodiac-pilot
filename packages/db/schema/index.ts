@@ -266,7 +266,11 @@ export const AccountTable = pgTable(
     ...updatedTimestamp,
     ...deletable,
   },
-  (table) => [index().on(table.tenantId), index().on(table.createdById)],
+  (table) => [
+    index().on(table.tenantId),
+    index().on(table.createdById),
+    index().on(table.workspaceId),
+  ],
 )
 
 const accountReference = {
@@ -452,6 +456,7 @@ export const ProposedTransactionTable = pgTable(
     index().on(table.tenantId),
     index().on(table.userId),
     index().on(table.signedTransactionId),
+    index().on(table.workspaceId),
   ],
 )
 
@@ -483,6 +488,7 @@ export const SignedTransactionTable = pgTable(
     index().on(table.tenantId),
     index().on(table.userId),
     index().on(table.walletId),
+    index().on(table.workspaceId),
   ],
 )
 
