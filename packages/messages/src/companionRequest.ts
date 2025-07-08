@@ -110,3 +110,28 @@ export function companionRequest<Type extends CompanionAppMessageType>(
     window.removeEventListener('message', handleMessage)
   }
 }
+
+export function autoRespondToCompanionRequest<
+  Type extends CompanionAppMessageType,
+>(messageType: Type, response: RequestResponseTypes[Type]) {
+  const { promise, resolve } = Promise.withResolvers<void>()
+
+  const handleRequest = (event: MessageEvent<CompanionAppMessage>) => {
+    if (event.data == null) {
+      return
+    }
+
+    if (event.data.type !== messageType) {
+      return
+    }
+
+    window.removeEventListener('message', handleRequest)
+    window.postMessage(response, '*')
+
+    resolve()
+  }
+
+  window.addEventListener('message', handleRequest)
+
+  return promise
+}

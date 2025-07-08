@@ -16,7 +16,8 @@ import {
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
-import { createMockExecutionRoute, sleepTillIdle } from '@zodiac/test-utils'
+import { createMockExecutionRoute } from '@zodiac/modules/test-utils'
+import { sleepTillIdle } from '@zodiac/test-utils'
 import { configMocks, mockAnimationsApi } from 'jsdom-testing-mocks'
 import { afterAll, afterEach, beforeEach, vi } from 'vitest'
 

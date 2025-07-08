@@ -7,12 +7,11 @@ import {
   tenantFactory,
   userFactory,
   walletFactory,
+  workspaceFactory,
 } from '@zodiac/db/test-utils'
+import { createMockTransactionRequest } from '@zodiac/modules/test-utils'
 import { encode } from '@zodiac/schema'
-import {
-  createMockTransactionRequest,
-  expectRouteToBe,
-} from '@zodiac/test-utils'
+import { expectRouteToBe } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { planExecution, queryRoutes } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -59,6 +58,7 @@ describe('Sign', () => {
   it('creates a proposal', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
+    const workspace = await workspaceFactory.create(tenant, user)
     const wallet = await walletFactory.create(user)
     const account = await accountFactory.create(tenant, user)
     const route = await routeFactory.create(account, wallet)
@@ -68,8 +68,9 @@ describe('Sign', () => {
     const transaction = createMockTransactionRequest()
 
     await render(
-      href('/submit/account/:accountId/:transactions', {
+      href('/workspace/:workspaceId/submit/account/:accountId/:transactions', {
         accountId: account.id,
+        workspaceId: workspace.id,
         transactions: encode([transaction]),
       }),
       { user, tenant },
@@ -87,6 +88,7 @@ describe('Sign', () => {
   it('redirects the user', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
+    const workspace = await workspaceFactory.create(tenant, user)
     const wallet = await walletFactory.create(user)
     const account = await accountFactory.create(tenant, user)
     const route = await routeFactory.create(account, wallet)
@@ -96,8 +98,9 @@ describe('Sign', () => {
     const transaction = createMockTransactionRequest()
 
     await render(
-      href('/submit/account/:accountId/:transactions', {
+      href('/workspace/:workspaceId/submit/account/:accountId/:transactions', {
         accountId: account.id,
+        workspaceId: workspace.id,
         transactions: encode([transaction]),
       }),
       { user, tenant },
@@ -110,8 +113,9 @@ describe('Sign', () => {
     )
 
     await expectRouteToBe(
-      href('/submit/proposal/:proposalId/:routeId', {
+      href('/workspace/:workspaceId/submit/proposal/:proposalId/:routeId', {
         proposalId: proposedTransaction.id,
+        workspaceId: workspace.id,
         routeId: route.id,
       }),
     )

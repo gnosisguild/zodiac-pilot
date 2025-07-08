@@ -10,8 +10,8 @@ type ToExecutionRouteOptions = {
 }
 
 export const toExecutionRoute = ({
-  wallet,
   account,
+  wallet,
   route,
 }: ToExecutionRouteOptions): ExecutionRoute => {
   invariant(route.fromId === wallet.id, 'Route does not match wallet')

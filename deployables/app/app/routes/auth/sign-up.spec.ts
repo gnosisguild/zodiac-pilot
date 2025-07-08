@@ -10,7 +10,7 @@ const mockCreateOrganization = vi.mocked(createOrganization)
 
 describe('Sign up', () => {
   it('is possible to create a new tenant', async () => {
-    await render(href('/sign-up'))
+    await render(href('/offline/sign-up'))
 
     await userEvent.type(
       screen.getByRole('textbox', { name: 'Email' }),
@@ -23,7 +23,7 @@ describe('Sign up', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Sign up' }))
 
-    await expectRouteToBe(href('/sign-up/success'))
+    await expectRouteToBe(href('/offline/sign-up/success'))
 
     expect(mockCreateOrganization).toHaveBeenCalledWith({
       name: 'ACME',

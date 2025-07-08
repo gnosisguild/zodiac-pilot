@@ -1,5 +1,5 @@
 import { createConfirmedTransaction, createTransaction } from '@/test-utils'
-import { createMockTransactionRequest } from '@zodiac/test-utils'
+import { createMockTransactionRequest } from '@zodiac/modules/test-utils'
 import { addMinutes } from 'date-fns'
 import { describe, expect, it } from 'vitest'
 import {

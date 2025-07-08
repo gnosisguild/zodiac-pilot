@@ -21,6 +21,7 @@ export const action = (args: Route.ActionArgs) =>
       context: {
         auth: { user },
       },
+      params: { workspaceId },
     }) => {
       const data = await request.formData()
 
@@ -41,16 +42,25 @@ export const action = (args: Route.ActionArgs) =>
 
       await getOrCreateWallet(dbClient(), user, { label, address })
 
-      return redirect(href('/profile'))
+      return redirect(href('/workspace/:workspaceId/profile', { workspaceId }))
     },
     { ensureSignedIn: true },
   )
 
-const AddWallet = ({ actionData }: Route.ComponentProps) => {
+const AddWallet = ({
+  actionData,
+  params: { workspaceId },
+}: Route.ComponentProps) => {
   const navigate = useNavigate()
 
   return (
-    <Modal open onClose={() => navigate(href('/profile'))} title="Add Wallet">
+    <Modal
+      open
+      onClose={() =>
+        navigate(href('/workspace/:workspaceId/profile', { workspaceId }))
+      }
+      title="Add Wallet"
+    >
       <Form intent={Intent.AddWallet}>
         {actionData != null && (
           <Error title="Wallet already exists">{actionData.error}</Error>

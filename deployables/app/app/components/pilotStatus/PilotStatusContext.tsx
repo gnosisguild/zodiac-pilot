@@ -20,14 +20,14 @@ const PilotStatusContext = createContext<StatusContext>({
 })
 
 type ProvidePilotStatusProps = PropsWithChildren<{
-  lastAccountsUpdate: Date | null
-  lastRoutesUpdate: Date | null
+  lastAccountsUpdate?: Date | null
+  lastRoutesUpdate?: Date | null
 }>
 
 export const ProvidePilotStatus = ({
   children,
-  lastAccountsUpdate,
-  lastRoutesUpdate,
+  lastAccountsUpdate = null,
+  lastRoutesUpdate = null,
 }: ProvidePilotStatusProps) => (
   <PilotStatusContext
     value={useUpToDateConnectedStatus({ lastAccountsUpdate, lastRoutesUpdate })}

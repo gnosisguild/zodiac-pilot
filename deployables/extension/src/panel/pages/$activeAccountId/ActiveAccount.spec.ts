@@ -183,7 +183,7 @@ describe('Active Account', () => {
 
           expect(chromeMock.tabs.create).toHaveBeenCalledWith({
             active: true,
-            url: `http://localhost/edit/${route.id}/${encode(route)}`,
+            url: `http://localhost/offline/accounts/${route.id}/${encode(route)}`,
           })
         })
 
@@ -192,7 +192,7 @@ describe('Active Account', () => {
           mockCompanionAppUrl('http://localhost')
 
           const tab = mockTab({
-            url: `http://localhost/edit/${route.id}/some-old-route-data`,
+            url: `http://localhost/offline/accounts/${route.id}/some-old-route-data`,
           })
 
           await render('/test-route')
@@ -206,7 +206,7 @@ describe('Active Account', () => {
 
           expect(chromeMock.tabs.update).toHaveBeenCalledWith(tab.id, {
             active: true,
-            url: `http://localhost/edit/${route.id}/${encode(route)}`,
+            url: `http://localhost/offline/accounts/${route.id}/${encode(route)}`,
           })
         })
       })

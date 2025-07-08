@@ -1,3 +1,4 @@
+import { invariant } from '@epic-web/invariant'
 import type { User } from '@zodiac/db/schema'
 import { createContext, useContext, type PropsWithChildren } from 'react'
 
@@ -10,6 +11,16 @@ export const ProvideUser = ({
   <UserContext value={user}>{children}</UserContext>
 )
 
-export const useUser = () => useContext(UserContext)
+export const useUser = () => {
+  const user = useContext(UserContext)
 
-export const useIsSignedIn = () => useUser() != null
+  invariant(user != null, 'No active user found')
+
+  return user
+}
+
+export const useIsSignedIn = () => {
+  const user = useContext(UserContext)
+
+  return user != null
+}

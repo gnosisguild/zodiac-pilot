@@ -5,7 +5,6 @@ import {
   type RouteCreateInput,
   type Wallet,
 } from '@zodiac/db/schema'
-import { waypointsSchema } from '@zodiac/schema'
 import {
   createMockEndWaypoint,
   createMockEoaAccount,
@@ -13,7 +12,8 @@ import {
   createMockSafeAccount,
   createMockStartingWaypoint,
   createMockWaypoints,
-} from '@zodiac/test-utils'
+} from '@zodiac/modules/test-utils'
+import { waypointsSchema } from '@zodiac/schema'
 import { randomUUID } from 'crypto'
 import { prefixAddress } from 'ser-kit'
 import { createFactory } from './createFactory'

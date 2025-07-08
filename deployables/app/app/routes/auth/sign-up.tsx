@@ -24,7 +24,7 @@ export const action = async ({ request }: Route.ActionArgs) => {
       adminEmail: email,
     })
 
-    return redirect(href('/sign-up/success'))
+    return redirect(href('/offline/sign-up/success'))
   } catch (error) {
     Sentry.captureException(error)
 

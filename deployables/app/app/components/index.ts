@@ -2,7 +2,6 @@ import { lazy } from 'react'
 
 export { AvatarInput } from './AvatarInput'
 export { ProvideDevelopmentContext, useIsDev } from './DevelopmentContext'
-export { FakeBrowser } from './FakeBrowser'
 export { InitiatorInput } from './InitiatorInput'
 export { KnownFromRoutes } from './KnownFromRoutes'
 export * from './menus'

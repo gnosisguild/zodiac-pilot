@@ -6,7 +6,7 @@ import {
   createMockOwnsConnection,
   createMockStartingWaypoint,
   createMockWaypoints,
-} from '@zodiac/test-utils'
+} from '@zodiac/modules/test-utils'
 import { prefixAddress, unprefixAddress } from 'ser-kit'
 
 const initiator = prefixAddress(

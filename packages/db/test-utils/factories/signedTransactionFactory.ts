@@ -5,11 +5,11 @@ import {
   type SignedTransactionCreateInput,
   type User,
 } from '@zodiac/db/schema'
-import { jsonStringify } from '@zodiac/schema'
 import {
   createMockTransactionRequest,
   createMockWaypoints,
-} from '@zodiac/test-utils'
+} from '@zodiac/modules/test-utils'
+import { jsonStringify } from '@zodiac/schema'
 import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 

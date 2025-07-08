@@ -1,10 +1,14 @@
+import { ProvideUser } from '@/auth-client'
+import { authorizedLoader } from '@/auth-server'
+import { getAvailableChains } from '@/balances-server'
 import {
   ProvideDevelopmentContext,
   ProvideExtensionVersion,
 } from '@/components'
 import * as Sentry from '@sentry/react-router'
 import { inject } from '@vercel/analytics'
-import { ToastContainer } from '@zodiac/ui'
+import { dbClient, getActiveFeatures } from '@zodiac/db'
+import { FeatureProvider, ToastContainer } from '@zodiac/ui'
 import { useEffect } from 'react'
 import {
   data,
@@ -17,19 +21,52 @@ import {
 } from 'react-router'
 import type { Route } from './+types/root'
 import './app.css'
+import { ProvideChains } from './routes-ui'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Zodiac OS' }]
 
-export const loader = () => {
-  return data(
-    {
-      isDev: process.env.NODE_ENV === 'development',
-    },
-    { headers: { 'Document-Policy': 'js-profiling' } },
-  )
-}
+export const loader = (args: Route.LoaderArgs) =>
+  authorizedLoader(
+    args,
+    async ({
+      request,
+      context: {
+        auth: { user, tenant },
+      },
+    }) => {
+      const url = new URL(request.url)
 
-export default function App({ loaderData: { isDev } }: Route.ComponentProps) {
+      const isDev = process.env.NODE_ENV === 'development'
+      const chains = await getAvailableChains()
+
+      const routeFeatures = url.searchParams.getAll('feature')
+
+      if (tenant == null) {
+        return {
+          isDev,
+          user: null,
+          chains,
+          features: routeFeatures,
+        }
+      }
+
+      const features = await getActiveFeatures(dbClient(), tenant.id)
+
+      return data(
+        {
+          isDev,
+          user,
+          chains,
+          features: [...features.map(({ name }) => name), ...routeFeatures],
+        },
+        { headers: { 'Document-Policy': 'js-profiling' } },
+      )
+    },
+  )
+
+export default function App({
+  loaderData: { isDev, user, chains, features },
+}: Route.ComponentProps) {
   useEffect(() => {
     if (typeof document === 'undefined') {
       return
@@ -50,7 +87,13 @@ export default function App({ loaderData: { isDev } }: Route.ComponentProps) {
       <body className="overflow-x-hidden bg-zinc-50 text-base text-zinc-900 dark:bg-zinc-950 dark:text-white">
         <ProvideDevelopmentContext isDev={isDev}>
           <ProvideExtensionVersion>
-            <Outlet />
+            <ProvideUser user={user}>
+              <ProvideChains chains={chains}>
+                <FeatureProvider features={features}>
+                  <Outlet />
+                </FeatureProvider>
+              </ProvideChains>
+            </ProvideUser>
           </ProvideExtensionVersion>
         </ProvideDevelopmentContext>
         <ToastContainer />

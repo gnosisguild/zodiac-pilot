@@ -1,0 +1,123 @@
+import { getAvailableChains } from '@/balances-server'
+import { render } from '@/test-utils'
+import { screen, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { dbClient, getAccounts } from '@zodiac/db'
+import {
+  accountFactory,
+  tenantFactory,
+  userFactory,
+  workspaceFactory,
+} from '@zodiac/db/test-utils'
+import { expectRouteToBe } from '@zodiac/test-utils'
+import { href } from 'react-router'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+
+const mockGetAvailableChains = vi.mocked(getAvailableChains)
+
+describe.sequential('List Accounts', () => {
+  beforeEach(() => {
+    mockGetAvailableChains.mockResolvedValue([])
+  })
+
+  describe('List', () => {
+    describe('Logged in', () => {
+      it('lists all accounts', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+        const workspace = await workspaceFactory.create(tenant, user)
+
+        await accountFactory.create(tenant, user, {
+          label: 'Test account',
+        })
+
+        await render(
+          href('/workspace/:workspaceId/accounts', {
+            workspaceId: workspace.id,
+          }),
+          { tenant, user },
+        )
+
+        expect(
+          await screen.findByRole('cell', { name: 'Test account' }),
+        ).toBeInTheDocument()
+      })
+    })
+  })
+
+  describe('Edit', () => {
+    it('is possible to edit a route', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+      const workspace = await workspaceFactory.create(tenant, user)
+
+      const account = await accountFactory.create(tenant, user)
+
+      await render(
+        href('/workspace/:workspaceId/accounts', { workspaceId: workspace.id }),
+        {
+          tenant,
+          user,
+        },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Account options' }),
+      )
+      await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
+
+      await expectRouteToBe(
+        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
+          workspaceId: workspace.id,
+          accountId: account.id,
+        }),
+      )
+    })
+  })
+
+  describe('Remove', () => {
+    it('is possible to remove an account', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+      const workspace = await workspaceFactory.create(tenant, user)
+
+      const account = await accountFactory.create(tenant, user)
+
+      const { waitForPendingActions } = await render(
+        href('/workspace/:workspaceId/accounts', { workspaceId: workspace.id }),
+        {
+          tenant,
+          user,
+        },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Account options' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Delete' }),
+      )
+
+      const { getByRole } = within(
+        screen.getByRole('dialog', { name: 'Confirm delete' }),
+      )
+
+      await userEvent.click(getByRole('button', { name: 'Delete' }))
+
+      await waitForPendingActions()
+
+      const [deletedAccount] = await getAccounts(dbClient(), {
+        userId: user.id,
+        tenantId: tenant.id,
+        deleted: true,
+      })
+
+      expect(deletedAccount).toMatchObject({
+        id: account.id,
+
+        deleted: true,
+        deletedById: user.id,
+      })
+    })
+  })
+})

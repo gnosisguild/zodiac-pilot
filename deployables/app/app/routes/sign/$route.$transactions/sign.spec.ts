@@ -2,11 +2,13 @@ import { simulateTransactionBundle } from '@/simulation-server'
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import { Chain } from '@zodiac/chains'
-import { encode } from '@zodiac/schema'
 import {
   createMockExecutionRoute,
   createMockSerRoute,
   createMockTransactionRequest,
+} from '@zodiac/modules/test-utils'
+import { encode } from '@zodiac/schema'
+import {
   randomAddress,
   randomEoaAddress,
   randomPrefixedAddress,
@@ -103,7 +105,7 @@ describe('Sign', () => {
         mockQueryRoutes.mockResolvedValue([])
 
         await render(
-          href('/submit/:route/:transactions', {
+          href('/offline/submit/:route/:transactions', {
             route: encode(currentRoute),
             transactions: encode([transaction]),
           }),
@@ -126,7 +128,7 @@ describe('Sign', () => {
 
         await expect(
           render(
-            href('/submit/:route/:transactions', {
+            href('/offline/submit/:route/:transactions', {
               route: encode(currentRoute),
               transactions: encode([transaction]),
             }),
@@ -141,7 +143,7 @@ describe('Sign', () => {
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
         await render(
-          href('/submit/:route/:transactions', {
+          href('/offline/submit/:route/:transactions', {
             route: encode(currentRoute),
             transactions: encode([transaction]),
           }),
@@ -163,7 +165,7 @@ describe('Sign', () => {
         mockQueryRoutes.mockRejectedValue('Ser is down')
 
         await render(
-          href('/submit/:route/:transactions', {
+          href('/offline/submit/:route/:transactions', {
             route: encode(currentRoute),
             transactions: encode([transaction]),
           }),
@@ -194,7 +196,7 @@ describe('Sign', () => {
       })
 
       await render(
-        href('/submit/:route/:transactions', {
+        href('/offline/submit/:route/:transactions', {
           route: encode(route),
           transactions: encode([transaction]),
         }),
@@ -214,7 +216,7 @@ describe('Sign', () => {
 
         await expect(
           render(
-            href('/submit/:route/:transactions', {
+            href('/offline/submit/:route/:transactions', {
               route: encode(currentRoute),
               transactions: encode([transaction]),
             }),
@@ -229,7 +231,7 @@ describe('Sign', () => {
         mockCheckPermissions.mockRejectedValue('Ser is down')
 
         await render(
-          href('/submit/:route/:transactions', {
+          href('/offline/submit/:route/:transactions', {
             route: encode(currentRoute),
             transactions: encode([transaction]),
           }),
@@ -251,7 +253,7 @@ describe('Sign', () => {
         mockCheckPermissions.mockRejectedValue('Ser is down')
 
         await render(
-          href('/submit/:route/:transactions', {
+          href('/offline/submit/:route/:transactions', {
             route: encode(currentRoute),
             transactions: encode([transaction]),
           }),
@@ -293,7 +295,7 @@ describe('Sign', () => {
       })
 
       await render(
-        href('/submit/:route/:transactions', {
+        href('/offline/submit/:route/:transactions', {
           route: encode(
             createMockExecutionRoute({
               initiator: randomEoaAddress(),

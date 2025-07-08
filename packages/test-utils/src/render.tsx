@@ -1,4 +1,3 @@
-import { invariant } from '@epic-web/invariant'
 import { render as baseRender, screen, waitFor } from '@testing-library/react'
 import {
   createMemoryRouter,
@@ -65,13 +64,15 @@ export const render = async (
   return result
 }
 
-export const expectRouteToBe = (expectedPathName: string) =>
-  waitFor(() => {
+export const expectRouteToBe = async (expectedPathName: string) => {
+  // Importing this dynamically, because otherwise vitest
+  // pollutes the global space and might conflight with playwright
+  const { expect } = await import('vitest')
+
+  return waitFor(() => {
     const testElement = screen.getByTestId('test-route-element-id')
     const foundPathName = testElement.getAttribute('data-pathname')
 
-    invariant(
-      expectedPathName === foundPathName,
-      `Expected pathname to be "${expectedPathName}" but got "${foundPathName}"`,
-    )
+    expect(foundPathName).toEqual(expectedPathName)
   })
+}

@@ -7,7 +7,7 @@ import {
   createMockStartingWaypoint,
   createMockTransactionRequest,
   createMockWaypoints,
-} from '@zodiac/test-utils'
+} from '@zodiac/modules/test-utils'
 import { prefixAddress, unprefixAddress } from 'ser-kit'
 
 export const account = '0xf06a3a90f9a248630bd15f9debc7a6a20e54677d'

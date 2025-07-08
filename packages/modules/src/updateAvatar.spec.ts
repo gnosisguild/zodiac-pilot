@@ -1,4 +1,3 @@
-import { Chain } from '@zodiac/chains'
 import {
   createMockEndWaypoint,
   createMockEoaAccount,
@@ -6,9 +5,9 @@ import {
   createMockRoleWaypoint,
   createMockStartingWaypoint,
   createMockWaypoints,
-  randomAddress,
-  randomPrefixedAddress,
-} from '@zodiac/test-utils'
+} from '@/test-utils'
+import { Chain } from '@zodiac/chains'
+import { randomAddress, randomPrefixedAddress } from '@zodiac/test-utils'
 import { ConnectionType, prefixAddress } from 'ser-kit'
 import { describe, expect, it } from 'vitest'
 import { getWaypoints } from './getWaypoints'
