@@ -9,12 +9,13 @@ export default {
 
       // Handle preflight OPTIONS requests
       if (request.method === 'OPTIONS') {
-        return addCorsHeaders(new Response(null, { status: 204 }))
+        return addCorsHeaders(request, new Response(null, { status: 204 }))
       }
 
       // Validate network and slug parameters
       if (!network || !slug) {
         return addCorsHeaders(
+          request,
           new Response('Network and slug parameters are required', {
             status: 400,
           }),
@@ -27,9 +28,23 @@ export default {
         return handleWebsocketRequest(request, network, slug)
       }
 
-      // Return 405 Method Not Allowed for non-POST requests (non-WebSocket)
+      // Handle GET requests without upgrade header
+      if (request.method === 'GET') {
+        return addCorsHeaders(
+          request,
+          new Response(
+            'GET requests must include Upgrade: websocket header for WebSocket connections',
+            {
+              status: 400,
+            },
+          ),
+        )
+      }
+
+      // Return 405 Method Not Allowed for non-POST requests
       if (request.method !== 'POST') {
         return addCorsHeaders(
+          request,
           new Response('Method Not Allowed', { status: 405 }),
         )
       }
@@ -37,18 +52,13 @@ export default {
       // Reconstruct the Tenderly URL with validated network parameter
       const tenderlyRpcUrl = `https://virtual.${network}.rpc.tenderly.co/${slug}`
 
-      // Filter out sensitive headers
-      const filteredHeaders = new Headers()
-      for (const [key, value] of request.headers.entries()) {
-        if (!SENSITIVE_HEADERS.has(key.toLowerCase())) {
-          filteredHeaders.set(key, value)
-        }
-      }
-
-      // Forward the request to Tenderly with filtered headers
+      // Forward the request to Tenderly with minimal required headers for JSON-RPC
       const tenderlyRequest = new Request(tenderlyRpcUrl, {
         method: request.method,
-        headers: filteredHeaders,
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
         body: await request.clone().arrayBuffer(),
       })
 
@@ -57,6 +67,7 @@ export default {
 
         // Clone the response and add CORS headers
         return addCorsHeaders(
+          request,
           new Response(tenderlyResponse.body, {
             status: tenderlyResponse.status,
             statusText: tenderlyResponse.statusText,
@@ -66,6 +77,7 @@ export default {
       } catch (error) {
         console.error('Error proxying to Tenderly:', error)
         return addCorsHeaders(
+          request,
           new Response('Internal Server Error', { status: 500 }),
         )
       }
@@ -76,54 +88,14 @@ export default {
   },
 }
 
-// Headers that should be filtered out to prevent sensitive data leakage
-const SENSITIVE_HEADERS = new Set([
-  'authorization',
-  'cookie',
-  'x-api-key',
-  'x-access-key',
-  'x-auth-token',
-  'x-tenderly-access-key',
-  'x-tenderly-project',
-  'x-tenderly-user',
-  'user-agent', // Prevent user agent fingerprinting
-  'referer', // Prevent referer leakage
-  'origin', // Prevent origin leakage
-])
-
 // CORS configuration – maximum permissiveness
 const corsConfig = {
   origin: true,
-  methods: ['POST', 'OPTIONS'],
-  allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-    'Accept',
-    'Accept-Language',
-    'Cache-Control',
-    'Connection',
-    'Cookie',
-    'DNT',
-    'Host',
-    'If-Modified-Since',
-    'If-None-Match',
-    'Origin',
-    'Pragma',
-    'Referer',
-    'Sec-Fetch-Dest',
-    'Sec-Fetch-Mode',
-    'Sec-Fetch-Site',
-    'User-Agent',
-    'X-Forwarded-For',
-    'X-Forwarded-Proto',
-    'X-Real-IP',
-    'X-Requested-With',
-  ],
+  methods: ['POST', 'OPTIONS', 'GET'], // GET for WebSocket upgrade
   maxAge: 86400,
 }
 
-function addCorsHeaders(response: Response): Response {
+function addCorsHeaders(request: Request, response: Response): Response {
   const newResponse = new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
@@ -132,10 +104,12 @@ function addCorsHeaders(response: Response): Response {
 
   // Add CORS headers
   newResponse.headers.set('Access-Control-Allow-Origin', '*')
-  newResponse.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS')
+  newResponse.headers.set('Access-Control-Allow-Methods', 'POST, OPTIONS, GET')
+
+  // Dynamically reflect ALL request headers in CORS response
   newResponse.headers.set(
     'Access-Control-Allow-Headers',
-    corsConfig.allowedHeaders.join(', '),
+    Array.from(request.headers.keys()).join(', '),
   )
   newResponse.headers.set(
     'Access-Control-Max-Age',
@@ -151,14 +125,6 @@ async function handleWebsocketRequest(
   slug: string,
 ): Promise<Response> {
   const tenderlyWsUrl = `wss://virtual.${network}.rpc.tenderly.co/${slug}`
-
-  // Filter out sensitive headers for WebSocket
-  const filteredHeaders = new Headers()
-  for (const [key, value] of request.headers.entries()) {
-    if (!SENSITIVE_HEADERS.has(key.toLowerCase())) {
-      filteredHeaders.set(key, value)
-    }
-  }
 
   try {
     // Create WebSocket pair for client and server
