@@ -253,7 +253,7 @@ describe('Transactions', () => {
 
         expect(screen.getByRole('link', { name: 'Sign' })).toHaveAttribute(
           'href',
-          `http://localhost/submit/${encode(route)}/${encode([toMetaTransactionRequest(transaction)])}`,
+          `http://localhost/offline/submit/${encode(route)}/${encode([toMetaTransactionRequest(transaction)])}`,
         )
       })
 
@@ -274,7 +274,7 @@ describe('Transactions', () => {
 
         expect(chromeMock.tabs.create).toHaveBeenCalledWith({
           active: true,
-          url: `http://localhost/edit/${route.id}/${encode(route)}`,
+          url: `http://localhost/offline/accounts/${route.id}/${encode(route)}`,
         })
       })
     })
