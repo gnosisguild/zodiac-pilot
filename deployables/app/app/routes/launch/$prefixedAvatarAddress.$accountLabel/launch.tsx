@@ -1,82 +1,63 @@
+import { CompanionAppMessageType } from '@zodiac/messages'
 import { createRouteId } from '@zodiac/modules'
-import { encode, type ExecutionRoute } from '@zodiac/schema'
+import { verifyPrefixedAddress, type ExecutionRoute } from '@zodiac/schema'
 import { href, redirect } from 'react-router'
+import { z } from 'zod'
 import type { Route } from './+types/launch'
 
-export async function loader({ params, request }: Route.LoaderArgs) {
-  const { prefixedAvatarAddress, accountLabel } = params
+const jsonRpcValueSchema: z.ZodTypeAny = z.union([
+  z.string(),
+  z.number(),
+  z.boolean(),
+  z.null(),
+  z.array(z.lazy(() => jsonRpcValueSchema)),
+  z.record(z.lazy(() => jsonRpcValueSchema)),
+])
+
+const jsonRpcCallSchema = z.object({
+  method: z.string().min(1, 'Method name is required'),
+  params: z.array(jsonRpcValueSchema).optional().default([]),
+})
+
+// Validate the params and forward to the panel app, wrapping the prefixedAvatarAddress in a route
+export async function clientLoader({
+  params,
+  request,
+}: Route.ClientLoaderArgs) {
+  const { accountLabel } = params
+  const prefixedAvatarAddress = verifyPrefixedAddress(
+    params.prefixedAvatarAddress,
+  )
 
   const url = new URL(request.url)
-  const setup = url.searchParams.get('setup')
-  const callback = url.searchParams.get('callback')
+  const setupParam = url.searchParams.get('setup')
+  const setup = setupParam
+    ? z.array(jsonRpcCallSchema).parse(JSON.parse(setupParam))
+    : null
 
-  // Create a temporary route with the provided avatar
-  const temporaryRoute: ExecutionRoute = {
+  const callbackParam = url.searchParams.get('callback')
+  const callback = callbackParam ? new URL(callbackParam).toString() : null
+
+  // Create a route with the provided avatar
+  const route: ExecutionRoute = {
     id: createRouteId(),
     label: decodeURIComponent(accountLabel),
-    avatar: `${chainPrefix}:${address.toLowerCase()}` as any,
+    avatar: prefixedAvatarAddress,
   }
 
-  // Store the callback and setup calls in session storage for later use
-  if (callback || setupCalls.length > 0) {
-    sessionStorage.setItem(
-      `pilot_launch_${temporaryRoute.id}`,
-      JSON.stringify({
-        callback: callback ? decodeURIComponent(callback) : null,
-        setupCalls,
-        temporary: true,
-      }),
-    )
-  }
+  // Forward to extension panel via search params
+  const searchParams = new URLSearchParams()
+  if (callback) searchParams.set('callback', callback)
+  if (setup) searchParams.set('setup', JSON.stringify(setup))
+  if (route) searchParams.set('route', JSON.stringify(route))
 
-  // Redirect to the edit route with the encoded temporary route
-  return redirect(
-    href('/edit/:routeId/:data', {
-      routeId: temporaryRoute.id,
-      data: encode(temporaryRoute),
-    }),
+  window.postMessage(
+    {
+      type: CompanionAppMessageType.OPEN_PILOT,
+      search: `?${searchParams.toString()}`,
+    },
+    '*',
   )
-}
 
-export async function clientLoader({ serverLoader }: Route.ClientLoaderArgs) {
-  try {
-    // Execute RPC calls on the client side before proceeding
-    const routeId = window.location.pathname.split('/').slice(-2)[0]
-    const launchDataKey = `pilot_launch_${routeId}`
-    const launchData = sessionStorage.getItem(launchDataKey)
-
-    if (launchData) {
-      const { setupCalls } = JSON.parse(launchData)
-
-      if (setupCalls && setupCalls.length > 0) {
-        const provider = (window as any).ethereum
-
-        if (!provider) {
-          console.warn('No ethereum provider found, skipping RPC setup calls')
-        } else {
-          for (const rpcCall of setupCalls) {
-            try {
-              console.log('Executing RPC call:', rpcCall.method)
-              const result = await provider.request({
-                method: rpcCall.method,
-                params: rpcCall.params || [],
-              })
-              console.log('RPC call result:', result)
-            } catch (error) {
-              console.error(
-                'Failed to execute RPC call:',
-                rpcCall.method,
-                error,
-              )
-              // Continue with other calls even if one fails
-            }
-          }
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Error in clientLoader:', error)
-  }
-
-  return serverLoader()
+  return redirect(href('/offline/tokens/balances'))
 }

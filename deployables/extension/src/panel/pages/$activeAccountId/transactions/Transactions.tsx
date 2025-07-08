@@ -35,7 +35,7 @@ import { prefixAddress } from 'ser-kit'
 import { ClearTransactionsModal } from '../ClearTransactionsModal'
 import { Intent } from './intents'
 import { RecordingIndicator } from './RecordingIndicator'
-import { Sign } from './Sign'
+import { Submit } from './Submit'
 import { Transaction } from './Transaction'
 
 export const action = async ({
@@ -201,7 +201,7 @@ const Transactions = () => {
           </CopyToClipboard>
         )}
 
-        <Sign />
+        <Submit />
       </Page.Footer>
 
       <ClearTransactionsModal

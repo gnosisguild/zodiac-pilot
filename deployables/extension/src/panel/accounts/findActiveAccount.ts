@@ -3,9 +3,18 @@ import {
   toAccount,
   type FetchOptions,
 } from '@/companion'
-import { getLastUsedRouteId, getRoutes } from '@/execution-routes'
+import {
+  getAdHocRoute,
+  getLastUsedRouteId,
+  getRoutes,
+} from '@/execution-routes'
 
 export const findActiveAccount = async (options: FetchOptions = {}) => {
+  const adHocRoute = getAdHocRoute()
+  if (adHocRoute != null) {
+    return toAccount(adHocRoute)
+  }
+
   const activeAccount = await findRemoteActiveAccount(options)
 
   if (activeAccount != null) {
