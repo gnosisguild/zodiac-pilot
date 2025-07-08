@@ -27,6 +27,15 @@ export default [
 
   route('/account/:accountId', 'routes/accounts/redirects/account-redirect.ts'),
 
+  route(
+    '/submit/proposal/:proposalId/:routeId?',
+    'routes/sign/redirects/sign-proposal-redirect.ts',
+  ),
+  route(
+    '/submit/:route/:transactions',
+    'routes/sign/redirects/offline-sign-transaction.ts',
+  ),
+
   // BEGIN LEGACY REDIRECTS
 
   route('/offline', 'routes/offline-layout.tsx', [
