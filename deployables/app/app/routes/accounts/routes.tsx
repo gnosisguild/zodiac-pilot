@@ -12,10 +12,8 @@ import {
   getWallet,
   getWallets,
   removeRoute,
-  setDefaultRoute,
-  updateRouteLabel,
 } from '@zodiac/db'
-import { getBoolean, getHexString, getString, getUUID } from '@zodiac/form-data'
+import { getHexString, getString, getUUID } from '@zodiac/form-data'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { queryRoutes } from '@zodiac/modules'
 import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
@@ -31,7 +29,13 @@ import {
 import type { UUID } from 'crypto'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
-import { href, redirect, useLoaderData, useOutletContext } from 'react-router'
+import {
+  href,
+  Outlet,
+  redirect,
+  useLoaderData,
+  useOutletContext,
+} from 'react-router'
 import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/routes'
 import { RouteTab } from './RouteTab'
@@ -125,34 +129,6 @@ export const action = (args: Route.ActionArgs) =>
       invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
 
       switch (getString(data, 'intent')) {
-        case Intent.EditRoute: {
-          const routeId = getUUID(data, 'routeId')
-          const label = getString(data, 'label')
-          const setAsDefault = getBoolean(data, 'defaultRoute')
-
-          await dbClient().transaction(async (tx) => {
-            const route = await getRoute(tx, routeId)
-            const defaultRoute = await findDefaultRoute(
-              tx,
-              tenant,
-              user,
-              accountId,
-            )
-
-            if (route.label !== label) {
-              await updateRouteLabel(tx, routeId, label)
-            }
-
-            if (setAsDefault) {
-              if (defaultRoute == null || defaultRoute.routeId !== routeId) {
-                await setDefaultRoute(tx, tenant, user, route)
-              }
-            }
-          })
-
-          return null
-        }
-
         case Intent.RemoveRoute: {
           const routeId = getUUID(data, 'routeId')
 
@@ -168,7 +144,7 @@ export const action = (args: Route.ActionArgs) =>
           if (defaultRoute != null) {
             return redirect(
               href(
-                '/workspace/:workspaceId/accounts/:accountId/route/:routeId?',
+                '/workspace/:workspaceId/accounts/:accountId/route/:routeId',
                 {
                   accountId,
                   workspaceId,
@@ -186,7 +162,7 @@ export const action = (args: Route.ActionArgs) =>
           if (route != null) {
             return redirect(
               href(
-                '/workspace/:workspaceId/accounts/:accountId/route/:routeId?',
+                '/workspace/:workspaceId/accounts/:accountId/route/:routeId',
                 {
                   accountId,
                   workspaceId,
@@ -197,13 +173,10 @@ export const action = (args: Route.ActionArgs) =>
           }
 
           return redirect(
-            href(
-              '/workspace/:workspaceId/accounts/:accountId/route/:routeId?',
-              {
-                accountId,
-                workspaceId,
-              },
-            ),
+            href('/workspace/:workspaceId/accounts/:accountId', {
+              accountId,
+              workspaceId,
+            }),
           )
         }
 
@@ -232,14 +205,11 @@ export const action = (args: Route.ActionArgs) =>
           })
 
           return redirect(
-            href(
-              '/workspace/:workspaceId/accounts/:accountId/route/:routeId?',
-              {
-                accountId,
-                workspaceId,
-                routeId: route.id,
-              },
-            ),
+            href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
+              accountId,
+              workspaceId,
+              routeId: route.id,
+            }),
           )
         }
       }
@@ -326,6 +296,8 @@ const Routes = ({
             : prefixAddress(undefined, initiatorAddress)
         }
       />
+
+      <Outlet />
     </>
   )
 }
