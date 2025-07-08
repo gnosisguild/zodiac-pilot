@@ -5,11 +5,7 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, CHAIN_NAME } from '@zodiac/chains'
 import { dbClient, getAccounts } from '@zodiac/db'
-import {
-  tenantFactory,
-  userFactory,
-  workspaceFactory,
-} from '@zodiac/db/test-utils'
+import { tenantFactory, userFactory } from '@zodiac/db/test-utils'
 import {
   autoRespondToCompanionRequest,
   CompanionAppMessageType,
@@ -61,11 +57,10 @@ describe('New SafeAccount', () => {
   it('creates a new account in the DB', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
-    const workspace = await workspaceFactory.create(tenant, user)
 
     const { waitForPendingActions } = await render(
       href('/workspace/:workspaceId/accounts/create/:prefixedAddress?', {
-        workspaceId: workspace.id,
+        workspaceId: tenant.defaultWorkspaceId,
       }),
       {
         tenant,
@@ -99,11 +94,10 @@ describe('New SafeAccount', () => {
     it('is possible to give label the account', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       await render(
         href('/workspace/:workspaceId/accounts/create/:prefixedAddress?', {
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         { tenant, user },
       )
@@ -134,11 +128,10 @@ describe('New SafeAccount', () => {
       it('redirects to the accounts page', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
-        const workspace = await workspaceFactory.create(tenant, user)
 
         await render(
           href('/workspace/:workspaceId/accounts/create/:prefixedAddress?', {
-            workspaceId: workspace.id,
+            workspaceId: tenant.defaultWorkspaceId,
           }),
           { tenant, user },
         )
@@ -162,7 +155,7 @@ describe('New SafeAccount', () => {
 
         await expectRouteToBe(
           href('/workspace/:workspaceId/accounts', {
-            workspaceId: workspace.id,
+            workspaceId: tenant.defaultWorkspaceId,
           }),
         )
       })
@@ -173,14 +166,13 @@ describe('New SafeAccount', () => {
     it('is possible to preset the chain', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const prefixedAddress = randomPrefixedAddress({ chainId: Chain.GNO })
 
       await render(
         href('/workspace/:workspaceId/accounts/create/:prefixedAddress?', {
           prefixedAddress,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         {
           user,
@@ -194,14 +186,13 @@ describe('New SafeAccount', () => {
     it('is possible to preset the address', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const address = randomAddress()
 
       await render(
         href('/workspace/:workspaceId/accounts/create/:prefixedAddress?', {
           prefixedAddress: randomPrefixedAddress({ address }),
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         {
           user,

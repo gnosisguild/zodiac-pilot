@@ -8,7 +8,6 @@ import {
   tenantFactory,
   userFactory,
   walletFactory,
-  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import { randomAddress } from '@zodiac/test-utils'
 import { href } from 'react-router'
@@ -20,14 +19,15 @@ describe('Profile', () => {
     it('lists all existing wallets', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const address = randomAddress()
 
       await walletFactory.create(user, { label: 'User wallet', address })
 
       await render(
-        href('/workspace/:workspaceId/profile', { workspaceId: workspace.id }),
+        href('/workspace/:workspaceId/profile', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
         { tenant, user },
       )
 
@@ -44,10 +44,11 @@ describe('Profile', () => {
     it('is possible to add new wallet', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const { waitForPendingActions } = await render(
-        href('/workspace/:workspaceId/profile', { workspaceId: workspace.id }),
+        href('/workspace/:workspaceId/profile', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
         {
           tenant,
           user,
@@ -82,7 +83,6 @@ describe('Profile', () => {
     it('is not possible to create duplicate wallets', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const address = randomAddress()
 
@@ -92,7 +92,9 @@ describe('Profile', () => {
       })
 
       const { waitForPendingActions } = await render(
-        href('/workspace/:workspaceId/profile', { workspaceId: workspace.id }),
+        href('/workspace/:workspaceId/profile', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
         {
           tenant,
           user,
@@ -128,13 +130,15 @@ describe('Profile', () => {
     it('is possible to remove a wallet', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
+
       const wallet = await walletFactory.create(user, {
         label: 'User wallet',
       })
 
       const { waitForPendingActions } = await render(
-        href('/workspace/:workspaceId/profile', { workspaceId: workspace.id }),
+        href('/workspace/:workspaceId/profile', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
         {
           tenant,
           user,
@@ -166,8 +170,8 @@ describe('Profile', () => {
     it('lists accounts that use this wallet', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
-      const account = await accountFactory.create(tenant, user, workspace, {
+
+      const account = await accountFactory.create(tenant, user, {
         label: 'Test account',
       })
       const wallet = await walletFactory.create(user, {
@@ -179,7 +183,9 @@ describe('Profile', () => {
       await setDefaultRoute(dbClient(), tenant, user, route)
 
       await render(
-        href('/workspace/:workspaceId/profile', { workspaceId: workspace.id }),
+        href('/workspace/:workspaceId/profile', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
         {
           tenant,
           user,
@@ -206,7 +212,6 @@ describe('Profile', () => {
     it('is possible to rename a wallet', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
 
       const address = randomAddress()
 
@@ -216,7 +221,9 @@ describe('Profile', () => {
       })
 
       const { waitForPendingActions } = await render(
-        href('/workspace/:workspaceId/profile', { workspaceId: workspace.id }),
+        href('/workspace/:workspaceId/profile', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
         {
           tenant,
           user,

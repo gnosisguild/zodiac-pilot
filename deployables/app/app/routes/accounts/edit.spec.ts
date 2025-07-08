@@ -6,7 +6,6 @@ import {
   accountFactory,
   tenantFactory,
   userFactory,
-  workspaceFactory,
 } from '@zodiac/db/test-utils'
 import { href } from 'react-router'
 import { queryInitiators, queryRoutes } from 'ser-kit'
@@ -36,15 +35,15 @@ describe('Edit account', () => {
     it('displays the current label', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
-      const account = await accountFactory.create(tenant, user, workspace, {
+
+      const account = await accountFactory.create(tenant, user, {
         label: 'Test label',
       })
 
       await render(
         href('/workspace/:workspaceId/accounts/:accountId', {
           accountId: account.id,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         {
           tenant,
@@ -60,15 +59,15 @@ describe('Edit account', () => {
     it('is possible to update the label', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
-      const workspace = await workspaceFactory.create(tenant, user)
-      const account = await accountFactory.create(tenant, user, workspace, {
+
+      const account = await accountFactory.create(tenant, user, {
         label: '',
       })
 
       const { waitForPendingActions } = await render(
         href('/workspace/:workspaceId/accounts/:accountId', {
           accountId: account.id,
-          workspaceId: workspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
         { tenant, user },
       )

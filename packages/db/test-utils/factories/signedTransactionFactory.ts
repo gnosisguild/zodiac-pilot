@@ -1,10 +1,9 @@
-import { invariant } from '@epic-web/invariant'
 import {
   SignedTransactionTable,
-  type Account,
   type Route,
   type SignedTransaction,
   type SignedTransactionCreateInput,
+  type Tenant,
   type User,
 } from '@zodiac/db/schema'
 import {
@@ -18,17 +17,15 @@ import { createFactory } from './createFactory'
 export const signedTransactionFactory = createFactory<
   SignedTransactionCreateInput,
   SignedTransaction,
-  [route: Route, user: User, account: Account]
+  [tenant: Tenant, user: User, route: Route]
 >({
-  build(route, user, account, data) {
-    invariant(route.toId === account.id, 'Route does not lead to account')
-
+  build(tenant, user, route, data) {
     return {
       routeId: route.id,
       accountId: route.toId,
       walletId: route.fromId,
       tenantId: route.tenantId,
-      workspaceId: account.id,
+      workspaceId: tenant.defaultWorkspaceId,
       userId: user.id,
       waypoints: createMockWaypoints(),
 

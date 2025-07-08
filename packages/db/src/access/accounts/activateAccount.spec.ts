@@ -14,8 +14,8 @@ describe('Activate account', () => {
     const tenant = await tenantFactory.create(user)
     const workspace = await workspaceFactory.create(tenant, user)
 
-    const accountA = await accountFactory.create(tenant, user, workspace)
-    const accountB = await accountFactory.create(tenant, user, workspace)
+    const accountA = await accountFactory.create(tenant, user)
+    const accountB = await accountFactory.create(tenant, user)
 
     await activateAccount(dbClient(), tenant, user, accountA.id)
     await activateAccount(dbClient(), tenant, user, accountB.id)

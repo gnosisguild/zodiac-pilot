@@ -1,5 +1,4 @@
 import { authorizedLoader } from '@/auth-server'
-import { dbClient, getDefaultWorkspace } from '@zodiac/db'
 import { href, redirect } from 'react-router'
 import type { Route } from './+types/edit-redirect'
 
@@ -21,13 +20,11 @@ export const loader = (args: Route.LoaderArgs) =>
         )
       }
 
-      const defaultWorkspace = await getDefaultWorkspace(dbClient(), tenant)
-
       return redirect(
         href('/workspace/:workspaceId/local-accounts/:accountId/:data', {
           accountId: routeId,
           data,
-          workspaceId: defaultWorkspace.id,
+          workspaceId: tenant.defaultWorkspaceId,
         }),
       )
     },
