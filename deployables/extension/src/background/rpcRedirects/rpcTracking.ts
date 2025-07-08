@@ -109,7 +109,10 @@ const trackRequest = async ({
   }
 
   // ignore requests to fork Rpcs
-  if (url.startsWith(`${getVnetApiUrl()}/rpc/`)) {
+  if (
+    url.startsWith(getVnetApiUrl('https')) ||
+    url.startsWith(getVnetApiUrl('wss'))
+  ) {
     return { newEndpoint: false }
   }
 

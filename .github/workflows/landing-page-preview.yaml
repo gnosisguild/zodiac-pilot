@@ -1,4 +1,7 @@
 name: Landing Page Preview
+# We use this workflow rather than the Cloudflare GitHub integration because the PR comments that Cloudflare posts after deployment
+# would override those posted for the vnet-api deployment.
+# So we disabled builds for non-production branches for the pilot-landing-page page on Cloudflare.
 
 on:
   pull_request:

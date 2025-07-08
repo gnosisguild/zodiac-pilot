@@ -190,7 +190,13 @@ describe('RPC Tracking', () => {
 
       await mockWebRequest(tab, {
         method: 'POST',
-        url: `${getVnetApiUrl()}/rpc/mainnet/some-slug`,
+        url: `${getVnetApiUrl('https')}/rpc/mainnet/some-slug`,
+        requestBody: { jsonrpc: '2.0' },
+      })
+
+      await mockWebRequest(tab, {
+        method: 'POST',
+        url: `${getVnetApiUrl('wss')}/rpc/mainnet/some-slug`,
         requestBody: { jsonrpc: '2.0' },
       })
 

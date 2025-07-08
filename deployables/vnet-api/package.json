@@ -5,14 +5,13 @@
     "@cloudflare/workers-types": "4.20250708.0",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "env-cmd": "10.1.0",
     "eslint": "9.30.1",
     "typescript": "5.8.3",
     "wrangler": "4.24.0"
   },
   "private": true,
   "scripts": {
-    "start": "env-cmd wrangler dev",
+    "start": "wrangler dev",
     "deploy": "wrangler publish",
     "check-types": "tsc --noEmit",
     "lint": "eslint . --max-warnings=0"
