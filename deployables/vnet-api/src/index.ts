@@ -133,41 +133,62 @@ async function handleWebsocketRequest(
 
   try {
     // Create WebSocket pair for client and server
-    const [clientSocket, _serverSocket] = Object.values(new WebSocketPair())
+    const [clientSocket, serverSocket] = Object.values(new WebSocketPair())
 
     // Connect to Tenderly WebSocket
     const tenderlySocket = new WebSocket(tenderlyWsUrl)
 
+    // Wait for Tenderly connection to be established before accepting client
+    await new Promise<void>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error('Tenderly WebSocket connection timeout'))
+      }, 10000) // 10 second timeout
+
+      tenderlySocket.addEventListener('open', () => {
+        clearTimeout(timeout)
+        resolve()
+      })
+
+      tenderlySocket.addEventListener('error', (error) => {
+        clearTimeout(timeout)
+        reject(error)
+      })
+    })
+
     // Forward messages from client to Tenderly
-    clientSocket.addEventListener('message', (event) => {
+    serverSocket.addEventListener('message', (event) => {
       if (tenderlySocket.readyState === WebSocket.OPEN) {
         tenderlySocket.send(event.data)
+      } else {
+        console.warn('Tenderly socket not ready, dropping client message')
       }
     })
 
     // Forward messages from Tenderly to client
     tenderlySocket.addEventListener('message', (event) => {
-      if (clientSocket.readyState === WebSocket.OPEN) {
-        clientSocket.send(event.data)
+      if (serverSocket.readyState === WebSocket.OPEN) {
+        serverSocket.send(event.data)
+      } else {
+        console.warn('Server socket not ready, dropping Tenderly message')
       }
     })
 
     // Handle WebSocket close events
-    clientSocket.addEventListener('close', () => {
+    serverSocket.addEventListener('close', () => {
       if (tenderlySocket.readyState === WebSocket.OPEN) {
         tenderlySocket.close()
       }
     })
 
     tenderlySocket.addEventListener('close', () => {
-      if (clientSocket.readyState === WebSocket.OPEN) {
-        clientSocket.close()
+      if (serverSocket.readyState === WebSocket.OPEN) {
+        serverSocket.close()
       }
     })
 
     // Handle WebSocket error events
-    clientSocket.addEventListener('error', (error) => {
-      console.error('Client WebSocket error:', error)
+    serverSocket.addEventListener('error', (error) => {
+      console.error('Server WebSocket error:', error)
       if (tenderlySocket.readyState === WebSocket.OPEN) {
         tenderlySocket.close()
       }
@@ -175,8 +196,8 @@ async function handleWebsocketRequest(
 
     tenderlySocket.addEventListener('error', (error) => {
       console.error('Tenderly WebSocket error:', error)
-      if (clientSocket.readyState === WebSocket.OPEN) {
-        clientSocket.close()
+      if (serverSocket.readyState === WebSocket.OPEN) {
+        serverSocket.close()
       }
     })
 
