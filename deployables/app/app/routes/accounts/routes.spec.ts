@@ -373,7 +373,7 @@ describe('Routes', () => {
           accountId: account.id,
           routeId: route.id,
         }),
-        { tenant, user, features: ['multiple-routes'] },
+        { tenant, user },
       )
 
       await userEvent.click(
@@ -416,7 +416,7 @@ describe('Routes', () => {
           accountId: account.id,
           routeId: routeA.id,
         }),
-        { tenant, user, features: ['multiple-routes'] },
+        { tenant, user },
       )
 
       const { findByRole } = within(
@@ -463,7 +463,7 @@ describe('Routes', () => {
           accountId: account.id,
           routeId: route.id,
         }),
-        { tenant, user, features: ['multiple-routes'] },
+        { tenant, user },
       )
 
       await userEvent.click(
@@ -611,7 +611,6 @@ describe('Routes', () => {
         {
           user,
           tenant,
-          features: ['multiple-routes'],
         },
       )
 
@@ -659,7 +658,6 @@ describe('Routes', () => {
         {
           user,
           tenant,
-          features: ['multiple-routes'],
         },
       )
 
@@ -683,7 +681,7 @@ describe('Routes', () => {
             accountId: account.id,
             routeId: route.id,
           }),
-          { user, tenant, features: ['multiple-routes'] },
+          { user, tenant },
         )
 
         await userEvent.click(
@@ -729,7 +727,7 @@ describe('Routes', () => {
             workspaceId: tenant.defaultWorkspaceId,
             accountId: account.id,
           }),
-          { user, tenant, features: ['multiple-routes'] },
+          { user, tenant },
         )
 
         await userEvent.click(
@@ -795,7 +793,7 @@ describe('Routes', () => {
           accountId: account.id,
           routeId: route.id,
         }),
-        { user, tenant, features: ['multiple-routes'] },
+        { user, tenant },
       )
 
       await removeRoute(route)
@@ -835,7 +833,7 @@ describe('Routes', () => {
           accountId: account.id,
           routeId: routeC.id,
         }),
-        { user, tenant, features: ['multiple-routes'] },
+        { user, tenant },
       )
 
       await removeRoute(routeC)
@@ -874,7 +872,7 @@ describe('Routes', () => {
           accountId: account.id,
           routeId: routeB.id,
         }),
-        { user, tenant, features: ['multiple-routes'] },
+        { user, tenant },
       )
 
       await removeRoute(routeB)
@@ -907,7 +905,7 @@ describe('Routes', () => {
           accountId: account.id,
           routeId: route.id,
         }),
-        { user, tenant, features: ['multiple-routes'] },
+        { user, tenant },
       )
 
       await removeRoute(route)
