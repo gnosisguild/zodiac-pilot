@@ -97,7 +97,7 @@ export const action = async (args: Route.ActionArgs) =>
 
         const workspace = await getWorkspace(dbClient(), workspaceId)
 
-        if (workspace.tenantId === tenant.id) {
+        if (workspace.tenantId !== tenant.id) {
           return false
         }
 
