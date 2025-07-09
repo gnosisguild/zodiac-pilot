@@ -254,7 +254,7 @@ describe('Transactions', () => {
 
         expect(screen.getByRole('link', { name: 'Sign' })).toHaveAttribute(
           'href',
-          `http://localhost/offline/submit/${encode(route)}/${encode([toMetaTransactionRequest(transaction)])}`,
+          `http://localhost/submit/${encode(route)}/${encode([toMetaTransactionRequest(transaction)])}`,
         )
       })
 

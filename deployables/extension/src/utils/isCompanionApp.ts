@@ -5,9 +5,13 @@ export const isCompanionApp = (url?: string) => {
     return false
   }
 
+  if (url.startsWith(getCompanionAppUrl()) === false) {
+    return false
+  }
+
   return (
-    url.startsWith(`${getCompanionAppUrl()}/edit`) ||
-    url.startsWith(`${getCompanionAppUrl()}/create`) ||
-    url.startsWith(`${getCompanionAppUrl()}/submit`)
+    url.includes('/submit') ||
+    url.includes('/accounts') ||
+    url.includes('/create')
   )
 }

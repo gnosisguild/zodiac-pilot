@@ -193,6 +193,20 @@ export default [
             index('routes/local-accounts/load-account.ts'),
             route(':data', 'routes/local-accounts/edit.tsx'),
           ]),
+
+          ...prefix('submit', [
+            layout(
+              'routes/sign/layout.tsx',
+              { id: 'local-account-sign-layout' },
+              [
+                route(
+                  ':route/:transactions',
+                  'routes/sign/$route.$transactions/sign.tsx',
+                  { id: 'local-account-sign' },
+                ),
+              ],
+            ),
+          ]),
         ]),
 
         ...prefix('submit', [

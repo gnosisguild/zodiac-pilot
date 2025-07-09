@@ -264,12 +264,12 @@ describe('Session tracking', () => {
         },
       )
 
-      it.each(['/edit', '/create', '/submit'])(
+      it.each(['accounts', 'create', 'submit'])(
         'does nothing for the "%s" page of the companion app',
         async (path) => {
           const tab = createMockTab({
             windowId: 1,
-            url: `${getCompanionAppUrl()}${path}`,
+            url: `${getCompanionAppUrl()}/something-irrelevant/${path}`,
           })
 
           await startPilotSession({ windowId: 1 }, tab)
