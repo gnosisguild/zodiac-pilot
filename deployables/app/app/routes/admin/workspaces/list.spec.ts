@@ -1,6 +1,7 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { dbClient, getWorkspace } from '@zodiac/db'
 import {
   tenantFactory,
   userFactory,
@@ -63,6 +64,38 @@ describe('Workspaces', () => {
       expect(
         await screen.findByRole('cell', { name: 'New workspace' }),
       ).toBeInTheDocument()
+    })
+  })
+
+  describe('Edit', () => {
+    it('is possible to rename a workspace', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user, {
+        defaultWorkspaceLabel: 'Workspace',
+      })
+
+      const { waitForPendingActions } = await render(
+        href('/workspace/:workspaceId/admin/workspaces', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Workspace options' }),
+      )
+      await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
+      await userEvent.type(
+        await screen.findByRole('textbox', { name: 'Label' }),
+        ' updated',
+      )
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      await expect(
+        getWorkspace(dbClient(), tenant.defaultWorkspaceId),
+      ).resolves.toHaveProperty('label', 'Workspace updated')
     })
   })
 })

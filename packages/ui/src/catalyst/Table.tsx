@@ -5,6 +5,7 @@ import {
   useState,
   type ComponentPropsWithoutRef,
   type ContextType,
+  type PropsWithChildren,
 } from 'react'
 import { Link } from './Link'
 
@@ -109,6 +110,7 @@ export function TableRow({
       <tr
         {...props}
         className={classNames(
+          'group',
           className,
           href &&
             'has-[[data-row-link][data-focus]]:outline-2 has-[[data-row-link][data-focus]]:-outline-offset-2 has-[[data-row-link][data-focus]]:outline-blue-500 dark:focus-within:bg-white/[2.5%]',
@@ -188,3 +190,9 @@ export function TableCell({
     </td>
   )
 }
+
+export const TableRowActions = ({ children }: PropsWithChildren) => (
+  <div className="flex justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+    {children}
+  </div>
+)

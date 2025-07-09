@@ -54,7 +54,12 @@ export const tenantFactory = createFactory<
           ),
         )
 
-        return addDefaultWorkspace(tx, tenant.id, owner)
+        return addDefaultWorkspace(
+          tx,
+          tenant.id,
+          owner,
+          data.defaultWorkspaceLabel,
+        )
       }
 
       await tx

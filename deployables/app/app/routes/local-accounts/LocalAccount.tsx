@@ -14,6 +14,7 @@ import {
   MeatballMenu,
   TableCell,
   TableRow,
+  TableRowActions,
   Tag,
 } from '@zodiac/ui'
 import { Pencil, Trash2, UploadIcon } from 'lucide-react'
@@ -49,7 +50,9 @@ export const LocalAccount = ({ route, active }: LocalAccountProps) => {
         <Address shorten>{route.avatar}</Address>
       </TableCell>
       <TableCell>
-        <Actions routeId={route.id} />
+        <TableRowActions>
+          <Actions routeId={route.id} />
+        </TableRowActions>
       </TableCell>
     </TableRow>
   )
@@ -59,39 +62,37 @@ const Actions = ({ routeId }: { routeId: string }) => {
   const workspaceId = useOptionalWorkspaceId()
 
   return (
-    <div className="flex justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-      <MeatballMenu size="tiny" label="Account options">
-        {useIsSignedIn() && <Upload routeId={routeId} />}
+    <MeatballMenu size="tiny" label="Account options">
+      {useIsSignedIn() && <Upload routeId={routeId} />}
 
-        <GhostLinkButton
-          to={href('/offline/accounts/:accountId', { accountId: routeId })}
-          align="left"
-          size="tiny"
-          icon={Pencil}
-        >
-          Edit
-        </GhostLinkButton>
+      <GhostLinkButton
+        to={href('/offline/accounts/:accountId', { accountId: routeId })}
+        align="left"
+        size="tiny"
+        icon={Pencil}
+      >
+        Edit
+      </GhostLinkButton>
 
-        <GhostLinkButton
-          to={
-            workspaceId
-              ? href(
-                  '/workspace/:workspaceId/local-accounts/delete/:accountId',
-                  { workspaceId, accountId: routeId },
-                )
-              : href('/offline/accounts/delete/:accountId', {
-                  accountId: routeId,
-                })
-          }
-          align="left"
-          size="tiny"
-          icon={Trash2}
-          style="critical"
-        >
-          Delete
-        </GhostLinkButton>
-      </MeatballMenu>
-    </div>
+      <GhostLinkButton
+        to={
+          workspaceId
+            ? href('/workspace/:workspaceId/local-accounts/delete/:accountId', {
+                workspaceId,
+                accountId: routeId,
+              })
+            : href('/offline/accounts/delete/:accountId', {
+                accountId: routeId,
+              })
+        }
+        align="left"
+        size="tiny"
+        icon={Trash2}
+        style="critical"
+      >
+        Delete
+      </GhostLinkButton>
+    </MeatballMenu>
   )
 }
 
