@@ -74,7 +74,7 @@ describe('Workspaces', () => {
         defaultWorkspaceLabel: 'Workspace',
       })
 
-      await render(
+      const { waitForPendingActions } = await render(
         href('/workspace/:workspaceId/admin/workspaces', {
           workspaceId: tenant.defaultWorkspaceId,
         }),
@@ -91,9 +91,11 @@ describe('Workspaces', () => {
       )
       await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
 
-      expect(
+      await waitForPendingActions()
+
+      await expect(
         getWorkspace(dbClient(), tenant.defaultWorkspaceId),
-      ).toHaveProperty('label', 'Workspace updated')
+      ).resolves.toHaveProperty('label', 'Workspace updated')
     })
   })
 })
