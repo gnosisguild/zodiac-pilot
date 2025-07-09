@@ -6,9 +6,15 @@ import { Stick } from './overlays/Stick'
 type MeatballMenuProps = Pick<BaseButtonProps, 'size' | 'busy'> &
   PropsWithChildren<{
     label: string
+    descriptionId?: string
   }>
 
-export const MeatballMenu = ({ label, size, children }: MeatballMenuProps) => {
+export const MeatballMenu = ({
+  label,
+  size,
+  children,
+  descriptionId,
+}: MeatballMenuProps) => {
   const [open, setOpen] = useState(false)
 
   return (
@@ -25,6 +31,7 @@ export const MeatballMenu = ({ label, size, children }: MeatballMenuProps) => {
     >
       <GhostButton
         iconOnly
+        aria-describedby={descriptionId}
         size={size}
         icon={Ellipsis}
         onClick={(event) => {

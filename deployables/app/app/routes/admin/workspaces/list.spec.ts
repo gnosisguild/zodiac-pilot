@@ -1,7 +1,7 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { dbClient, getWorkspace } from '@zodiac/db'
+import { dbClient, getWorkspace, getWorkspaces } from '@zodiac/db'
 import {
   tenantFactory,
   userFactory,
@@ -96,6 +96,48 @@ describe('Workspaces', () => {
       await expect(
         getWorkspace(dbClient(), tenant.defaultWorkspaceId),
       ).resolves.toHaveProperty('label', 'Workspace updated')
+    })
+
+    it.todo('is possible to set a workspace as the default one')
+  })
+
+  describe('Remove', () => {
+    it('is possible to remove a workspace', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      await workspaceFactory.create(tenant, user, { label: 'Test workspace' })
+
+      await render(
+        href('/workspace/:workspaceId/admin/workspaces', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', {
+          name: 'Workspace options',
+          description: 'Test workspace',
+        }),
+      )
+      await userEvent.click(await screen.findByRole('link', { name: 'Remove' }))
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Remove' }),
+      )
+
+      await expect(
+        getWorkspaces(dbClient(), { tenantId: tenant.id }),
+      ).resolves.toEqual([
+        await getWorkspace(dbClient(), tenant.defaultWorkspaceId),
+      ])
+    })
+    it.todo('is not possible to remove the default workspace')
+
+    describe('Accounts', () => {
+      it.todo('is possible to move accounts to a different workspace')
+      it.todo('is possible to remove accounts with the workspace')
     })
   })
 })

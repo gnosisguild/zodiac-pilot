@@ -15,7 +15,7 @@ import {
   TableRowActions,
   Tag,
 } from '@zodiac/ui'
-import { Pencil, Plus } from 'lucide-react'
+import { Pencil, Plus, Trash2 } from 'lucide-react'
 import { href, Outlet } from 'react-router'
 import type { Route } from './+types/list'
 
@@ -28,6 +28,7 @@ export const loader = (args: Route.LoaderArgs) =>
       },
     }) => {
       return {
+        defaultWorkspaceId: tenant.defaultWorkspaceId,
         workspaces: await getWorkspaces(dbClient(), { tenantId: tenant.id }),
       }
     },
@@ -40,7 +41,7 @@ export const loader = (args: Route.LoaderArgs) =>
   )
 
 const Workspaces = ({
-  loaderData: { workspaces },
+  loaderData: { workspaces, defaultWorkspaceId },
   params: { workspaceId },
 }: Route.ComponentProps) => {
   return (
@@ -71,12 +72,18 @@ const Workspaces = ({
           {workspaces.map((workspace) => (
             <TableRow key={workspace.id}>
               <TableCell>
-                <div className="flex justify-between gap-2">
+                <div className="flex justify-between gap-2" id={workspace.id}>
                   {workspace.label}
 
-                  {workspace.id === workspaceId && (
-                    <Tag color="green">Current</Tag>
-                  )}
+                  <div aria-hidden className="flex gap-2">
+                    {workspace.id === defaultWorkspaceId && (
+                      <Tag color="green">Default</Tag>
+                    )}
+
+                    {workspace.id === workspaceId && (
+                      <Tag color="blue">Current</Tag>
+                    )}
+                  </div>
                 </div>
               </TableCell>
               <TableCell>
@@ -88,7 +95,11 @@ const Workspaces = ({
               </TableCell>
               <TableCell>
                 <TableRowActions>
-                  <MeatballMenu size="tiny" label="Workspace options">
+                  <MeatballMenu
+                    size="tiny"
+                    label="Workspace options"
+                    descriptionId={workspace.id}
+                  >
                     <GhostLinkButton
                       size="tiny"
                       icon={Pencil}
@@ -99,6 +110,19 @@ const Workspaces = ({
                       )}
                     >
                       Edit
+                    </GhostLinkButton>
+
+                    <GhostLinkButton
+                      size="tiny"
+                      icon={Trash2}
+                      align="left"
+                      style="critical"
+                      to={href(
+                        '/workspace/:workspaceId/admin/workspaces/remove/:id',
+                        { workspaceId, id: workspace.id },
+                      )}
+                    >
+                      Remove
                     </GhostLinkButton>
                   </MeatballMenu>
                 </TableRowActions>
