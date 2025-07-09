@@ -40,7 +40,11 @@ export const action = (args: Route.ActionArgs) =>
 
         const workspace = await getWorkspace(dbClient(), id)
 
-        return role === 'admin' && workspace.tenantId === tenant.id
+        return (
+          role === 'admin' &&
+          workspace.tenantId === tenant.id &&
+          workspace.id !== tenant.defaultWorkspaceId
+        )
       },
     },
   )

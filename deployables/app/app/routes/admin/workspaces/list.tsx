@@ -113,6 +113,7 @@ const Workspaces = ({
                     </GhostLinkButton>
 
                     <GhostLinkButton
+                      disabled={defaultWorkspaceId === workspace.id}
                       size="tiny"
                       icon={Trash2}
                       align="left"

@@ -172,7 +172,27 @@ describe('Workspaces', () => {
         }),
       )
     })
-    it.todo('is not possible to remove the default workspace')
+    it('is not possible to remove the default workspace', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      await render(
+        href('/workspace/:workspaceId/admin/workspaces', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', {
+          name: 'Workspace options',
+        }),
+      )
+
+      expect(
+        await screen.findByRole('button', { name: 'Remove' }),
+      ).toBeDisabled()
+    })
 
     describe('Accounts', () => {
       it.todo('is possible to move accounts to a different workspace')
