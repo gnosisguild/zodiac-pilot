@@ -12,6 +12,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableRowActions,
   Tag,
 } from '@zodiac/ui'
 import { Pencil, Plus } from 'lucide-react'
@@ -86,7 +87,7 @@ const Workspaces = ({
                 <DateValue>{workspace.updatedAt}</DateValue>
               </TableCell>
               <TableCell>
-                <div className="flex justify-end gap-1 transition-opacity group-hover:opacity-100">
+                <TableRowActions>
                   <MeatballMenu size="tiny" label="Workspace options">
                     <GhostLinkButton
                       size="tiny"
@@ -100,7 +101,7 @@ const Workspaces = ({
                       Edit
                     </GhostLinkButton>
                   </MeatballMenu>
-                </div>
+                </TableRowActions>
               </TableCell>
             </TableRow>
           ))}

@@ -8,6 +8,7 @@ import {
   MeatballMenu,
   TableCell,
   TableRow,
+  TableRowActions,
   Tag,
 } from '@zodiac/ui'
 import { Pencil, Trash2 } from 'lucide-react'
@@ -21,7 +22,6 @@ type RemoteAccountProps = {
 export const RemoteAccount = ({ account, active }: RemoteAccountProps) => {
   return (
     <TableRow
-      className="group"
       href={href('/workspace/:workspaceId/accounts/:accountId', {
         accountId: account.id,
         workspaceId: useWorkspaceId(),
@@ -42,41 +42,35 @@ export const RemoteAccount = ({ account, active }: RemoteAccountProps) => {
         <Address shorten>{account.address}</Address>
       </TableCell>
       <TableCell>
-        <Actions accountId={account.id} />
+        <TableRowActions>
+          <MeatballMenu size="tiny" label="Account options">
+            <GhostLinkButton
+              to={href('/workspace/:workspaceId/accounts/:accountId', {
+                accountId: account.id,
+                workspaceId: useWorkspaceId(),
+              })}
+              icon={Pencil}
+              align="left"
+              size="tiny"
+            >
+              Edit
+            </GhostLinkButton>
+
+            <GhostLinkButton
+              to={href('/workspace/:workspaceId/accounts/delete/:accountId', {
+                workspaceId: useWorkspaceId(),
+                accountId: account.id,
+              })}
+              size="tiny"
+              style="critical"
+              align="left"
+              icon={Trash2}
+            >
+              Delete
+            </GhostLinkButton>
+          </MeatballMenu>
+        </TableRowActions>
       </TableCell>
     </TableRow>
-  )
-}
-
-const Actions = ({ accountId }: { accountId: string }) => {
-  return (
-    <div className="flex justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-      <MeatballMenu size="tiny" label="Account options">
-        <GhostLinkButton
-          to={href('/workspace/:workspaceId/accounts/:accountId', {
-            accountId,
-            workspaceId: useWorkspaceId(),
-          })}
-          icon={Pencil}
-          align="left"
-          size="tiny"
-        >
-          Edit
-        </GhostLinkButton>
-
-        <GhostLinkButton
-          to={href('/workspace/:workspaceId/accounts/delete/:accountId', {
-            workspaceId: useWorkspaceId(),
-            accountId,
-          })}
-          size="tiny"
-          style="critical"
-          align="left"
-          icon={Trash2}
-        >
-          Delete
-        </GhostLinkButton>
-      </MeatballMenu>
-    </div>
   )
 }
