@@ -157,6 +157,7 @@ export default [
             }),
             route('route/:routeId', 'routes/accounts/routes.tsx', [
               route('edit', 'routes/accounts/edit-route.tsx'),
+              route('remove', 'routes/accounts/remove-route.tsx'),
             ]),
           ]),
         ]),

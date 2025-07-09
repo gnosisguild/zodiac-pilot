@@ -1,12 +1,8 @@
-import { ConfirmableAction } from '@/components'
 import { useWorkspaceId } from '@/workspaces'
 import type { Route } from '@zodiac/db/schema'
-import { useIsPending } from '@zodiac/hooks'
 import { GhostLinkButton, MeatballMenu, Popover, TabBar } from '@zodiac/ui'
-import { Pencil } from 'lucide-react'
-import { useState } from 'react'
+import { Pencil, Trash2 } from 'lucide-react'
 import { href } from 'react-router'
-import { Intent } from './intents'
 
 type RouteTabProps = {
   route: Route
@@ -14,8 +10,6 @@ type RouteTabProps = {
 }
 
 export const RouteTab = ({ route, isDefault }: RouteTabProps) => {
-  const [, setConfirmDelete] = useState(false)
-
   return (
     <TabBar.LinkTab
       aria-labelledby={route.id}
@@ -50,17 +44,22 @@ export const RouteTab = ({ route, isDefault }: RouteTabProps) => {
           Edit
         </GhostLinkButton>
 
-        <ConfirmableAction
-          title="Remove route"
-          description="Are you sure you want to remove this route? This action cannot be undone."
-          intent={Intent.RemoveRoute}
-          busy={useIsPending(Intent.RemoveRoute)}
-          onConfirmChange={setConfirmDelete}
-          context={{ routeId: route.id }}
+        <GhostLinkButton
+          size="tiny"
+          align="left"
           style="critical"
+          icon={Trash2}
+          to={href(
+            '/workspace/:workspaceId/accounts/:accountId/route/:routeId/remove',
+            {
+              workspaceId: useWorkspaceId(),
+              accountId: route.toId,
+              routeId: route.id,
+            },
+          )}
         >
           Remove
-        </ConfirmableAction>
+        </GhostLinkButton>
       </MeatballMenu>
     </TabBar.LinkTab>
   )

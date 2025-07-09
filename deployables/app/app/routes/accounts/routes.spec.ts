@@ -766,9 +766,7 @@ describe('Routes', () => {
       await userEvent.click(
         await findByRole('button', { name: 'Route options' }),
       )
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Remove' }),
-      )
+      await userEvent.click(await screen.findByRole('link', { name: 'Remove' }))
 
       await userEvent.click(
         await screen.findByRole('button', { name: 'Remove' }),

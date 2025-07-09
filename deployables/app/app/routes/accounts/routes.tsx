@@ -11,9 +11,8 @@ import {
   getRoutes,
   getWallet,
   getWallets,
-  removeRoute,
 } from '@zodiac/db'
-import { getHexString, getString, getUUID } from '@zodiac/form-data'
+import { getHexString, getString } from '@zodiac/form-data'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { queryRoutes } from '@zodiac/modules'
 import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
@@ -129,57 +128,6 @@ export const action = (args: Route.ActionArgs) =>
       invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
 
       switch (getString(data, 'intent')) {
-        case Intent.RemoveRoute: {
-          const routeId = getUUID(data, 'routeId')
-
-          await removeRoute(dbClient(), routeId)
-
-          const defaultRoute = await findDefaultRoute(
-            dbClient(),
-            tenant,
-            user,
-            accountId,
-          )
-
-          if (defaultRoute != null) {
-            return redirect(
-              href(
-                '/workspace/:workspaceId/accounts/:accountId/route/:routeId',
-                {
-                  accountId,
-                  workspaceId,
-                  routeId: defaultRoute.routeId,
-                },
-              ),
-            )
-          }
-
-          const [route] = await getRoutes(dbClient(), tenant.id, {
-            accountId,
-            userId: user.id,
-          })
-
-          if (route != null) {
-            return redirect(
-              href(
-                '/workspace/:workspaceId/accounts/:accountId/route/:routeId',
-                {
-                  accountId,
-                  workspaceId,
-                  routeId: route.id,
-                },
-              ),
-            )
-          }
-
-          return redirect(
-            href('/workspace/:workspaceId/accounts/:accountId', {
-              accountId,
-              workspaceId,
-            }),
-          )
-        }
-
         case Intent.AddRoute: {
           const initiator = getHexString(data, 'initiator')
           const label = getString(data, 'label')
