@@ -1,8 +1,9 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { dbClient, getWorkspace, getWorkspaces } from '@zodiac/db'
+import { dbClient, getAccount, getWorkspace, getWorkspaces } from '@zodiac/db'
 import {
+  accountFactory,
   tenantFactory,
   userFactory,
   workspaceFactory,
@@ -195,8 +196,55 @@ describe('Workspaces', () => {
     })
 
     describe('Accounts', () => {
-      it.todo('is possible to move accounts to a different workspace')
-      it.todo('is possible to remove accounts with the workspace')
+      it('is possible to move accounts to a different workspace', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user, {
+          defaultWorkspaceLabel: 'Default workspace',
+        })
+
+        const workspace = await workspaceFactory.create(tenant, user, {
+          label: 'Workspace',
+        })
+
+        const account = await accountFactory.create(tenant, user, {
+          workspaceId: workspace.id,
+        })
+
+        const { waitForPendingActions } = await render(
+          href('/workspace/:workspaceId/admin/workspaces', {
+            workspaceId: tenant.defaultWorkspaceId,
+          }),
+          { tenant, user },
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', {
+            name: 'Workspace options',
+            description: 'Workspace',
+          }),
+        )
+
+        await userEvent.click(
+          await screen.findByRole('link', { name: 'Remove' }),
+        )
+
+        await userEvent.click(
+          await screen.findByRole('combobox', { name: 'Move accounts to' }),
+        )
+        await userEvent.click(
+          await screen.findByRole('option', { name: 'Default workspace' }),
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Remove' }),
+        )
+
+        await waitForPendingActions()
+
+        await expect(
+          getAccount(dbClient(), account.id),
+        ).resolves.toHaveProperty('workspaceId', tenant.defaultWorkspaceId)
+      })
     })
   })
 })

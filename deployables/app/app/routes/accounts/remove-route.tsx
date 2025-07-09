@@ -44,6 +44,7 @@ const RemoveRoute = ({
     <Modal
       open
       title="Remove route"
+      description="Are you sure you want to remove this route? This action cannot be undone."
       onClose={() =>
         navigate(
           href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
@@ -54,7 +55,6 @@ const RemoveRoute = ({
         )
       }
     >
-      Are you sure you want to remove this route? This action cannot be undone.
       <Modal.Actions>
         <InlineForm>
           <PrimaryButton
