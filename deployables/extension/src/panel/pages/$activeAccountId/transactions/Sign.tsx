@@ -63,7 +63,7 @@ export const Sign = () => {
           <PrimaryLinkButton
             fluid
             openInNewWindow
-            to={`${companionAppUrl}/offline/submit/${encode(route)}/${encode(transactions.map(toMetaTransactionRequest))}`}
+            to={`${companionAppUrl}/submit/${encode(route)}/${encode(transactions.map(toMetaTransactionRequest))}`}
             disabled={transactions.length === 0}
             onClick={() => setSignPending(true)}
           >
