@@ -131,6 +131,7 @@ export default [
         route('workspaces', 'routes/admin/workspaces/list.tsx', [
           route('add', 'routes/admin/workspaces/add-workspace.tsx'),
           route('edit/:id', 'routes/admin/workspaces/edit-workspace.tsx'),
+          route('remove/:id', 'routes/admin/workspaces/remove-workspace.tsx'),
         ]),
       ]),
 

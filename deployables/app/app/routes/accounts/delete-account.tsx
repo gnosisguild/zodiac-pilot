@@ -48,13 +48,13 @@ const DeleteAccount = ({ params: { workspaceId } }: Route.ComponentProps) => {
   return (
     <Modal
       title="Confirm delete"
+      description="Are you sure you want to delete this account? This action cannot be
+      undone."
       open
       onClose={() =>
         navigate(href('/workspace/:workspaceId/accounts', { workspaceId }))
       }
     >
-      Are you sure you want to delete this account? This action cannot be
-      undone.
       <Modal.Actions>
         <InlineForm>
           <PrimaryButton
