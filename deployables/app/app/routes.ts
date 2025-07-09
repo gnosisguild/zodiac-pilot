@@ -165,6 +165,7 @@ export default [
             route('new-route', 'routes/accounts/routes.tsx', {
               id: 'new-route',
             }),
+            route('add', 'routes/accounts/add-route.tsx'),
             route('route/:routeId', 'routes/accounts/routes.tsx', [
               route('edit', 'routes/accounts/edit-route.tsx'),
               route('remove', 'routes/accounts/remove-route.tsx'),

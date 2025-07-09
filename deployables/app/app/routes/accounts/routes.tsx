@@ -1,44 +1,24 @@
-import { authorizedAction, authorizedLoader } from '@/auth-server'
+import { authorizedLoader } from '@/auth-server'
 import { getRouteId, RouteSelect } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
-  createRoute,
   dbClient,
   findDefaultRoute,
   getAccount,
-  getOrCreateWallet,
   getRoute,
   getRoutes,
   getWallet,
   getWallets,
 } from '@zodiac/db'
-import { getHexString, getString } from '@zodiac/form-data'
-import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { queryRoutes } from '@zodiac/modules'
 import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
-import {
-  AddressSelect,
-  Form,
-  Modal,
-  PrimaryButton,
-  SecondaryButton,
-  TabBar,
-  TextInput,
-} from '@zodiac/ui'
+import { AddressSelect, Form, SecondaryLinkButton, TabBar } from '@zodiac/ui'
 import type { UUID } from 'crypto'
 import { Plus } from 'lucide-react'
-import { useState } from 'react'
-import {
-  href,
-  Outlet,
-  redirect,
-  useLoaderData,
-  useOutletContext,
-} from 'react-router'
+import { href, Outlet, useOutletContext } from 'react-router'
 import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/routes'
 import { RouteTab } from './RouteTab'
-import { Intent } from './intents'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -113,75 +93,6 @@ export const loader = (args: Route.LoaderArgs) =>
     { ensureSignedIn: true },
   )
 
-export const action = (args: Route.ActionArgs) =>
-  authorizedAction(
-    args,
-    async ({
-      request,
-      params: { accountId, workspaceId },
-      context: {
-        auth: { tenant, user },
-      },
-    }) => {
-      const data = await request.formData()
-
-      invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
-
-      switch (getString(data, 'intent')) {
-        case Intent.AddRoute: {
-          const initiator = getHexString(data, 'initiator')
-          const label = getString(data, 'label')
-
-          const wallet = await getOrCreateWallet(dbClient(), user, {
-            label: 'Unnamed wallet',
-            address: initiator,
-          })
-          const account = await getAccount(dbClient(), accountId)
-
-          const queryRoutesResult = await queryRoutes(
-            prefixAddress(undefined, initiator),
-            prefixAddress(account.chainId, account.address),
-          )
-
-          const [defaultRoute] = queryRoutesResult.routes
-
-          const route = await createRoute(dbClient(), tenant.id, {
-            walletId: wallet.id,
-            accountId: account.id,
-            waypoints: defaultRoute.waypoints,
-            label,
-          })
-
-          return redirect(
-            href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
-              accountId,
-              workspaceId,
-              routeId: route.id,
-            }),
-          )
-        }
-      }
-    },
-    {
-      ensureSignedIn: true,
-      async hasAccess({ tenant, params: { routeId, accountId } }) {
-        if (routeId == null) {
-          invariantResponse(isUUID(accountId), '"accountId" is not a UUID')
-
-          const account = await getAccount(dbClient(), accountId)
-
-          return account.tenantId === tenant.id
-        }
-
-        invariantResponse(isUUID(routeId), '"routeId" is not a UUID')
-
-        const route = await getRoute(dbClient(), routeId)
-
-        return route.tenantId === tenant.id && route.toId === accountId
-      },
-    },
-  )
-
 const Routes = ({
   loaderData: {
     initiatorAddress,
@@ -191,7 +102,7 @@ const Routes = ({
     routes,
     defaultRouteId,
   },
-  params: { routeId },
+  params: { routeId, workspaceId, accountId },
 }: Route.ComponentProps) => {
   const { formId } = useOutletContext<{ formId: string }>()
 
@@ -200,7 +111,16 @@ const Routes = ({
       <TabBar
         action={
           <div className="py-2">
-            <AddRoute />
+            <SecondaryLinkButton
+              icon={Plus}
+              size="small"
+              to={href('/workspace/:workspaceId/accounts/:accountId/add', {
+                workspaceId,
+                accountId,
+              })}
+            >
+              Add route
+            </SecondaryLinkButton>
           </div>
         }
       >
@@ -287,51 +207,4 @@ const findInitiator = async ({
   }
 
   return null
-}
-
-const AddRoute = () => {
-  const [adding, setAdding] = useState(false)
-
-  const { possibleInitiators } = useLoaderData<typeof loader>()
-
-  useAfterSubmit(Intent.AddRoute, () => setAdding(false))
-
-  return (
-    <>
-      <SecondaryButton size="small" icon={Plus} onClick={() => setAdding(true)}>
-        Add route
-      </SecondaryButton>
-
-      <Modal title="Add route" open={adding} onClose={() => setAdding(false)}>
-        <Form>
-          <TextInput
-            required
-            label="Label"
-            name="label"
-            placeholder="New route"
-          />
-
-          <AddressSelect
-            required
-            isMulti={false}
-            label="Pilot Signer"
-            name="initiator"
-            placeholder="Select a wallet form the list"
-            options={possibleInitiators}
-          />
-
-          <Modal.Actions>
-            <PrimaryButton
-              submit
-              intent={Intent.AddRoute}
-              busy={useIsPending(Intent.AddRoute)}
-            >
-              Add
-            </PrimaryButton>
-            <Modal.CloseAction>Cancel</Modal.CloseAction>
-          </Modal.Actions>
-        </Form>
-      </Modal>
-    </>
-  )
 }

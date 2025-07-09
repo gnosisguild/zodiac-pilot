@@ -729,7 +729,7 @@ describe('Routes', () => {
         )
 
         await userEvent.click(
-          await screen.findByRole('button', { name: 'Add route' }),
+          await screen.findByRole('link', { name: 'Add route' }),
         )
 
         const { findByRole } = within(
