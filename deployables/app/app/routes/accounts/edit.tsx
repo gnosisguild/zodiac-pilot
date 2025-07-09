@@ -3,20 +3,16 @@ import { Page } from '@/components'
 import { ChainSelect, getRouteId } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
-  createRoute as baseCreateRoute,
   dbClient,
   getAccount,
   getOrCreateWallet,
   getRoute,
-  removeRoute,
-  setDefaultRoute,
   updateAccount,
   updateRoutePath,
-  type DBClient,
 } from '@zodiac/db'
-import type { Account, User } from '@zodiac/db/schema'
+import type { Account } from '@zodiac/db/schema'
 import {
-  getOptionalHexString,
+  getHexString,
   getOptionalString,
   getOptionalUUID,
   getString,
@@ -37,7 +33,6 @@ import {
   PrimaryButton,
   TextInput,
 } from '@zodiac/ui'
-import type { UUID } from 'crypto'
 import { useId } from 'react'
 import { href, Outlet, redirect } from 'react-router'
 import { prefixAddress } from 'ser-kit'
@@ -76,7 +71,7 @@ export const action = (args: Route.ActionArgs) =>
       request,
       params: { accountId, workspaceId },
       context: {
-        auth: { user, tenant },
+        auth: { user },
       },
     }) => {
       const data = await request.formData()
@@ -88,31 +83,14 @@ export const action = (args: Route.ActionArgs) =>
           label: getString(data, 'label'),
         })
 
-        const initiator = getOptionalHexString(data, 'initiator')
-        const selectedRouteId = getOptionalString(data, 'serRouteId')
         const routeId = getOptionalUUID(data, 'routeId')
 
         if (routeId == null) {
-          if (initiator == null) {
-            return
-          }
-
-          const route = await createRoute(tx, user, {
-            accountId,
-            initiator,
-            selectedRouteId,
-          })
-
-          await setDefaultRoute(tx, tenant, user, route)
-
           return
         }
 
-        if (initiator == null) {
-          await removeRoute(tx, routeId)
-
-          return
-        }
+        const initiator = getHexString(data, 'initiator')
+        const selectedRouteId = getOptionalString(data, 'serRouteId')
 
         const account = await getAccount(tx, accountId)
         const waypoints = await getWaypoints(
@@ -210,30 +188,6 @@ export default EditAccount
 
 enum Intent {
   Save = 'Save',
-}
-
-type CreateRouteOptions = {
-  initiator: HexAddress
-  accountId: UUID
-  selectedRouteId: string | undefined
-}
-
-const createRoute = async (
-  db: DBClient,
-  user: User,
-  { accountId, initiator, selectedRouteId }: CreateRouteOptions,
-) => {
-  const wallet = await getOrCreateWallet(db, user, {
-    address: initiator,
-    label: 'Unnamed wallet',
-  })
-  const account = await getAccount(db, accountId)
-
-  return baseCreateRoute(db, account.tenantId, {
-    walletId: wallet.id,
-    accountId,
-    waypoints: await getWaypoints(wallet.address, account, selectedRouteId),
-  })
 }
 
 const getWaypoints = async (

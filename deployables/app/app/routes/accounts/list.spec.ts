@@ -1,6 +1,6 @@
 import { getAvailableChains } from '@/balances-server'
 import { render } from '@/test-utils'
-import { screen, within } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { dbClient, getAccounts } from '@zodiac/db'
 import {
@@ -73,7 +73,7 @@ describe.sequential('List Accounts', () => {
   })
 
   describe('Edit', () => {
-    it('is possible to edit a route', async () => {
+    it('is possible to edit an account', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -95,7 +95,7 @@ describe.sequential('List Accounts', () => {
       await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
 
       await expectRouteToBe(
-        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId?', {
+        href('/workspace/:workspaceId/accounts/:accountId/no-routes', {
           workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
         }),
@@ -123,15 +123,11 @@ describe.sequential('List Accounts', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Account options' }),
       )
+      await userEvent.click(await screen.findByRole('link', { name: 'Delete' }))
+
       await userEvent.click(
         await screen.findByRole('button', { name: 'Delete' }),
       )
-
-      const { getByRole } = within(
-        screen.getByRole('dialog', { name: 'Confirm delete' }),
-      )
-
-      await userEvent.click(getByRole('button', { name: 'Delete' }))
 
       await waitForPendingActions()
 

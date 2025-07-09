@@ -6,7 +6,7 @@ import {
   postMessage,
   render,
 } from '@/test-utils'
-import { screen, waitFor, within } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   dbClient,
@@ -97,15 +97,11 @@ describe.sequential('List Accounts', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Account options' }),
       )
+      await userEvent.click(await screen.findByRole('link', { name: 'Delete' }))
+
       await userEvent.click(
         await screen.findByRole('button', { name: 'Delete' }),
       )
-
-      const { getByRole } = within(
-        screen.getByRole('dialog', { name: 'Confirm delete' }),
-      )
-
-      await userEvent.click(getByRole('button', { name: 'Delete' }))
 
       expect(mockPostMessage).toHaveBeenCalledWith(
         {
@@ -114,37 +110,6 @@ describe.sequential('List Accounts', () => {
         } satisfies CompanionAppMessage,
         '*',
       )
-    })
-
-    it('hides the dialog once the delete is confirmed', async () => {
-      const route = createMockExecutionRoute({ label: 'Test route' })
-
-      await render(href('/offline/accounts'), {
-        availableRoutes: [route],
-      })
-
-      await loadAndActivateRoute(route)
-
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Account options' }),
-      )
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Delete' }),
-      )
-
-      const { getByRole } = within(
-        screen.getByRole('dialog', { name: 'Confirm delete' }),
-      )
-
-      await userEvent.click(getByRole('button', { name: 'Delete' }))
-
-      await postMessage({ type: CompanionResponseMessageType.DELETED_ROUTE })
-
-      await waitFor(() => {
-        expect(
-          screen.queryByRole('dialog', { name: 'Confirm delete' }),
-        ).not.toBeInTheDocument()
-      })
     })
   })
 

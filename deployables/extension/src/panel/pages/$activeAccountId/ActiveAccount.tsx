@@ -129,6 +129,11 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
       return null
     }
+
+    case Intent.RefreshAccount: {
+      // This action is just here to call all loaders again
+      return null
+    }
   }
 }
 

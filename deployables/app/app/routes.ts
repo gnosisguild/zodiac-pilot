@@ -80,10 +80,20 @@ export default [
       ]),
 
       layout('routes/walletProvider.tsx', { id: 'offline-wallet-provider' }, [
+        route(
+          'accounts',
+          'routes/local-accounts/list.tsx',
+          { id: 'offline-list-accounts' },
+          [
+            route(
+              'delete/:accountId',
+              'routes/local-accounts/delete-account.tsx',
+              { id: 'offline-delete-account' },
+            ),
+          ],
+        ),
+
         ...prefix('accounts', [
-          index('routes/local-accounts/list.tsx', {
-            id: 'offline-accounts-list',
-          }),
           route('create', 'routes/local-accounts/create.tsx', {
             id: 'offline-create-account',
           }),
@@ -143,18 +153,39 @@ export default [
           route('delete-wallet/:walletId', 'routes/auth/delete-wallet.tsx'),
         ]),
 
+        route('accounts', 'routes/accounts/list.tsx', [
+          route('delete/:accountId', 'routes/accounts/delete-account.tsx'),
+        ]),
+
         ...prefix('accounts', [
-          index('routes/accounts/list.tsx'),
           route('create/:prefixedAddress?', 'routes/accounts/create.tsx'),
 
           route(':accountId', 'routes/accounts/edit.tsx', [
             index('routes/accounts/load-default-route.ts'),
-            route('route/:routeId?', 'routes/accounts/routes.tsx'),
+
+            layout('routes/accounts/routes-layout.tsx', [
+              route('no-routes', 'routes/accounts/no-routes.tsx', [
+                route('add', 'routes/accounts/add-route.tsx', {
+                  id: 'add-first-route',
+                }),
+              ]),
+              route('route/:routeId', 'routes/accounts/routes.tsx', [
+                route('edit', 'routes/accounts/edit-route.tsx'),
+                route('remove', 'routes/accounts/remove-route.tsx'),
+                route('add', 'routes/accounts/add-route.tsx'),
+              ]),
+            ]),
           ]),
         ]),
 
+        route('local-accounts', 'routes/local-accounts/list.tsx', [
+          route(
+            'delete/:accountId',
+            'routes/local-accounts/delete-account.tsx',
+          ),
+        ]),
+
         ...prefix('local-accounts', [
-          index('routes/local-accounts/list.tsx'),
           route('create', 'routes/local-accounts/create.tsx'),
 
           ...prefix(':accountId', [

@@ -1,9 +1,7 @@
-import { ConfirmableAction } from '@/components'
 import { Chain } from '@/routes-ui'
 import { useWorkspaceId } from '@/workspaces'
 import { CHAIN_NAME } from '@zodiac/chains'
 import type { Account } from '@zodiac/db/schema'
-import { useIsPending } from '@zodiac/hooks'
 import {
   Address,
   GhostLinkButton,
@@ -12,11 +10,8 @@ import {
   TableRow,
   Tag,
 } from '@zodiac/ui'
-import classNames from 'classnames'
-import { Pencil } from 'lucide-react'
-import { useState } from 'react'
+import { Pencil, Trash2 } from 'lucide-react'
 import { href } from 'react-router'
-import { Intent } from './intents'
 
 type RemoteAccountProps = {
   account: Account
@@ -54,27 +49,9 @@ export const RemoteAccount = ({ account, active }: RemoteAccountProps) => {
 }
 
 const Actions = ({ accountId }: { accountId: string }) => {
-  const submitting = useIsPending(
-    undefined,
-    (data) => data.get('accountId') === accountId,
-  )
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [confirmingDelete, setConfirmingDelete] = useState(false)
-
   return (
-    <div
-      className={classNames(
-        'flex justify-end gap-1 transition-opacity group-hover:opacity-100',
-        submitting || menuOpen ? 'opacity-100' : 'opacity-0',
-      )}
-    >
-      <MeatballMenu
-        open={menuOpen || confirmingDelete}
-        size="tiny"
-        label="Account options"
-        onRequestShow={() => setMenuOpen(true)}
-        onRequestHide={() => setMenuOpen(false)}
-      >
+    <div className="flex justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+      <MeatballMenu size="tiny" label="Account options">
         <GhostLinkButton
           to={href('/workspace/:workspaceId/accounts/:accountId', {
             accountId,
@@ -87,17 +64,18 @@ const Actions = ({ accountId }: { accountId: string }) => {
           Edit
         </GhostLinkButton>
 
-        <ConfirmableAction
-          title="Confirm delete"
-          description="Are you sure you want to delete this account? This action cannot be undone."
-          busy={submitting}
-          intent={Intent.DeleteAccount}
-          onConfirmChange={setConfirmingDelete}
+        <GhostLinkButton
+          to={href('/workspace/:workspaceId/accounts/delete/:accountId', {
+            workspaceId: useWorkspaceId(),
+            accountId,
+          })}
+          size="tiny"
           style="critical"
-          context={{ accountId }}
+          align="left"
+          icon={Trash2}
         >
           Delete
-        </ConfirmableAction>
+        </GhostLinkButton>
       </MeatballMenu>
     </div>
   )

@@ -184,7 +184,7 @@ export function TableCell({
           className="focus:outline-hidden absolute inset-0 z-0"
         />
       )}
-      <div className="z-1 pointer-events-auto relative">{children}</div>
+      {children}
     </td>
   )
 }

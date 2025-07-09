@@ -1,17 +1,16 @@
 import { useAccount } from '@/accounts'
 import { useCompanionAppUrl, useCompanionAppUser } from '@/companion'
 import { useWindowId } from '@/port-handling'
-import { useAfterSubmit, useIsPending, useStableHandler } from '@zodiac/hooks'
+import { useIsPending } from '@zodiac/hooks'
 import {
   Divider,
   Form,
   GhostButton,
   GhostLinkButton,
+  InlineForm,
   MeatballMenu,
 } from '@zodiac/ui'
 import { CloudOff, List, Pencil, RefreshCcw, User } from 'lucide-react'
-import { useEffect, useRef, useState } from 'react'
-import { useRevalidator } from 'react-router'
 import { Intent } from './intents'
 
 export const AccountActions = () => {
@@ -19,23 +18,23 @@ export const AccountActions = () => {
   const user = useCompanionAppUser()
   const appUrl = useCompanionAppUrl()
   const windowId = useWindowId()
-  const [open, setOpen] = useState(false)
   const loggingIn = useIsPending(Intent.Login)
-
-  useAfterSubmit([Intent.EditAccount, Intent.ListAccounts], () =>
-    setOpen(false),
-  )
 
   return (
     <div className="flex shrink-0 items-center gap-1">
-      <MeatballMenu
-        open={open}
-        label="Account actions"
-        size="small"
-        onRequestShow={() => setOpen(true)}
-        onRequestHide={() => setOpen(false)}
-      >
-        <Refresh onRefresh={() => setOpen(false)} />
+      <MeatballMenu label="Account actions" size="small">
+        <InlineForm>
+          <GhostButton
+            submit
+            icon={RefreshCcw}
+            size="small"
+            align="left"
+            intent={Intent.RefreshAccount}
+            busy={useIsPending(Intent.RefreshAccount)}
+          >
+            Refresh account
+          </GhostButton>
+        </InlineForm>
 
         <Divider />
 
@@ -86,7 +85,6 @@ export const AccountActions = () => {
               size="small"
               align="left"
               icon={User}
-              onClick={() => setOpen(false)}
             >
               View Profile
             </GhostLinkButton>
@@ -94,32 +92,5 @@ export const AccountActions = () => {
         </Form>
       </MeatballMenu>
     </div>
-  )
-}
-
-const Refresh = ({ onRefresh }: { onRefresh: () => void }) => {
-  const revalidator = useRevalidator()
-
-  const onRefreshRef = useStableHandler(onRefresh)
-  const stateRef = useRef(revalidator.state)
-
-  useEffect(() => {
-    if (revalidator.state === 'idle' && stateRef.current === 'loading') {
-      onRefreshRef.current()
-    }
-
-    stateRef.current = revalidator.state
-  }, [onRefreshRef, revalidator.state])
-
-  return (
-    <GhostButton
-      icon={RefreshCcw}
-      size="small"
-      align="left"
-      onClick={() => revalidator.revalidate()}
-      busy={revalidator.state === 'loading'}
-    >
-      Refresh account
-    </GhostButton>
   )
 }
