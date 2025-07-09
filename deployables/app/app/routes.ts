@@ -80,10 +80,20 @@ export default [
       ]),
 
       layout('routes/walletProvider.tsx', { id: 'offline-wallet-provider' }, [
+        route(
+          'accounts',
+          'routes/local-accounts/list.tsx',
+          { id: 'offline-list-accounts' },
+          [
+            route(
+              'delete/:accountId',
+              'routes/local-accounts/delete-account.tsx',
+              { id: 'offline-delete-account' },
+            ),
+          ],
+        ),
+
         ...prefix('accounts', [
-          index('routes/local-accounts/list.tsx', {
-            id: 'offline-accounts-list',
-          }),
           route('create', 'routes/local-accounts/create.tsx', {
             id: 'offline-create-account',
           }),
@@ -162,8 +172,14 @@ export default [
           ]),
         ]),
 
+        route('local-accounts', 'routes/local-accounts/list.tsx', [
+          route(
+            'delete/:accountId',
+            'routes/local-accounts/delete-account.tsx',
+          ),
+        ]),
+
         ...prefix('local-accounts', [
-          index('routes/local-accounts/list.tsx'),
           route('create', 'routes/local-accounts/create.tsx'),
 
           ...prefix(':accountId', [

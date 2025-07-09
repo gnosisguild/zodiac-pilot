@@ -12,15 +12,11 @@ import {
   GhostButton,
   GhostLinkButton,
   MeatballMenu,
-  Modal,
-  PrimaryButton,
   TableCell,
   TableRow,
   Tag,
 } from '@zodiac/ui'
-import classNames from 'classnames'
 import { Pencil, Trash2, UploadIcon } from 'lucide-react'
-import { useEffect, useState } from 'react'
 import { href, useSubmit } from 'react-router'
 import { Intent } from './intents'
 
@@ -60,32 +56,40 @@ export const LocalAccount = ({ route, active }: LocalAccountProps) => {
 }
 
 const Actions = ({ routeId }: { routeId: string }) => {
-  const submitting = useIsPending(
-    undefined,
-    (data) => data.get('routeId') === routeId,
-  )
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [confirmingDelete, setConfirmingDelete] = useState(false)
+  const workspaceId = useOptionalWorkspaceId()
 
   return (
-    <div
-      className={classNames(
-        'flex justify-end gap-1 transition-opacity group-hover:opacity-100',
-        submitting || menuOpen ? 'opacity-100' : 'opacity-0',
-      )}
-    >
-      <MeatballMenu
-        open={menuOpen || confirmingDelete}
-        size="tiny"
-        label="Account options"
-        onRequestShow={() => setMenuOpen(true)}
-        onRequestHide={() => setMenuOpen(false)}
-      >
+    <div className="flex justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+      <MeatballMenu size="tiny" label="Account options">
         {useIsSignedIn() && <Upload routeId={routeId} />}
 
-        <Edit routeId={routeId} />
+        <GhostLinkButton
+          to={href('/offline/accounts/:accountId', { accountId: routeId })}
+          align="left"
+          size="tiny"
+          icon={Pencil}
+        >
+          Edit
+        </GhostLinkButton>
 
-        <Delete routeId={routeId} onConfirmChange={setConfirmingDelete} />
+        <GhostLinkButton
+          to={
+            workspaceId
+              ? href(
+                  '/workspace/:workspaceId/local-accounts/delete/:accountId',
+                  { workspaceId, accountId: routeId },
+                )
+              : href('/offline/accounts/delete/:accountId', {
+                  accountId: routeId,
+                })
+          }
+          align="left"
+          size="tiny"
+          icon={Trash2}
+          style="critical"
+        >
+          Delete
+        </GhostLinkButton>
       </MeatballMenu>
     </div>
   )
@@ -135,72 +139,6 @@ const Upload = ({ routeId }: { routeId: string }) => {
         Upload
       </GhostButton>
     </Form>
-  )
-}
-
-const Edit = ({ routeId }: { routeId: string }) => (
-  <GhostLinkButton
-    to={href('/offline/accounts/:accountId', { accountId: routeId })}
-    align="left"
-    size="tiny"
-    icon={Pencil}
-  >
-    Edit
-  </GhostLinkButton>
-)
-
-const Delete = ({
-  routeId,
-  onConfirmChange,
-}: {
-  routeId: string
-  onConfirmChange: (state: boolean) => void
-}) => {
-  const [confirmDelete, setConfirmDelete] = useState(false)
-  const submitting = useIsPending(
-    Intent.Delete,
-    (data) => data.get('routeId') === routeId,
-  )
-
-  useEffect(() => {
-    onConfirmChange(confirmDelete)
-  }, [confirmDelete, onConfirmChange])
-
-  return (
-    <>
-      <GhostButton
-        align="left"
-        size="tiny"
-        icon={Trash2}
-        style="critical"
-        onClick={() => setConfirmDelete(true)}
-        busy={submitting}
-      >
-        Delete
-      </GhostButton>
-
-      <Modal
-        title="Confirm delete"
-        onClose={() => setConfirmDelete(false)}
-        open={confirmDelete}
-        description="Are you sure you want to delete this account? This action cannot be undone."
-      >
-        <Form intent={Intent.Delete} onSubmit={() => setConfirmDelete(false)}>
-          <Modal.Actions>
-            <PrimaryButton
-              submit
-              name="routeId"
-              value={routeId}
-              busy={submitting}
-            >
-              Delete
-            </PrimaryButton>
-
-            <Modal.CloseAction>Cancel</Modal.CloseAction>
-          </Modal.Actions>
-        </Form>
-      </Modal>
-    </>
   )
 }
 

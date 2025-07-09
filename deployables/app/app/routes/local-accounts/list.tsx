@@ -32,7 +32,7 @@ import {
   TableRow,
 } from '@zodiac/ui'
 import { Suspense, type PropsWithChildren } from 'react'
-import { Await, href, useRevalidator } from 'react-router'
+import { Await, href, Outlet, useRevalidator } from 'react-router'
 import { splitPrefixedAddress } from 'ser-kit'
 import type { Route } from './+types/list'
 import { Intent } from './intents'
@@ -138,22 +138,6 @@ export const clientAction = async ({
   const intent = getString(data, 'intent')
 
   switch (intent) {
-    case Intent.Delete: {
-      const { promise, resolve } = Promise.withResolvers<void>()
-
-      companionRequest(
-        {
-          type: CompanionAppMessageType.DELETE_ROUTE,
-          routeId: getString(data, 'routeId'),
-        },
-        () => resolve(),
-      )
-
-      await promise
-
-      return null
-    }
-
     case Intent.Upload: {
       const uploadResult = await serverAction()
 
@@ -254,6 +238,8 @@ const ListRoutes = ({
           </Suspense>
         </OnlyConnected>
       </Page.Main>
+
+      <Outlet />
     </Page>
   )
 }
