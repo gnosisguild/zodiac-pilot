@@ -7,6 +7,7 @@ import {
   userFactory,
   workspaceFactory,
 } from '@zodiac/db/test-utils'
+import { expectRouteToBe } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { describe, expect, it } from 'vitest'
 
@@ -108,7 +109,7 @@ describe('Workspaces', () => {
 
       await workspaceFactory.create(tenant, user, { label: 'Test workspace' })
 
-      await render(
+      const { waitForPendingActions } = await render(
         href('/workspace/:workspaceId/admin/workspaces', {
           workspaceId: tenant.defaultWorkspaceId,
         }),
@@ -127,11 +128,49 @@ describe('Workspaces', () => {
         await screen.findByRole('button', { name: 'Remove' }),
       )
 
+      await waitForPendingActions()
+
       await expect(
         getWorkspaces(dbClient(), { tenantId: tenant.id }),
       ).resolves.toEqual([
-        await getWorkspace(dbClient(), tenant.defaultWorkspaceId),
+        expect.objectContaining(
+          await getWorkspace(dbClient(), tenant.defaultWorkspaceId),
+        ),
       ])
+    })
+
+    it('redirects to the default workspace when the current one was deleted', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const workspace = await workspaceFactory.create(tenant, user, {
+        label: 'Test workspace',
+      })
+
+      await render(
+        href('/workspace/:workspaceId/admin/workspaces', {
+          workspaceId: workspace.id,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', {
+          name: 'Workspace options',
+          description: 'Test workspace',
+        }),
+      )
+      await userEvent.click(await screen.findByRole('link', { name: 'Remove' }))
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Remove' }),
+      )
+
+      await expectRouteToBe(
+        href('/workspace/:workspaceId/admin/workspaces', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
+      )
     })
     it.todo('is not possible to remove the default workspace')
 
