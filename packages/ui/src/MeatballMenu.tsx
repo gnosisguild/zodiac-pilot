@@ -3,7 +3,7 @@ import { useState, type PropsWithChildren } from 'react'
 import { GhostButton, type BaseButtonProps } from './buttons'
 import { Stick } from './overlays/Stick'
 
-type MeatballMenuProps = Pick<BaseButtonProps, 'size'> &
+type MeatballMenuProps = Pick<BaseButtonProps, 'size' | 'busy'> &
   PropsWithChildren<{
     label: string
   }>
