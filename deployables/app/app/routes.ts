@@ -152,7 +152,9 @@ export default [
 
           route(':accountId', 'routes/accounts/edit.tsx', [
             index('routes/accounts/load-default-route.ts'),
-            route('new-route', 'routes/accounts/new-route.tsx'),
+            route('new-route', 'routes/accounts/routes.tsx', {
+              id: 'new-route',
+            }),
             route('route/:routeId', 'routes/accounts/routes.tsx', [
               route('edit', 'routes/accounts/edit-route.tsx'),
             ]),

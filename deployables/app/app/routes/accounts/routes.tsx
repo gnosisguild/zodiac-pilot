@@ -249,7 +249,13 @@ const Routes = ({
 
   return (
     <>
-      <TabBar action={<AddRoute />}>
+      <TabBar
+        action={
+          <div className="py-2">
+            <AddRoute />
+          </div>
+        }
+      >
         {routes.map((route) => (
           <RouteTab
             key={route.id}

@@ -379,7 +379,7 @@ describe('Routes', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Route options' }),
       )
-      await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
+      await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
 
       await userEvent.click(
         await screen.findByRole('checkbox', { name: 'Use as default route' }),
@@ -426,7 +426,7 @@ describe('Routes', () => {
       await userEvent.click(
         await findByRole('button', { name: 'Route options' }),
       )
-      await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
+      await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
 
       await userEvent.click(
         await screen.findByRole('checkbox', { name: 'Use as default route' }),
@@ -469,7 +469,7 @@ describe('Routes', () => {
       await userEvent.click(
         await screen.findByRole('button', { name: 'Route options' }),
       )
-      await userEvent.click(await screen.findByRole('button', { name: 'Edit' }))
+      await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
 
       await userEvent.click(
         await screen.findByRole('button', { name: 'Update' }),
@@ -687,9 +687,7 @@ describe('Routes', () => {
         await userEvent.click(
           await screen.findByRole('button', { name: 'Route options' }),
         )
-        await userEvent.click(
-          await screen.findByRole('button', { name: 'Edit' }),
-        )
+        await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
 
         const { findByRole } = within(
           await screen.findByRole('dialog', { name: 'Edit route' }),
@@ -911,7 +909,7 @@ describe('Routes', () => {
       await removeRoute(route)
 
       await expectRouteToBe(
-        href('/workspace/:workspaceId/accounts/:accountId', {
+        href('/workspace/:workspaceId/accounts/:accountId/new-route', {
           workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
         }),
