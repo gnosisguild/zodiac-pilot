@@ -19,7 +19,9 @@ import {
 } from '@zodiac/db/test-utils'
 import {
   createMockEoaAccount,
+  createMockExecutionRoute,
   createMockRoute,
+  createMockSerRoute,
   createMockStartingWaypoint,
   createMockWaypoints,
 } from '@zodiac/modules/test-utils'
@@ -77,6 +79,10 @@ describe('Routes', () => {
       )
 
       await userEvent.click(
+        await screen.findByRole('link', { name: 'Add route' }),
+      )
+
+      await userEvent.click(
         await screen.findByRole('combobox', { name: 'Pilot Signer' }),
       )
 
@@ -110,86 +116,6 @@ describe('Routes', () => {
       )
 
       expect(await screen.findByText('Test Wallet')).toBeInTheDocument()
-    })
-
-    it('is possible to add an initiator', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
-
-      const account = await accountFactory.create(tenant, user)
-      const wallet = await walletFactory.create(user, {
-        label: 'Test Wallet',
-      })
-
-      mockQueryInitiators.mockResolvedValue([wallet.address])
-
-      const { waitForPendingActions, waitForPendingLoaders } = await render(
-        href('/workspace/:workspaceId/accounts/:accountId', {
-          accountId: account.id,
-          workspaceId: tenant.defaultWorkspaceId,
-        }),
-        { tenant, user },
-      )
-
-      await userEvent.click(
-        await screen.findByRole('combobox', { name: 'Pilot Signer' }),
-      )
-      await userEvent.click(
-        await screen.findByRole('option', { name: 'Test Wallet' }),
-      )
-
-      await waitForPendingLoaders()
-
-      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
-
-      await waitForPendingActions()
-
-      const [route] = await getRoutes(dbClient(), tenant.id, {
-        userId: user.id,
-        accountId: account.id,
-      })
-
-      expect(route).toMatchObject({
-        fromId: wallet.id,
-        toId: account.id,
-      })
-    })
-
-    it('is possible to remove the initiator', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
-
-      const account = await accountFactory.create(tenant, user)
-      const wallet = await walletFactory.create(user)
-      const route = await routeFactory.create(account, wallet)
-
-      mockQueryInitiators.mockResolvedValue([wallet.address])
-
-      const { waitForPendingActions, waitForPendingLoaders } = await render(
-        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          accountId: account.id,
-          routeId: route.id,
-        }),
-        { tenant, user },
-      )
-
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Remove Pilot Signer' }),
-      )
-
-      await waitForPendingLoaders()
-
-      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
-
-      await waitForPendingActions()
-
-      await expect(
-        getRoutes(dbClient(), tenant.id, {
-          accountId: account.id,
-          userId: user.id,
-        }),
-      ).resolves.toEqual([])
     })
 
     it('is possible to update the initiator', async () => {
@@ -243,13 +169,29 @@ describe('Routes', () => {
       const walletAddress = randomAddress()
 
       mockQueryInitiators.mockResolvedValue([walletAddress])
+      mockQueryRoutes.mockResolvedValue([
+        createMockSerRoute(createMockExecutionRoute()),
+      ])
 
-      const { waitForPendingActions, waitForPendingLoaders } = await render(
+      const { waitForPendingActions } = await render(
         href('/workspace/:workspaceId/accounts/:accountId', {
           accountId: account.id,
           workspaceId: tenant.defaultWorkspaceId,
         }),
         { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('link', { name: 'Add route' }),
+      )
+
+      const { findByRole } = within(
+        await screen.findByRole('dialog', { name: 'Add route' }),
+      )
+
+      await userEvent.type(
+        await findByRole('textbox', { name: 'Label' }),
+        'Test route',
       )
 
       await userEvent.click(
@@ -259,9 +201,7 @@ describe('Routes', () => {
         await screen.findByRole('option', { name: getAddress(walletAddress) }),
       )
 
-      await waitForPendingLoaders()
-
-      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+      await userEvent.click(await screen.findByRole('button', { name: 'Add' }))
 
       await waitForPendingActions()
 
@@ -285,8 +225,11 @@ describe('Routes', () => {
       const account = await accountFactory.create(tenant, user)
 
       mockQueryInitiators.mockResolvedValue([wallet.address])
+      mockQueryRoutes.mockResolvedValue([
+        createMockSerRoute(createMockExecutionRoute()),
+      ])
 
-      const { waitForPendingActions, waitForPendingLoaders } = await render(
+      const { waitForPendingActions } = await render(
         href('/workspace/:workspaceId/accounts/:accountId', {
           accountId: account.id,
           workspaceId: tenant.defaultWorkspaceId,
@@ -295,15 +238,24 @@ describe('Routes', () => {
       )
 
       await userEvent.click(
-        await screen.findByRole('combobox', { name: 'Pilot Signer' }),
+        await screen.findByRole('link', { name: 'Add route' }),
+      )
+
+      const { findByRole } = within(
+        await screen.findByRole('dialog', { name: 'Add route' }),
+      )
+
+      await userEvent.type(
+        await findByRole('textbox', { name: 'Label' }),
+        'Test route',
+      )
+      await userEvent.click(
+        await findByRole('combobox', { name: 'Pilot Signer' }),
       )
       await userEvent.click(
         await screen.findByRole('option', { name: 'Test Wallet' }),
       )
-
-      await waitForPendingLoaders()
-
-      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+      await userEvent.click(await screen.findByRole('button', { name: 'Add' }))
 
       await waitForPendingActions()
 
@@ -503,12 +455,25 @@ describe('Routes', () => {
 
       mockQueryRoutes.mockResolvedValue([newRoute])
 
-      const { waitForPendingLoaders, waitForPendingActions } = await render(
+      const { waitForPendingActions } = await render(
         href('/workspace/:workspaceId/accounts/:accountId', {
           workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
         }),
         { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('link', { name: 'Add route' }),
+      )
+
+      const { findByRole } = within(
+        await screen.findByRole('dialog', { name: 'Add route' }),
+      )
+
+      await userEvent.type(
+        await findByRole('textbox', { name: 'Label' }),
+        'Test route',
       )
 
       await userEvent.click(
@@ -518,9 +483,7 @@ describe('Routes', () => {
         await screen.findByRole('option', { name: 'Test wallet' }),
       )
 
-      await waitForPendingLoaders()
-
-      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+      await userEvent.click(await screen.findByRole('button', { name: 'Add' }))
 
       await waitForPendingActions()
 
@@ -907,7 +870,7 @@ describe('Routes', () => {
       await removeRoute(route)
 
       await expectRouteToBe(
-        href('/workspace/:workspaceId/accounts/:accountId/new-route', {
+        href('/workspace/:workspaceId/accounts/:accountId/no-routes', {
           workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
         }),

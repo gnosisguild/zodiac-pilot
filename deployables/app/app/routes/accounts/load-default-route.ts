@@ -40,7 +40,7 @@ export const loader = (args: Route.LoaderArgs) =>
         }
 
         return redirect(
-          href('/workspace/:workspaceId/accounts/:accountId/new-route', {
+          href('/workspace/:workspaceId/accounts/:accountId/no-routes', {
             accountId,
             workspaceId,
           }),

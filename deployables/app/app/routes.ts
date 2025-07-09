@@ -162,13 +162,18 @@ export default [
 
           route(':accountId', 'routes/accounts/edit.tsx', [
             index('routes/accounts/load-default-route.ts'),
-            route('new-route', 'routes/accounts/routes.tsx', {
-              id: 'new-route',
-            }),
-            route('add', 'routes/accounts/add-route.tsx'),
-            route('route/:routeId', 'routes/accounts/routes.tsx', [
-              route('edit', 'routes/accounts/edit-route.tsx'),
-              route('remove', 'routes/accounts/remove-route.tsx'),
+
+            layout('routes/accounts/routes-layout.tsx', [
+              route('no-routes', 'routes/accounts/no-routes.tsx', [
+                route('add', 'routes/accounts/add-route.tsx', {
+                  id: 'add-first-route',
+                }),
+              ]),
+              route('route/:routeId', 'routes/accounts/routes.tsx', [
+                route('edit', 'routes/accounts/edit-route.tsx'),
+                route('remove', 'routes/accounts/remove-route.tsx'),
+                route('add', 'routes/accounts/add-route.tsx'),
+              ]),
             ]),
           ]),
         ]),

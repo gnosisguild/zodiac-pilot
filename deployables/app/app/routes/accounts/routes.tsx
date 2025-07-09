@@ -3,22 +3,18 @@ import { getRouteId, RouteSelect } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
-  findDefaultRoute,
   getAccount,
   getRoute,
-  getRoutes,
   getWallet,
   getWallets,
 } from '@zodiac/db'
 import { queryRoutes } from '@zodiac/modules'
 import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
-import { AddressSelect, Form, SecondaryLinkButton, TabBar } from '@zodiac/ui'
+import { AddressSelect, Form } from '@zodiac/ui'
 import type { UUID } from 'crypto'
-import { Plus } from 'lucide-react'
-import { href, Outlet, useOutletContext } from 'react-router'
+import { Outlet, useOutletContext } from 'react-router'
 import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/routes'
-import { RouteTab } from './RouteTab'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -27,7 +23,7 @@ export const loader = (args: Route.LoaderArgs) =>
       request,
       params: { accountId, routeId },
       context: {
-        auth: { tenant, user },
+        auth: { user },
       },
     }) => {
       const url = new URL(request.url)
@@ -38,15 +34,11 @@ export const loader = (args: Route.LoaderArgs) =>
         '"routeId" is not a UUID',
       )
 
-      const [account, wallets, routes, route, defaultRoute] = await Promise.all(
-        [
-          getAccount(dbClient(), accountId),
-          getWallets(dbClient(), user.id),
-          getRoutes(dbClient(), tenant.id, { accountId, userId: user.id }),
-          routeId == null ? null : await getRoute(dbClient(), routeId),
-          findDefaultRoute(dbClient(), tenant, user, accountId),
-        ],
-      )
+      const [account, wallets, route] = await Promise.all([
+        getAccount(dbClient(), accountId),
+        getWallets(dbClient(), user.id),
+        routeId == null ? null : await getRoute(dbClient(), routeId),
+      ])
 
       const initiators = await queryInitiators(
         prefixAddress(account.chainId, account.address),
@@ -80,8 +72,6 @@ export const loader = (args: Route.LoaderArgs) =>
         ],
         initiatorAddress,
         possibleRoutes: possibleRoutes.routes,
-        routes,
-        defaultRouteId: defaultRoute == null ? null : defaultRoute.routeId,
         comparableId:
           route == null
             ? defaultProposedRoute == null
@@ -99,52 +89,24 @@ const Routes = ({
     possibleInitiators,
     possibleRoutes,
     comparableId,
-    routes,
-    defaultRouteId,
   },
-  params: { routeId, workspaceId, accountId },
+  params: { routeId },
 }: Route.ComponentProps) => {
   const { formId } = useOutletContext<{ formId: string }>()
 
   return (
     <>
-      <TabBar
-        action={
-          <div className="py-2">
-            <SecondaryLinkButton
-              icon={Plus}
-              size="small"
-              to={href('/workspace/:workspaceId/accounts/:accountId/add', {
-                workspaceId,
-                accountId,
-              })}
-            >
-              Add route
-            </SecondaryLinkButton>
-          </div>
-        }
-      >
-        {routes.map((route) => (
-          <RouteTab
-            key={route.id}
-            route={route}
-            isDefault={defaultRouteId != null && route.id === defaultRouteId}
-          />
-        ))}
-      </TabBar>
-
       <input
         type="hidden"
         form={formId}
         name="initiator"
         value={initiatorAddress ?? ''}
       />
-      <input type="hidden" form={formId} name="routeId" value={routeId ?? ''} />
+      <input type="hidden" form={formId} name="routeId" value={routeId} />
 
       <Form method="GET">
         {({ submit }) => (
           <AddressSelect
-            isClearable
             key={routeId}
             isMulti={false}
             label="Pilot Signer"

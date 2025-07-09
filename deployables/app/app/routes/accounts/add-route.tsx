@@ -3,9 +3,11 @@ import { invariantResponse } from '@epic-web/invariant'
 import {
   createRoute,
   dbClient,
+  findDefaultRoute,
   getAccount,
   getOrCreateWallet,
   getWallets,
+  setDefaultRoute,
 } from '@zodiac/db'
 import { getHexString, getString } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
@@ -85,24 +87,34 @@ export const action = (args: Route.ActionArgs) =>
       const initiator = getHexString(data, 'initiator')
       const label = getString(data, 'label')
 
-      const wallet = await getOrCreateWallet(dbClient(), user, {
-        label: 'Unnamed wallet',
-        address: initiator,
-      })
-      const account = await getAccount(dbClient(), accountId)
+      const route = await dbClient().transaction(async (tx) => {
+        const wallet = await getOrCreateWallet(tx, user, {
+          label: 'Unnamed wallet',
+          address: initiator,
+        })
+        const account = await getAccount(tx, accountId)
 
-      const queryRoutesResult = await queryRoutes(
-        prefixAddress(undefined, initiator),
-        prefixAddress(account.chainId, account.address),
-      )
+        const queryRoutesResult = await queryRoutes(
+          prefixAddress(undefined, initiator),
+          prefixAddress(account.chainId, account.address),
+        )
 
-      const [defaultRoute] = queryRoutesResult.routes
+        const [defaultSerRoute] = queryRoutesResult.routes
 
-      const route = await createRoute(dbClient(), tenant.id, {
-        walletId: wallet.id,
-        accountId: account.id,
-        waypoints: defaultRoute.waypoints,
-        label,
+        const route = await createRoute(tx, tenant.id, {
+          walletId: wallet.id,
+          accountId: account.id,
+          waypoints: defaultSerRoute.waypoints,
+          label,
+        })
+
+        const defaultRoute = await findDefaultRoute(tx, tenant, user, accountId)
+
+        if (defaultRoute == null) {
+          await setDefaultRoute(tx, tenant, user, route)
+        }
+
+        return route
       })
 
       return redirect(
