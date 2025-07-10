@@ -31,6 +31,15 @@ type ChromeMock = typeof vitestChrome & {
   }
 
   tabs: {
+    // augment "get" with a very generic signature so that we can mock
+    // the promise return case better
+    get: MockedFunction<(typeof chrome.tabs)['get'] | ((tabId: number) => any)>
+    // augment "sendMessage" with a very generic signature so that we can mock
+    // the promise return case better
+    sendMessage: MockedFunction<
+      | (typeof chrome.tabs)['sendMessage']
+      | ((tabId: number, message: unknown) => any)
+    >
     remove: MockedFunction<(typeof chrome.tabs)['remove']>
   }
 }

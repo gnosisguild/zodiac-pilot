@@ -15,7 +15,6 @@ export const mockRpcRequest = async (
 
   chromeMock.tabs.get.mockResolvedValue(currentTab)
 
-  // @ts-expect-error I don't give a crap in a test helper
   chromeMock.tabs.sendMessage.mockImplementation((_, __, respond) => {
     if (typeof respond === 'function') {
       // @ts-expect-error see above
