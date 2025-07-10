@@ -1,10 +1,13 @@
 import { Page, useConnected } from '@/components'
 import { ChainSelect } from '@/routes-ui'
 import { CompanionAppMessageType } from '@zodiac/messages'
-import { verifyPrefixedAddress, type ExecutionRoute } from '@zodiac/schema'
+import {
+  jsonStringify,
+  verifyPrefixedAddress,
+  type ExecutionRoute,
+} from '@zodiac/schema'
 import { AddressInput, PrimaryButton, Warning } from '@zodiac/ui'
 import { useState } from 'react'
-import { useLoaderData } from 'react-router'
 import { splitPrefixedAddress } from 'ser-kit'
 import { z } from 'zod'
 import type { Route } from './+types/launch'
@@ -54,16 +57,16 @@ export async function loader({ params, request }: Route.LoaderArgs) {
   }
 }
 
-export default function LaunchPage() {
-  const { route, callback, setup } = useLoaderData<typeof loader>()
-
+export default function LaunchPage({
+  loaderData: { route, callback, setup },
+}: Route.ComponentProps) {
   const [launching, setLaunching] = useState(false)
 
   // Forward to extension panel via search params
   const searchParams = new URLSearchParams()
   if (callback) searchParams.set('callback', callback)
-  if (setup) searchParams.set('setup', JSON.stringify(setup))
-  if (route) searchParams.set('route', JSON.stringify(route))
+  if (setup) searchParams.set('setup', jsonStringify(setup))
+  if (route) searchParams.set('route', jsonStringify(route))
   const search = `?${searchParams.toString()}`
 
   const connected = useConnected()
