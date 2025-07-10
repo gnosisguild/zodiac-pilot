@@ -11,7 +11,7 @@ import {
   TableRowActions,
   Tag,
 } from '@zodiac/ui'
-import { Pencil, Trash2 } from 'lucide-react'
+import { ArrowRight, Pencil, Trash2 } from 'lucide-react'
 import { href } from 'react-router'
 
 type RemoteAccountProps = {
@@ -54,6 +54,18 @@ export const RemoteAccount = ({ account, active }: RemoteAccountProps) => {
               size="tiny"
             >
               Edit
+            </GhostLinkButton>
+
+            <GhostLinkButton
+              to={href('/workspace/:workspaceId/accounts/move/:accountId', {
+                accountId: account.id,
+                workspaceId: useWorkspaceId(),
+              })}
+              icon={ArrowRight}
+              align="left"
+              size="tiny"
+            >
+              Move
             </GhostLinkButton>
 
             <GhostLinkButton

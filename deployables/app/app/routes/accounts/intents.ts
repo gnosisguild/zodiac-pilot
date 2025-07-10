@@ -3,4 +3,5 @@ export enum Intent {
   EditRoute = 'EditRoute',
   RemoveRoute = 'RemoveRoute',
   DeleteAccount = 'DeleteAccount',
+  MoveAccount = 'MoveAccount',
 }
