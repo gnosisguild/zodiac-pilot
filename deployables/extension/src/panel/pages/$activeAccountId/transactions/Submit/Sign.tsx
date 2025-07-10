@@ -14,7 +14,7 @@ import {
   Spinner,
 } from '@zodiac/ui'
 import { useState } from 'react'
-import { Intent } from './intents'
+import { Intent } from '../intents'
 
 export const Sign = () => {
   const account = useAccount()
