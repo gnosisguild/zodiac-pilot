@@ -1,4 +1,4 @@
-import { EXPLORER_URL } from '@zodiac/chains'
+import { explorerUrl } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
 import { AddressInput, GhostLinkButton } from '@zodiac/ui'
 import { SquareArrowOutUpRight } from 'lucide-react'
@@ -28,7 +28,7 @@ export const AddressField = ({
           openInNewWindow
           iconOnly
           size="small"
-          to={`${EXPLORER_URL[chainId]}/search?q=${address}`}
+          to={`${explorerUrl(chainId)}/search?q=${address}`}
           icon={SquareArrowOutUpRight}
         >
           Show in block explorer

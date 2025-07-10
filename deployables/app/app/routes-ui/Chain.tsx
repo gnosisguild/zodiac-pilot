@@ -1,15 +1,14 @@
 import { Token } from '@/components'
-import { CHAIN_NAME } from '@zodiac/chains'
-import type { PropsWithChildren } from 'react'
+import { chainName } from '@zodiac/chains'
 import type { ChainId } from 'ser-kit'
 import { useChain } from './ChainContext'
 
-type ChainProps = PropsWithChildren<{
+type ChainProps = {
   chainId: ChainId
-}>
+}
 
-export const Chain = ({ chainId, children }: ChainProps) => {
+export const Chain = ({ chainId }: ChainProps) => {
   const chain = useChain(chainId)
 
-  return <Token logo={chain?.logo_url}>{CHAIN_NAME[chainId] ?? children}</Token>
+  return <Token logo={chain?.logo_url}>{chainName(chainId)}</Token>
 }

@@ -1,4 +1,4 @@
-import { CHAIN_NAME } from '@zodiac/chains'
+import { chainName } from '@zodiac/chains'
 import { SecondaryButton, Warning } from '@zodiac/ui'
 import type { PropsWithChildren } from 'react'
 import type { ChainId } from 'ser-kit'
@@ -17,7 +17,7 @@ export const SwitchChain = ({
   onSwitch,
   onDisconnect,
 }: SwitchChainProps) => {
-  const chainName = CHAIN_NAME[chainId] || `#${chainId}`
+  const name = chainName(chainId)
 
   return (
     <Section>
@@ -25,11 +25,11 @@ export const SwitchChain = ({
 
       <Warning title="Chain mismatch">
         The connected wallet belongs to a different chain. To use it you need to
-        switch back to <span className="font-semibold">{chainName}</span>
+        switch back to <span className="font-semibold">{name}</span>
         <Warning.Actions>
           {onSwitch && (
             <SecondaryButton onClick={onSwitch}>
-              Switch wallet to {chainName}
+              Switch wallet to {name}
             </SecondaryButton>
           )}
 

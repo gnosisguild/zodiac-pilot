@@ -1,6 +1,6 @@
 import { sentry } from '@/sentry-client'
 import { jsonRpcProvider } from '@/utils'
-import { EXPLORER_URL } from '@zodiac/chains'
+import { explorerUrl } from '@zodiac/chains'
 import { useIsPending, useStableHandler } from '@zodiac/hooks'
 import {
   CompanionAppMessageType,
@@ -124,7 +124,7 @@ export const SignTransaction = ({
 
             console.debug(`Transaction ${txHash} has been executed`, receipt)
 
-            const url = new URL(`tx/${txHash}`, EXPLORER_URL[chainId])
+            const url = new URL(`tx/${txHash}`, explorerUrl(chainId))
 
             if (onSignRef.current) {
               onSignRef.current({ explorerUrl: url.toString() })

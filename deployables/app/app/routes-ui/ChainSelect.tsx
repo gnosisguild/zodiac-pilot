@@ -1,8 +1,8 @@
 import { invariant } from '@epic-web/invariant'
-import { CHAIN_NAME, HIDDEN_CHAINS, verifyChainId } from '@zodiac/chains'
+import { Chain, HIDDEN_CHAINS, chainName, verifyChainId } from '@zodiac/chains'
 import { Select } from '@zodiac/ui'
 import type { ChainId } from 'ser-kit'
-import { Chain } from './Chain'
+import { Chain as ChainComponent } from './Chain'
 
 type ChainSelectProps = {
   disabled?: boolean
@@ -12,10 +12,12 @@ type ChainSelectProps = {
   name?: string
 }
 
-const allOptions = Object.entries(CHAIN_NAME).map(([chainId, name]) => ({
-  value: verifyChainId(parseInt(chainId)),
-  label: name,
-}))
+const allOptions = Object.values(Chain)
+  .filter((value): value is ChainId => typeof value === 'number')
+  .map((chainId) => ({
+    value: verifyChainId(chainId),
+    label: chainName(chainId),
+  }))
 
 const visibleOptions = allOptions.filter(
   (op) => !HIDDEN_CHAINS.includes(op.value),
@@ -54,7 +56,7 @@ export const ChainSelect = ({
         }
       }}
     >
-      {({ data: { value } }) => <Chain chainId={value} />}
+      {({ data: { value } }) => <ChainComponent chainId={value} />}
     </Select>
   )
 }

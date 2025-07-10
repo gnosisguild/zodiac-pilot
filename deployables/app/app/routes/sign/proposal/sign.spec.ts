@@ -7,7 +7,7 @@ import {
 import { jsonRpcProvider } from '@/utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Chain, EXPLORER_URL } from '@zodiac/chains'
+import { Chain, explorerUrl } from '@zodiac/chains'
 import {
   dbClient,
   getProposedTransaction,
@@ -522,7 +522,7 @@ describe('Sign', () => {
 
         expect(transaction).toHaveProperty(
           'explorerUrl',
-          new URL(`tx/${testHash}`, EXPLORER_URL[account.chainId]).toString(),
+          new URL(`tx/${testHash}`, explorerUrl(account.chainId)).toString(),
         )
       })
     })
