@@ -460,6 +460,30 @@ describe('Transactions', () => {
         ).not.toBeInTheDocument()
       })
 
+      it('does not clear transactions when the avatars stay the same', async () => {
+        const currentRoute = await mockRoute({
+          id: 'test-route',
+          avatar: randomPrefixedAddress(),
+        })
+        await saveLastUsedAccountId(currentRoute.id)
+
+        const { mockedTab } = await render('/test-route', {
+          initialState: { executed: [createConfirmedTransaction()] },
+        })
+
+        await mockIncomingRouteUpdate(
+          {
+            ...currentRoute,
+            label: 'New label',
+          },
+          mockedTab,
+        )
+
+        expect(
+          screen.queryByRole('alert', { name: 'No transactions' }),
+        ).not.toBeInTheDocument()
+      })
+
       it('does not warn when the route differs from the currently active one', async () => {
         const currentRoute = await mockRoute({
           id: 'test-route',
