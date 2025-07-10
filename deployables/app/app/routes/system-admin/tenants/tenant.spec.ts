@@ -14,6 +14,7 @@ import {
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
+import { waitForPendingActions } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { describe, expect, it } from 'vitest'
 
@@ -24,7 +25,7 @@ describe('Tenant', () => {
       const tenant = await tenantFactory.create(user)
       const feature = await featureFactory.create({ name: 'Test feature' })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/system-admin/tenant/:tenantId', { tenantId: tenant.id }),
         { user, tenant, isSystemAdmin: true },
       )
@@ -53,7 +54,7 @@ describe('Tenant', () => {
         featureIds: [feature.id],
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/system-admin/tenant/:tenantId', { tenantId: tenant.id }),
         { user, tenant, isSystemAdmin: true },
       )
@@ -84,7 +85,7 @@ describe('Tenant', () => {
         featureIds: [featureA.id],
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/system-admin/tenant/:tenantId', { tenantId: tenant.id }),
         { user, tenant, isSystemAdmin: true },
       )
@@ -111,7 +112,7 @@ describe('Tenant', () => {
       const tenant = await tenantFactory.create(user)
       const plan = await subscriptionPlanFactory.create()
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/system-admin/tenant/:tenantId', { tenantId: tenant.id }),
         { tenant, user, isSystemAdmin: true },
       )

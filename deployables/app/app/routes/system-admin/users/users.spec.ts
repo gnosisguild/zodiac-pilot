@@ -7,6 +7,7 @@ import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { getWorkOS } from '@workos-inc/authkit-react-router'
 import { tenantFactory, userFactory } from '@zodiac/db/test-utils'
+import { waitForPendingActions } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { describe, expect, it, vi } from 'vitest'
 
@@ -93,14 +94,11 @@ describe('Users', () => {
       mockListUsers.mockResolvedValue(createMockListResult([workOsUser]))
       mockGetUser.mockResolvedValue(workOsUser)
 
-      const { waitForPendingActions } = await render(
-        href('/system-admin/users'),
-        {
-          user,
-          tenant,
-          isSystemAdmin: true,
-        },
-      )
+      await render(href('/system-admin/users'), {
+        user,
+        tenant,
+        isSystemAdmin: true,
+      })
 
       await userEvent.click(await screen.findByRole('link', { name: 'Remove' }))
       await userEvent.type(

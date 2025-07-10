@@ -8,7 +8,7 @@ import {
   userFactory,
   workspaceFactory,
 } from '@zodiac/db/test-utils'
-import { expectRouteToBe } from '@zodiac/test-utils'
+import { expectRouteToBe, waitForPendingActions } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { describe, expect, it } from 'vitest'
 
@@ -76,7 +76,7 @@ describe('Workspaces', () => {
         defaultWorkspaceLabel: 'Workspace',
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/admin/workspaces', {
           workspaceId: tenant.defaultWorkspaceId,
         }),
@@ -110,7 +110,7 @@ describe('Workspaces', () => {
 
       await workspaceFactory.create(tenant, user, { label: 'Test workspace' })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/admin/workspaces', {
           workspaceId: tenant.defaultWorkspaceId,
         }),
@@ -210,7 +210,7 @@ describe('Workspaces', () => {
           workspaceId: workspace.id,
         })
 
-        const { waitForPendingActions } = await render(
+        await render(
           href('/workspace/:workspaceId/admin/workspaces', {
             workspaceId: tenant.defaultWorkspaceId,
           }),

@@ -37,6 +37,7 @@ import {
   randomAddress,
   randomEoaAddress,
   randomPrefixedAddress,
+  waitForPendingActions,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { prefixAddress } from 'ser-kit'
@@ -125,7 +126,7 @@ describe.sequential('List Accounts', () => {
         label: 'Test account',
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/local-accounts', {
           workspaceId: tenant.defaultWorkspaceId,
         }),
@@ -182,7 +183,7 @@ describe.sequential('List Accounts', () => {
         label: 'Test account',
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/local-accounts', {
           workspaceId: tenant.defaultWorkspaceId,
         }),
@@ -233,7 +234,7 @@ describe.sequential('List Accounts', () => {
         initiator: prefixAddress(undefined, initiator),
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/local-accounts', {
           workspaceId: tenant.defaultWorkspaceId,
         }),
@@ -285,7 +286,7 @@ describe.sequential('List Accounts', () => {
         initiator: prefixAddress(undefined, initiator),
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/local-accounts', {
           workspaceId: tenant.defaultWorkspaceId,
         }),
@@ -334,7 +335,7 @@ describe.sequential('List Accounts', () => {
         initiator: prefixAddress(undefined, initiator),
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/local-accounts', {
           workspaceId: tenant.defaultWorkspaceId,
         }),
@@ -395,7 +396,7 @@ describe.sequential('List Accounts', () => {
         initiator: prefixAddress(undefined, initiator),
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/local-accounts', {
           workspaceId: tenant.defaultWorkspaceId,
         }),
@@ -467,7 +468,7 @@ describe.sequential('List Accounts', () => {
         avatar: prefixAddress(account.chainId, account.address),
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/local-accounts', {
           workspaceId: tenant.defaultWorkspaceId,
         }),
@@ -572,7 +573,7 @@ describe.sequential('List Accounts', () => {
         avatar: randomPrefixedAddress(),
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/local-accounts', {
           workspaceId: tenant.defaultWorkspaceId,
         }),

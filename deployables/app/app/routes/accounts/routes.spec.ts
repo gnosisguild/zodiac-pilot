@@ -25,7 +25,11 @@ import {
   createMockStartingWaypoint,
   createMockWaypoints,
 } from '@zodiac/modules/test-utils'
-import { expectRouteToBe, randomAddress } from '@zodiac/test-utils'
+import {
+  expectRouteToBe,
+  randomAddress,
+  waitForPendingActions,
+} from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { queryInitiators, queryRoutes } from 'ser-kit'
 import { getAddress } from 'viem'
@@ -132,7 +136,7 @@ describe('Routes', () => {
 
       mockQueryInitiators.mockResolvedValue([walletA.address, walletB.address])
 
-      const { waitForPendingActions, waitForPendingLoaders } = await render(
+      const { waitForPendingLoaders } = await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
           workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
@@ -173,7 +177,7 @@ describe('Routes', () => {
         createMockSerRoute(createMockExecutionRoute()),
       ])
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/accounts/:accountId', {
           accountId: account.id,
           workspaceId: tenant.defaultWorkspaceId,
@@ -229,7 +233,7 @@ describe('Routes', () => {
         createMockSerRoute(createMockExecutionRoute()),
       ])
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/accounts/:accountId', {
           accountId: account.id,
           workspaceId: tenant.defaultWorkspaceId,
@@ -284,7 +288,7 @@ describe('Routes', () => {
 
       mockQueryInitiators.mockResolvedValue([walletA.address, walletB.address])
 
-      const { waitForPendingActions, waitForPendingLoaders } = await render(
+      const { waitForPendingLoaders } = await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
           workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
@@ -319,7 +323,7 @@ describe('Routes', () => {
       const account = await accountFactory.create(tenant, user)
       const route = await routeFactory.create(account, wallet)
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
           workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
@@ -362,7 +366,7 @@ describe('Routes', () => {
 
       await setDefaultRoute(dbClient(), tenant, user, routeA)
 
-      const { waitForPendingActions, waitForPendingLoaders } = await render(
+      const { waitForPendingLoaders } = await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
           workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
@@ -409,7 +413,7 @@ describe('Routes', () => {
 
       await setDefaultRoute(dbClient(), tenant, user, route)
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
           workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
@@ -455,7 +459,7 @@ describe('Routes', () => {
 
       mockQueryRoutes.mockResolvedValue([newRoute])
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/accounts/:accountId', {
           workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
@@ -528,7 +532,7 @@ describe('Routes', () => {
 
       mockQueryRoutes.mockResolvedValue([firstRoute, secondRoute])
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
           workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
@@ -638,7 +642,7 @@ describe('Routes', () => {
           label: 'Test route',
         })
 
-        const { waitForPendingActions } = await render(
+        await render(
           href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
             workspaceId: tenant.defaultWorkspaceId,
             accountId: account.id,
@@ -746,7 +750,7 @@ describe('Routes', () => {
         label: 'Test route',
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
           workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,

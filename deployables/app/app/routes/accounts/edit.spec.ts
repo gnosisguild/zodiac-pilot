@@ -7,6 +7,7 @@ import {
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
+import { waitForPendingActions } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { queryInitiators, queryRoutes } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -64,7 +65,7 @@ describe('Edit account', () => {
         label: '',
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/accounts/:accountId', {
           accountId: account.id,
           workspaceId: tenant.defaultWorkspaceId,

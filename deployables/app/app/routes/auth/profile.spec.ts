@@ -9,7 +9,7 @@ import {
   userFactory,
   walletFactory,
 } from '@zodiac/db/test-utils'
-import { randomAddress } from '@zodiac/test-utils'
+import { randomAddress, waitForPendingActions } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { getAddress } from 'viem'
 import { describe, expect, it } from 'vitest'
@@ -45,7 +45,7 @@ describe('Profile', () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/profile', {
           workspaceId: tenant.defaultWorkspaceId,
         }),
@@ -91,7 +91,7 @@ describe('Profile', () => {
         label: 'Existing wallet',
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/profile', {
           workspaceId: tenant.defaultWorkspaceId,
         }),
@@ -135,7 +135,7 @@ describe('Profile', () => {
         label: 'User wallet',
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/profile', {
           workspaceId: tenant.defaultWorkspaceId,
         }),
@@ -220,7 +220,7 @@ describe('Profile', () => {
         label: 'Existing wallet',
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/profile', {
           workspaceId: tenant.defaultWorkspaceId,
         }),

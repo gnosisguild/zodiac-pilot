@@ -25,7 +25,11 @@ import {
   walletFactory,
 } from '@zodiac/db/test-utils'
 import { multisigTransactionUrl } from '@zodiac/safe'
-import { randomAddress, randomHex } from '@zodiac/test-utils'
+import {
+  randomAddress,
+  randomHex,
+  waitForPendingActions,
+} from '@zodiac/test-utils'
 import { MockJsonRpcProvider } from '@zodiac/test-utils/rpc'
 import { href } from 'react-router'
 import {
@@ -501,7 +505,7 @@ describe('Sign', () => {
         state.push(testHash)
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/submit/proposal/:proposalId', {
           proposalId: proposal.id,
           workspaceId: tenant.defaultWorkspaceId,
@@ -551,7 +555,7 @@ describe('Sign', () => {
         state.push(testHash)
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/submit/proposal/:proposalId', {
           proposalId: proposal.id,
           workspaceId: tenant.defaultWorkspaceId,
@@ -599,7 +603,7 @@ describe('Sign', () => {
         state.push(testHash)
       })
 
-      const { waitForPendingActions } = await render(
+      await render(
         href('/workspace/:workspaceId/submit/proposal/:proposalId', {
           proposalId: proposal.id,
           workspaceId: tenant.defaultWorkspaceId,

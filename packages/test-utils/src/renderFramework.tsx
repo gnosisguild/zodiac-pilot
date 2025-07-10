@@ -23,7 +23,7 @@ import { InspectRoute } from './InspectRoute'
 import type { RenderOptions } from './render'
 import { sleepTillIdle } from './sleepTillIdle'
 import { TestElement, waitForTestElement } from './TestElement'
-import { waitForPendingActions, WatchForActions } from './WatchForActions'
+import { WatchForActions } from './WatchForActions'
 
 type Func = (...args: any[]) => unknown
 
@@ -46,7 +46,6 @@ export type RenderFrameworkOptions = Omit<RenderOptions, 'inspectRoutes'> & {
 }
 
 export type RenderFrameworkResult = RenderResult & {
-  waitForPendingActions: () => Promise<void>
   waitForPendingLoaders: () => Promise<void>
 }
 
@@ -114,7 +113,7 @@ export async function createRenderFramework<
     await waitForTestElement()
     await sleepTillIdle()
 
-    return { ...result, waitForPendingActions, waitForPendingLoaders }
+    return { ...result, waitForPendingLoaders }
   }
 }
 
