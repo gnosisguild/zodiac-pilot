@@ -13,7 +13,7 @@ export const chainName = (chain: Chain): string => {
 
 export const explorerUrl = (chain: Chain): URL => {
   const chainConfig = chains[chain]
-  const explorerUrl = chainConfig?.blockExplorers?.default?.url
-  invariant(explorerUrl != null, 'No explorer url found for chain')
-  return new URL(explorerUrl)
+  const url = chainConfig?.blockExplorers?.default?.url
+  invariant(url != null, 'No explorer url found for chain')
+  return new URL(url)
 }
