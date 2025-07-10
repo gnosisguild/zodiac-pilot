@@ -81,6 +81,10 @@ describe('Workspace Layout', () => {
         defaultWorkspaceLabel: 'Test workspace',
       })
 
+      await workspaceFactory.create(tenant, user, {
+        label: 'Another workspace',
+      })
+
       await render(
         href('/workspace/:workspaceId', {
           workspaceId: tenant.defaultWorkspaceId,
@@ -90,7 +94,21 @@ describe('Workspace Layout', () => {
 
       expect(await screen.findByText('Test workspace')).toBeInTheDocument()
     })
-    it.todo('offers a shortcut to the workspace creation page')
-    it.todo('hides the shortcut for non-admins')
+
+    it('hides the combobox when there is only one workspace', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      await render(
+        href('/workspace/:workspaceId', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
+        { tenant, user },
+      )
+
+      expect(
+        screen.queryByRole('combobox', { name: 'Current workspace' }),
+      ).not.toBeInTheDocument()
+    })
   })
 })

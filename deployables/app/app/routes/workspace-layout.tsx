@@ -136,23 +136,25 @@ const PageLayout = ({
               </SidebarHeader>
 
               <SidebarBody>
-                <InlineForm>
-                  {({ submit }) => (
-                    <Select
-                      label="Current workspace"
-                      name="workspaceId"
-                      defaultValue={{
-                        value: workspace.id,
-                        label: workspace.label,
-                      }}
-                      options={workspaces.map((workspace) => ({
-                        value: workspace.id,
-                        label: workspace.label,
-                      }))}
-                      onChange={submit}
-                    />
-                  )}
-                </InlineForm>
+                {workspaces.length > 1 && (
+                  <InlineForm>
+                    {({ submit }) => (
+                      <Select
+                        label="Current workspace"
+                        name="workspaceId"
+                        defaultValue={{
+                          value: workspace.id,
+                          label: workspace.label,
+                        }}
+                        options={workspaces.map((workspace) => ({
+                          value: workspace.id,
+                          label: workspace.label,
+                        }))}
+                        onChange={submit}
+                      />
+                    )}
+                  </InlineForm>
+                )}
 
                 <Navigation>
                   <Navigation.Section title="Tokens">
