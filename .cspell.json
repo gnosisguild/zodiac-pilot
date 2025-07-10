@@ -10,6 +10,7 @@
     "arbitrum",
     "authkit",
     "barnbridge",
+    "BASESEP",
     "berachain",
     "Bitmask",
     "bitshift",
@@ -40,6 +41,7 @@
     "gnosisguild",
     "googlechrome",
     "headlessui",
+    "hemi",
     "hexlify",
     "honeyswap",
     "IERC20",
@@ -49,9 +51,11 @@
     "instadapp",
     "isbot",
     "KARPATKEY",
+    "Katana",
     "keyvaluestorage",
     "Kiehn",
     "kleros",
+    "linea",
     "lucide",
     "Lukas",
     "mastercopy",
@@ -124,7 +128,8 @@
     "worldchain",
     "xcall",
     "xdai",
-    "xmlhttprequest"
+    "xmlhttprequest",
+    "ZKEVM"
   ],
   "flagWords": [],
   "ignorePaths": [

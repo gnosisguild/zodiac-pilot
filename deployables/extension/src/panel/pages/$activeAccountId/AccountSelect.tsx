@@ -1,7 +1,7 @@
 import { useAccount, useActivateAccount } from '@/accounts'
 import { type Account } from '@/companion'
 import { useTransactions } from '@/transactions'
-import { CHAIN_NAME } from '@zodiac/chains'
+import { chainName } from '@zodiac/chains'
 import { Select, Tag } from '@zodiac/ui'
 import { useEffect } from 'react'
 import { ClearTransactionsModal } from './ClearTransactionsModal'
@@ -54,7 +54,7 @@ export const AccountSelect = ({ accounts, onSelect }: AccountSelectProps) => {
               <span className="overflow-hidden text-ellipsis whitespace-nowrap">
                 {account.label}
               </span>
-              <Tag color="gray">{CHAIN_NAME[account.chainId]}</Tag>
+              <Tag color="gray">{chainName(account.chainId)}</Tag>
             </div>
           )
         }}

@@ -2,7 +2,7 @@ import { useAccount } from '@/accounts'
 import { useExecutionRoute } from '@/execution-routes'
 import { Translate, useTransaction } from '@/transactions'
 import type { ExecutionRoute } from '@/types'
-import { CHAIN_CURRENCY } from '@zodiac/chains'
+import { chainCurrency } from '@zodiac/chains'
 import { toMetaTransactionRequest } from '@zodiac/schema'
 import { CopyToClipboard, Divider, TextInput, ToggleButton } from '@zodiac/ui'
 import { formatEther, Fragment } from 'ethers'
@@ -204,7 +204,7 @@ const EtherValue = ({ value }: EtherValueProps) => {
       readOnly
       value={formatEther(value || 0)}
       label="Amount"
-      description={CHAIN_CURRENCY[chainId]}
+      description={chainCurrency(chainId)}
     />
   )
 }

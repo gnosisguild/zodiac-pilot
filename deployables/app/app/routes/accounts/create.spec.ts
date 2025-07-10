@@ -3,7 +3,7 @@ import { createMockChain, expectMessage, render } from '@/test-utils'
 import { isSmartContractAddress } from '@/utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Chain, CHAIN_NAME } from '@zodiac/chains'
+import { Chain, chainName } from '@zodiac/chains'
 import { dbClient, getAccounts } from '@zodiac/db'
 import { tenantFactory, userFactory } from '@zodiac/db/test-utils'
 import {
@@ -47,9 +47,11 @@ vi.mock('react-router', async (importOriginal) => {
 describe('New SafeAccount', () => {
   beforeEach(() => {
     mockGetAvailableChains.mockResolvedValue(
-      Object.entries(CHAIN_NAME).map(([chainId, name]) =>
-        createMockChain({ community_id: parseInt(chainId), name }),
-      ),
+      Object.values(Chain)
+        .filter((value): value is number => typeof value === 'number')
+        .map((chainId) =>
+          createMockChain({ community_id: chainId, name: chainName(chainId) }),
+        ),
     )
 
     mockIsSmartContractAddress.mockResolvedValue(true)

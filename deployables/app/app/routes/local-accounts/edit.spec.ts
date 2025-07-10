@@ -2,7 +2,7 @@ import { getAvailableChains } from '@/balances-server'
 import { createMockChain, expectMessage, render } from '@/test-utils'
 import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { Chain, CHAIN_NAME, verifyChainId } from '@zodiac/chains'
+import { Chain, chainName, verifyChainId } from '@zodiac/chains'
 import { CompanionAppMessageType } from '@zodiac/messages'
 import { createBlankRoute, updateAvatar, updateChainId } from '@zodiac/modules'
 import {
@@ -43,13 +43,15 @@ const mockQueryRoutes = vi.mocked(queryRoutes)
 describe('Edit local account', () => {
   beforeEach(() => {
     mockGetAvailableChains.mockResolvedValue(
-      Object.entries(CHAIN_NAME).map(([chainId, name]) =>
-        createMockChain({
-          name,
-          community_id: parseInt(chainId),
-          logo_url: 'http://chain-img.com',
-        }),
-      ),
+      Object.values(Chain)
+        .filter((value): value is number => typeof value === 'number')
+        .map((chainId) =>
+          createMockChain({
+            name: chainName(chainId),
+            community_id: chainId,
+            logo_url: 'http://chain-img.com',
+          }),
+        ),
     )
   })
 
@@ -105,24 +107,26 @@ describe('Edit local account', () => {
   })
 
   describe('Chain', () => {
-    it.each(Object.entries(CHAIN_NAME))(
-      'shows chainId "%s" as "%s"',
-      async (chainId, name) => {
-        const route = updateChainId(
-          updateAvatar(createBlankRoute(), { safe: randomAddress() }),
-          verifyChainId(parseInt(chainId)),
-        )
+    it.each(
+      Object.values(Chain).filter(
+        (value): value is number => typeof value === 'number',
+      ),
+    )('shows chainId %i as "%s"', async (chainId) => {
+      const name = chainName(chainId)
+      const route = updateChainId(
+        updateAvatar(createBlankRoute(), { safe: randomAddress() }),
+        verifyChainId(chainId),
+      )
 
-        await render(
-          href('/offline/accounts/:accountId/:data', {
-            accountId: route.id,
-            data: encode(route),
-          }),
-        )
+      await render(
+        href('/offline/accounts/:accountId/:data', {
+          accountId: route.id,
+          data: encode(route),
+        }),
+      )
 
-        expect(screen.getByText(name)).toBeInTheDocument()
-      },
-    )
+      expect(screen.getByText(name)).toBeInTheDocument()
+    })
 
     // This test even if it should work. It seems like
     // an issue within react router. I'll keep it around
