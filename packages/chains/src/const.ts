@@ -17,9 +17,11 @@ export enum Chain {
   GNO = 100,
   SEP = 11155111,
   MATIC = 137,
+  ZKEVM = 1101,
   ARB1 = 42161,
   AVAX = 43114,
   BASE = 8453,
+  BASESEP = 84532,
   CELO = 42220,
   SONIC = 146,
   BERACHAIN = 80094,
@@ -27,34 +29,22 @@ export enum Chain {
   WORLDCHAIN = 480,
   BOB = 60808,
   MANTLE = 5000,
+  HEMI = 43111,
+  KATANA = 747474,
+  LINEA = 59144,
+  INK = 57073,
 }
 
-const airlock = 'https://airlock.gnosisguild.org/api/v1/'
-
-export const RPC: Record<ChainId, URL> = {
-  [Chain.ETH]: new URL(`${Chain.ETH}/rpc`, airlock),
-  [Chain.OETH]: new URL(`${Chain.OETH}/rpc`, airlock),
-  [Chain.GNO]: new URL(`${Chain.GNO}/rpc`, airlock),
-  [Chain.MATIC]: new URL(`${Chain.MATIC}/rpc`, airlock),
-  [Chain.BASE]: new URL(`${Chain.BASE}/rpc`, airlock),
-  [Chain.ARB1]: new URL(`${Chain.ARB1}/rpc`, airlock),
-  [Chain.AVAX]: new URL(`${Chain.AVAX}/rpc`, airlock),
-  [Chain.SEP]: new URL(`${Chain.SEP}/rpc`, airlock),
-  [Chain.CELO]: new URL(`${Chain.CELO}/rpc`, airlock),
-  [Chain.SONIC]: new URL(`${Chain.SONIC}/rpc`, airlock),
-  [Chain.BERACHAIN]: new URL(`${Chain.BERACHAIN}/rpc`, airlock),
-  [Chain.UNICHAIN]: new URL(`${Chain.UNICHAIN}/rpc`, airlock),
-  [Chain.WORLDCHAIN]: new URL(`${Chain.WORLDCHAIN}/rpc`, airlock),
-  [Chain.BOB]: new URL(`${Chain.BOB}/rpc`, airlock),
-  [Chain.MANTLE]: new URL(`${Chain.MANTLE}/rpc`, airlock),
-}
+export const rpc = (chain: Chain) => new URL(`https://rpc.zodiacos.io/${chain}`)
 
 export const EXPLORER_URL: Record<ChainId, URL> = {
   [Chain.ETH]: new URL('https://etherscan.io'),
   [Chain.OETH]: new URL('https://optimistic.etherscan.io'),
   [Chain.GNO]: new URL('https://gnosisscan.io'),
   [Chain.MATIC]: new URL('https://polygonscan.com'),
+  [Chain.ZKEVM]: new URL('https://zkevm.polygonscan.com'),
   [Chain.BASE]: new URL('https://basescan.org'),
+  [Chain.BASESEP]: new URL('https://sepolia.basescan.org'),
   [Chain.ARB1]: new URL('https://arbiscan.io'),
   [Chain.AVAX]: new URL('https://snowtrace.io'),
   [Chain.SEP]: new URL('https://sepolia.etherscan.io'),
@@ -65,6 +55,10 @@ export const EXPLORER_URL: Record<ChainId, URL> = {
   [Chain.WORLDCHAIN]: new URL('https://worldscan.org'),
   [Chain.BOB]: new URL('https://explorer.gobob.xyz'),
   [Chain.MANTLE]: new URL('https://mantlescan.xyz'),
+  [Chain.HEMI]: new URL('https://explorer.hemi.xyz'),
+  [Chain.KATANA]: new URL('https://explorer.katanarpc.com'),
+  [Chain.LINEA]: new URL('https://lineascan.build'),
+  [Chain.INK]: new URL('https://explorer.inkonchain.com'),
 }
 
 export const CHAIN_CURRENCY: Record<ChainId, string> = {
@@ -72,7 +66,9 @@ export const CHAIN_CURRENCY: Record<ChainId, string> = {
   [Chain.OETH]: 'ETH',
   [Chain.GNO]: 'xDAI',
   [Chain.MATIC]: 'MATIC',
+  [Chain.ZKEVM]: 'ETH',
   [Chain.BASE]: 'ETH',
+  [Chain.BASESEP]: 'ETH',
   [Chain.ARB1]: 'ETH',
   [Chain.AVAX]: 'AVAX',
   [Chain.SEP]: 'ETH',
@@ -83,6 +79,10 @@ export const CHAIN_CURRENCY: Record<ChainId, string> = {
   [Chain.WORLDCHAIN]: 'ETH',
   [Chain.BOB]: 'ETH',
   [Chain.MANTLE]: 'MNT',
+  [Chain.HEMI]: 'ETH',
+  [Chain.KATANA]: 'ETH',
+  [Chain.LINEA]: 'ETH',
+  [Chain.INK]: 'ETH',
 }
 
 export const CHAIN_NAME: Record<ChainId, string> = {
@@ -90,7 +90,9 @@ export const CHAIN_NAME: Record<ChainId, string> = {
   [Chain.OETH]: 'Optimism',
   [Chain.GNO]: 'Gnosis',
   [Chain.MATIC]: 'Polygon',
+  [Chain.ZKEVM]: 'Polygon zkEVM',
   [Chain.BASE]: 'Base',
+  [Chain.BASESEP]: 'Base Sepolia',
   [Chain.ARB1]: 'Arbitrum One',
   [Chain.AVAX]: 'Avalanche C-Chain',
   [Chain.SEP]: 'Sepolia',
@@ -101,10 +103,22 @@ export const CHAIN_NAME: Record<ChainId, string> = {
   [Chain.WORLDCHAIN]: 'World Chain',
   [Chain.BOB]: 'BOB',
   [Chain.MANTLE]: 'Mantle',
+  [Chain.HEMI]: 'Hemi',
+  [Chain.KATANA]: 'Katana',
+  [Chain.LINEA]: 'Linea',
+  [Chain.INK]: 'Ink',
 }
 
 /**
  * As long as ser does not support querying routes for a chain, we hide it from the chain select field.
  * That way we can support chains as long as users manually import their route using https://github.com/gnosisguild/build-pilot-route, for example.
  **/
-export const HIDDEN_CHAINS = [Chain.WORLDCHAIN]
+export const HIDDEN_CHAINS = [
+  Chain.WORLDCHAIN,
+  Chain.ZKEVM,
+  Chain.BASESEP,
+  Chain.HEMI,
+  Chain.KATANA,
+  Chain.LINEA,
+  Chain.INK,
+]

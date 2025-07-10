@@ -1,5 +1,5 @@
 import type { JsonRpcRequest } from '@/types'
-import { RPC } from '@zodiac/chains'
+import { rpc } from '@zodiac/chains'
 import { JsonRpcProvider, toQuantity } from 'ethers'
 import EventEmitter from 'events'
 import type { ChainId } from 'ser-kit'
@@ -14,7 +14,7 @@ export const getReadOnlyProvider = (chainId: ChainId): JsonRpcProvider => {
     return readOnlyProviderCache.get(chainId)!
   }
 
-  const provider = new JsonRpcProvider(RPC[chainId].toString(), chainId, {
+  const provider = new JsonRpcProvider(rpc(chainId).toString(), chainId, {
     staticNetwork: true,
   })
   readOnlyProviderCache.set(chainId, provider)
