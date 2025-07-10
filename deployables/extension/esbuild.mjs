@@ -22,10 +22,9 @@ esbuild
       './src/monitor/contentScript/main.ts',
       './src/monitor/injectedScript/main.ts',
 
-      // COMPANION APP TO EDIT ROUTES
+      // ZODIAC OS APP <-> PILOT EXTENSION COMMUNICATION
       './src/companion/contentScripts/main.ts',
       './src/companion/contentScripts/fork-support.ts',
-      './src/companion/injectedScripts/main.ts',
 
       // SIDEPANEL APP
       './src/panel/app.tsx',

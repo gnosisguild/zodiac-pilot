@@ -72,20 +72,46 @@ export type RequestResponseTypes = {
 
 export type RequestResponse = typeof requestResponseTypes
 
-export type Handler<Type extends CompanionAppMessageType> = (
-  response: Type extends null ? null : RequestResponseTypes[Type],
-) => void
+// Derived types to split CompanionAppMessageType into two categories
+type CompanionAppMessageTypeWithResponse = {
+  [K in CompanionAppMessageType]: RequestResponseTypes[K] extends null
+    ? never
+    : K
+}[CompanionAppMessageType]
 
-export function companionRequest<Type extends CompanionAppMessageType>(
+type CompanionAppMessageTypeWithoutResponse = {
+  [K in CompanionAppMessageType]: RequestResponseTypes[K] extends null
+    ? K
+    : never
+}[CompanionAppMessageType]
+
+/**
+ * Helper for sending messages from the companion app to the extension.
+ */
+// Overload for notification messages (no response expected)
+export function companionRequest<
+  Type extends CompanionAppMessageTypeWithoutResponse,
+>(message: Extract<CompanionAppMessage, { type: Type }>): void
+
+// Overload for request messages (response expected)
+export function companionRequest<
+  Type extends CompanionAppMessageTypeWithResponse,
+>(
   message: Extract<CompanionAppMessage, { type: Type }>,
-  handler: Handler<Type>,
-) {
+  handler: (response: RequestResponseTypes[Type]) => void,
+): () => void
+
+export function companionRequest(message: CompanionAppMessage, handler?: any) {
   const expectedResponseType = requestResponseTypes[message.type]
 
   if (expectedResponseType == null) {
     window.postMessage(message, '*')
 
     return
+  }
+
+  if (!handler) {
+    throw new Error(`Handler required for message type: ${message.type}`)
   }
 
   const handleMessage = (event: MessageEvent<CompanionResponseMessage>) => {
@@ -99,7 +125,7 @@ export function companionRequest<Type extends CompanionAppMessageType>(
 
     window.removeEventListener('message', handleMessage)
 
-    handler(event.data as Extract<CompanionResponseMessage, { type: Type }>)
+    handler(event.data)
   }
 
   window.addEventListener('message', handleMessage)

@@ -17,7 +17,6 @@ describe('External panel open', () => {
     )
 
     expect(chromeMock.sidePanel.open).toHaveBeenCalledWith({
-      tabId: 1,
       windowId: 2,
     })
   })
