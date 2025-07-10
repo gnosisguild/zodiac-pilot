@@ -31,6 +31,7 @@ import {
 import { RefreshCcw, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate, type ActionFunctionArgs } from 'react-router'
+import { prefixAddress } from 'ser-kit'
 import { ClearTransactionsModal } from '../ClearTransactionsModal'
 import { Intent } from './intents'
 import { RecordingIndicator } from './RecordingIndicator'
@@ -103,16 +104,20 @@ const Transactions = () => {
   const scrollContainerRef = useScrollIntoView()
 
   const [saveOptions, saveAndActivateOptions] = useSaveAccount(account.id, {
-    async onSave(route, account, tabId) {
+    async onSave(route, updatedAccount, tabId) {
       await sendMessageToCompanionApp(tabId, {
         type: CompanionResponseMessageType.PROVIDE_ROUTE,
         route,
       })
 
-      if (transactions.length === 0) {
-        navigate(`/${account.id}`)
+      if (
+        transactions.length === 0 ||
+        prefixAddress(account.chainId, account.address) ===
+          prefixAddress(updatedAccount.chainId, updatedAccount.address)
+      ) {
+        navigate(`/${updatedAccount.id}`)
       } else {
-        navigate(`/${account.id}/clear-transactions/${account.id}`)
+        navigate(`/${account.id}/clear-transactions/${updatedAccount.id}`)
       }
     },
   })
