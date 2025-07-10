@@ -8,7 +8,7 @@ const clientRef: Ref<ReturnType<typeof postgres>> = { current: null }
 
 export const dbClient = () => {
   if (clientRef.current == null) {
-    clientRef.current = postgres(getDBConnectionString())
+    clientRef.current = postgres(getDBConnectionString(), { prepare: false })
   }
 
   return drizzle({ client: clientRef.current, schema })
