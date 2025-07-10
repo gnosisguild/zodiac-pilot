@@ -29,6 +29,7 @@ import {
   expectRouteToBe,
   randomAddress,
   waitForPendingActions,
+  waitForPendingLoaders,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { queryInitiators, queryRoutes } from 'ser-kit'
@@ -136,7 +137,7 @@ describe('Routes', () => {
 
       mockQueryInitiators.mockResolvedValue([walletA.address, walletB.address])
 
-      const { waitForPendingLoaders } = await render(
+      await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
           workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
@@ -288,7 +289,7 @@ describe('Routes', () => {
 
       mockQueryInitiators.mockResolvedValue([walletA.address, walletB.address])
 
-      const { waitForPendingLoaders } = await render(
+      await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
           workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
@@ -366,7 +367,7 @@ describe('Routes', () => {
 
       await setDefaultRoute(dbClient(), tenant, user, routeA)
 
-      const { waitForPendingLoaders } = await render(
+      await render(
         href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
           workspaceId: tenant.defaultWorkspaceId,
           accountId: account.id,
