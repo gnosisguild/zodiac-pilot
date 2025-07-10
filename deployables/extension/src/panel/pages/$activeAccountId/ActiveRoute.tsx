@@ -1,6 +1,7 @@
 import { getRoute, getRoutes } from '@/accounts'
 import { ProvideExecutionRoute } from '@/execution-routes'
 import { sentry } from '@/sentry'
+import { ProvideForkProvider } from '@/transactions'
 import { invariantResponse } from '@epic-web/invariant'
 import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
 import { Divider } from '@zodiac/ui'
@@ -62,7 +63,9 @@ const ActiveRoute = () => {
           </div>
         </>
       )}
-      <Outlet />
+      <ProvideForkProvider route={route}>
+        <Outlet />
+      </ProvideForkProvider>
     </ProvideExecutionRoute>
   )
 }

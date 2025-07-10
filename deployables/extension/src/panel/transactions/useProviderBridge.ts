@@ -13,7 +13,7 @@ import type { Hex } from '@zodiac/schema'
 import { toQuantity } from 'ethers'
 import { useEffect, useRef } from 'react'
 import type { ChainId } from 'ser-kit'
-import { useProvider } from './ProvideProvider'
+import { useProvider } from './ProvideForkProvider'
 
 const emitEvent = async (eventName: string, eventData: any) => {
   const tab = await getActiveTab()

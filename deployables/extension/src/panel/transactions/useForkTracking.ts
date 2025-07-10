@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useProvider } from './ProvideProvider'
+import { useProvider } from './ProvideForkProvider'
 import { useDispatch, useRefresh, useTransactions } from './TransactionsContext'
 import { commitRefreshTransactions } from './actions'
 
