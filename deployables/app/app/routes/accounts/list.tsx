@@ -1,8 +1,11 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
+import { Chain } from '@/routes-ui'
 import { routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
+import { CHAIN_NAME } from '@zodiac/chains'
 import {
+  countWorkspaces,
   dbClient,
   deleteAccount,
   findActiveAccount,
@@ -13,20 +16,26 @@ import {
 import { getString, getUUID } from '@zodiac/form-data'
 import { isUUID } from '@zodiac/schema'
 import {
+  Address,
+  GhostLinkButton,
   Info,
+  MeatballMenu,
   PrimaryLinkButton,
   SecondaryLinkButton,
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
+  TableRowActions,
+  Tag,
 } from '@zodiac/ui'
+import { ArrowRight, Pencil, Trash2 } from 'lucide-react'
 import { type PropsWithChildren } from 'react'
 import { href, Outlet } from 'react-router'
 import type { Route } from './+types/list'
 import { Intent } from './intents'
-import { RemoteAccount } from './RemoteAccount'
 
 export const meta: Route.MetaFunction = ({ matches }) => [
   { title: routeTitle(matches, 'Safe Accounts') },
@@ -43,18 +52,19 @@ export const loader = (args: Route.LoaderArgs) =>
     }) => {
       invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID"')
 
-      const [accounts, activeAccount] = await Promise.all([
+      const [accounts, activeAccount, workspaceCount] = await Promise.all([
         getAccounts(dbClient(), {
           tenantId: tenant.id,
-          userId: user.id,
           workspaceId,
         }),
         findActiveAccount(dbClient(), tenant, user),
+        countWorkspaces(dbClient(), { tenantId: tenant.id }),
       ])
 
       return {
         accounts,
         activeAccountId: activeAccount == null ? null : activeAccount.id,
+        workspaceCount,
       }
     },
     {
@@ -120,7 +130,7 @@ export const action = async (args: Route.ActionArgs) =>
   )
 
 const ListRoutes = ({
-  loaderData: { accounts, activeAccountId },
+  loaderData: { accounts, activeAccountId, workspaceCount },
   params: { workspaceId },
 }: Route.ComponentProps) => {
   return (
@@ -162,27 +172,86 @@ const ListRoutes = ({
 
         {accounts.length > 0 && (
           <Accounts>
-            {accounts.map((account) => {
-              const [defaultRoute] = account.defaultRoutes
+            {accounts.map((account) => (
+              <TableRow
+                key={account.id}
+                href={href('/workspace/:workspaceId/accounts/:accountId', {
+                  accountId: account.id,
+                  workspaceId: account.workspaceId,
+                })}
+              >
+                <TableCell aria-describedby={account.id}>
+                  {account.label}
+                </TableCell>
+                <TableCell>
+                  {activeAccountId === account.id && (
+                    <Tag id={account.id} color="green">
+                      Active
+                    </Tag>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <Chain chainId={account.chainId}>
+                    {CHAIN_NAME[account.chainId]}
+                  </Chain>
+                </TableCell>
+                <TableCell>
+                  <Address shorten>{account.address}</Address>
+                </TableCell>
+                <TableCell>
+                  <TableRowActions>
+                    <MeatballMenu size="tiny" label="Account options">
+                      <GhostLinkButton
+                        to={href(
+                          '/workspace/:workspaceId/accounts/:accountId',
+                          {
+                            accountId: account.id,
+                            workspaceId: account.workspaceId,
+                          },
+                        )}
+                        icon={Pencil}
+                        align="left"
+                        size="tiny"
+                      >
+                        Edit
+                      </GhostLinkButton>
 
-              if (defaultRoute != null) {
-                return (
-                  <RemoteAccount
-                    key={account.id}
-                    account={account}
-                    active={activeAccountId === account.id}
-                  />
-                )
-              }
+                      <GhostLinkButton
+                        to={href(
+                          '/workspace/:workspaceId/accounts/move/:accountId',
+                          {
+                            accountId: account.id,
+                            workspaceId: account.workspaceId,
+                          },
+                        )}
+                        disabled={workspaceCount === 1}
+                        icon={ArrowRight}
+                        align="left"
+                        size="tiny"
+                      >
+                        Move
+                      </GhostLinkButton>
 
-              return (
-                <RemoteAccount
-                  key={account.id}
-                  account={account}
-                  active={activeAccountId === account.id}
-                />
-              )
-            })}
+                      <GhostLinkButton
+                        to={href(
+                          '/workspace/:workspaceId/accounts/delete/:accountId',
+                          {
+                            workspaceId: account.workspaceId,
+                            accountId: account.id,
+                          },
+                        )}
+                        size="tiny"
+                        style="critical"
+                        align="left"
+                        icon={Trash2}
+                      >
+                        Delete
+                      </GhostLinkButton>
+                    </MeatballMenu>
+                  </TableRowActions>
+                </TableCell>
+              </TableRow>
+            ))}
           </Accounts>
         )}
       </Page.Main>

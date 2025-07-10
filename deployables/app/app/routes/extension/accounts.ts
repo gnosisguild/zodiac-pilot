@@ -7,13 +7,13 @@ export const loader = (args: Route.LoaderArgs) =>
     args,
     async ({
       context: {
-        auth: { tenant, user },
+        auth: { tenant },
       },
     }) => {
-      if (tenant == null || user == null) {
+      if (tenant == null) {
         return []
       }
 
-      return getAccounts(dbClient(), { tenantId: tenant.id, userId: user.id })
+      return getAccounts(dbClient(), { tenantId: tenant.id })
     },
   )

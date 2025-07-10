@@ -132,7 +132,6 @@ describe.sequential('List Accounts', () => {
       await waitForPendingActions()
 
       const [deletedAccount] = await getAccounts(dbClient(), {
-        userId: user.id,
         tenantId: tenant.id,
         deleted: true,
       })
@@ -185,8 +184,23 @@ describe.sequential('List Accounts', () => {
       )
     })
 
-    it.todo(
-      'is not possible to move accounts when there are no other workspaces',
-    )
+    it('is not possible to move accounts when there are no other workspaces', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+      await accountFactory.create(tenant, user)
+
+      await render(
+        href('/workspace/:workspaceId/accounts', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Account options' }),
+      )
+
+      expect(await screen.findByRole('button', { name: 'Move' })).toBeDisabled()
+    })
   })
 })

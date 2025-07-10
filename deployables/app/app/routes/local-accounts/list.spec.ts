@@ -211,7 +211,7 @@ describe.sequential('List Accounts', () => {
       await waitForPendingActions()
 
       await expect(
-        getAccounts(dbClient(), { tenantId: tenant.id, userId: user.id }),
+        getAccounts(dbClient(), { tenantId: tenant.id }),
       ).resolves.toHaveLength(1)
     })
 
