@@ -141,6 +141,10 @@ describe.sequential('List Accounts', () => {
               type: CompanionResponseMessageType.PROVIDE_ROUTE,
               route,
             },
+            [CompanionAppMessageType.REQUEST_ACTIVE_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+              activeRouteId: null,
+            },
           },
         },
       )
@@ -194,6 +198,10 @@ describe.sequential('List Accounts', () => {
               type: CompanionResponseMessageType.PROVIDE_ROUTE,
               route,
             },
+            [CompanionAppMessageType.REQUEST_ACTIVE_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+              activeRouteId: null,
+            },
           },
         },
       )
@@ -240,6 +248,10 @@ describe.sequential('List Accounts', () => {
             [CompanionAppMessageType.REQUEST_ROUTE]: {
               type: CompanionResponseMessageType.PROVIDE_ROUTE,
               route,
+            },
+            [CompanionAppMessageType.REQUEST_ACTIVE_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+              activeRouteId: null,
             },
           },
         },
@@ -289,6 +301,10 @@ describe.sequential('List Accounts', () => {
               type: CompanionResponseMessageType.PROVIDE_ROUTE,
               route,
             },
+            [CompanionAppMessageType.REQUEST_ACTIVE_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+              activeRouteId: null,
+            },
           },
         },
       )
@@ -333,6 +349,10 @@ describe.sequential('List Accounts', () => {
             [CompanionAppMessageType.REQUEST_ROUTE]: {
               type: CompanionResponseMessageType.PROVIDE_ROUTE,
               route,
+            },
+            [CompanionAppMessageType.REQUEST_ACTIVE_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+              activeRouteId: null,
             },
           },
         },
@@ -390,6 +410,10 @@ describe.sequential('List Accounts', () => {
             [CompanionAppMessageType.REQUEST_ROUTE]: {
               type: CompanionResponseMessageType.PROVIDE_ROUTE,
               route,
+            },
+            [CompanionAppMessageType.REQUEST_ACTIVE_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+              activeRouteId: null,
             },
           },
         },
@@ -459,6 +483,10 @@ describe.sequential('List Accounts', () => {
               type: CompanionResponseMessageType.PROVIDE_ROUTE,
               route: executionRoute,
             },
+            [CompanionAppMessageType.REQUEST_ACTIVE_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+              activeRouteId: null,
+            },
           },
         },
       )
@@ -512,6 +540,10 @@ describe.sequential('List Accounts', () => {
               type: CompanionResponseMessageType.PROVIDE_ROUTE,
               route,
             },
+            [CompanionAppMessageType.REQUEST_ACTIVE_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+              activeRouteId: null,
+            },
           },
         },
       )
@@ -555,6 +587,10 @@ describe.sequential('List Accounts', () => {
             [CompanionAppMessageType.REQUEST_ROUTE]: {
               type: CompanionResponseMessageType.PROVIDE_ROUTE,
               route,
+            },
+            [CompanionAppMessageType.REQUEST_ACTIVE_ROUTE]: {
+              type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+              activeRouteId: null,
             },
           },
         },

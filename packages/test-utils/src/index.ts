@@ -1,6 +1,7 @@
 export * from './creators'
+export { expectRouteToBe } from './InspectRoute'
 export * from './messages'
-export { expectRouteToBe, render } from './render'
+export { render } from './render'
 export type { RenderOptions } from './render'
 export { createRenderDataMode, type RenderDataOptions } from './renderDataMode'
 export {

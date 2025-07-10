@@ -1,4 +1,4 @@
-import { render as baseRender, screen, waitFor } from '@testing-library/react'
+import { render as baseRender } from '@testing-library/react'
 import {
   createMemoryRouter,
   RouterProvider,
@@ -62,17 +62,4 @@ export const render = async (
   await sleepTillIdle()
 
   return result
-}
-
-export const expectRouteToBe = async (expectedPathName: string) => {
-  // Importing this dynamically, because otherwise vitest
-  // pollutes the global space and might conflight with playwright
-  const { expect } = await import('vitest')
-
-  return waitFor(() => {
-    const testElement = screen.getByTestId('test-route-element-id')
-    const foundPathName = testElement.getAttribute('data-pathname')
-
-    expect(foundPathName).toEqual(expectedPathName)
-  })
 }

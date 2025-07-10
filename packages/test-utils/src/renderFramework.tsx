@@ -23,6 +23,7 @@ import { InspectRoute } from './InspectRoute'
 import type { RenderOptions } from './render'
 import { sleepTillIdle } from './sleepTillIdle'
 import { TestElement, waitForTestElement } from './TestElement'
+import { waitForPendingActions, WatchForActions } from './WatchForActions'
 
 type Func = (...args: any[]) => unknown
 
@@ -52,11 +53,11 @@ export type RenderFrameworkResult = RenderResult & {
 const CombinedTestElement = () => (
   <TestElement>
     <InspectRoute />
+    <WatchForActions />
   </TestElement>
 )
 
 type ResolveFn = () => void
-type RejectFn = (error: unknown) => void
 
 export async function createRenderFramework<
   R extends Register,
@@ -65,7 +66,6 @@ export async function createRenderFramework<
   const routes = await Promise.resolve(routeConfig)
 
   const pendingLoaders: Promise<void>[] = []
-  const pendingActions: Promise<void>[] = []
 
   const stubbedRoutes = await stubRoutes<R>(basePath, routes, {
     startLoader: () => {
@@ -75,26 +75,11 @@ export async function createRenderFramework<
 
       return resolve
     },
-    startAction: () => {
-      const { resolve, reject, promise } = Promise.withResolvers<void>()
-
-      pendingActions.push(promise)
-
-      return { resolve, reject }
-    },
   })
 
   const waitForPendingLoaders = async () => {
     await Promise.all(pendingLoaders)
     await sleepTillIdle()
-  }
-
-  const waitForPendingActions = async () => {
-    await sleepTillIdle()
-
-    await Promise.all(pendingActions)
-
-    await waitForPendingLoaders()
   }
 
   return async function renderFramework(
@@ -136,7 +121,6 @@ export async function createRenderFramework<
 type StubRoute = Parameters<typeof createRoutesStub>[0]
 
 type StubRoutesOptions = {
-  startAction: () => { resolve: ResolveFn; reject: RejectFn }
   startLoader: () => ResolveFn
 }
 
@@ -150,7 +134,7 @@ type AnyRouteFiles = Record<
 function stubRoutes<R extends Register>(
   basePath: URL,
   routes: RouteConfigEntry[],
-  { startAction, startLoader }: StubRoutesOptions,
+  { startLoader }: StubRoutesOptions,
 ): Promise<StubRoute> {
   type RouteFiles = R extends {
     routeFiles: infer Registered extends AnyRouteFiles
@@ -223,34 +207,18 @@ function stubRoutes<R extends Register>(
         // doesn't handle the clientAction/action hierarchy
         // so we built it ouselves.
         async action(actionArgs: ActionFunctionArgs) {
-          const { resolve, reject } = startAction()
-
-          let hasErrored = false
-
-          try {
-            if (clientAction != null) {
-              return await clientAction({
-                ...actionArgs,
-                serverAction: action ? () => action(actionArgs) : undefined,
-              })
-            }
-
-            if (action != null) {
-              return await action(actionArgs)
-            }
-
-            return null
-          } catch (error) {
-            hasErrored = true
-
-            reject(error)
-
-            throw error
-          } finally {
-            if (!hasErrored) {
-              resolve()
-            }
+          if (clientAction != null) {
+            return await clientAction({
+              ...actionArgs,
+              serverAction: action ? () => action(actionArgs) : undefined,
+            })
           }
+
+          if (action != null) {
+            return await action(actionArgs)
+          }
+
+          return null
         },
         Component:
           Component == null
@@ -272,7 +240,6 @@ function stubRoutes<R extends Register>(
         children:
           route.children != null
             ? await stubRoutes(basePath, route.children, {
-                startAction,
                 startLoader,
               })
             : undefined,
