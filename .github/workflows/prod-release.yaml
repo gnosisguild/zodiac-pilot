@@ -43,7 +43,7 @@ jobs:
           files: ./deployables/extension/zodiac-pilot.zip
 
       - name: Publish to Chrome Web Store
-        uses: puzzlers-labs/chrome-webstore-publish@v1
+        uses: puzzlers-labs/chrome-webstore-publish@2064b45e0f8747aa3fe07b872279adba96011cff
         with:
           extension_id: jklckajipokenkbbodifahogmidkekcb
           zip_file_path: ./deployables/extension/zodiac-pilot.zip
