@@ -38,12 +38,12 @@ jobs:
         run: pnpm zip
 
       - name: Add zip to Github release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8
         with:
           files: ./deployables/extension/zodiac-pilot.zip
 
       - name: Publish to Chrome Web Store
-        uses: puzzlers-labs/chrome-webstore-publish@v1
+        uses: puzzlers-labs/chrome-webstore-publish@48bfffca1742576b17d8c0890136da8a24502244
         with:
           extension_id: jklckajipokenkbbodifahogmidkekcb
           zip_file_path: ./deployables/extension/zodiac-pilot.zip
