@@ -1,18 +1,16 @@
-import { useCallback, useRef, type ComponentProps, type ReactNode } from 'react'
-import { Form as BaseForm, useFormAction, useSubmit } from 'react-router'
+import { useRef, type ComponentProps } from 'react'
+import { Form as BaseForm } from 'react-router'
+import { AllowSubmit, type AllowSubmitChildren } from './AllowSubmit'
+import { FormContext, type Context } from './FormContext'
 import { FormLayout } from './FormLayout'
-
-type RenderProps = {
-  submit: () => void
-}
 
 type FormProps = Omit<
   ComponentProps<typeof BaseForm>,
   'className' | 'children'
 > & {
   intent?: string
-  context?: Record<string, string | number | boolean | null | undefined>
-  children?: ReactNode | ((props: RenderProps) => ReactNode)
+  context?: Context
+  children?: AllowSubmitChildren
 }
 
 export const Form = ({
@@ -24,40 +22,16 @@ export const Form = ({
 }: FormProps) => {
   const formRef = useRef(null)
 
-  const submit = useSubmit()
-  const action = useFormAction()
-
-  const submitFromWithin = useCallback(
-    () => setTimeout(() => submit(formRef.current, { method, action }), 1),
-    [action, method, submit],
-  )
-
   return (
     <BaseForm {...props} ref={formRef} method={method}>
       <FormLayout>
         {intent && <input type="hidden" name="intent" value={intent} />}
 
-        {Object.entries(context).map(
-          ([key, value]) =>
-            value != null && (
-              <input
-                type="hidden"
-                key={key}
-                name={key}
-                value={
-                  typeof value === 'boolean'
-                    ? value === true
-                      ? 'on'
-                      : 'off'
-                    : value
-                }
-              />
-            ),
-        )}
+        <FormContext context={context} />
 
-        {typeof children === 'function'
-          ? children({ submit: submitFromWithin })
-          : children}
+        <AllowSubmit method={method} formRef={formRef}>
+          {children}
+        </AllowSubmit>
       </FormLayout>
     </BaseForm>
   )

@@ -16,6 +16,7 @@ import {
   expectRouteToBe,
   randomAddress,
   randomPrefixedAddress,
+  waitForPendingActions,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -58,7 +59,7 @@ describe('New SafeAccount', () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
 
-    const { waitForPendingActions } = await render(
+    await render(
       href('/workspace/:workspaceId/accounts/create/:prefixedAddress?', {
         workspaceId: tenant.defaultWorkspaceId,
       }),

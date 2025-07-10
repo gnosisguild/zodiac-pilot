@@ -1,6 +1,7 @@
 export * from './creators'
+export { expectRouteToBe } from './InspectRoute'
 export * from './messages'
-export { expectRouteToBe, render } from './render'
+export { render } from './render'
 export type { RenderOptions } from './render'
 export { createRenderDataMode, type RenderDataOptions } from './renderDataMode'
 export {
@@ -12,3 +13,7 @@ export type { RouteModule } from './renderFramework'
 export { renderHook } from './renderHook'
 export type { RenderHookOptions } from './renderHook'
 export { sleepTillIdle } from './sleepTillIdle'
+export {
+  waitForPendingActions,
+  waitForPendingActions as waitForPendingLoaders,
+} from './WatchForActions'

@@ -1,14 +1,12 @@
-import type { ComponentPropsWithRef } from 'react'
+import { useRef, type ComponentPropsWithRef } from 'react'
 import { Form } from 'react-router'
+import { AllowSubmit, type AllowSubmitChildren } from './AllowSubmit'
+import { FormContext, type Context } from './FormContext'
 
-export type InlineFormContext = Record<
-  string,
-  string | number | null | undefined
->
-
-type InlineFormProps = ComponentPropsWithRef<typeof Form> & {
-  context?: InlineFormContext
+type InlineFormProps = Omit<ComponentPropsWithRef<typeof Form>, 'children'> & {
+  context?: Context
   intent?: string
+  children?: AllowSubmitChildren
 }
 
 export const InlineForm = ({
@@ -19,18 +17,17 @@ export const InlineForm = ({
 
   ...props
 }: InlineFormProps) => {
+  const formRef = useRef(null)
+
   return (
-    <Form method={method} {...props}>
-      {Object.entries(context).map(
-        ([key, value]) =>
-          value != null && (
-            <input type="hidden" key={key} name={key} value={value} />
-          ),
-      )}
+    <Form method={method} ref={formRef} {...props}>
+      <FormContext context={context} />
 
       {intent != null && <input type="hidden" name="intent" value={intent} />}
 
-      {children}
+      <AllowSubmit formRef={formRef} method={method}>
+        {children}
+      </AllowSubmit>
     </Form>
   )
 }

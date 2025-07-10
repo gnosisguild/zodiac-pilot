@@ -11,6 +11,7 @@ import {
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
+import { waitForPendingActions } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { describe, expect, it } from 'vitest'
 
@@ -82,14 +83,11 @@ describe('Subscription plans', () => {
 
       const plan = await subscriptionPlanFactory.create({ name: 'Open' })
 
-      const { waitForPendingActions } = await render(
-        href('/system-admin/subscriptionPlans'),
-        {
-          user,
-          tenant,
-          isSystemAdmin: true,
-        },
-      )
+      await render(href('/system-admin/subscriptionPlans'), {
+        user,
+        tenant,
+        isSystemAdmin: true,
+      })
 
       await userEvent.click(
         await screen.findByRole('button', { name: 'Make default' }),
@@ -110,14 +108,11 @@ describe('Subscription plans', () => {
 
       const plan = await subscriptionPlanFactory.create({ priority: 1 })
 
-      const { waitForPendingActions } = await render(
-        href('/system-admin/subscriptionPlans'),
-        {
-          user,
-          tenant,
-          isSystemAdmin: true,
-        },
-      )
+      await render(href('/system-admin/subscriptionPlans'), {
+        user,
+        tenant,
+        isSystemAdmin: true,
+      })
 
       await userEvent.click(
         await screen.findByRole('button', { name: 'Increase priority' }),
@@ -136,14 +131,11 @@ describe('Subscription plans', () => {
 
       const plan = await subscriptionPlanFactory.create({ priority: 2 })
 
-      const { waitForPendingActions } = await render(
-        href('/system-admin/subscriptionPlans'),
-        {
-          user,
-          tenant,
-          isSystemAdmin: true,
-        },
-      )
+      await render(href('/system-admin/subscriptionPlans'), {
+        user,
+        tenant,
+        isSystemAdmin: true,
+      })
 
       await userEvent.click(
         await screen.findByRole('button', { name: 'Decrease priority' }),

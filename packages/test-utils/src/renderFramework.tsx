@@ -21,8 +21,8 @@ import type { GetAnnotations, GetInfo } from 'react-router/internal'
 import { getCurrentPath } from './getCurrentPath'
 import { InspectRoute } from './InspectRoute'
 import type { RenderOptions } from './render'
-import { sleepTillIdle } from './sleepTillIdle'
 import { TestElement, waitForTestElement } from './TestElement'
+import { waitForPendingActions, WatchForActions } from './WatchForActions'
 
 type Func = (...args: any[]) => unknown
 
@@ -44,19 +44,14 @@ export type RenderFrameworkOptions = Omit<RenderOptions, 'inspectRoutes'> & {
   loadActions?: () => Promise<unknown>
 }
 
-export type RenderFrameworkResult = RenderResult & {
-  waitForPendingActions: () => Promise<void>
-  waitForPendingLoaders: () => Promise<void>
-}
+export type RenderFrameworkResult = RenderResult
 
 const CombinedTestElement = () => (
   <TestElement>
     <InspectRoute />
+    <WatchForActions />
   </TestElement>
 )
-
-type ResolveFn = () => void
-type RejectFn = (error: unknown) => void
 
 export async function createRenderFramework<
   R extends Register,
@@ -64,38 +59,7 @@ export async function createRenderFramework<
 >(basePath: URL, routeConfig: Config) {
   const routes = await Promise.resolve(routeConfig)
 
-  const pendingLoaders: Promise<void>[] = []
-  const pendingActions: Promise<void>[] = []
-
-  const stubbedRoutes = await stubRoutes<R>(basePath, routes, {
-    startLoader: () => {
-      const { resolve, promise } = Promise.withResolvers<void>()
-
-      pendingLoaders.push(promise)
-
-      return resolve
-    },
-    startAction: () => {
-      const { resolve, reject, promise } = Promise.withResolvers<void>()
-
-      pendingActions.push(promise)
-
-      return { resolve, reject }
-    },
-  })
-
-  const waitForPendingLoaders = async () => {
-    await Promise.all(pendingLoaders)
-    await sleepTillIdle()
-  }
-
-  const waitForPendingActions = async () => {
-    await sleepTillIdle()
-
-    await Promise.all(pendingActions)
-
-    await waitForPendingLoaders()
-  }
+  const stubbedRoutes = await stubRoutes<R>(basePath, routes)
 
   return async function renderFramework(
     currentPath: string,
@@ -127,18 +91,13 @@ export async function createRenderFramework<
     await promise
 
     await waitForTestElement()
-    await sleepTillIdle()
+    await waitForPendingActions()
 
-    return { ...result, waitForPendingActions, waitForPendingLoaders }
+    return result
   }
 }
 
 type StubRoute = Parameters<typeof createRoutesStub>[0]
-
-type StubRoutesOptions = {
-  startAction: () => { resolve: ResolveFn; reject: RejectFn }
-  startLoader: () => ResolveFn
-}
 
 type AnyRouteFiles = Record<
   string,
@@ -150,7 +109,6 @@ type AnyRouteFiles = Record<
 function stubRoutes<R extends Register>(
   basePath: URL,
   routes: RouteConfigEntry[],
-  { startAction, startLoader }: StubRoutesOptions,
 ): Promise<StubRoute> {
   type RouteFiles = R extends {
     routeFiles: infer Registered extends AnyRouteFiles
@@ -199,58 +157,36 @@ function stubRoutes<R extends Register>(
         // doesn't handle the clientLoader/loader hierarchy
         // so we built it ouselves.
         async loader(loaderArgs: LoaderFunctionArgs) {
-          const finishLoader = startLoader()
-
-          try {
-            if (clientLoader != null) {
-              return await clientLoader({
-                ...loaderArgs,
-                serverLoader:
-                  loader == null ? undefined : () => loader(loaderArgs),
-              })
-            }
-
-            if (loader != null) {
-              return await loader(loaderArgs)
-            }
-
-            return null
-          } finally {
-            finishLoader()
+          if (clientLoader != null) {
+            return await clientLoader({
+              ...loaderArgs,
+              serverLoader:
+                loader == null ? undefined : () => loader(loaderArgs),
+            })
           }
+
+          if (loader != null) {
+            return await loader(loaderArgs)
+          }
+
+          return null
         },
         // the test stub from react-router unfortunately
         // doesn't handle the clientAction/action hierarchy
         // so we built it ouselves.
         async action(actionArgs: ActionFunctionArgs) {
-          const { resolve, reject } = startAction()
-
-          let hasErrored = false
-
-          try {
-            if (clientAction != null) {
-              return await clientAction({
-                ...actionArgs,
-                serverAction: action ? () => action(actionArgs) : undefined,
-              })
-            }
-
-            if (action != null) {
-              return await action(actionArgs)
-            }
-
-            return null
-          } catch (error) {
-            hasErrored = true
-
-            reject(error)
-
-            throw error
-          } finally {
-            if (!hasErrored) {
-              resolve()
-            }
+          if (clientAction != null) {
+            return await clientAction({
+              ...actionArgs,
+              serverAction: action ? () => action(actionArgs) : undefined,
+            })
           }
+
+          if (action != null) {
+            return await action(actionArgs)
+          }
+
+          return null
         },
         Component:
           Component == null
@@ -271,10 +207,7 @@ function stubRoutes<R extends Register>(
               ),
         children:
           route.children != null
-            ? await stubRoutes(basePath, route.children, {
-                startAction,
-                startLoader,
-              })
+            ? await stubRoutes(basePath, route.children)
             : undefined,
       }
     }),

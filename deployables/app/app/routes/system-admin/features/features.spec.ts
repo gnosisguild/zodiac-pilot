@@ -7,6 +7,7 @@ import {
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
+import { waitForPendingActions } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { describe, expect, it } from 'vitest'
 
@@ -65,14 +66,11 @@ describe('Features', () => {
 
       await featureFactory.create({ name: 'Test feature' })
 
-      const { waitForPendingActions } = await render(
-        href('/system-admin/features'),
-        {
-          user,
-          tenant,
-          isSystemAdmin: true,
-        },
-      )
+      await render(href('/system-admin/features'), {
+        user,
+        tenant,
+        isSystemAdmin: true,
+      })
 
       await userEvent.click(await screen.findByRole('link', { name: 'Remove' }))
 
