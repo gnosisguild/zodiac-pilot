@@ -64,7 +64,7 @@ describe('Workspace Layout', () => {
       )
 
       await userEvent.click(
-        await screen.findByRole('combobox', { name: 'Current workspace' }),
+        await screen.findByRole('combobox', { name: 'Workspace' }),
       )
       await userEvent.click(
         await screen.findByRole('option', { name: 'Another workspace' }),
@@ -107,7 +107,7 @@ describe('Workspace Layout', () => {
       )
 
       expect(
-        screen.queryByRole('combobox', { name: 'Current workspace' }),
+        screen.queryByRole('combobox', { name: 'Workspace' }),
       ).not.toBeInTheDocument()
     })
   })

@@ -137,10 +137,10 @@ const PageLayout = ({
 
               <SidebarBody>
                 {workspaces.length > 1 && (
-                  <InlineForm>
+                  <InlineForm className="mb-8">
                     {({ submit }) => (
                       <Select
-                        label="Current workspace"
+                        label="Workspace"
                         name="workspaceId"
                         defaultValue={{
                           value: workspace.id,
