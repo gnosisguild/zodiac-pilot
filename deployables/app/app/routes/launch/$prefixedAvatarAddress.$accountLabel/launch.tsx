@@ -12,6 +12,9 @@ import { splitPrefixedAddress } from 'ser-kit'
 import { z } from 'zod'
 import type { Route } from './+types/launch'
 
+// this must be the same value as AD_HOC_ROUTE_ID in the extension
+const AD_HOC_ROUTE_ID = 'ad-hoc'
+
 const jsonRpcValueSchema: z.ZodTypeAny = z.union([
   z.string(),
   z.number(),
@@ -44,7 +47,7 @@ function readParams({ params, request }: Omit<Route.LoaderArgs, 'context'>) {
 
   // Create a route with the provided avatar
   const route: ExecutionRoute = {
-    id: 'ad-hoc',
+    id: AD_HOC_ROUTE_ID,
     label: decodeURIComponent(accountLabel),
     avatar: prefixedAvatarAddress,
   }

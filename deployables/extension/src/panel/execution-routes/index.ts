@@ -2,7 +2,7 @@ export {
   ProvideExecutionRoute,
   useExecutionRoute,
 } from './ExecutionRouteContext'
-export { findAdHocRoute } from './findAdHocRoute'
+export { AD_HOC_ROUTE_ID, findAdHocRoute } from './findAdHocRoute'
 export { findRoute } from './findRoute'
 export { getLastUsedRouteId } from './getLastUsedRouteId'
 export { getRoute } from './getRoute'

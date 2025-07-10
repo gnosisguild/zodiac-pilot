@@ -1,5 +1,7 @@
 import { executionRouteSchema, type ExecutionRoute } from '@zodiac/schema'
 
+export const AD_HOC_ROUTE_ID = 'ad-hoc'
+
 let adHocRoute: ExecutionRoute | null = null
 
 /**
