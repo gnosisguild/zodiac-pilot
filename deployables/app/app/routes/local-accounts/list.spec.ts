@@ -6,7 +6,7 @@ import {
   postMessage,
   render,
 } from '@/test-utils'
-import { screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
   dbClient,
@@ -162,12 +162,14 @@ describe.sequential('List Accounts', () => {
 
       await waitForPendingActions()
 
-      const account = await getAccountByAddress(dbClient(), {
-        tenantId: tenant.id,
-        prefixedAddress: avatar,
-      })
-
-      expect(account).toHaveProperty('label', 'Test account')
+      await waitFor(() =>
+        expect(
+          getAccountByAddress(dbClient(), {
+            tenantId: tenant.id,
+            prefixedAddress: avatar,
+          }),
+        ).resolves.toHaveProperty('label', 'Test account'),
+      )
     })
 
     it('reuses existing accounts', async () => {

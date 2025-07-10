@@ -1,7 +1,13 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { dbClient, getAccount, getWorkspace, getWorkspaces } from '@zodiac/db'
+import {
+  dbClient,
+  getAccount,
+  getTenant,
+  getWorkspace,
+  getWorkspaces,
+} from '@zodiac/db'
 import {
   accountFactory,
   tenantFactory,
@@ -100,7 +106,68 @@ describe('Workspaces', () => {
       ).resolves.toHaveProperty('label', 'Workspace updated')
     })
 
-    it.todo('is possible to set a workspace as the default one')
+    it('is possible to set a workspace as the default one', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const workspace = await workspaceFactory.create(tenant, user, {
+        label: 'New workspace',
+      })
+
+      await render(
+        href('/workspace/:workspaceId/admin/workspaces', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', {
+          name: 'Workspace options',
+          description: 'New workspace',
+        }),
+      )
+      await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
+
+      await userEvent.click(
+        await screen.findByRole('checkbox', {
+          name: 'Use as default workspace',
+        }),
+      )
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      await expect(getTenant(dbClient(), tenant.id)).resolves.toHaveProperty(
+        'defaultWorkspaceId',
+        workspace.id,
+      )
+    })
+
+    it('shows when the workspace is already the default', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      await render(
+        href('/workspace/:workspaceId/admin/workspaces', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', {
+          name: 'Workspace options',
+        }),
+      )
+      await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
+
+      expect(
+        await screen.findByRole('checkbox', {
+          name: 'Use as default workspace',
+        }),
+      ).toBeChecked()
+    })
   })
 
   describe('Remove', () => {
