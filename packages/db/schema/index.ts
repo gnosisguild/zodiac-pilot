@@ -303,10 +303,6 @@ export const accountSchema = createSelectSchema(AccountTable, {
   deletedAt: z.coerce.date().optional().nullable(),
 })
 
-const AccountRelations = relations(AccountTable, ({ many }) => ({
-  defaultRoutes: many(DefaultRouteTable),
-}))
-
 export const WalletTable = pgTable(
   'Wallet',
   {
@@ -538,7 +534,6 @@ export const schema = {
   TenantRelations,
   FeatureRelations,
   RouteRelations,
-  AccountRelations,
   ActiveFeatureRelations,
   DefaultRouteRelations,
   ActiveAccountRelations,

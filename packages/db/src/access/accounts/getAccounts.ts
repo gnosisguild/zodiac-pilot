@@ -3,14 +3,13 @@ import type { DBClient } from '../../dbClient'
 
 type GetAccountsOptions = {
   tenantId: UUID
-  userId: UUID
   workspaceId?: UUID
   deleted?: boolean
 }
 
 export const getAccounts = (
   db: DBClient,
-  { tenantId, userId, workspaceId, deleted = false }: GetAccountsOptions,
+  { tenantId, workspaceId, deleted = false }: GetAccountsOptions,
 ) =>
   db.query.account.findMany({
     where(fields, { eq, and }) {
@@ -27,20 +26,5 @@ export const getAccounts = (
     },
     orderBy(fields, { asc }) {
       return asc(fields.label)
-    },
-    with: {
-      defaultRoutes: {
-        where(fields, { eq, and }) {
-          return and(eq(fields.userId, userId), eq(fields.tenantId, tenantId))
-        },
-
-        with: {
-          route: {
-            with: {
-              wallet: true,
-            },
-          },
-        },
-      },
     },
   })

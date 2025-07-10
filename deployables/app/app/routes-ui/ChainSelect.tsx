@@ -54,9 +54,7 @@ export const ChainSelect = ({
         }
       }}
     >
-      {({ data: { label, value } }) => (
-        <Chain chainId={value}>{label || `#${value}`}</Chain>
-      )}
+      {({ data: { value } }) => <Chain chainId={value} />}
     </Select>
   )
 }
