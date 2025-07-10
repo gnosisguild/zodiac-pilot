@@ -4,13 +4,13 @@ import {
   type FetchOptions,
 } from '@/companion'
 import {
-  getAdHocRoute,
+  findAdHocRoute,
   getLastUsedRouteId,
   getRoutes,
 } from '@/execution-routes'
 
 export const findActiveAccount = async (options: FetchOptions = {}) => {
-  const adHocRoute = getAdHocRoute()
+  const adHocRoute = findAdHocRoute()
   if (adHocRoute != null) {
     return toAccount(adHocRoute)
   }

@@ -1,5 +1,5 @@
 import { getRemoteAccount, toAccount } from '@/companion'
-import { findRoute, getAdHocRoute } from '@/execution-routes'
+import { findAdHocRoute, findRoute } from '@/execution-routes'
 import type { FetchOptions } from '../companion/api'
 import type { TaggedAccount } from './TaggedAccount'
 import { toLocalAccount } from './toLocalAccount'
@@ -10,7 +10,7 @@ export const getAccount = async (
   options: FetchOptions = {},
 ): Promise<TaggedAccount> => {
   // 1) try ad-hoc route (encoded in location search param)
-  const adHocRoute = getAdHocRoute()
+  const adHocRoute = findAdHocRoute()
   if (adHocRoute != null && adHocRoute.id === accountId) {
     return toLocalAccount(toAccount(adHocRoute))
   }

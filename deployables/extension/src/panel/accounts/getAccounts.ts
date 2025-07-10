@@ -1,5 +1,5 @@
 import { getRemoteAccounts, toAccount, type FetchOptions } from '@/companion'
-import { getAdHocRoute, getRoutes } from '@/execution-routes'
+import { findAdHocRoute, getRoutes } from '@/execution-routes'
 import { sortAccounts } from './sortAccounts'
 
 export const getAccounts = async (options: FetchOptions = {}) => {
@@ -11,7 +11,7 @@ export const getAccounts = async (options: FetchOptions = {}) => {
   const result = [...accounts, ...routes.map(toAccount)].toSorted(sortAccounts)
 
   // if we have an ad-hoc route, add it to the beginning of the list
-  const adHocRoute = getAdHocRoute()
+  const adHocRoute = findAdHocRoute()
   if (adHocRoute != null) {
     result.unshift(toAccount(adHocRoute))
   }

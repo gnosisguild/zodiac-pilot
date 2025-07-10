@@ -1,5 +1,5 @@
 import { getRemoteRoutes, type FetchOptions } from '@/companion'
-import { getAdHocRoute, getRoute } from '@/execution-routes'
+import { findAdHocRoute, getRoute } from '@/execution-routes'
 import { invariant } from '@epic-web/invariant'
 import { isUUID } from '@zodiac/schema'
 import type { UUID } from 'crypto'
@@ -10,7 +10,7 @@ export const getRoutes = async (
   options: FetchOptions,
 ) => {
   if (accountId === 'ad-hoc') {
-    const adHocRoute = getAdHocRoute()
+    const adHocRoute = findAdHocRoute()
     invariant(adHocRoute != null, 'Ad-hoc route not found')
     return [adHocRoute]
   }
