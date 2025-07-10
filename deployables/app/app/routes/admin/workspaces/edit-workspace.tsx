@@ -1,10 +1,15 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { invariantResponse } from '@epic-web/invariant'
-import { dbClient, getWorkspace, updateWorkspaceLabel } from '@zodiac/db'
-import { getString } from '@zodiac/form-data'
+import {
+  dbClient,
+  getWorkspace,
+  setDefaultWorkspace,
+  updateWorkspaceLabel,
+} from '@zodiac/db'
+import { getBoolean, getString } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
-import { Form, Modal, PrimaryButton, TextInput } from '@zodiac/ui'
+import { Checkbox, Form, Modal, PrimaryButton, TextInput } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import type { Route } from './+types/edit-workspace'
 import { Intent } from './intents'
@@ -12,12 +17,20 @@ import { Intent } from './intents'
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
-    async ({ params: { id } }) => {
+    async ({
+      params: { id },
+      context: {
+        auth: { tenant },
+      },
+    }) => {
       invariantResponse(isUUID(id), '"id" is not a UUID')
 
       const workspace = await getWorkspace(dbClient(), id)
 
-      return { label: workspace.label }
+      return {
+        label: workspace.label,
+        isDefaultWorkspace: id === tenant.defaultWorkspaceId,
+      }
     },
     {
       ensureSignedIn: true,
@@ -34,14 +47,29 @@ export const loader = (args: Route.LoaderArgs) =>
 export const action = (args: Route.ActionArgs) =>
   authorizedAction(
     args,
-    async ({ request, params: { id, workspaceId } }) => {
+    async ({
+      request,
+      params: { id, workspaceId },
+      context: {
+        auth: { tenant },
+      },
+    }) => {
       invariantResponse(isUUID(id), '"id" is not a UUID')
 
       const data = await request.formData()
 
       const label = getString(data, 'label')
 
-      await updateWorkspaceLabel(dbClient(), id, label)
+      await dbClient().transaction(async (tx) => {
+        await updateWorkspaceLabel(tx, id, label)
+
+        if (getBoolean(data, 'useAsDefault')) {
+          await setDefaultWorkspace(tx, {
+            tenantId: tenant.id,
+            workspaceId: id,
+          })
+        }
+      })
 
       return redirect(
         href('/workspace/:workspaceId/admin/workspaces', { workspaceId }),
@@ -61,7 +89,7 @@ export const action = (args: Route.ActionArgs) =>
 
 const EditWorkspace = ({
   params: { workspaceId },
-  loaderData: { label },
+  loaderData: { label, isDefaultWorkspace },
 }: Route.ComponentProps) => {
   const navigate = useNavigate()
 
@@ -77,6 +105,10 @@ const EditWorkspace = ({
     >
       <Form>
         <TextInput required label="Label" name="label" defaultValue={label} />
+
+        <Checkbox name="useAsDefault" defaultChecked={isDefaultWorkspace}>
+          Use as default workspace
+        </Checkbox>
 
         <Modal.Actions>
           <PrimaryButton
