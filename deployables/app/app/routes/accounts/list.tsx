@@ -3,7 +3,6 @@ import { Page } from '@/components'
 import { Chain } from '@/routes-ui'
 import { routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
-import { CHAIN_NAME } from '@zodiac/chains'
 import {
   countWorkspaces,
   dbClient,
@@ -191,9 +190,7 @@ const ListRoutes = ({
                   )}
                 </TableCell>
                 <TableCell>
-                  <Chain chainId={account.chainId}>
-                    {CHAIN_NAME[account.chainId]}
-                  </Chain>
+                  <Chain chainId={account.chainId} />
                 </TableCell>
                 <TableCell>
                   <Address shorten>{account.address}</Address>

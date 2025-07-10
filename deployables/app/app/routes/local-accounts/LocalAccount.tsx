@@ -2,7 +2,7 @@ import { useIsSignedIn } from '@/auth-client'
 import { Chain } from '@/routes-ui'
 import { useOptionalWorkspaceId } from '@/workspaces'
 import { invariant } from '@epic-web/invariant'
-import { CHAIN_NAME, getChainId, ZERO_ADDRESS } from '@zodiac/chains'
+import { getChainId, ZERO_ADDRESS } from '@zodiac/chains'
 import { useIsPending } from '@zodiac/hooks'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import { encode, type ExecutionRoute } from '@zodiac/schema'
@@ -37,7 +37,7 @@ export const LocalAccount = ({ route, active }: LocalAccountProps) => {
         )}
       </TableCell>
       <TableCell>
-        <Chain chainId={chainId}>{CHAIN_NAME[chainId]}</Chain>
+        <Chain chainId={chainId} />
       </TableCell>
       <TableCell>
         {route.initiator == null ? (
