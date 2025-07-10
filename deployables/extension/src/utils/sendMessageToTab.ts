@@ -12,7 +12,7 @@ export const sendMessageToTab = async (tabId: number, message: unknown) => {
   if (!isValidTab(tab.url)) {
     console.debug(`Tab URL "${tab.url}" is not valid.`)
 
-    const handleActivate = async (activeInfo: chrome.tabs.TabActiveInfo) => {
+    const handleActivate = async (activeInfo: chrome.tabs.OnActivatedInfo) => {
       chrome.tabs.onActivated.removeListener(handleActivate)
       chrome.tabs.onUpdated.removeListener(handleUpdate)
 
@@ -23,7 +23,7 @@ export const sendMessageToTab = async (tabId: number, message: unknown) => {
 
     const handleUpdate = (
       updatedTabId: number,
-      changeInfo: chrome.tabs.TabChangeInfo,
+      changeInfo: chrome.tabs.OnUpdatedInfo,
     ) => {
       if (updatedTabId !== tabId) {
         return
@@ -73,7 +73,7 @@ export const sendMessageToTab = async (tabId: number, message: unknown) => {
 
   const handleUpdate = (
     updatedTabId: number,
-    changeInfo: chrome.tabs.TabChangeInfo,
+    changeInfo: chrome.tabs.OnUpdatedInfo,
   ) => {
     if (updatedTabId !== tabId) {
       return

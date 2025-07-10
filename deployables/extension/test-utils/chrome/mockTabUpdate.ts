@@ -5,7 +5,7 @@ import {
   mockActiveTab,
 } from '@zodiac/test-utils/chrome'
 
-export const mockTabUpdate = async (chnageInfo: chrome.tabs.TabChangeInfo) => {
+export const mockTabUpdate = async (chnageInfo: chrome.tabs.OnUpdatedInfo) => {
   const activeTab = await getActiveTab()
 
   const updatedTab = mockActiveTab({ ...activeTab, ...chnageInfo })
