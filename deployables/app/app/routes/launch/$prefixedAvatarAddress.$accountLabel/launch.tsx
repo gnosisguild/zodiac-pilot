@@ -1,13 +1,13 @@
 import { Page, useConnected } from '@/components'
 import { ChainSelect } from '@/routes-ui'
+import { useIsPending } from '@zodiac/hooks'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
   jsonStringify,
   verifyPrefixedAddress,
   type ExecutionRoute,
 } from '@zodiac/schema'
-import { AddressInput, PrimaryButton, Warning } from '@zodiac/ui'
-import { useState } from 'react'
+import { AddressInput, InlineForm, PrimaryButton, Warning } from '@zodiac/ui'
 import { splitPrefixedAddress } from 'ser-kit'
 import { z } from 'zod'
 import type { Route } from './+types/launch'
@@ -26,7 +26,7 @@ const jsonRpcCallSchema = z.object({
   params: z.array(jsonRpcValueSchema).optional().default([]),
 })
 
-export async function loader({ params, request }: Route.LoaderArgs) {
+function readParams({ params, request }: Omit<Route.LoaderArgs, 'context'>) {
   const { accountLabel } = params
 
   const prefixedAvatarAddress = verifyPrefixedAddress(
@@ -53,14 +53,18 @@ export async function loader({ params, request }: Route.LoaderArgs) {
     route,
     setup,
     callback,
-    prefixedAvatarAddress,
   }
 }
 
-export default function LaunchPage({
-  loaderData: { route, callback, setup },
-}: Route.ComponentProps) {
-  const [launching, setLaunching] = useState(false)
+export const loader = async (args: Route.LoaderArgs) => {
+  return readParams(args)
+}
+
+export const clientAction = async ({
+  params,
+  request,
+}: Route.ClientActionArgs) => {
+  const { callback, route, setup } = readParams({ params, request })
 
   // Forward to extension panel via search params
   const searchParams = new URLSearchParams()
@@ -69,24 +73,25 @@ export default function LaunchPage({
   if (route) searchParams.set('route', jsonStringify(route))
   const search = `?${searchParams.toString()}`
 
+  companionRequest(
+    {
+      type: CompanionAppMessageType.OPEN_PILOT,
+      search,
+    },
+    // // TODO make this message respond after switching to the ad-hoc route and executing the setup
+    // () => {
+    //   // Then continue here with redirecting to the token balances page
+    //   // navigate('/offline/tokens/balances')
+    // },
+  )
+}
+
+export default function LaunchPage({
+  loaderData: { route },
+}: Route.ComponentProps) {
+  const isLaunching = useIsPending()
+
   const connected = useConnected()
-
-  const openPilot = async () => {
-    setLaunching(true)
-    companionRequest(
-      {
-        type: CompanionAppMessageType.OPEN_PILOT,
-        search,
-      },
-      // // TODO make this message respond after switching to the ad-hoc route and executing the setup
-      // () => {
-      //   // Then continue here with redirecting to the token balances page
-      //   // navigate('/offline/tokens/balances')
-      // },
-    )
-
-    setLaunching(false)
-  }
 
   const [chainId, address] = splitPrefixedAddress(route.avatar)
 
@@ -95,7 +100,7 @@ export default function LaunchPage({
       <div className="flex h-full items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="flex items-center gap-4">
-            <ChainSelect disabled defaultValue={chainId} />
+            <ChainSelect disabled value={chainId} />
             <AddressInput
               readOnly
               value={address}
@@ -103,14 +108,16 @@ export default function LaunchPage({
             />
           </div>
 
-          {connected && !launching && (
+          {connected && !isLaunching && (
             <Warning title="Switching account">
               Launch will clear any previously recorded calls in the panel.
             </Warning>
           )}
-          <PrimaryButton onClick={openPilot} busy={launching}>
-            Launch
-          </PrimaryButton>
+          <InlineForm>
+            <PrimaryButton submit busy={isLaunching}>
+              Launch
+            </PrimaryButton>
+          </InlineForm>
         </div>
       </div>
     </Page>
