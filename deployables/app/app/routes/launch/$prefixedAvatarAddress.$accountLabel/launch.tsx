@@ -1,6 +1,6 @@
 import { Page, useConnected } from '@/components'
 import { ChainSelect } from '@/routes-ui'
-import { CompanionAppMessageType } from '@zodiac/messages'
+import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import {
   jsonStringify,
   verifyPrefixedAddress,
@@ -73,15 +73,18 @@ export default function LaunchPage({
 
   const openPilot = async () => {
     setLaunching(true)
-    window.postMessage(
+    companionRequest(
       {
         type: CompanionAppMessageType.OPEN_PILOT,
         search,
       },
-      '*',
+      // // TODO make this message respond after switching to the ad-hoc route and executing the setup
+      // () => {
+      //   // Then continue here with redirecting to the token balances page
+      //   // navigate('/offline/tokens/balances')
+      // },
     )
-    // TODO: wait for setup to be applied, then navigate to the token balances page
-    // navigate('/offline/tokens/balances')
+
     setLaunching(false)
   }
 
