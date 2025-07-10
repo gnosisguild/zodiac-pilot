@@ -1,4 +1,4 @@
-import { authorizedLoader } from '@/auth-server'
+import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Navigation, PilotStatus, ProvidePilotStatus } from '@/components'
 import { ProvideWorkspace } from '@/workspaces'
 import { invariantResponse } from '@epic-web/invariant'
@@ -7,11 +7,15 @@ import {
   getLastAccountsUpdateTime,
   getLastRoutesUpdateTime,
   getWorkspace,
+  getWorkspaces,
 } from '@zodiac/db'
 import { getAdminOrganizationId } from '@zodiac/env'
+import { getUUID } from '@zodiac/form-data'
 import { isUUID } from '@zodiac/schema'
 import {
   Divider,
+  InlineForm,
+  Select,
   Sidebar,
   SidebarBody,
   SidebarFooter,
@@ -30,7 +34,7 @@ import {
   Signature,
   User,
 } from 'lucide-react'
-import { href, NavLink, Outlet } from 'react-router'
+import { href, NavLink, Outlet, redirect } from 'react-router'
 import type { Route } from './+types/workspace-layout'
 
 export const loader = async (args: Route.LoaderArgs) =>
@@ -46,17 +50,19 @@ export const loader = async (args: Route.LoaderArgs) =>
 
       const db = dbClient()
 
-      const [lastAccountsUpdate, lastRoutesUpdate, workspace] =
+      const [lastAccountsUpdate, lastRoutesUpdate, workspace, workspaces] =
         await Promise.all([
           getLastAccountsUpdateTime(db, tenant.id),
           getLastRoutesUpdateTime(db, tenant.id),
           getWorkspace(db, workspaceId),
+          getWorkspaces(db, { tenantId: tenant.id }),
         ])
 
       return {
         user,
         role,
         workspace,
+        workspaces,
         isSystemAdmin: getAdminOrganizationId() === workOsOrganization.id,
         lastAccountsUpdate,
         lastRoutesUpdate,
@@ -74,6 +80,33 @@ export const loader = async (args: Route.LoaderArgs) =>
     },
   )
 
+export const action = (args: Route.ActionArgs) =>
+  authorizedAction(
+    args,
+    async ({ request }) => {
+      const data = await request.formData()
+
+      return redirect(
+        href('/workspace/:workspaceId', {
+          workspaceId: getUUID(data, 'workspaceId'),
+        }),
+      )
+    },
+    {
+      ensureSignedIn: true,
+      async hasAccess({ request, tenant }) {
+        const data = await request.formData()
+
+        const workspace = await getWorkspace(
+          dbClient(),
+          getUUID(data, 'workspaceId'),
+        )
+
+        return workspace.tenantId === tenant.id
+      },
+    },
+  )
+
 const PageLayout = ({
   loaderData: {
     user,
@@ -82,6 +115,7 @@ const PageLayout = ({
     lastAccountsUpdate,
     lastRoutesUpdate,
     workspace,
+    workspaces,
   },
   params: { workspaceId },
 }: Route.ComponentProps) => {
@@ -102,6 +136,24 @@ const PageLayout = ({
               </SidebarHeader>
 
               <SidebarBody>
+                <InlineForm>
+                  {({ submit }) => (
+                    <Select
+                      label="Current workspace"
+                      name="workspaceId"
+                      defaultValue={{
+                        value: workspace.id,
+                        label: workspace.label,
+                      }}
+                      options={workspaces.map((workspace) => ({
+                        value: workspace.id,
+                        label: workspace.label,
+                      }))}
+                      onChange={submit}
+                    />
+                  )}
+                </InlineForm>
+
                 <Navigation>
                   <Navigation.Section title="Tokens">
                     <Navigation.Link
