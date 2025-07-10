@@ -19,7 +19,7 @@
   "dependencies": {
     "@epic-web/invariant": "1.0.0",
     "@headlessui/react": "2.2.4",
-    "@tanstack/react-query": "5.81.5",
+    "@tanstack/react-query": "5.82.0",
     "@zodiac/chains": "workspace:*",
     "@zodiac/schema": "workspace:*",
     "classnames": "2.5.1",
