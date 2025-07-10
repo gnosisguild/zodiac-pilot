@@ -30,9 +30,6 @@ export const getRoutes = async (
     orderBy(fields, { asc, desc }) {
       return [asc(fields.label), desc(fields.createdAt)]
     },
-    with: {
-      wallet: true,
-    },
   })
 
   return routes.map((route) => ({

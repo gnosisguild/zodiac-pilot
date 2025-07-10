@@ -32,6 +32,6 @@ describe('getRoutes', () => {
         accountId: account.id,
         userId: userB.id,
       }),
-    ).resolves.toEqual([{ ...routeB, wallet: walletB }])
+    ).resolves.toEqual([routeB])
   })
 })

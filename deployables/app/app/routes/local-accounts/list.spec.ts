@@ -506,16 +506,21 @@ describe.sequential('List Accounts', () => {
 
       await waitForPendingActions()
 
-      const [, routeB] = await getRoutes(dbClient(), tenant.id, {
-        walletId: wallet.id,
-        userId: user.id,
-        accountId: account.id,
-      })
-
-      expect(routeB).toMatchObject({
-        label: 'Route B',
-        waypoints: executionRoute.waypoints,
-      })
+      await waitFor(() =>
+        expect(
+          getRoutes(dbClient(), tenant.id, {
+            walletId: wallet.id,
+            userId: user.id,
+            accountId: account.id,
+          }),
+        ).resolves.toEqual([
+          expect.objectContaining(route),
+          expect.objectContaining({
+            label: 'Route B',
+            waypoints: executionRoute.waypoints,
+          }),
+        ]),
+      )
     })
 
     it('removes the local account', async () => {
