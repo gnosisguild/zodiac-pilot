@@ -1,6 +1,6 @@
 import { Page } from '@/components'
 import { useWorkspaceId } from '@/workspaces'
-import { Feature, TabBar } from '@zodiac/ui'
+import { TabBar } from '@zodiac/ui'
 import { Blocks, Users } from 'lucide-react'
 import { href, Outlet } from 'react-router'
 
@@ -21,16 +21,14 @@ const AdminLayout = () => {
             User management
           </TabBar.LinkTab>
 
-          <Feature feature="workspaces">
-            <TabBar.LinkTab
-              icon={Blocks}
-              to={href('/workspace/:workspaceId/admin/workspaces', {
-                workspaceId: useWorkspaceId(),
-              })}
-            >
-              Workspaces
-            </TabBar.LinkTab>
-          </Feature>
+          <TabBar.LinkTab
+            icon={Blocks}
+            to={href('/workspace/:workspaceId/admin/workspaces', {
+              workspaceId: useWorkspaceId(),
+            })}
+          >
+            Workspaces
+          </TabBar.LinkTab>
         </TabBar>
 
         <Outlet />
