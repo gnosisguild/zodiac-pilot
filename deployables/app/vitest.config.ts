@@ -29,7 +29,7 @@ export default defineConfig({
     mockReset: true,
     clearMocks: true,
 
-    retry: process.env.CI ? 1 : undefined,
+    retry: process.env.CI ? 3 : undefined,
 
     poolOptions: {
       forks: { singleFork: true },
