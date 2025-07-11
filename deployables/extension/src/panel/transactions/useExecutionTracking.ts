@@ -55,7 +55,7 @@ export const useExecutionTracking = () => {
       })
 
     return () => {
-      abortController.abort()
+      abortController.abort('Effect cancelled')
     }
   }, [markDone, nextTransaction, refresh, rollback, sendTransaction])
 }
