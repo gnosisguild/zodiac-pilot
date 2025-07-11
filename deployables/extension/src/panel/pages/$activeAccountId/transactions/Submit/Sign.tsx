@@ -1,11 +1,14 @@
 import { useAccount } from '@/accounts'
 import { useCompanionAppUrl } from '@/companion'
-import { useExecutionRoute } from '@/execution-routes'
 import { useWindowId } from '@/port-handling'
 import { useClearTransactions, useTransactions } from '@/transactions'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
-import { encode, toMetaTransactionRequest } from '@zodiac/schema'
+import {
+  encode,
+  toMetaTransactionRequest,
+  type ExecutionRoute,
+} from '@zodiac/schema'
 import {
   Form,
   Modal,
@@ -14,11 +17,14 @@ import {
   Spinner,
 } from '@zodiac/ui'
 import { useState } from 'react'
-import { Intent } from '../intents'
+import { Intent } from '../../intents'
 
-export const Sign = () => {
+type SignProps = {
+  route: ExecutionRoute | null
+}
+
+export const Sign = ({ route }: SignProps) => {
   const account = useAccount()
-  const route = useExecutionRoute()
   const windowId = useWindowId()
 
   const transactions = useTransactions()
@@ -40,36 +46,38 @@ export const Sign = () => {
 
   useAfterSubmit(Intent.CreateProposal, () => setSignPending(true))
 
-  if (route != null && route.initiator != null) {
+  if (route == null || route.initiator == null) {
+    return (
+      <Form
+        context={{ accountId: account.id, windowId }}
+        action={`/${account.id}`}
+      >
+        <PrimaryButton fluid submit intent={Intent.EditAccount}>
+          Complete route setup to sign
+        </PrimaryButton>
+      </Form>
+    )
+  }
+
+  if (account.remote) {
     return (
       <>
-        {account.remote ? (
-          <Form
-            context={{
-              transaction: encode(transactions.map(toMetaTransactionRequest)),
-            }}
-          >
-            <PrimaryButton
-              submit
-              fluid
-              intent={Intent.CreateProposal}
-              busy={creatingProposal}
-              disabled={transactions.length === 0}
-            >
-              Sign
-            </PrimaryButton>
-          </Form>
-        ) : (
-          <PrimaryLinkButton
+        <Form
+          context={{
+            transaction: encode(transactions.map(toMetaTransactionRequest)),
+          }}
+          action={`/${account.id}/${route.id}`}
+        >
+          <PrimaryButton
+            submit
             fluid
-            openInNewWindow
-            to={`${companionAppUrl}/submit/${encode(route)}/${encode(transactions.map(toMetaTransactionRequest))}`}
+            intent={Intent.CreateProposal}
+            busy={creatingProposal}
             disabled={transactions.length === 0}
-            onClick={() => setSignPending(true)}
           >
             Sign
-          </PrimaryLinkButton>
-        )}
+          </PrimaryButton>
+        </Form>
 
         <AwaitingSignatureModal
           isOpen={signPending}
@@ -80,11 +88,22 @@ export const Sign = () => {
   }
 
   return (
-    <Form context={{ accountId: account.id, windowId }}>
-      <PrimaryButton fluid submit intent={Intent.EditAccount}>
-        Complete route setup to sign
-      </PrimaryButton>
-    </Form>
+    <>
+      <PrimaryLinkButton
+        fluid
+        openInNewWindow
+        to={`${companionAppUrl}/submit/${encode(route)}/${encode(transactions.map(toMetaTransactionRequest))}`}
+        disabled={transactions.length === 0}
+        onClick={() => setSignPending(true)}
+      >
+        Sign
+      </PrimaryLinkButton>
+
+      <AwaitingSignatureModal
+        isOpen={signPending}
+        onClose={() => setSignPending(false)}
+      />
+    </>
   )
 }
 

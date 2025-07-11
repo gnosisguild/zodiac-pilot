@@ -3,6 +3,7 @@ import { type RouteObject } from 'react-router'
 import * as ActiveAccount from './pages/$activeAccountId/ActiveAccount'
 import * as ActiveRoute from './pages/$activeAccountId/ActiveRoute'
 import * as LoadDefaultRoute from './pages/$activeAccountId/LoadDefaultRoute'
+import * as NoActiveRoute from './pages/$activeAccountId/NoActiveRoute'
 import * as ClearTransactions from './pages/$activeAccountId/clear-transactions.$newActiveAccountId/ClearTransactions'
 import * as Transactions from './pages/$activeAccountId/transactions/Transactions'
 import * as LoadDefaultAccount from './pages/LoadDefaultAccount'
@@ -35,18 +36,23 @@ export const routes: RouteObject[] = [
           },
           {
             path: 'no-routes',
-            Component: Transactions.default,
-            action: Transactions.action,
+            Component: NoActiveRoute.default,
+            children: [
+              {
+                index: true,
+                Component: Transactions.default,
+              },
+            ],
           },
           {
             path: ':routeId',
             Component: ActiveRoute.default,
             loader: ActiveRoute.loader,
+            action: ActiveRoute.action,
             children: [
               {
                 index: true,
                 Component: Transactions.default,
-                action: Transactions.action,
               },
             ],
           },

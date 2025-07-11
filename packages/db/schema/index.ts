@@ -234,6 +234,8 @@ export type SubscriptionPlanCreateInput =
 export const ActiveSubscriptionTable = pgTable(
   'ActiveSubscription',
   {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+
     subscriptionPlanId: uuid()
       .notNull()
       .$type<UUID>()
@@ -426,6 +428,9 @@ export const ActiveAccountTable = pgTable(
   },
   (table) => [
     primaryKey({ columns: [table.accountId, table.tenantId, table.userId] }),
+    index().on(table.accountId),
+    index().on(table.tenantId),
+    index().on(table.userId),
   ],
 )
 

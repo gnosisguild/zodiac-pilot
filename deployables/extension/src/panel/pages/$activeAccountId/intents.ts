@@ -5,4 +5,5 @@ export enum Intent {
   ListAccounts = 'ListAccounts',
   ActivateAccount = 'ActivateAccount',
   RefreshAccount = 'RefreshAccount',
+  CreateProposal = 'CreateProposal',
 }
