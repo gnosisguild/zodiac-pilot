@@ -28,7 +28,7 @@ import { prefixAddress } from 'ser-kit'
 import { ClearTransactionsModal } from '../ClearTransactionsModal'
 import { RecordingIndicator } from './RecordingIndicator'
 import { Sign } from './Sign'
-import { Transaction } from './transaction'
+import { Transaction } from './Transaction'
 
 const Transactions = () => {
   const transactions = useTransactions()
