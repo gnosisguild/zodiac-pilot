@@ -155,6 +155,8 @@ export default [
           route('delete-wallet/:walletId', 'routes/auth/delete-wallet.tsx'),
         ]),
 
+        route('roles', 'routes/roles/list.tsx'),
+
         route('accounts', 'routes/accounts/list.tsx', [
           route('delete/:accountId', 'routes/accounts/delete-account.tsx'),
           route('move/:accountId', 'routes/accounts/move-account.tsx'),

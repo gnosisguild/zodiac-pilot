@@ -14,6 +14,7 @@ import { getUUID } from '@zodiac/form-data'
 import { isUUID } from '@zodiac/schema'
 import {
   Divider,
+  Feature,
   InlineForm,
   Select,
   Sidebar,
@@ -29,6 +30,7 @@ import {
   Bookmark,
   BookmarkX,
   Cog,
+  Drama,
   Landmark,
   Shield,
   Signature,
@@ -160,7 +162,9 @@ const PageLayout = ({
                   <Navigation.Section title="Tokens">
                     <Navigation.Link
                       reloadDocument={(location) =>
-                        !location.pathname.startsWith('/tokens')
+                        !location.pathname.startsWith(
+                          `/workspace/${workspaceId}/tokens`,
+                        )
                       }
                       to={href(
                         '/workspace/:workspaceId/tokens/send/:chain?/:token?',
@@ -173,7 +177,9 @@ const PageLayout = ({
 
                     <Navigation.Link
                       reloadDocument={(location) =>
-                        !location.pathname.startsWith('/tokens')
+                        !location.pathname.startsWith(
+                          `/workspace/${workspaceId}/tokens`,
+                        )
                       }
                       to={href('/workspace/:workspaceId/tokens/balances', {
                         workspaceId,
@@ -185,7 +191,9 @@ const PageLayout = ({
 
                     <Navigation.Link
                       reloadDocument={(location) =>
-                        !location.pathname.startsWith('/tokens')
+                        !location.pathname.startsWith(
+                          `/workspace/${workspaceId}/tokens`,
+                        )
                       }
                       to={href('/workspace/:workspaceId/tokens/swap', {
                         workspaceId,
@@ -203,7 +211,9 @@ const PageLayout = ({
                       })}
                       icon={Bookmark}
                       reloadDocument={(location) =>
-                        location.pathname.startsWith('/tokens')
+                        location.pathname.startsWith(
+                          `/workspace/${workspaceId}/tokens`,
+                        )
                       }
                     >
                       Safe Accounts
@@ -215,11 +225,24 @@ const PageLayout = ({
                       })}
                       icon={BookmarkX}
                       reloadDocument={(location) =>
-                        location.pathname.startsWith('/tokens')
+                        location.pathname.startsWith(
+                          `/workspace/${workspaceId}/tokens`,
+                        )
                       }
                     >
                       Local Safe Accounts
                     </Navigation.Link>
+
+                    <Feature feature="roles">
+                      <Navigation.Link
+                        to={href('/workspace/:workspaceId/roles', {
+                          workspaceId,
+                        })}
+                        icon={Drama}
+                      >
+                        Roles
+                      </Navigation.Link>
+                    </Feature>
                   </Navigation.Section>
 
                   <Navigation.Section title="Transactions">
