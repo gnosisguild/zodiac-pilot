@@ -3,8 +3,10 @@ import { type RouteObject } from 'react-router'
 import * as ActiveAccount from './pages/$activeAccountId/ActiveAccount'
 import * as ActiveRoute from './pages/$activeAccountId/ActiveRoute'
 import * as LoadDefaultRoute from './pages/$activeAccountId/LoadDefaultRoute'
+import * as NoActiveRoute from './pages/$activeAccountId/NoActiveRoute'
 import * as ClearTransactions from './pages/$activeAccountId/clear-transactions.$newActiveAccountId/ClearTransactions'
 import * as Transactions from './pages/$activeAccountId/transactions/Transactions'
+import * as TransactionsLayout from './pages/$activeAccountId/transactions/TransactionsLayout'
 import * as LoadDefaultAccount from './pages/LoadDefaultAccount'
 import * as Root from './pages/Root'
 import * as NoAccounts from './pages/_index/NoAccounts'
@@ -35,8 +37,19 @@ export const routes: RouteObject[] = [
           },
           {
             path: 'no-routes',
-            Component: Transactions.default,
-            action: Transactions.action,
+            Component: NoActiveRoute.default,
+            children: [
+              {
+                Component: TransactionsLayout.default,
+                action: TransactionsLayout.action,
+                children: [
+                  {
+                    index: true,
+                    Component: Transactions.default,
+                  },
+                ],
+              },
+            ],
           },
           {
             path: ':routeId',
@@ -44,9 +57,14 @@ export const routes: RouteObject[] = [
             loader: ActiveRoute.loader,
             children: [
               {
-                index: true,
-                Component: Transactions.default,
-                action: Transactions.action,
+                Component: TransactionsLayout.default,
+                action: TransactionsLayout.action,
+                children: [
+                  {
+                    index: true,
+                    Component: Transactions.default,
+                  },
+                ],
               },
             ],
           },

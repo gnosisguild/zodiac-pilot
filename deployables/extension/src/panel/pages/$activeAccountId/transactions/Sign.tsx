@@ -1,11 +1,14 @@
 import { useAccount } from '@/accounts'
 import { useCompanionAppUrl } from '@/companion'
-import { useExecutionRoute } from '@/execution-routes'
 import { useWindowId } from '@/port-handling'
 import { useClearTransactions, useTransactions } from '@/transactions'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { CompanionAppMessageType, useTabMessageHandler } from '@zodiac/messages'
-import { encode, toMetaTransactionRequest } from '@zodiac/schema'
+import {
+  encode,
+  toMetaTransactionRequest,
+  type ExecutionRoute,
+} from '@zodiac/schema'
 import {
   Form,
   Modal,
@@ -16,9 +19,12 @@ import {
 import { useState } from 'react'
 import { Intent } from './intents'
 
-export const Sign = () => {
+type SignProps = {
+  route: ExecutionRoute | null
+}
+
+export const Sign = ({ route }: SignProps) => {
   const account = useAccount()
-  const route = useExecutionRoute()
   const windowId = useWindowId()
 
   const transactions = useTransactions()

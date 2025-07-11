@@ -1,6 +1,7 @@
 export {
   ProvideExecutionRoute,
   useExecutionRoute,
+  useOptionalExecutionRoute,
 } from './ExecutionRouteContext'
 export { findRoute } from './findRoute'
 export { getLastUsedRouteId } from './getLastUsedRouteId'

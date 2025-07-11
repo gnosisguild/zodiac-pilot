@@ -1,5 +1,5 @@
 import { useAccount } from '@/accounts'
-import { useExecutionRoute } from '@/execution-routes'
+import { useOptionalExecutionRoute } from '@/execution-routes'
 import type { HexAddress } from '@zodiac/schema'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import { useCallback } from 'react'
@@ -18,7 +18,7 @@ export const useSendTransaction = () => {
   const provider = useProvider()
   const dispatch = useDispatch()
   const { address } = useAccount()
-  const route = useExecutionRoute()
+  const route = useOptionalExecutionRoute()
 
   const moduleAddress = getModuleAddress(route)
 
