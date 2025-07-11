@@ -1,6 +1,5 @@
-import { editAccount, getAccount, useAccount, useSaveAccount } from '@/accounts'
-import { createProposal } from '@/companion'
-import { useExecutionRoute } from '@/execution-routes'
+import { useAccount, useSaveAccount } from '@/accounts'
+import { useOptionalExecutionRoute } from '@/execution-routes'
 import { usePilotIsReady } from '@/port-handling'
 import {
   useDecodeTransactions,
@@ -10,15 +9,9 @@ import {
   useTransactionTracking,
 } from '@/transactions'
 import { sendMessageToCompanionApp } from '@/utils'
-import { invariant, invariantResponse } from '@epic-web/invariant'
-import { getCompanionAppUrl } from '@zodiac/env'
-import { getInt, getString } from '@zodiac/form-data'
+import { invariant } from '@epic-web/invariant'
 import { CompanionResponseMessageType } from '@zodiac/messages'
-import {
-  isUUID,
-  parseTransactionData,
-  toMetaTransactionRequest,
-} from '@zodiac/schema'
+import { toMetaTransactionRequest } from '@zodiac/schema'
 import {
   CopyToClipboard,
   GhostButton,
@@ -30,78 +23,26 @@ import {
 } from '@zodiac/ui'
 import { RefreshCcw, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate, type ActionFunctionArgs } from 'react-router'
+import { useNavigate } from 'react-router'
 import { prefixAddress } from 'ser-kit'
 import { ClearTransactionsModal } from '../ClearTransactionsModal'
-import { Intent } from './intents'
 import { RecordingIndicator } from './RecordingIndicator'
 import { Sign } from './Sign'
 import { Transaction } from './Transaction'
 
-export const action = async ({
-  request,
-  params: { activeAccountId, routeId },
-}: ActionFunctionArgs) => {
-  const data = await request.formData()
-
-  const intent = getString(data, 'intent')
-
-  switch (intent) {
-    case Intent.EditAccount: {
-      const windowId = getInt(data, 'windowId')
-
-      const accountId = getString(data, 'accountId')
-      const account = await getAccount(accountId, { signal: request.signal })
-
-      await editAccount(windowId, account)
-
-      return null
-    }
-
-    case Intent.CreateProposal: {
-      const transaction = parseTransactionData(getString(data, 'transaction'))
-
-      invariantResponse(
-        isUUID(activeAccountId),
-        'Can only create proposals for remote accounts',
-      )
-
-      invariantResponse(
-        routeId != null,
-        'No active route selected to create the proposal',
-      )
-
-      const { proposalId } = await createProposal(
-        activeAccountId,
-        transaction,
-        {
-          signal: request.signal,
-        },
-      )
-
-      await chrome.tabs.create({
-        active: true,
-        url: `${getCompanionAppUrl()}/submit/proposal/${proposalId}/${routeId}`,
-      })
-
-      return null
-    }
-  }
-}
-
 const Transactions = () => {
   const transactions = useTransactions()
   const account = useAccount()
-  const route = useExecutionRoute()
-  const pilotIsReady = usePilotIsReady()
   const pendingTransactions = usePendingTransactions()
   const refreshTransactions = useRefreshTransactions()
   const navigate = useNavigate()
+  const route = useOptionalExecutionRoute()
+  const pilotIsReady = usePilotIsReady()
+
+  const scrollContainerRef = useScrollIntoView()
 
   useTransactionTracking(account)
   useDecodeTransactions()
-
-  const scrollContainerRef = useScrollIntoView()
 
   const [saveOptions, saveAndActivateOptions] = useSaveAccount(account.id, {
     async onSave(route, updatedAccount, tabId) {
@@ -174,19 +115,19 @@ const Transactions = () => {
             </div>
           </div>
 
-          {transactions.map((transaction) => (
-            <div id={`t-${transaction.id}`} key={transaction.id}>
-              <Transaction transactionId={transaction.id} />
-            </div>
-          ))}
-
-          {transactions.length === 0 && (
+          {transactions.length === 0 ? (
             <div className="mt-32 flex flex-col gap-32">
               <Info title="No transactions">
                 As you interact with apps in the browser, transactions will be
                 recorded here. You can then sign and submit them as a batch.
               </Info>
             </div>
+          ) : (
+            transactions.map((transaction) => (
+              <div id={`t-${transaction.id}`} key={transaction.id}>
+                <Transaction transactionId={transaction.id} />
+              </div>
+            ))
           )}
         </WagmiProvider>
       </Page.Content>
@@ -201,7 +142,7 @@ const Transactions = () => {
           </CopyToClipboard>
         )}
 
-        <Sign />
+        <Sign route={route} />
       </Page.Footer>
 
       <ClearTransactionsModal
@@ -219,39 +160,6 @@ const Transactions = () => {
       />
     </>
   )
-}
-
-const useScrollIntoView = () => {
-  const transactions = useTransactions()
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-
-  const currentTransactionsRef = useRef(transactions)
-
-  useEffect(() => {
-    if (currentTransactionsRef.current.length < transactions.length) {
-      const lastTransaction = transactions.at(-1)
-
-      invariant(lastTransaction != null, 'Could not get new transaction')
-
-      if (scrollContainerRef.current != null) {
-        const element = scrollContainerRef.current.querySelector(
-          `#t-${lastTransaction.id}`,
-        )
-
-        if (element != null) {
-          element.scrollIntoView({
-            block: 'nearest',
-            behavior: 'smooth',
-            inline: 'center',
-          })
-        }
-      }
-    }
-
-    currentTransactionsRef.current = transactions
-  }, [transactions])
-
-  return scrollContainerRef
 }
 
 export default Transactions
@@ -293,4 +201,37 @@ const ClearTransactions = ({ disabled }: { disabled: boolean }) => {
       </Modal>
     </>
   )
+}
+
+const useScrollIntoView = () => {
+  const transactions = useTransactions()
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  const currentTransactionsRef = useRef(transactions)
+
+  useEffect(() => {
+    if (currentTransactionsRef.current.length < transactions.length) {
+      const lastTransaction = transactions.at(-1)
+
+      invariant(lastTransaction != null, 'Could not get new transaction')
+
+      if (scrollContainerRef.current != null) {
+        const element = scrollContainerRef.current.querySelector(
+          `#t-${lastTransaction.id}`,
+        )
+
+        if (element != null) {
+          element.scrollIntoView({
+            block: 'nearest',
+            behavior: 'smooth',
+            inline: 'center',
+          })
+        }
+      }
+    }
+
+    currentTransactionsRef.current = transactions
+  }, [transactions])
+
+  return scrollContainerRef
 }

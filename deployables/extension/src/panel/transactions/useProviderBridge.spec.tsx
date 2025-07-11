@@ -22,7 +22,7 @@ import type { PropsWithChildren } from 'react'
 import type { ChainId } from 'ser-kit'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { MockProvider } from './MockProvider'
-import { ProvideProvider } from './ProvideProvider'
+import { ProvideForkProvider } from './ProvideForkProvider'
 import { useProviderBridge } from './useProviderBridge'
 
 vi.mock('@/providers', async (importOriginal) => {
@@ -50,9 +50,9 @@ describe('Bridge', () => {
           accountFactory.createWithoutDb(tenant, user, workspace),
         )}
       >
-        <ProvideProvider>
+        <ProvideForkProvider route={null}>
           <ProvideBridgeContext windowId={1}>{children}</ProvideBridgeContext>
-        </ProvideProvider>
+        </ProvideForkProvider>
       </ProvideAccount>
     )
   }

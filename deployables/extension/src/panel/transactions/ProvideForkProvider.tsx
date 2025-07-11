@@ -1,5 +1,4 @@
 import { useAccount } from '@/accounts'
-import { useExecutionRoute } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import type { ExecutionRoute } from '@/types'
 import { invariant } from '@epic-web/invariant'
@@ -15,9 +14,11 @@ import { getModuleAddress } from './getModuleAddress'
 
 const ProviderContext = createContext<ForkProvider | null>(null)
 
-export const ProvideProvider = ({ children }: PropsWithChildren) => {
+export const ProvideForkProvider = ({
+  children,
+  route,
+}: PropsWithChildren<{ route: ExecutionRoute | null }>) => {
   const { chainId, address } = useAccount()
-  const route = useExecutionRoute()
 
   const moduleAddress = getModuleAddress(route)
   const ownerAddress = getOwnerAddress(route)
@@ -44,19 +45,15 @@ export const ProvideProvider = ({ children }: PropsWithChildren) => {
     return null
   }
 
-  return (
-    <ProviderContext.Provider value={provider}>
-      {children}
-    </ProviderContext.Provider>
-  )
+  return <ProviderContext value={provider}>{children}</ProviderContext>
 }
 
-export const useProvider = () => {
+export const useForkProvider = () => {
   const provider = useContext(ProviderContext)
 
   invariant(
     provider != null,
-    'useProvider() must be used within a <ProvideProvider/>',
+    'useForkProvider() must be used within a <ProvideProvider/>',
   )
 
   return provider

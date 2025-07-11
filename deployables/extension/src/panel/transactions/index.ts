@@ -10,6 +10,7 @@ export { getPersistedTransactionState } from './getPersistedTransactionState'
 export { isConfirmedTransaction } from './isConfirmedTransaction'
 export { MockProvider } from './MockProvider'
 export { persistTransactionState } from './persistTransactionState'
+export { ProvideForkProvider } from './ProvideForkProvider'
 export type {
   ConfirmedTransaction,
   ContractInfo,

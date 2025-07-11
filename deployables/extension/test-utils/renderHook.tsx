@@ -1,6 +1,10 @@
 import { ProvideAccount, toLocalAccount, type TaggedAccount } from '@/accounts'
 import { toAccount } from '@/companion'
-import { ProvideTransactions, type State } from '@/transactions'
+import {
+  ProvideForkProvider,
+  ProvideTransactions,
+  type State,
+} from '@/transactions'
 import { createMockExecutionRoute } from '@zodiac/modules/test-utils'
 import {
   renderHook as renderHookBase,
@@ -63,7 +67,7 @@ const RenderWrapper = ({
 }: RenderWrapperProps) => (
   <ProvideAccount account={account}>
     <ProvideTransactions initialState={initialState}>
-      {children}
+      <ProvideForkProvider route={null}>{children}</ProvideForkProvider>
     </ProvideTransactions>
   </ProvideAccount>
 )

@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
-import { useProvider } from './ProvideProvider'
+import { useForkProvider } from './ProvideForkProvider'
 import { useDispatch, useRefresh, useTransactions } from './TransactionsContext'
 import { commitRefreshTransactions } from './actions'
 
 export const useForkTracking = () => {
-  const provider = useProvider()
+  const provider = useForkProvider()
   const transactions = useTransactions()
   const dispatch = useDispatch()
   const refresh = useRefresh()

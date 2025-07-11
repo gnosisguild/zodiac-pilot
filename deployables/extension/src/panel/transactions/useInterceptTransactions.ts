@@ -1,11 +1,11 @@
 import type { MetaTransactionRequest } from '@zodiac/schema'
 import { useEffect } from 'react'
-import { useProvider } from './ProvideProvider'
+import { useForkProvider } from './ProvideForkProvider'
 import { useDispatch } from './TransactionsContext'
 import { appendTransaction } from './actions'
 
 export const useInterceptTransactions = () => {
-  const provider = useProvider()
+  const provider = useForkProvider()
   const dispatch = useDispatch()
 
   useEffect(() => {
