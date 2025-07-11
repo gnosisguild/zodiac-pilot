@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useProvider } from './ProvideForkProvider'
+import { useForkProvider } from './ProvideForkProvider'
 import {
   useDispatch,
   useRollback,
@@ -11,7 +11,7 @@ export const useRollbackTracking = () => {
   const transactionToRollback = useRollback()
   const transactions = useTransactions()
   const dispatch = useDispatch()
-  const provider = useProvider()
+  const provider = useForkProvider()
 
   useEffect(() => {
     if (transactionToRollback == null) {

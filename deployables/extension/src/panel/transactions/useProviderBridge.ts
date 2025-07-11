@@ -13,7 +13,7 @@ import type { Hex } from '@zodiac/schema'
 import { toQuantity } from 'ethers'
 import { useEffect, useRef } from 'react'
 import type { ChainId } from 'ser-kit'
-import { useProvider } from './ProvideForkProvider'
+import { useForkProvider } from './ProvideForkProvider'
 
 const emitEvent = async (eventName: string, eventData: any) => {
   const tab = await getActiveTab()
@@ -36,7 +36,7 @@ export const useProviderBridge = ({
   chainId,
   account,
 }: UseProviderBridgeOptions = {}) => {
-  const provider = useProvider()
+  const provider = useForkProvider()
 
   useHandleProviderRequests(provider)
 

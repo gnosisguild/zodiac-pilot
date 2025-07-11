@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
-import { useProvider } from './ProvideForkProvider'
+import { useForkProvider } from './ProvideForkProvider'
 
 export const useGetTransactionLink = () => {
-  const provider = useProvider()
+  const provider = useForkProvider()
 
   return useCallback(
     (txHash: string) => provider.getTransactionLink(txHash),

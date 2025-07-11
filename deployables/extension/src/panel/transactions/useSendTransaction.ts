@@ -3,7 +3,7 @@ import { useOptionalExecutionRoute } from '@/execution-routes'
 import type { HexAddress } from '@zodiac/schema'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import { useCallback } from 'react'
-import { useProvider } from './ProvideForkProvider'
+import { useForkProvider } from './ProvideForkProvider'
 import { useDispatch } from './TransactionsContext'
 import {
   confirmTransaction,
@@ -15,7 +15,7 @@ import { getModuleAddress } from './getModuleAddress'
 import type { UnconfirmedTransaction } from './state'
 
 export const useSendTransaction = () => {
-  const provider = useProvider()
+  const provider = useForkProvider()
   const dispatch = useDispatch()
   const { address } = useAccount()
   const route = useOptionalExecutionRoute()

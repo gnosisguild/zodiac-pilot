@@ -48,12 +48,12 @@ export const ProvideForkProvider = ({
   return <ProviderContext value={provider}>{children}</ProviderContext>
 }
 
-export const useProvider = () => {
+export const useForkProvider = () => {
   const provider = useContext(ProviderContext)
 
   invariant(
     provider != null,
-    'useProvider() must be used within a <ProvideProvider/>',
+    'useForkProvider() must be used within a <ProvideProvider/>',
   )
 
   return provider
