@@ -1,0 +1,8 @@
+query FetchRoles($account: String!) {
+  rolesModifiers(avatar: $account) {
+    roles {
+      id
+      key
+    }
+  }
+}

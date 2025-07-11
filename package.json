@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "cspell": "9.2.0",
+    "graphql-config": "^5.1.5",
     "husky": "9.1.7",
     "lint-staged": "16.1.2",
     "prettier": "3.6.2",
