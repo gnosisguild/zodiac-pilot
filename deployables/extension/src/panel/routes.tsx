@@ -6,7 +6,6 @@ import * as LoadDefaultRoute from './pages/$activeAccountId/LoadDefaultRoute'
 import * as NoActiveRoute from './pages/$activeAccountId/NoActiveRoute'
 import * as ClearTransactions from './pages/$activeAccountId/clear-transactions.$newActiveAccountId/ClearTransactions'
 import * as Transactions from './pages/$activeAccountId/transactions/Transactions'
-import * as TransactionsLayout from './pages/$activeAccountId/transactions/TransactionsLayout'
 import * as LoadDefaultAccount from './pages/LoadDefaultAccount'
 import * as Root from './pages/Root'
 import * as NoAccounts from './pages/_index/NoAccounts'
@@ -40,14 +39,8 @@ export const routes: RouteObject[] = [
             Component: NoActiveRoute.default,
             children: [
               {
-                Component: TransactionsLayout.default,
-                action: TransactionsLayout.action,
-                children: [
-                  {
-                    index: true,
-                    Component: Transactions.default,
-                  },
-                ],
+                index: true,
+                Component: Transactions.default,
               },
             ],
           },
@@ -55,16 +48,11 @@ export const routes: RouteObject[] = [
             path: ':routeId',
             Component: ActiveRoute.default,
             loader: ActiveRoute.loader,
+            action: ActiveRoute.action,
             children: [
               {
-                Component: TransactionsLayout.default,
-                action: TransactionsLayout.action,
-                children: [
-                  {
-                    index: true,
-                    Component: Transactions.default,
-                  },
-                ],
+                index: true,
+                Component: Transactions.default,
               },
             ],
           },
