@@ -12,3 +12,6 @@
 .vercel
 .branches
 .temp
+
+# GraphQL
+/graphql-client/gql/
