@@ -30,7 +30,7 @@ import { RecordingIndicator } from './RecordingIndicator'
 import { Sign } from './Sign'
 import { Transaction } from './transaction'
 
-const TransactionsLayout = () => {
+const Transactions = () => {
   const transactions = useTransactions()
   const account = useAccount()
   const pendingTransactions = usePendingTransactions()
@@ -162,7 +162,7 @@ const TransactionsLayout = () => {
   )
 }
 
-export default TransactionsLayout
+export default Transactions
 
 const ClearTransactions = ({ disabled }: { disabled: boolean }) => {
   const [confirm, setConfirm] = useState(false)
