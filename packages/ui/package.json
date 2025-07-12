@@ -27,7 +27,7 @@
     "framer-motion": "12.23.1",
     "lucide-react": "0.525.0",
     "nanoid": "5.1.5",
-    "react-select": "5.10.1",
+    "react-select": "5.10.2",
     "react-stick": "5.0.7",
     "react-toastify": "11.0.5",
     "ser-kit": "3.10.1",
