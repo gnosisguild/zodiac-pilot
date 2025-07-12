@@ -22,7 +22,7 @@
     "@zodiac/schema": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "22.14.1",
+    "@types/node": "22.16.3",
     "@types/chrome": "0.0.332",
     "@types/react": "19.1.8",
     "@zodiac/eslint-config": "workspace:*",

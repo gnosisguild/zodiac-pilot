@@ -22,7 +22,7 @@
     "react-router": "7.6.3"
   },
   "devDependencies": {
-    "@types/node": "22.14.1",
+    "@types/node": "22.16.3",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "eslint": "9.30.1",
