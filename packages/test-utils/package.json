@@ -35,7 +35,7 @@
   "dependencies": {
     "@depay/web3-mock": "15.3.0",
     "@epic-web/invariant": "1.0.0",
-    "@playwright/test": "1.53.2",
+    "@playwright/test": "1.54.1",
     "@testing-library/react": "16.3.0",
     "@zodiac/chains": "workspace:*",
     "@zodiac/schema": "workspace:*",
