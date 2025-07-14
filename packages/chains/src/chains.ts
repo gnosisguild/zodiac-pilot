@@ -9,6 +9,7 @@ import {
   celo,
   gnosis,
   hemi,
+  ink,
   linea,
   mainnet,
   mantle,
@@ -31,16 +32,6 @@ const katana = defineChain({
   rpcUrls: { default: { http: [rpc(747474).toString()] } },
   blockExplorers: {
     default: { name: 'Katana Explorer', url: 'https://explorer.katana.xyz' },
-  },
-})
-
-const ink = defineChain({
-  id: 57073,
-  name: 'Ink',
-  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
-  rpcUrls: { default: { http: [rpc(57073).toString()] } },
-  blockExplorers: {
-    default: { name: 'Ink Explorer', url: 'https://explorer.inkonchain.com' },
   },
 })
 
@@ -99,9 +90,7 @@ export enum Chain {
 export const HIDDEN_CHAINS = [
   Chain.WORLDCHAIN,
   Chain.ZKEVM,
-  Chain.BASESEP,
   Chain.HEMI,
   Chain.KATANA,
   Chain.LINEA,
-  Chain.INK,
 ]
