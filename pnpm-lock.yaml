@@ -198,8 +198,8 @@ importers:
         version: 3.25.76
     devDependencies:
       '@dotenvx/dotenvx':
-        specifier: 1.47.5
-        version: 1.47.5
+        specifier: 1.47.6
+        version: 1.47.6
       '@playwright/test':
         specifier: 1.53.2
         version: 1.53.2
@@ -370,8 +370,8 @@ importers:
         specifier: 15.3.0
         version: 15.3.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@dotenvx/dotenvx':
-        specifier: 1.47.5
-        version: 1.47.5
+        specifier: 1.47.6
+        version: 1.47.6
       '@playwright/test':
         specifier: 1.53.2
         version: 1.53.2
@@ -658,8 +658,8 @@ importers:
         version: 3.25.76
     devDependencies:
       '@dotenvx/dotenvx':
-        specifier: 1.47.5
-        version: 1.47.5
+        specifier: 1.47.6
+        version: 1.47.6
       '@faker-js/faker':
         specifier: 9.9.0
         version: 9.9.0
@@ -1601,8 +1601,8 @@ packages:
     resolution: {integrity: sha512-D/9dozteKcutI5OdxJd8rU+fL6XgaaRg60sPPJWkT33OCiRfkCu5wO5B/yXTaaL2e6EB0lcCBGe5E0XscZCvvQ==}
     engines: {node: '>=18'}
 
-  '@dotenvx/dotenvx@1.47.5':
-    resolution: {integrity: sha512-FtDgJyqOXmkj+BTU0qcE4Iq2HKjrEH6ZhRMc7m8fmOwstf1Ms9/9lbLNzyiNqyQrEnVr38W8PTTWMbDB3IX5og==}
+  '@dotenvx/dotenvx@1.47.6':
+    resolution: {integrity: sha512-bvVMFc3Z9/mtYUWP1S1UB4SA3U2mQ1p7Qc9QW6Cm7t1Vm6D+dysmus/Mt26Dc1QrE6OgrKUGC99EQcMvcFZC3Q==}
     hasBin: true
 
   '@drizzle-team/brocli@0.10.2':
@@ -10159,7 +10159,7 @@ snapshots:
       gonzales-pe: 4.3.0
       node-source-walk: 7.0.0
 
-  '@dotenvx/dotenvx@1.47.5':
+  '@dotenvx/dotenvx@1.47.6':
     dependencies:
       commander: 11.1.0
       dotenv: 16.4.7
