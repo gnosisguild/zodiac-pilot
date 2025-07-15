@@ -54,7 +54,7 @@
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "1.47.6",
-    "@playwright/test": "1.53.2",
+    "@playwright/test": "1.54.1",
     "@react-router/dev": "7.6.3",
     "@tailwindcss/vite": "4.1.11",
     "@testing-library/jest-dom": "6.6.3",
