@@ -43,7 +43,7 @@
     "@zodiac/chains": "workspace:*",
     "@zodiac/env": "workspace:*",
     "@zodiac/schema": "workspace:*",
-    "drizzle-orm": "0.44.2",
+    "drizzle-orm": "0.44.3",
     "drizzle-zod": "0.7.1",
     "postgres": "3.4.7",
     "ser-kit": "3.10.1",
