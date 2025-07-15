@@ -13,4 +13,4 @@ To set up a development environment follow the steps outlaid in the readmes for 
 Zodiac Pilot is a browser-based tool for Safe accounts that enables users to build and execute multi-step transactions across multiple dapps.
 It combines modular batching, programmable permissions, and a built-in sandbox environment to simulate transactions before they’re sent onchain.
 Designed to streamline treasury, governance, and DeFi workflows, Pilot reduces risk and coordination overhead by letting users manage execution directly from a side panel interface.
-[Available on the Chrome Web Store](https://chrome.google.com/webstore/detail/zodiac-pilot/jklckajipokenkbbodifahogmidkekcb?hl=en&authuser=0)
+[Available on the Chrome Web Store](https://chrome.google.com/webstore/detail/zodiac-pilot/jklckajipokenkbbodifahogmidkekcb)

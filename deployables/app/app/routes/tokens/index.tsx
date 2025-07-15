@@ -46,10 +46,8 @@ const Connected = ({ children }: PropsWithChildren) => {
       <Page.Main>
         <div className="mx-auto my-16 w-1/2">
           <Info title="Connected wallet needed">
-            The intended use of this page requires a wallet to be connected.
-            We've built it to easily test out the functionality offered by
-            Zodiac Pilot. When you open the extension it will automatically
-            connect to this page.
+            This page requires the Zodiac Pilot extension to be active. Open it
+            using the button below.
           </Info>
         </div>
 
