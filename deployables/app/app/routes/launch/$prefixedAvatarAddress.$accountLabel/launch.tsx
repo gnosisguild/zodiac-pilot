@@ -1,4 +1,4 @@
-import { Page, useConnected } from '@/components'
+import { Page, useConnected, useIsExtensionInstalled } from '@/components'
 import { ChainSelect } from '@/routes-ui'
 import { useIsPending } from '@zodiac/hooks'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
@@ -7,7 +7,14 @@ import {
   verifyPrefixedAddress,
   type ExecutionRoute,
 } from '@zodiac/schema'
-import { AddressInput, InlineForm, PrimaryButton, Warning } from '@zodiac/ui'
+import {
+  AddressInput,
+  InlineForm,
+  PrimaryButton,
+  PrimaryLinkButton,
+  Warning,
+} from '@zodiac/ui'
+import { Chrome } from 'lucide-react'
 import { splitPrefixedAddress } from 'ser-kit'
 import { z } from 'zod'
 import type { Route } from './+types/launch'
@@ -95,13 +102,14 @@ export default function LaunchPage({
   const isLaunching = useIsPending()
 
   const connected = useConnected()
+  const installed = useIsExtensionInstalled()
 
   const [chainId, address] = splitPrefixedAddress(route.avatar)
 
   return (
     <Page>
       <div className="flex h-full items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-8">
           <div className="flex items-center gap-4">
             <ChainSelect disabled value={chainId} />
             <AddressInput
@@ -116,11 +124,24 @@ export default function LaunchPage({
               Launch will clear any previously recorded calls in the panel.
             </Warning>
           )}
-          <InlineForm>
-            <PrimaryButton submit busy={isLaunching}>
-              Launch
-            </PrimaryButton>
-          </InlineForm>
+
+          {installed === false && (
+            <PrimaryLinkButton
+              icon={Chrome}
+              to="https://chromewebstore.google.com/detail/zodiac-pilot/jklckajipokenkbbodifahogmidkekcb"
+              openInNewWindow
+            >
+              Install Zodiac Pilot
+            </PrimaryLinkButton>
+          )}
+
+          {installed !== false && (
+            <InlineForm>
+              <PrimaryButton submit busy={isLaunching}>
+                Launch
+              </PrimaryButton>
+            </InlineForm>
+          )}
         </div>
       </div>
     </Page>
