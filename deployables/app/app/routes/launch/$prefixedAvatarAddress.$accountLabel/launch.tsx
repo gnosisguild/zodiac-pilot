@@ -76,7 +76,7 @@ export const clientAction = async ({
   if (route) searchParams.set('route', jsonStringify(route))
   const search = `?${searchParams.toString()}`
 
-  // const { promise, resolve } = Promise.withResovlers()
+  // const { promise, resolve } = Promise.withResolvers()
   companionRequest(
     {
       type: CompanionAppMessageType.OPEN_PILOT,
