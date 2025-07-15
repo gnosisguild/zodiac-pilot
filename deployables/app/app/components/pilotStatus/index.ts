@@ -6,3 +6,4 @@ export {
   useConnected,
   useLastTransactionExecutedAt,
 } from './PilotStatusContext'
+export { useIsExtensionInstalled } from './useIsExtensionInstalled'
