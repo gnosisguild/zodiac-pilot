@@ -22,6 +22,7 @@ type CompanionAppSaveRouteMessage = {
 
 type CompanionAppOpenPilotMessage = {
   type: CompanionAppMessageType.OPEN_PILOT
+  search?: string
 }
 
 type CompanionAppSubmitSuccessMessage = {

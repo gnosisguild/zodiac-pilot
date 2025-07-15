@@ -27,7 +27,7 @@ import { useNavigate } from 'react-router'
 import { prefixAddress } from 'ser-kit'
 import { ClearTransactionsModal } from '../ClearTransactionsModal'
 import { RecordingIndicator } from './RecordingIndicator'
-import { Sign } from './Sign'
+import { Submit } from './Submit'
 import { Transaction } from './Transaction'
 
 const Transactions = () => {
@@ -142,7 +142,7 @@ const Transactions = () => {
           </CopyToClipboard>
         )}
 
-        <Sign route={route} />
+        <Submit />
       </Page.Footer>
 
       <ClearTransactionsModal

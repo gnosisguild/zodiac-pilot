@@ -3,6 +3,7 @@ export {
   useExecutionRoute,
   useOptionalExecutionRoute,
 } from './ExecutionRouteContext'
+export { AD_HOC_ROUTE_ID, findAdHocRoute } from './findAdHocRoute'
 export { findRoute } from './findRoute'
 export { getLastUsedRouteId } from './getLastUsedRouteId'
 export { getRoute } from './getRoute'

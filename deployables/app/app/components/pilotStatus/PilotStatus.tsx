@@ -1,9 +1,14 @@
+import { CompanionAppMessageType } from '@zodiac/messages'
 import { GhostButton } from '@zodiac/ui'
 import { PanelRightOpen, Power, PowerOff } from 'lucide-react'
 import { useConnected } from './PilotStatusContext'
 
 export const PilotStatus = () => {
   const connected = useConnected()
+
+  const openPilot = () => {
+    window.postMessage({ type: CompanionAppMessageType.OPEN_PILOT }, '*')
+  }
 
   if (connected) {
     return (
@@ -26,8 +31,8 @@ export const PilotStatus = () => {
       <GhostButton
         iconOnly
         icon={PanelRightOpen}
-        id="ZODIAC-PILOT::open-panel-button"
         size="tiny"
+        onClick={openPilot}
       >
         Open Pilot
       </GhostButton>

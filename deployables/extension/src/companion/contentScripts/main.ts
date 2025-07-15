@@ -1,5 +1,4 @@
 import { captureLastError } from '@/sentry'
-import { injectScript } from '@/utils'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
@@ -73,7 +72,5 @@ chrome.runtime.onMessage.addListener(
     },
   ),
 )
-
-injectScript('./build/companion/injectedScripts/main.js')
 
 export default {}
