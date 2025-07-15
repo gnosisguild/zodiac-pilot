@@ -76,17 +76,17 @@ export const clientAction = async ({
   if (route) searchParams.set('route', jsonStringify(route))
   const search = `?${searchParams.toString()}`
 
+  // const { promise, resolve } = Promise.withResovlers()
   companionRequest(
     {
       type: CompanionAppMessageType.OPEN_PILOT,
       search,
     },
     // // TODO make this message respond after switching to the ad-hoc route and executing the setup
-    // () => {
-    //   // Then continue here with redirecting to the token balances page
-    //   // navigate('/offline/tokens/balances')
-    // },
+    // resolve
   )
+  // await promise
+  // return redirect('/offline/tokens/balances')
 }
 
 export default function LaunchPage({
