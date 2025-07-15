@@ -639,11 +639,11 @@ importers:
         specifier: workspace:*
         version: link:../schema
       drizzle-orm:
-        specifier: 0.44.2
-        version: 0.44.2(@cloudflare/workers-types@4.20250712.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7)
+        specifier: 0.44.3
+        version: 0.44.3(@cloudflare/workers-types@4.20250712.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7)
       drizzle-zod:
         specifier: 0.7.1
-        version: 0.7.1(drizzle-orm@0.44.2(@cloudflare/workers-types@4.20250712.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7))(zod@3.25.76)
+        version: 0.7.1(drizzle-orm@0.44.3(@cloudflare/workers-types@4.20250712.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7))(zod@3.25.76)
       postgres:
         specifier: 3.4.7
         version: 3.4.7
@@ -889,7 +889,7 @@ importers:
         version: 1.0.0
       '@safe-global/api-kit':
         specifier: 4.0.0
-        version: 4.0.0(typescript@5.8.3)(zod@3.25.76)
+        version: 4.0.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@safe-global/protocol-kit':
         specifier: 6.1.0
         version: 6.1.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
@@ -5683,8 +5683,8 @@ packages:
     resolution: {integrity: sha512-tCPWVZWZqWVx2XUsVpJRnH9Mx0ClVOf5YUHerZ5so1OKSlqww4zy1R5ksEdGRcO3tM3zj0PYN6V48TbQCL1RfA==}
     hasBin: true
 
-  drizzle-orm@0.44.2:
-    resolution: {integrity: sha512-zGAqBzWWkVSFjZpwPOrmCrgO++1kZ5H/rZ4qTGeGOe18iXGVJWf3WPfHOVwFIbmi8kHjfJstC6rJomzGx8g/dQ==}
+  drizzle-orm@0.44.3:
+    resolution: {integrity: sha512-8nIiYQxOpgUicEL04YFojJmvC4DNO4KoyXsEIqN44+g6gNBr6hmVpWk3uyAt4CaTiRGDwoU+alfqNNeonLAFOQ==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
@@ -12792,7 +12792,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@safe-global/api-kit@4.0.0(typescript@5.8.3)(zod@3.25.76)':
+  '@safe-global/api-kit@4.0.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)':
     dependencies:
       '@safe-global/protocol-kit': 6.1.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@safe-global/types-kit': 3.0.0(typescript@5.8.3)(zod@3.25.76)
@@ -15380,7 +15380,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.44.2(@cloudflare/workers-types@4.20250712.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7):
+  drizzle-orm@0.44.3(@cloudflare/workers-types@4.20250712.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7):
     optionalDependencies:
       '@cloudflare/workers-types': 4.20250712.0
       '@opentelemetry/api': 1.9.0
@@ -15389,9 +15389,9 @@ snapshots:
       pg: 8.14.1
       postgres: 3.4.7
 
-  drizzle-zod@0.7.1(drizzle-orm@0.44.2(@cloudflare/workers-types@4.20250712.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7))(zod@3.25.76):
+  drizzle-zod@0.7.1(drizzle-orm@0.44.3(@cloudflare/workers-types@4.20250712.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7))(zod@3.25.76):
     dependencies:
-      drizzle-orm: 0.44.2(@cloudflare/workers-types@4.20250712.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7)
+      drizzle-orm: 0.44.3(@cloudflare/workers-types@4.20250712.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7)
       zod: 3.25.76
 
   dunder-proto@1.0.1:
@@ -16775,7 +16775,7 @@ snapshots:
     dependencies:
       ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
-  isows@1.0.7(ws@8.18.2):
+  isows@1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)):
     dependencies:
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
@@ -19298,7 +19298,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
-      isows: 1.0.7(ws@8.18.2)
+      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ox: 0.8.1(typescript@5.8.3)(zod@3.22.4)
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
@@ -19315,7 +19315,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.8.3)(zod@3.25.76)
-      isows: 1.0.7(ws@8.18.2)
+      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ox: 0.8.1(typescript@5.8.3)(zod@3.25.76)
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
