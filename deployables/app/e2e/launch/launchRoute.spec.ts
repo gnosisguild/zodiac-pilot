@@ -1,6 +1,6 @@
 import { expect, getExtensionPage, test } from '../utils'
 
-// TODO: unskip this test once extension version > 3.19.1 is released
+// TODO: un-skip this test once extension version > 3.19.1 is released
 test.skip('Launch route', () => {
   test('it opens the pilot panel with the correct account and is ready to record transactions', async ({
     page,
