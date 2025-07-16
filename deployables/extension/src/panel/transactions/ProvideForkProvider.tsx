@@ -10,7 +10,6 @@ import {
   type PropsWithChildren,
 } from 'react'
 import { ConnectionType, unprefixAddress } from 'ser-kit'
-import { getModuleAddress } from './getModuleAddress'
 
 const ProviderContext = createContext<ForkProvider | null>(null)
 
@@ -20,8 +19,7 @@ export const ProvideForkProvider = ({
 }: PropsWithChildren<{ route: ExecutionRoute | null }>) => {
   const { chainId, address } = useAccount()
 
-  const moduleAddress = getModuleAddress(route)
-  const ownerAddress = getOwnerAddress(route)
+  const simulationModuleAddress = getSimulationModuleAddress(route)
 
   const [provider, setProvider] = useState<ForkProvider | null>(null)
 
@@ -30,8 +28,7 @@ export const ProvideForkProvider = ({
     const provider = new ForkProvider({
       chainId,
       avatarAddress: address,
-      moduleAddress,
-      ownerAddress,
+      simulationModuleAddress,
     })
 
     setProvider(provider)
@@ -39,7 +36,7 @@ export const ProvideForkProvider = ({
     return () => {
       provider.deleteFork()
     }
-  }, [chainId, address, moduleAddress, ownerAddress])
+  }, [chainId, address, simulationModuleAddress])
 
   if (provider == null) {
     return null
@@ -59,7 +56,45 @@ export const useForkProvider = () => {
   return provider
 }
 
-const getOwnerAddress = (route: ExecutionRoute | null) => {
+const DUMMY_MODULE_ADDRESS = '0xfacade0000000000000000000000000000000000'
+
+/**
+ * Returns the module address used for simulation.
+ * We generally simulate transactions using a Safe module as the entrypoint.
+ * As part of the fork initialization, we ensure that the owner, the modules, or a dummy module is enabled.
+ * Then we will route all transactions through this module.
+ */
+export const getSimulationModuleAddress = (route: ExecutionRoute | null) => {
+  const moduleAddress = findModuleOnAvatarAddress(route)
+  const ownerAddress = findOwnerOfAvatarAddress(route)
+  return moduleAddress ?? ownerAddress ?? DUMMY_MODULE_ADDRESS
+}
+
+const findModuleOnAvatarAddress = (route: ExecutionRoute | null) => {
+  if (route == null) {
+    return
+  }
+
+  const { waypoints } = route
+
+  if (waypoints == null) {
+    return
+  }
+
+  const avatarWaypoint = waypoints[waypoints.length - 1]
+
+  if (!('connection' in avatarWaypoint)) {
+    return
+  }
+
+  if (avatarWaypoint.connection.type !== ConnectionType.IS_ENABLED) {
+    return
+  }
+
+  return unprefixAddress(avatarWaypoint.connection.from)
+}
+
+const findOwnerOfAvatarAddress = (route: ExecutionRoute | null) => {
   if (route == null) {
     return
   }

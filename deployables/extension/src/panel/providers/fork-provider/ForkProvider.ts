@@ -47,8 +47,7 @@ export class ForkProvider extends EventEmitter {
 
   private chainId: ChainId
   private avatarAddress: HexAddress
-  private moduleAddress: HexAddress | undefined
-  private ownerAddress: HexAddress | undefined
+  private simulationModuleAddress: HexAddress
 
   private blockGasLimitPromise: Promise<bigint>
   private isSafePromise: Promise<boolean>
@@ -63,22 +62,17 @@ export class ForkProvider extends EventEmitter {
   constructor({
     chainId,
     avatarAddress,
-    moduleAddress,
-    ownerAddress,
+    simulationModuleAddress,
   }: {
     chainId: ChainId
     avatarAddress: HexAddress
-    /** If set, will simulate transactions using respective `execTransactionFromModule` calls */
-    moduleAddress?: HexAddress
-    /** If set, will enable the ownerAddress as a module and simulate using `execTransactionFromModule` calls. If neither `moduleAddress` nor `ownerAddress` is set, it will enable a dummy module 0xfacade */
-    ownerAddress?: HexAddress
+    simulationModuleAddress: HexAddress
   }) {
     super()
     this.chainId = chainId
     this.provider = new TenderlyProvider(chainId)
     this.avatarAddress = avatarAddress
-    this.moduleAddress = moduleAddress
-    this.ownerAddress = ownerAddress
+    this.simulationModuleAddress = simulationModuleAddress
 
     this.blockGasLimitPromise = readBlockGasLimit(this.provider)
 
@@ -364,24 +358,12 @@ export class ForkProvider extends EventEmitter {
       await this.initFork()
     }
 
-    const ownerAddress =
-      this.ownerAddress === ZERO_ADDRESS ? undefined : this.ownerAddress
     const isSafe = await this.isSafePromise
-
-    invariant(
-      isSafe || (this.moduleAddress == null && ownerAddress == null),
-      'moduleAddress or ownerAddress is only supported for Safes as avatar',
-    )
-
     const isDelegateCall = metaTx.operation === 1
 
     invariant(
       isSafe || !isDelegateCall,
       'delegatecall is only supported for Safes as avatar',
-    )
-    invariant(
-      !isDelegateCall || this.moduleAddress != null || ownerAddress != null,
-      'delegatecall requires moduleAddress or ownerAddress',
     )
 
     // take a snapshot and record the meta transaction
@@ -395,14 +377,11 @@ export class ForkProvider extends EventEmitter {
 
     let tx: TransactionData
     if (isSafe) {
-      let from = this.moduleAddress || ownerAddress || DUMMY_MODULE_ADDRESS
-      if (from === ZERO_ADDRESS) from = DUMMY_MODULE_ADDRESS
-
       // correctly route the meta tx through the avatar
       tx = execTransactionFromModule(
         metaTx,
         this.avatarAddress,
-        from,
+        this.simulationModuleAddress,
         await this.blockGasLimitPromise,
       )
     } else {
@@ -432,8 +411,7 @@ export class ForkProvider extends EventEmitter {
         {
           chainId: this.chainId,
           avatarAddress: this.avatarAddress,
-          moduleAddress: this.moduleAddress,
-          ownerAddress: this.ownerAddress,
+          simulationModuleAddress: this.simulationModuleAddress,
         },
         this.provider,
       )
@@ -512,8 +490,6 @@ const execTransactionFromModule = (
   }
 }
 
-const DUMMY_MODULE_ADDRESS = '0xfacade0000000000000000000000000000000000'
-
 async function readBlockGasLimit(provider: Eip1193Provider) {
   const browserProvider = new BrowserProvider(provider)
   const block = await browserProvider.getBlock('latest')
@@ -536,13 +512,11 @@ async function prepareSafeForSimulation(
   {
     chainId,
     avatarAddress,
-    moduleAddress,
-    ownerAddress,
+    simulationModuleAddress,
   }: {
     chainId: ChainId
-    avatarAddress: string
-    moduleAddress?: string
-    ownerAddress?: string
+    avatarAddress: HexAddress
+    simulationModuleAddress: HexAddress
   },
   provider: TenderlyProvider,
 ) {
@@ -550,10 +524,6 @@ async function prepareSafeForSimulation(
 
   // If we simulate as a Safe owner, we could either use execTransaction and override the threshold to 1.
   // However, enabling the owner as a module seems like a more simple approach.
-
-  let from = moduleAddress || ownerAddress || DUMMY_MODULE_ADDRESS
-  if (from === ZERO_ADDRESS) from = DUMMY_MODULE_ADDRESS
-
   const { safeContract } = safe.getContractManager()
 
   invariant(safeContract != null, 'Safe contract not found')
@@ -565,7 +535,7 @@ async function prepareSafeForSimulation(
         {
           to: avatarAddress,
           // @ts-expect-error This apparently produces a too big union type
-          data: safeContract.encode('enableModule', [from]),
+          data: safeContract.encode('enableModule', [simulationModuleAddress]),
           from: avatarAddress,
         },
       ],
