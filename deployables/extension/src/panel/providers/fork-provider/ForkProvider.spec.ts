@@ -11,6 +11,7 @@ describe('Fork provider', () => {
     const provider = new ForkProvider({
       chainId: Chain.ETH,
       avatarAddress: randomAddress(),
+      simulationModuleAddress: randomAddress(),
     })
 
     provider.on('transaction', handleTransaction)
@@ -37,6 +38,7 @@ describe('Fork provider', () => {
     const provider = new ForkProvider({
       chainId: Chain.ETH,
       avatarAddress: randomAddress(),
+      simulationModuleAddress: randomAddress(),
     })
 
     const transaction = {
@@ -65,6 +67,7 @@ describe('Fork provider', () => {
       const provider = new ForkProvider({
         chainId: Chain.ETH,
         avatarAddress: randomAddress(),
+        simulationModuleAddress: randomAddress(),
       })
 
       const calls = [
@@ -141,6 +144,7 @@ describe('Fork provider', () => {
       const provider = new ForkProvider({
         chainId: Chain.ETH,
         avatarAddress: randomAddress(),
+        simulationModuleAddress: randomAddress(),
       })
 
       const calls = [{ to: randomAddress(), data: randomHex(), value: '0x0' }]
@@ -176,6 +180,7 @@ describe('Fork provider', () => {
       const provider = new ForkProvider({
         chainId: Chain.ETH,
         avatarAddress: randomAddress(),
+        simulationModuleAddress: randomAddress(),
       })
 
       await expect(
@@ -193,6 +198,7 @@ describe('Fork provider', () => {
       const provider = new ForkProvider({
         chainId: Chain.ETH,
         avatarAddress: randomAddress(),
+        simulationModuleAddress: randomAddress(),
       })
 
       const result = await provider.request(
