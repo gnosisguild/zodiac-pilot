@@ -1,9 +1,12 @@
 import { useAccount } from '@/accounts'
 import { useOptionalExecutionRoute } from '@/execution-routes'
-import type { HexAddress } from '@zodiac/schema'
+import type { ExecutionRoute, HexAddress } from '@zodiac/schema'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import { useCallback } from 'react'
-import { useForkProvider } from './ProvideForkProvider'
+import {
+  getSimulationModuleAddress,
+  useForkProvider,
+} from './ProvideForkProvider'
 import { useDispatch } from './TransactionsContext'
 import {
   confirmTransaction,
@@ -11,7 +14,6 @@ import {
   finishTransaction,
   revertTransaction,
 } from './actions'
-import { getModuleAddress } from './getModuleAddress'
 import type { UnconfirmedTransaction } from './state'
 
 export const useSendTransaction = () => {
@@ -19,8 +21,6 @@ export const useSendTransaction = () => {
   const dispatch = useDispatch()
   const { address } = useAccount()
   const route = useOptionalExecutionRoute()
-
-  const moduleAddress = getModuleAddress(route)
 
   return useCallback(
     async (transaction: UnconfirmedTransaction) => {
@@ -52,7 +52,7 @@ export const useSendTransaction = () => {
           isExecutionFailure(
             receipt.logs[receipt.logs.length - 1],
             address,
-            moduleAddress,
+            route,
           )
         ) {
           dispatch(revertTransaction({ id: transaction.id }))
@@ -65,24 +65,29 @@ export const useSendTransaction = () => {
         dispatch(failTransaction({ id: transaction.id }))
       }
     },
-    [address, dispatch, moduleAddress, provider],
+    [dispatch, address, route, provider],
   )
 }
 
 const isExecutionFailure = (
   log: TransactionReceipt['logs'][0],
   avatarAddress: HexAddress,
-  moduleAddress?: HexAddress,
+  route: ExecutionRoute | null,
 ) => {
   if (log.address.toLowerCase() !== avatarAddress.toLowerCase()) {
     return false
   }
 
-  if (moduleAddress) {
+  const simulationModuleAddress = getSimulationModuleAddress(route)
+
+  if (simulationModuleAddress) {
     return (
       log.topics[0] === id('ExecutionFromModuleFailure(address)') &&
       log.topics[1] ===
-        AbiCoder.defaultAbiCoder().encode(['address'], [moduleAddress])
+        AbiCoder.defaultAbiCoder().encode(
+          ['address'],
+          [simulationModuleAddress],
+        )
     )
   }
 
