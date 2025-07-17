@@ -1,3 +1,4 @@
+import type { Account } from '@/companion'
 import { executionRouteSchema, type ExecutionRoute } from '@zodiac/schema'
 
 export const AD_HOC_ROUTE_ID = 'ad-hoc'
@@ -20,3 +21,6 @@ export const findAdHocRoute = (): ExecutionRoute | null => {
 
   return adHocRoute
 }
+
+export const isAdHocAccount = (account: Account) =>
+  account.id === AD_HOC_ROUTE_ID
