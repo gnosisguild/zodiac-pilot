@@ -39,6 +39,10 @@
       "matchPackageNames": ["/^@cowprotocol/"],
       "automerge": true,
       "groupName": "cowprotocol"
+    },
+    {
+      "matchPackageNames": ["/^puzzlers-labs/chrome-webstore-publish$/"],
+      "enabled": false
     }
   ]
 }
