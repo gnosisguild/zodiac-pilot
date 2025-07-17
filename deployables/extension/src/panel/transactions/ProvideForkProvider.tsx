@@ -1,7 +1,8 @@
 import { useAccount } from '@/accounts'
 import { ForkProvider } from '@/providers'
-import type { ExecutionRoute } from '@/types'
+import type { ExecutionRoute, HexAddress } from '@/types'
 import { invariant } from '@epic-web/invariant'
+import { ZERO_ADDRESS } from '@zodiac/chains'
 import {
   createContext,
   useContext,
@@ -72,48 +73,52 @@ export const getSimulationModuleAddress = (route: ExecutionRoute | null) => {
 
 const findModuleOnAvatarAddress = (route: ExecutionRoute | null) => {
   if (route == null) {
-    return
+    return null
   }
 
   const { waypoints } = route
 
   if (waypoints == null) {
-    return
+    return null
   }
 
   const avatarWaypoint = waypoints[waypoints.length - 1]
 
   if (!('connection' in avatarWaypoint)) {
-    return
+    return null
   }
 
   if (avatarWaypoint.connection.type !== ConnectionType.IS_ENABLED) {
-    return
+    return null
   }
 
-  return unprefixAddress(avatarWaypoint.connection.from)
+  return nullifyZeroAddress(unprefixAddress(avatarWaypoint.connection.from))
 }
 
 const findOwnerOfAvatarAddress = (route: ExecutionRoute | null) => {
   if (route == null) {
-    return
+    return null
   }
 
   const { waypoints } = route
 
   if (waypoints == null) {
-    return
+    return null
   }
 
   const avatarWaypoint = waypoints[waypoints.length - 1]
 
   if (!('connection' in avatarWaypoint)) {
-    return
+    return null
   }
 
   if (avatarWaypoint.connection.type !== ConnectionType.OWNS) {
-    return
+    return null
   }
 
-  return unprefixAddress(avatarWaypoint.connection.from)
+  return nullifyZeroAddress(unprefixAddress(avatarWaypoint.connection.from))
+}
+
+const nullifyZeroAddress = (address: HexAddress) => {
+  return address === ZERO_ADDRESS ? null : address
 }
