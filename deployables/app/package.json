@@ -49,7 +49,7 @@
     "remix-utils": "8.7.0",
     "ser-kit": "3.10.1",
     "viem": "2.31.7",
-    "wagmi": "2.15.6",
+    "wagmi": "2.15.7",
     "zod": "3.25.76"
   },
   "devDependencies": {
