@@ -1,5 +1,6 @@
 import { useAccount } from '@/accounts'
 import { useCompanionAppUrl, useCompanionAppUser } from '@/companion'
+import { isAdHocAccount } from '@/execution-routes'
 import { useWindowId } from '@/port-handling'
 import { useIsPending } from '@zodiac/hooks'
 import {
@@ -31,6 +32,7 @@ export const AccountActions = () => {
             align="left"
             intent={Intent.RefreshAccount}
             busy={useIsPending(Intent.RefreshAccount)}
+            disabled={isAdHocAccount(account)}
           >
             Refresh account
           </GhostButton>
@@ -46,6 +48,7 @@ export const AccountActions = () => {
             intent={Intent.EditAccount}
             icon={Pencil}
             size="small"
+            disabled={isAdHocAccount(account)}
           >
             Edit account
           </GhostButton>
