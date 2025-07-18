@@ -11,6 +11,9 @@ import {
 import type { TrackSessionsResult } from './sessions'
 import type { TrackSimulationResult } from './simulations'
 
+// Track all active listeners per tab for cleanup
+const activeListeners = new Map<number, () => void>()
+
 export const companionEnablement = (
   { withPilotSession }: TrackSessionsResult,
   { onSimulationUpdate }: TrackSimulationResult,
@@ -34,6 +37,14 @@ export const companionEnablement = (
 
         console.debug('Companion App connected!')
 
+        // Clean up any existing listener for this tab
+        if (activeListeners.has(tabId)) {
+          const existingDispose = activeListeners.get(tabId)!
+          console.debug(`Cleaning up existing listener for tab ${tabId}`)
+          existingDispose()
+          activeListeners.delete(tabId)
+        }
+
         const dispose = onSimulationUpdate.addListener(async (fork) => {
           console.debug('Sending updated fork to companion app', { fork })
           await sendMessageToCompanionApp(tabId, {
@@ -45,6 +56,12 @@ export const companionEnablement = (
           captureLastError()
         })
 
+        // Store the dispose function for this tab
+        activeListeners.set(tabId, dispose)
+        console.debug(
+          `Added simulation update listener for tab ${tabId}. Total listeners: ${activeListeners.size}`,
+        )
+
         const handleTabClose = (closedTabId: number) => {
           if (tabId !== closedTabId) {
             return
@@ -52,7 +69,14 @@ export const companionEnablement = (
 
           chrome.tabs.onRemoved.removeListener(handleTabClose)
 
-          dispose()
+          // Clean up the listener
+          if (activeListeners.has(tabId)) {
+            const disposeFn = activeListeners.get(tabId)!
+            console.debug(`Cleaning up listener for closed tab ${tabId}`)
+            disposeFn()
+            activeListeners.delete(tabId)
+            console.debug(`Remaining listeners: ${activeListeners.size}`)
+          }
         }
 
         chrome.tabs.onRemoved.addListener(handleTabClose)
