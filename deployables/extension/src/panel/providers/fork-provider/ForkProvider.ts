@@ -6,7 +6,12 @@ import {
   signTypedData,
   typedDataHash,
 } from '@/safe'
-import type { Eip1193Provider, HexAddress, TransactionData } from '@/types'
+import type {
+  Eip1193Provider,
+  HexAddress,
+  JsonRpcRequest,
+  TransactionData,
+} from '@/types'
 import { decodeGenericError, getActiveTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
@@ -52,10 +57,12 @@ enum BatchStatus {
 /** This is separated from TenderlyProvider to provide an abstraction over Tenderly implementation details. That way we will be able to more easily plug in alternative simulation back-ends. */
 export class ForkProvider extends EventEmitter {
   private provider: TenderlyProvider
+  private abortController: AbortController
 
   private chainId: ChainId
   private avatarAddress: HexAddress
   private simulationModuleAddress: HexAddress
+  private setupRequests: JsonRpcRequest[]
 
   private blockGasLimitPromise: Promise<bigint>
   private isSafePromise: Promise<boolean>
@@ -71,21 +78,39 @@ export class ForkProvider extends EventEmitter {
     chainId,
     avatarAddress,
     simulationModuleAddress,
+    setupRequests = [],
   }: {
     chainId: ChainId
     avatarAddress: HexAddress
     simulationModuleAddress: HexAddress
+    setupRequests?: JsonRpcRequest[]
   }) {
     super()
     this.chainId = chainId
     this.provider = new TenderlyProvider(chainId)
     this.avatarAddress = avatarAddress
     this.simulationModuleAddress = simulationModuleAddress
+    this.setupRequests = setupRequests
+    this.abortController = new AbortController()
 
     this.blockGasLimitPromise = readBlockGasLimit(this.provider)
 
     // for now we generally assume smart accounts are Safes
     this.isSafePromise = isSmartAccount(this.avatarAddress, this.provider)
+
+    // Usually we initialize the fork when the first transaction is sent, but if there are setup requests we rather initialize immediately.
+    // This is to make sure any spoofed balances or other setup effects are visible right away.
+    if (this.setupRequests.length > 0) {
+      this.initFork()
+    }
+  }
+
+  private isDeleted() {
+    return this.abortController.signal.aborted
+  }
+
+  private assertNotDeleted() {
+    invariant(!this.isDeleted(), 'ForkProvider deleted')
   }
 
   async request(
@@ -345,6 +370,8 @@ export class ForkProvider extends EventEmitter {
       await this.initFork()
     }
 
+    this.assertNotDeleted()
+
     const isSafe = await this.isSafePromise
     const isDelegateCall = metaTx.operation === 1
 
@@ -352,6 +379,8 @@ export class ForkProvider extends EventEmitter {
       isSafe || !isDelegateCall,
       'delegatecall is only supported for Safes as avatar',
     )
+
+    this.assertNotDeleted()
 
     // take a snapshot and record the meta transaction
     const checkpointId: string = await this.provider.request({
@@ -361,6 +390,8 @@ export class ForkProvider extends EventEmitter {
       method: 'evm_setNextBlockTimestamp',
       params: [Math.ceil(Date.now() / 1000).toString()],
     })
+
+    this.assertNotDeleted()
 
     let tx: TransactionData
     if (isSafe) {
@@ -391,8 +422,21 @@ export class ForkProvider extends EventEmitter {
   }
 
   async initFork(): Promise<void> {
+    // Check if we've been aborted before starting initialization.
+    // Then check again after each async operation. This is to make sure we don't do any work if the fork is deleted.
+    if (this.isDeleted()) {
+      console.debug('fork deleted, skipping initialization')
+      return
+    }
+
     console.debug('Initializing fork for simulation...')
     const isSafe = await this.isSafePromise
+
+    if (this.isDeleted()) {
+      console.debug('fork deleted, skipping initialization')
+      return
+    }
+
     if (isSafe) {
       await prepareSafeForSimulation(
         {
@@ -404,9 +448,30 @@ export class ForkProvider extends EventEmitter {
       )
     }
 
+    for (const request of this.setupRequests) {
+      if (this.isDeleted()) {
+        console.debug('fork deleted, skipping initialization')
+        return
+      }
+
+      console.debug('Running setup request', request)
+      await this.provider.request(translateJsonRpcRequest(request))
+    }
+
+    if (this.isDeleted()) {
+      console.debug('fork deleted, skipping initialization')
+      return
+    }
+
     // notify the background script to start intercepting JSON RPC requests in the current window
     // we use the public RPC for requests originating from apps
     const activeTab = await getActiveTab()
+
+    if (this.isDeleted()) {
+      console.debug('fork deleted, skipping initialization')
+      return
+    }
+
     chrome.runtime.sendMessage<SimulationMessage>({
       type: PilotSimulationMessageType.SIMULATE_START,
       windowId: activeTab.windowId,
@@ -416,6 +481,11 @@ export class ForkProvider extends EventEmitter {
     })
 
     this.provider.on('update', ({ rpcUrl, vnetId }) => {
+      // Check abort signal before sending update messages
+      if (this.abortController.signal.aborted) {
+        return
+      }
+
       chrome.runtime.sendMessage<SimulationMessage>({
         type: PilotSimulationMessageType.SIMULATE_UPDATE,
         windowId: activeTab.windowId,
@@ -428,6 +498,9 @@ export class ForkProvider extends EventEmitter {
   }
 
   async deleteFork(): Promise<void> {
+    // Abort any ongoing operations immediately
+    this.abortController.abort('ForkProvider being deleted')
+
     // notify the background script to stop intercepting JSON RPC requests
     const activeTab = await getActiveTab()
 
@@ -472,8 +545,6 @@ const execTransactionFromModule = (
     from: moduleAddress,
     // We simulate setting the entire block gas limit as the gas limit for the transaction
     gas: toQuantity(blockGasLimit), // Tenderly errors if the hex value has leading zeros
-    // With gas price 0 account don't need token for gas
-    // gasPrice: '0x0', // doesn't seem to be required
   }
 }
 
@@ -533,4 +604,18 @@ async function prepareSafeForSimulation(
       throw e
     }
   }
+}
+
+/**
+ * We don't want to expose the Tenderly API to users to keep the option open to switch to a different simulation provider in the future.
+ * So rather than telling users to use tenderly_addErc20Balance, for example, we expect pilot_addErc20Balance.
+ **/
+const translateJsonRpcRequest = (request: JsonRpcRequest) => {
+  if (request.method.startsWith('pilot_')) {
+    return {
+      method: 'tenderly_' + request.method.slice(6),
+      params: request.params,
+    }
+  }
+  return request
 }
