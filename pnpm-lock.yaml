@@ -198,8 +198,8 @@ importers:
         version: 3.25.76
     devDependencies:
       '@dotenvx/dotenvx':
-        specifier: 1.47.6
-        version: 1.47.6
+        specifier: 1.48.0
+        version: 1.48.0
       '@playwright/test':
         specifier: 1.54.1
         version: 1.54.1
@@ -370,8 +370,8 @@ importers:
         specifier: 15.3.0
         version: 15.3.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@dotenvx/dotenvx':
-        specifier: 1.47.6
-        version: 1.47.6
+        specifier: 1.48.0
+        version: 1.48.0
       '@playwright/test':
         specifier: 1.54.1
         version: 1.54.1
@@ -658,8 +658,8 @@ importers:
         version: 3.25.76
     devDependencies:
       '@dotenvx/dotenvx':
-        specifier: 1.47.6
-        version: 1.47.6
+        specifier: 1.48.0
+        version: 1.48.0
       '@faker-js/faker':
         specifier: 9.9.0
         version: 9.9.0
@@ -889,7 +889,7 @@ importers:
         version: 1.0.0
       '@safe-global/api-kit':
         specifier: 4.0.0
-        version: 4.0.0(typescript@5.8.3)(zod@3.25.76)
+        version: 4.0.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@safe-global/protocol-kit':
         specifier: 6.1.0
         version: 6.1.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
@@ -1601,8 +1601,8 @@ packages:
     resolution: {integrity: sha512-D/9dozteKcutI5OdxJd8rU+fL6XgaaRg60sPPJWkT33OCiRfkCu5wO5B/yXTaaL2e6EB0lcCBGe5E0XscZCvvQ==}
     engines: {node: '>=18'}
 
-  '@dotenvx/dotenvx@1.47.6':
-    resolution: {integrity: sha512-bvVMFc3Z9/mtYUWP1S1UB4SA3U2mQ1p7Qc9QW6Cm7t1Vm6D+dysmus/Mt26Dc1QrE6OgrKUGC99EQcMvcFZC3Q==}
+  '@dotenvx/dotenvx@1.48.0':
+    resolution: {integrity: sha512-UrAKBvUYl8SwCyYa8U8lND4rkdPbd7uOPtCPeiObeg5B44yrdH2ioO0tLfsGAGoenLmf6IpN6be4eT4gXxyzjQ==}
     hasBin: true
 
   '@drizzle-team/brocli@0.10.2':
@@ -10201,7 +10201,7 @@ snapshots:
       gonzales-pe: 4.3.0
       node-source-walk: 7.0.0
 
-  '@dotenvx/dotenvx@1.47.6':
+  '@dotenvx/dotenvx@1.48.0':
     dependencies:
       commander: 11.1.0
       dotenv: 16.4.7
@@ -12834,7 +12834,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@safe-global/api-kit@4.0.0(typescript@5.8.3)(zod@3.25.76)':
+  '@safe-global/api-kit@4.0.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)':
     dependencies:
       '@safe-global/protocol-kit': 6.1.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@safe-global/types-kit': 3.0.0(typescript@5.8.3)(zod@3.25.76)
@@ -16804,7 +16804,7 @@ snapshots:
     dependencies:
       ws: 8.18.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
-  isows@1.0.7(ws@8.18.2):
+  isows@1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)):
     dependencies:
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
 
@@ -19343,7 +19343,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.8.3)(zod@3.22.4)
-      isows: 1.0.7(ws@8.18.2)
+      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ox: 0.8.1(typescript@5.8.3)(zod@3.22.4)
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
@@ -19360,7 +19360,7 @@ snapshots:
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
       abitype: 1.0.8(typescript@5.8.3)(zod@3.25.76)
-      isows: 1.0.7(ws@8.18.2)
+      isows: 1.0.7(ws@8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10))
       ox: 0.8.1(typescript@5.8.3)(zod@3.25.76)
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
