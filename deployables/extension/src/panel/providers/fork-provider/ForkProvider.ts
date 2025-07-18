@@ -68,7 +68,7 @@ export class ForkProvider extends EventEmitter {
   private isSafePromise: Promise<boolean>
 
   private pendingMetaTransaction: Promise<TransactionResult> | undefined
-  private isInitialized = false
+  private initForkPromise: Promise<void> | undefined
 
   // This map is used to serve the EIP-5792 `wallet_getCallsStatus` request.
   // It maps the `id` parameter of `wallet_sendCalls` to the hashes of the resulting transactions.
@@ -101,7 +101,7 @@ export class ForkProvider extends EventEmitter {
     // Usually we initialize the fork when the first transaction is sent, but if there are setup requests we rather initialize immediately.
     // This is to make sure any spoofed balances or other setup effects are visible right away.
     if (this.setupRequests.length > 0) {
-      this.initFork()
+      this.initForkPromise = this.initFork()
     }
   }
 
@@ -365,10 +365,7 @@ export class ForkProvider extends EventEmitter {
   private async sendMetaTransactionInSeries(
     metaTx: MetaTransactionRequest,
   ): Promise<TransactionResult> {
-    if (!this.isInitialized) {
-      // we lazily initialize the fork (making the Safe ready for simulating transactions) when the first transaction is sent
-      await this.initFork()
-    }
+    await this.ensureForkInitialized()
 
     this.assertNotDeleted()
 
@@ -419,6 +416,18 @@ export class ForkProvider extends EventEmitter {
     })
 
     return { checkpointId, hash }
+  }
+
+  private async ensureForkInitialized(): Promise<void> {
+    // If initialization is already in progress, wait for it to complete
+    if (this.initForkPromise) {
+      await this.initForkPromise
+      return
+    }
+
+    // Start initialization and store the promise
+    this.initForkPromise = this.initFork()
+    await this.initForkPromise
   }
 
   async initFork(): Promise<void> {
@@ -493,8 +502,6 @@ export class ForkProvider extends EventEmitter {
         vnetId,
       })
     })
-
-    this.isInitialized = true
   }
 
   async deleteFork(): Promise<void> {
@@ -513,7 +520,7 @@ export class ForkProvider extends EventEmitter {
 
     await this.provider.deleteFork()
     this.eip5792Calls.clear()
-    this.isInitialized = false
+    this.initForkPromise = undefined
   }
 
   getTransactionLink(txHash: string) {
