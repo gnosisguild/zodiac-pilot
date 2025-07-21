@@ -25,7 +25,7 @@
     "@vercel/analytics": "1.5.0",
     "@workos-inc/authkit-react-router": "0.6.1",
     "@workos-inc/node": "7.61.0",
-    "@workos-inc/widgets": "1.1.5",
+    "@workos-inc/widgets": "1.2.0",
     "@zodiac/chains": "workspace:*",
     "@zodiac/db": "workspace:*",
     "@zodiac/env": "workspace:*",
