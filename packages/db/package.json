@@ -64,7 +64,7 @@
     "eslint": "9.31.0",
     "eslint-plugin-drizzle": "0.2.3",
     "madge": "8.0.0",
-    "supabase": "2.31.4",
+    "supabase": "2.31.8",
     "vitest": "3.2.4"
   },
   "peerDependencies": {
