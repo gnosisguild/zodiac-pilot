@@ -5,14 +5,16 @@ import { route } from './fixture'
 
 test.describe('Edit route', () => {
   test('it is possible to save a route', async ({ page }) => {
+    await page.goto(href('/'))
+
+    const extension = await loadExtension(page)
+
     await page.goto(
       href('/offline/accounts/:accountId/:data', {
         accountId: route.id,
         data: encode(route),
       }),
     )
-
-    const extension = await loadExtension(page)
 
     await page.getByRole('textbox', { name: 'Label' }).fill('New route')
     await page.getByRole('button', { name: 'Save', exact: true }).click()
@@ -21,14 +23,16 @@ test.describe('Edit route', () => {
   })
 
   test('the new route shows up in the list afterwards', async ({ page }) => {
+    await page.goto(href('/'))
+
+    await loadExtension(page)
+
     await page.goto(
       href('/offline/accounts/:accountId/:data', {
         accountId: route.id,
         data: encode(route),
       }),
     )
-
-    await loadExtension(page)
 
     await page.getByRole('textbox', { name: 'Label' }).fill('New route')
     await page.getByRole('button', { name: 'Save', exact: true }).click()
