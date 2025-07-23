@@ -9,7 +9,7 @@ import { extractApprovalsFromSimulation } from './extractApprovalsFromSimulation
 describe('extractApprovalsFromSimulation', () => {
   it('returns an empty array if logs are missing', async () => {
     const transaction = createMockSimulatedTransaction({
-      transaction_info: { asset_changes: [] },
+      transaction_info: { asset_changes: [], logs: null },
     })
 
     await expect(
