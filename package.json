@@ -10,8 +10,7 @@
       "@duneanalytics/client-sdk": "patches/@duneanalytics__client-sdk.patch"
     },
     "onlyBuiltDependencies": [
-      "esbuild",
-      "supabase"
+      "esbuild"
     ]
   },
   "scripts": {
