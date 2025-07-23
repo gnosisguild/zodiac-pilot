@@ -34,7 +34,12 @@ export const action = (args: Route.ActionArgs) =>
     const avatar = getHexString(data, 'avatar')
     const chainId = verifyChainId(getInt(data, 'chainId'))
 
-    if (!(await isSmartContractAddress(jsonRpcProvider(chainId), avatar))) {
+    const isSmartContract = await isSmartContractAddress(
+      jsonRpcProvider(chainId),
+      avatar,
+    )
+
+    if (isSmartContract === false) {
       return { error: 'Account is not a smart contract' }
     }
 

@@ -1,10 +1,5 @@
 import { getAvailableChains } from '@/balances-server'
-import {
-  createMockChain,
-  expectMessage,
-  postMessage,
-  render,
-} from '@/test-utils'
+import { createMockChain, expectMessage, render } from '@/test-utils'
 import { isSmartContractAddress } from '@/utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -126,7 +121,14 @@ describe('New SafeAccount', () => {
 
     describe('Save', () => {
       it('redirects to the accounts page', async () => {
-        await render(href('/offline/accounts/create'))
+        await render(href('/offline/accounts/create'), {
+          autoRespond: {
+            [CompanionAppMessageType.SAVE_AND_LAUNCH]: {
+              type: CompanionResponseMessageType.PROVIDE_ROUTE,
+              route: createMockExecutionRoute(),
+            },
+          },
+        })
 
         const address = randomAddress()
 
@@ -136,11 +138,6 @@ describe('New SafeAccount', () => {
         )
 
         await userEvent.click(screen.getByRole('button', { name: 'Create' }))
-
-        await postMessage({
-          type: CompanionResponseMessageType.PROVIDE_ROUTE,
-          route: createMockExecutionRoute(),
-        })
 
         await expectRouteToBe(href('/offline/accounts'))
       })
