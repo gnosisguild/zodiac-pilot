@@ -33,5 +33,8 @@
   },
   "lint-staged": {
     "*.{ts,tsx,mts,js,json,html,css}": "prettier --write"
+  },
+  "overrides": {
+    "stylus": "github:stylus/stylus#0.62.0"
   }
 }
