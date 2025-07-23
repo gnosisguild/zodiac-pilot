@@ -9,18 +9,7 @@
       "evm-proxy-detection": "patches/evm-proxy-detection.patch",
       "@duneanalytics/client-sdk": "patches/@duneanalytics__client-sdk.patch"
     },
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "@sentry/cli",
-      "@tailwindcss/oxide",
-      "bufferutil",
-      "esbuild",
-      "keccak",
-      "sharp",
-      "supabase",
-      "utf-8-validate",
-      "workerd"
-    ]
+    "neverBuiltDependencies": []
   },
   "scripts": {
     "build": "turbo run build --affected",
