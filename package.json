@@ -10,7 +10,16 @@
       "@duneanalytics/client-sdk": "patches/@duneanalytics__client-sdk.patch"
     },
     "onlyBuiltDependencies": [
-      "esbuild"
+      "@parcel/watcher",
+      "@sentry/cli",
+      "@tailwindcss/oxide",
+      "bufferutil",
+      "esbuild",
+      "keccak",
+      "sharp",
+      "supabase",
+      "utf-8-validate",
+      "workerd"
     ]
   },
   "scripts": {
