@@ -9,8 +9,8 @@
     "lint": "eslint . --max-warnings=0",
     "check-types": "tsc",
     "check-cycles": "madge -c --warning --ts-config tsconfig.json ./src/index.ts ./schema/index.ts",
-    "start": "supabase start",
-    "stop": "supabase stop",
+    "start": "npx supabase start",
+    "stop": "npx supabase stop",
     "test": "dotenvx run --env-file=.env.test -- vitest",
     "create-migration": "dotenvx run -- drizzle-kit generate --name $1",
     "migrate": "dotenvx run -- drizzle-kit migrate",
@@ -64,7 +64,6 @@
     "eslint": "9.31.0",
     "eslint-plugin-drizzle": "0.2.3",
     "madge": "8.0.0",
-    "supabase": "2.31.8",
     "vitest": "3.2.4"
   },
   "peerDependencies": {
