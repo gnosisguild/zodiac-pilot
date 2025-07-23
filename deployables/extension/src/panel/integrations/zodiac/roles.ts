@@ -127,7 +127,7 @@ type Record = z.infer<typeof zRecord>
 // We use a single chrome.sync.storage key for all role records so that we don't
 // consume an excessive of stored values (limit: 512).
 const STORAGE_KEY = 'role-records'
-const zRecordStore = z.record(zRecord.optional()) // 📀 🎧
+const zRecordStore = z.record(z.string(), zRecord.optional()) // 📀 🎧
 
 const recordStoreKey = (rolesMod: PrefixedAddress, roleKey: string) =>
   `${rolesMod}:${decodeRoleKey(roleKey)}`

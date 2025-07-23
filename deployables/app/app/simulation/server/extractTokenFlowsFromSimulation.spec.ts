@@ -9,7 +9,7 @@ const mockGetTokenDetails = vi.mocked(getTokenDetails)
 describe('extractTokenFlowsFromSimulation', () => {
   it('returns empty array if transaction_info.asset_changes is empty', async () => {
     const transaction = createMockSimulatedTransaction({
-      transaction_info: { asset_changes: [] },
+      transaction_info: { asset_changes: [], logs: null },
     })
 
     await expect(
@@ -35,6 +35,7 @@ describe('extractTokenFlowsFromSimulation', () => {
 
     const transaction = createMockSimulatedTransaction({
       transaction_info: {
+        logs: null,
         asset_changes: [
           {
             from,
@@ -76,6 +77,7 @@ describe('extractTokenFlowsFromSimulation', () => {
 
     const transaction = createMockSimulatedTransaction({
       transaction_info: {
+        logs: null,
         asset_changes: [
           {
             from,

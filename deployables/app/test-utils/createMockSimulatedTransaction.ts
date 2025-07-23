@@ -5,7 +5,7 @@ export const createMockSimulatedTransaction = (
   transaction: Partial<SimulatedTransaction> = {},
 ): SimulatedTransaction => ({
   network_id: Chain.ETH.toString(),
-  transaction_info: {},
+  transaction_info: { logs: null },
 
   ...transaction,
 })

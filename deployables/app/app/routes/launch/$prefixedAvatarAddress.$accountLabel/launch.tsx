@@ -28,7 +28,10 @@ const jsonRpcValueSchema: z.ZodTypeAny = z.union([
   z.boolean(),
   z.null(),
   z.array(z.lazy(() => jsonRpcValueSchema)),
-  z.record(z.lazy(() => jsonRpcValueSchema)),
+  z.record(
+    z.string(),
+    z.lazy(() => jsonRpcValueSchema),
+  ),
 ])
 
 const jsonRpcCallSchema = z.object({
