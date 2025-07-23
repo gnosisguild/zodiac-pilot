@@ -19,7 +19,7 @@ export const tokensSchema = tokenSchema.array()
 
 const tokenBalanceSchema = tokenSchema.extend({
   amount: z.number(),
-  raw_amount: z.number().int(),
+  raw_amount: z.bigint(),
 })
 
 export const tokenBalancesSchema = tokenBalanceSchema.array()
