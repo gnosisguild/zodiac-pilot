@@ -1,7 +1,6 @@
 import { Token } from '@/components'
 import type { ApprovalTransaction } from '@/simulation-server'
 import {
-  Address,
   Popover,
   Table,
   TableBody,
@@ -10,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@zodiac/ui'
+import { Address } from '@zodiac/web3'
 import { type PrefixedAddress } from 'ser-kit'
 import { formatApprovalAmount } from './formatApprovalAmount'
 

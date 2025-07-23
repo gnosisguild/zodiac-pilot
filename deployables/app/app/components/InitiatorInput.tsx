@@ -3,7 +3,7 @@ import type {
   HexAddress,
   PrefixedAddress,
 } from '@zodiac/schema'
-import { AddressSelect, type AddressSelectProps } from '@zodiac/ui'
+import { AddressSelect, type AddressSelectProps } from '@zodiac/web3'
 import { useEffect } from 'react'
 import { useFetcher } from 'react-router'
 import { prefixAddress, splitPrefixedAddress } from 'ser-kit'

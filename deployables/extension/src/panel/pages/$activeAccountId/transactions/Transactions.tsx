@@ -19,8 +19,8 @@ import {
   Modal,
   Page,
   PrimaryLinkButton,
-  WagmiProvider,
 } from '@zodiac/ui'
+import { ReadOnlyWalletProvider } from '@zodiac/web3'
 import { RefreshCcw, Trash2 } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router'
@@ -81,7 +81,7 @@ const Transactions = () => {
   return (
     <>
       <Page.Content ref={scrollContainerRef}>
-        <WagmiProvider chainId={account.chainId}>
+        <ReadOnlyWalletProvider chainId={account.chainId}>
           <div className="flex items-center justify-between gap-2">
             <RecordingIndicator />
 
@@ -129,7 +129,7 @@ const Transactions = () => {
               </div>
             ))
           )}
-        </WagmiProvider>
+        </ReadOnlyWalletProvider>
       </Page.Content>
 
       <Page.Footer>

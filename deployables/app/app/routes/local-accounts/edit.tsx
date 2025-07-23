@@ -1,6 +1,5 @@
 import {
   AvatarInput,
-  ConnectWalletButton,
   InitiatorInput,
   Page,
   useConnected,
@@ -34,6 +33,7 @@ import {
   SecondaryLinkButton,
   TextInput,
 } from '@zodiac/ui'
+import { ConnectWalletButton } from '@zodiac/web3'
 import { useId } from 'react'
 import { href, redirect, useParams } from 'react-router'
 import { rankRoutes, type ChainId, type PrefixedAddress } from 'ser-kit'

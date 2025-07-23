@@ -23,7 +23,8 @@ import {
   CompanionResponseMessageType,
   useTabMessageHandler,
 } from '@zodiac/messages'
-import { Blockie, GhostLinkButton, Modal, Page, Spinner } from '@zodiac/ui'
+import { GhostLinkButton, Modal, Page, Spinner } from '@zodiac/ui'
+import { Blockie } from '@zodiac/web3'
 import { ArrowUpFromLine, Landmark } from 'lucide-react'
 import { useRef } from 'react'
 import {

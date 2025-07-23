@@ -26,13 +26,13 @@ import {
 } from '@zodiac/modules'
 import { isUUID, type HexAddress, type Waypoints } from '@zodiac/schema'
 import {
-  AddressInput,
   FormLayout,
   GhostLinkButton,
   InlineForm,
   PrimaryButton,
   TextInput,
 } from '@zodiac/ui'
+import { AddressInput } from '@zodiac/web3'
 import { useId } from 'react'
 import { href, Outlet, redirect } from 'react-router'
 import { prefixAddress } from 'ser-kit'

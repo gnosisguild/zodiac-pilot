@@ -1,5 +1,6 @@
-import { validateAddress } from '@/utils'
-import { AddressInput, CopyToClipboard } from '@zodiac/ui'
+import { validateAddress } from '@zodiac/schema'
+import { CopyToClipboard } from '@zodiac/ui'
+import { AddressInput } from './AddressInput'
 
 type AccountProps = {
   children: string

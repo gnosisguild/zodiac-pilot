@@ -1,9 +1,9 @@
 import { ProvideForkContext } from '@/balances-client'
-import { Page, WalletProvider } from '@/components'
+import { Page } from '@/components'
 import { Info, PrimaryButton } from '@zodiac/ui'
+import { useAccount, WalletProvider } from '@zodiac/web3'
 import { type PropsWithChildren, useEffect, useState } from 'react'
 import { Outlet } from 'react-router'
-import { useAccount } from 'wagmi'
 
 const Tokens = () => {
   return (

@@ -1,6 +1,7 @@
 import { explorerUrl } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
-import { AddressInput, GhostLinkButton } from '@zodiac/ui'
+import { GhostLinkButton } from '@zodiac/ui'
+import { AddressInput } from '@zodiac/web3'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import type { ChainId } from 'ser-kit'
 

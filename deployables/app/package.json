@@ -21,7 +21,6 @@
     "@react-router/node": "7.6.3",
     "@sentry/browser": "9.38.0",
     "@sentry/react-router": "9.38.0",
-    "@tanstack/react-query": "5.83.0",
     "@vercel/analytics": "1.5.0",
     "@workos-inc/authkit-react-router": "0.6.1",
     "@workos-inc/node": "7.61.0",
@@ -36,9 +35,9 @@
     "@zodiac/safe": "workspace:*",
     "@zodiac/schema": "workspace:*",
     "@zodiac/ui": "workspace:*",
+    "@zodiac/web3": "workspace:*",
     "classnames": "2.5.1",
     "compare-versions": "6.1.1",
-    "connectkit": "1.9.1",
     "ethers": "6.15.0",
     "highlight.js": "11.11.1",
     "isbot": "5.1.28",
@@ -49,7 +48,6 @@
     "remix-utils": "8.7.0",
     "ser-kit": "3.10.1",
     "viem": "2.33.0",
-    "wagmi": "2.15.7",
     "zod": "3.25.76"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 import { useLastTransactionExecutedAt } from '@/components'
+import { useAccount } from '@zodiac/web3'
 import { useEffect, useMemo } from 'react'
 import { useFetcher } from 'react-router'
-import { useAccount } from 'wagmi'
 import type { TokenBalance } from '../types'
 import { useForkUrl } from './ForkContext'
 

@@ -13,13 +13,8 @@ import { getHexString, getString } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { queryRoutes } from '@zodiac/modules'
 import { isUUID } from '@zodiac/schema'
-import {
-  AddressSelect,
-  Form,
-  Modal,
-  PrimaryButton,
-  TextInput,
-} from '@zodiac/ui'
+import { Form, Modal, PrimaryButton, TextInput } from '@zodiac/ui'
+import { AddressSelect } from '@zodiac/web3'
 import { href, redirect, useNavigate } from 'react-router'
 import { prefixAddress, queryInitiators } from 'ser-kit'
 import type { Route } from './+types/add-route'

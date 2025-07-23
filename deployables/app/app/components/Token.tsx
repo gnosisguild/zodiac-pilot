@@ -1,5 +1,6 @@
 import { isHexAddress } from '@zodiac/schema'
-import { Address, Popover } from '@zodiac/ui'
+import { Popover } from '@zodiac/ui'
+import { Address } from '@zodiac/web3'
 import { CircleDollarSign } from 'lucide-react'
 import type { PropsWithChildren } from 'react'
 

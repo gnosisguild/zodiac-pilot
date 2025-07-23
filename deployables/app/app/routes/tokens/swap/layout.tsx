@@ -1,4 +1,5 @@
-import { ConnectWalletButton, Page } from '@/components'
+import { Page } from '@/components'
+import { ConnectWalletButton } from '@zodiac/web3'
 import { Outlet } from 'react-router'
 
 const SwapLayout = () => (
