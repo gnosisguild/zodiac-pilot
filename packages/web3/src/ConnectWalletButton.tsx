@@ -1,5 +1,6 @@
 import { verifyHexAddress } from '@zodiac/schema'
-import { Address, SecondaryButton } from '@zodiac/ui'
+import { SecondaryButton } from '@zodiac/ui'
+import { Address } from './Address'
 import { LaunchConnectKit } from './LaunchConnectKit'
 
 export const ConnectWalletButton = ({

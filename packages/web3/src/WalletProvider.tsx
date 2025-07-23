@@ -1,7 +1,7 @@
-import { getWagmiConfig } from '@/wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useMemo, type PropsWithChildren } from 'react'
 import { WagmiProvider } from 'wagmi'
+import { getWagmiConfig } from './getWagmiConfig'
 
 export type WalletProviderProps = PropsWithChildren<{
   injectedOnly?: boolean

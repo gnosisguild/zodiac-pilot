@@ -1,5 +1,4 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
-import { ConnectWallet } from '@/components'
 import { simulateTransactionBundle } from '@/simulation-server'
 import { routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
@@ -24,6 +23,7 @@ import {
 import { checkPermissions, isValidRoute, queryRoutes } from '@zodiac/modules'
 import { isUUID } from '@zodiac/schema'
 import { DateValue, Error, Form, Info, Success, Warning } from '@zodiac/ui'
+import { ConnectWallet } from '@zodiac/web3'
 import { ArrowDownToLine, ArrowLeftRight, ArrowUpFromLine } from 'lucide-react'
 import { Suspense } from 'react'
 import { Await, useSubmit } from 'react-router'

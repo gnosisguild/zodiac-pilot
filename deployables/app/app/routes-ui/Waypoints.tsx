@@ -1,5 +1,6 @@
 import type { Account } from '@zodiac/schema'
-import { Address, Popover } from '@zodiac/ui'
+import { Popover } from '@zodiac/ui'
+import { Address } from '@zodiac/web3'
 import classNames from 'classnames'
 import { MoveDown, MoveRight } from 'lucide-react'
 import { Children, cloneElement, type ReactElement } from 'react'

@@ -2,14 +2,8 @@ import { authorizedAction } from '@/auth-server'
 import { dbClient, findWalletByAddress, getOrCreateWallet } from '@zodiac/db'
 import { getHexString, getString } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
-import {
-  AddressInput,
-  Error,
-  Form,
-  Modal,
-  PrimaryButton,
-  TextInput,
-} from '@zodiac/ui'
+import { Error, Form, Modal, PrimaryButton, TextInput } from '@zodiac/ui'
+import { AddressInput } from '@zodiac/web3'
 import { href, redirect, useNavigate } from 'react-router'
 import type { Route } from './+types/add-wallet'
 

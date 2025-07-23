@@ -1,6 +1,7 @@
 import { validateAddress } from '@/utils'
 import type { HexAddress } from '@zodiac/schema'
-import { Address as BaseAddress, Tag } from '@zodiac/ui'
+import { Tag } from '@zodiac/ui'
+import { Address as BaseAddress } from '@zodiac/web3'
 import { Unlink } from 'lucide-react'
 
 interface Props {

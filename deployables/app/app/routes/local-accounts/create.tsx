@@ -1,10 +1,5 @@
 import { authorizedAction } from '@/auth-server'
-import {
-  ConnectWalletButton,
-  OnlyConnected,
-  Page,
-  useConnected,
-} from '@/components'
+import { OnlyConnected, Page, useConnected } from '@/components'
 import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
 import { Chain, verifyChainId } from '@zodiac/chains'
@@ -22,7 +17,8 @@ import {
   updateChainId,
   updateLabel,
 } from '@zodiac/modules'
-import { AddressInput, Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
+import { Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
+import { AddressInput, ConnectWalletButton } from '@zodiac/web3'
 import { href, redirect } from 'react-router'
 import type { Route } from './+types/create'
 
@@ -38,7 +34,12 @@ export const action = (args: Route.ActionArgs) =>
     const avatar = getHexString(data, 'avatar')
     const chainId = verifyChainId(getInt(data, 'chainId'))
 
-    if (!(await isSmartContractAddress(jsonRpcProvider(chainId), avatar))) {
+    const isSmartContract = await isSmartContractAddress(
+      jsonRpcProvider(chainId),
+      avatar,
+    )
+
+    if (isSmartContract === false) {
       return { error: 'Account is not a smart contract' }
     }
 

@@ -80,6 +80,7 @@
     "@zodiac/safe": "workspace:*",
     "@zodiac/schema": "workspace:*",
     "@zodiac/ui": "workspace:*",
+    "@zodiac/web3": "workspace:*",
     "classnames": "2.5.1",
     "date-fns": "4.1.0",
     "lucide-react": "0.525.0",
@@ -91,7 +92,6 @@
     "react-stick": "5.0.7",
     "ser-kit": "3.10.1",
     "viem": "2.33.0",
-    "wagmi": "2.15.7",
     "zod": "3.25.76"
   }
 }

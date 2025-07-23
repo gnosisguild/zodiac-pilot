@@ -15,7 +15,6 @@ import {
 import { getString, getUUID } from '@zodiac/form-data'
 import { isUUID } from '@zodiac/schema'
 import {
-  Address,
   GhostLinkButton,
   Info,
   MeatballMenu,
@@ -30,6 +29,7 @@ import {
   TableRowActions,
   Tag,
 } from '@zodiac/ui'
+import { Address } from '@zodiac/web3'
 import { ArrowRight, Pencil, Trash2 } from 'lucide-react'
 import { type PropsWithChildren } from 'react'
 import { href, Outlet } from 'react-router'

@@ -9,6 +9,7 @@ import {
 import { multisigTransactionUrl } from '@zodiac/safe'
 import type { HexAddress } from '@zodiac/schema'
 import { errorToast, PrimaryButton, successToast } from '@zodiac/ui'
+import { useAccount, useConnectorClient } from '@zodiac/web3'
 import type { Eip1193Provider } from 'ethers'
 import { SquareArrowOutUpRight } from 'lucide-react'
 import { useEffect } from 'react'
@@ -19,7 +20,6 @@ import {
   type ExecutionPlan,
   type ExecutionState,
 } from 'ser-kit'
-import { useAccount, useConnectorClient } from 'wagmi'
 
 type MultiSigResult = {
   safeWalletUrl: string

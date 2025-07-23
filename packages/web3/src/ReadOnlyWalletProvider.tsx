@@ -1,12 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { chains, type ChainId } from '@zodiac/chains'
 import { useMemo } from 'react'
-import {
-  createConfig,
-  http,
-  useChainId as useChainIdBase,
-  WagmiProvider as WagmiProviderBase,
-} from 'wagmi'
+import { createConfig, http, WagmiProvider } from 'wagmi'
 
 const defaultConfig = createConfig({
   chains: Object.values(chains) as any,
@@ -16,7 +11,7 @@ const defaultConfig = createConfig({
 })
 
 /** A read-only wagmi provider that can be used to read chain data from the chain specified by `chainId`. */
-export const WagmiProvider = ({
+export const ReadOnlyWalletProvider = ({
   children,
   chainId,
   config = defaultConfig,
@@ -29,7 +24,7 @@ export const WagmiProvider = ({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <WagmiProviderBase
+      <WagmiProvider
         config={config}
         initialState={{
           chainId,
@@ -39,12 +34,7 @@ export const WagmiProvider = ({
         }}
       >
         {children}
-      </WagmiProviderBase>
+      </WagmiProvider>
     </QueryClientProvider>
   )
-}
-
-export const useChainId = () => {
-  const chainId = useChainIdBase()
-  return chainId as ChainId
 }

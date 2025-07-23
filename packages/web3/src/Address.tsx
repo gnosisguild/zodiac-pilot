@@ -1,13 +1,16 @@
 import { ZERO_ADDRESS } from '@zodiac/chains'
 import type { HexAddress, PrefixedAddress } from '@zodiac/schema'
+import {
+  CopyToClipboard,
+  defaultSize,
+  Empty,
+  Popover,
+  type Size,
+} from '@zodiac/ui'
 import classNames from 'classnames'
 import { splitPrefixedAddress } from 'ser-kit'
 import { getAddress } from 'viem'
 import { useEnsName } from 'wagmi'
-import { CopyToClipboard } from '../CopyToClipboard'
-import { Empty } from '../Empty'
-import { defaultSize, type Size } from '../common'
-import { Popover } from '../overlays'
 import { Blockie } from './Blockie'
 
 type AddressProps = {

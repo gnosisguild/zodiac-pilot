@@ -1,1 +1,0 @@
-export { getWagmiConfig } from './getWagmiConfig'

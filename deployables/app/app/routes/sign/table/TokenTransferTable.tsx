@@ -2,7 +2,6 @@ import type { TokenTransfer } from '@/balances-client'
 import { Token } from '@/components'
 import type { HexAddress } from '@zodiac/schema'
 import {
-  Address,
   NumberValue,
   Table,
   TableBody,
@@ -11,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@zodiac/ui'
+import { Address } from '@zodiac/web3'
 import { formatUnits, parseUnits, ZeroAddress } from 'ethers'
 import type { LucideIcon } from 'lucide-react'
 

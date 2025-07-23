@@ -7,7 +7,6 @@ import { useIsPending } from '@zodiac/hooks'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import { encode, type ExecutionRoute } from '@zodiac/schema'
 import {
-  Address,
   Form,
   GhostButton,
   GhostLinkButton,
@@ -17,6 +16,7 @@ import {
   TableRowActions,
   Tag,
 } from '@zodiac/ui'
+import { Address } from '@zodiac/web3'
 import { Pencil, Trash2, UploadIcon } from 'lucide-react'
 import { href, useSubmit } from 'react-router'
 import { Intent } from './intents'

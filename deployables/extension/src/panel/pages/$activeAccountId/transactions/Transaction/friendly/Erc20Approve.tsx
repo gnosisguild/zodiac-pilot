@@ -8,7 +8,7 @@ import {
 } from '@/transactions'
 import { invariant } from '@epic-web/invariant'
 import { verifyHexAddress } from '@zodiac/schema'
-import { useChainId } from '@zodiac/ui'
+import { useChainId, useReadContracts } from '@zodiac/web3'
 import {
   decodeFunctionData,
   encodeFunctionData,
@@ -16,7 +16,6 @@ import {
   formatUnits,
   parseUnits,
 } from 'viem'
-import { useReadContracts } from 'wagmi'
 import { AddressField } from '../AddressField'
 import { InplaceEditAmountField } from '../InplaceEditAmountField'
 

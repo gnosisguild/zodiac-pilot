@@ -1,16 +1,15 @@
 import { isValidToken } from '@/balances-server'
 import { getHexString, getString } from '@zodiac/form-data'
 import { isHexAddress, type HexAddress } from '@zodiac/schema'
+import { Error as ErrorAlert, Form, PrimaryButton } from '@zodiac/ui'
 import {
   AddressInput,
-  Error as ErrorAlert,
-  Form,
-  PrimaryButton,
-} from '@zodiac/ui'
+  useSendTransaction,
+  useWriteContract,
+} from '@zodiac/web3'
 import { useCallback, useEffect } from 'react'
 import { href, useNavigate } from 'react-router'
 import { erc20Abi } from 'viem'
-import { useSendTransaction, useWriteContract } from 'wagmi'
 import type { Route } from './+types/send'
 import { TokenValueInput } from './TokenValueInput'
 

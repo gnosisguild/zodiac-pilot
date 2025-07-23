@@ -9,7 +9,6 @@ import type { Wallet } from '@zodiac/db/schema'
 import { getString, getUUID } from '@zodiac/form-data'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import {
-  Address,
   FormLayout,
   GhostButton,
   GhostLinkButton,
@@ -24,6 +23,7 @@ import {
   TableRow,
   TextInput,
 } from '@zodiac/ui'
+import { Address } from '@zodiac/web3'
 import { Check, Edit, Trash2 } from 'lucide-react'
 import { useId, useState } from 'react'
 import { href, Outlet } from 'react-router'

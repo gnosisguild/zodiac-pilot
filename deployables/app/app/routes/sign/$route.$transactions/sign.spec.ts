@@ -13,6 +13,7 @@ import {
   randomEoaAddress,
   randomPrefixedAddress,
 } from '@zodiac/test-utils'
+import { useAccount, useConnectorClient } from '@zodiac/web3'
 import { href } from 'react-router'
 import {
   checkPermissions,
@@ -22,7 +23,6 @@ import {
   unprefixAddress,
 } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useAccount, useConnectorClient } from 'wagmi'
 
 vi.mock('ser-kit', async (importOriginal) => {
   const module = await importOriginal<typeof import('ser-kit')>()
@@ -39,8 +39,8 @@ vi.mock('ser-kit', async (importOriginal) => {
 const mockQueryRoutes = vi.mocked(queryRoutes)
 const mockCheckPermissions = vi.mocked(checkPermissions)
 
-vi.mock('wagmi', async (importOriginal) => {
-  const module = await importOriginal<typeof import('wagmi')>()
+vi.mock('@zodiac/web3', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@zodiac/web3')>()
 
   return {
     ...module,

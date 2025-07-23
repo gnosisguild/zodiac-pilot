@@ -4,12 +4,12 @@ import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain } from '@zodiac/chains'
 import { randomAddress } from '@zodiac/test-utils'
+import { useAccount } from '@zodiac/web3'
 import { href } from 'react-router'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useAccount } from 'wagmi'
 
-vi.mock('wagmi', async (importOriginal) => {
-  const module = await importOriginal<typeof import('wagmi')>()
+vi.mock('@zodiac/web3', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@zodiac/web3')>()
 
   return {
     ...module,

@@ -1,11 +1,10 @@
 import { ZERO_ADDRESS } from '@zodiac/chains'
 import { addressSchema, type HexAddress } from '@zodiac/schema'
+import { Input, InputLayout, type ComposableInputProps } from '@zodiac/ui'
 import classNames from 'classnames'
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import { getAddress } from 'viem'
-import { Blockie } from '../addresses'
-import { Input, type ComposableInputProps } from './Input'
-import { InputLayout } from './InputLayout'
+import { Blockie } from './Blockie'
 
 type AddressInputProps = Omit<
   ComponentPropsWithoutRef<'input'>,

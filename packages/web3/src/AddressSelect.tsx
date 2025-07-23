@@ -3,9 +3,9 @@ import {
   type HexAddress,
   type PrefixedAddress,
 } from '@zodiac/schema'
+import { Select, type SelectProps } from '@zodiac/ui'
 import { unprefixAddress } from 'ser-kit'
-import { Address } from '../addresses'
-import { Select, type SelectProps } from './Select'
+import { Address } from './Address'
 
 type Option = {
   label: string

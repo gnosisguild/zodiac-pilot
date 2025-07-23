@@ -8,12 +8,12 @@ import {
   type ExecutionRoute,
 } from '@zodiac/schema'
 import {
-  AddressInput,
   InlineForm,
   PrimaryButton,
   PrimaryLinkButton,
   Warning,
 } from '@zodiac/ui'
+import { AddressInput } from '@zodiac/web3'
 import { Chrome } from 'lucide-react'
 import { splitPrefixedAddress } from 'ser-kit'
 import { z } from 'zod'

@@ -1,5 +1,5 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
-import { ConnectWalletButton, Page, useConnected } from '@/components'
+import { Page, useConnected } from '@/components'
 import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
@@ -20,7 +20,8 @@ import {
   updateLabel,
 } from '@zodiac/modules'
 import { isUUID, verifyPrefixedAddress } from '@zodiac/schema'
-import { AddressInput, Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
+import { Error, Form, PrimaryButton, TextInput } from '@zodiac/ui'
+import { AddressInput, ConnectWalletButton } from '@zodiac/web3'
 import { href, redirect } from 'react-router'
 import { unprefixAddress } from 'ser-kit'
 import type { Route } from './+types/create'

@@ -1,4 +1,4 @@
-import { WalletProvider } from '@/components'
+import { WalletProvider } from '@zodiac/web3'
 import { Outlet } from 'react-router'
 
 const WalletLayout = () => (
