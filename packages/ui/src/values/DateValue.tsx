@@ -1,7 +1,7 @@
 import { Empty } from '../Empty'
 
 type DateValueProps = {
-  children: Date | null | undefined
+  children: Date | number | null | undefined
 }
 
 const dateFormatter = new Intl.DateTimeFormat('en-GB', {

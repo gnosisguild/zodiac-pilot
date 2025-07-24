@@ -2,9 +2,24 @@ import { authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { FetchRolesDocument } from '@/graphql'
 import { graphqlClient } from '@/graphql-client'
-import { invariantResponse } from '@epic-web/invariant'
+import { Chain } from '@/routes-ui'
+import { invariant, invariantResponse } from '@epic-web/invariant'
+import { verifyChainId } from '@zodiac/chains'
 import { dbClient, getAccounts, getWorkspace } from '@zodiac/db'
-import { isUUID } from '@zodiac/schema'
+import { Account } from '@zodiac/db/schema'
+import { decodeRoleKey } from '@zodiac/modules'
+import { isUUID, PrefixedAddress, verifyHexAddress } from '@zodiac/schema'
+import {
+  DateValue,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@zodiac/ui'
+import { Address } from '@zodiac/web3'
+import { prefixAddress } from 'ser-kit'
 import type { Route } from './+types/list'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -27,14 +42,51 @@ export const loader = (args: Route.LoaderArgs) =>
         accounts.flatMap(async (account) => {
           const { rolesModifiers } = await graphqlClient().query(
             FetchRolesDocument,
-            { account: account.address },
+            { account: prefixAddress(account.chainId, account.address) },
           )
 
-          return rolesModifiers.flatMap(({ roles }) => roles)
+          return rolesModifiers
         }),
       )
 
-      return { roles: roles.flat() }
+      const rolesByAccount = roles
+        .flat()
+        .reduce<
+          Record<
+            PrefixedAddress,
+            { account: Account; roles: { id: string; key: string }[] }
+          >
+        >((result, { roles, avatar: _avatar, chainId }) => {
+          if (roles.length === 0) {
+            return result
+          }
+
+          const avatar = verifyHexAddress(_avatar)
+          const prefixedAddress = prefixAddress(verifyChainId(chainId), avatar)
+          const account = accounts.find(
+            (a) => a.address === avatar && a.chainId === chainId,
+          )
+
+          invariant(
+            account != null,
+            `Could not find account with address "${avatar}" on chain "${chainId}"`,
+          )
+
+          if (prefixedAddress in result) {
+            return {
+              ...result,
+
+              [avatar]: {
+                account,
+                roles: [...result[prefixedAddress].roles, ...roles],
+              },
+            }
+          }
+
+          return { ...result, [prefixedAddress]: { account, roles } }
+        }, {})
+
+      return { rolesByAccount }
     },
     {
       ensureSignedIn: true,
@@ -48,15 +100,46 @@ export const loader = (args: Route.LoaderArgs) =>
     },
   )
 
-const Roles = ({ loaderData: { roles } }: Route.ComponentProps) => {
+const Roles = ({ loaderData: { rolesByAccount } }: Route.ComponentProps) => {
   return (
     <Page>
       <Page.Header>Roles</Page.Header>
       <Page.Main>
-        {roles.map((role) => (
-          <div key={role.id}>
-            {role.key} {role.id}
-          </div>
+        {Object.entries(rolesByAccount).map(([, { account, roles }]) => (
+          <section
+            key={account.id}
+            className="flex flex-col gap-4 rounded border p-4 dark:border-zinc-700"
+          >
+            <h2 className="font-semibold">
+              {account.label}
+
+              <span className="mt-1.5 flex items-center gap-8 text-xs text-zinc-300">
+                <Chain chainId={account.chainId} />
+                <Address size="small" shorten>
+                  {account.address}
+                </Address>
+              </span>
+            </h2>
+
+            <Table bleed dense className="[--gutter:--spacing(4)]">
+              <TableHead>
+                <TableRow>
+                  <TableHeader className="w-1/3">Label</TableHeader>
+                  <TableHeader>Last updated</TableHeader>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {roles.map((role) => (
+                  <TableRow key={role.key}>
+                    <TableCell>{decodeRoleKey(role.key)}</TableCell>
+                    <TableCell>
+                      <DateValue>{role.lastUpdate}</DateValue>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </section>
         ))}
       </Page.Main>
     </Page>

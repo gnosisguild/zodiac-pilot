@@ -1,8 +1,11 @@
 query FetchRoles($account: String!) {
   rolesModifiers(avatar: $account) {
+    avatar
+    chainId
     roles {
       id
       key
+      lastUpdate
     }
   }
 }

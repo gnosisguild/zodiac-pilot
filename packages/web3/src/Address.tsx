@@ -116,8 +116,10 @@ const VISIBLE_START = 4
 const VISIBLE_END = 4
 
 const ShortAddress = ({ children }: { children: HexAddress }) => {
-  const start = children.substring(2, VISIBLE_START + 2)
-  const end = children.substring(42 - VISIBLE_END, 42)
+  const address = getAddress(children)
+
+  const start = address.substring(2, VISIBLE_START + 2)
+  const end = address.substring(42 - VISIBLE_END, 42)
 
   return (
     <span className="flex items-center">
