@@ -104,7 +104,7 @@ export default [
           }),
 
           ...prefix(':accountId', [
-            index('routes/local-accounts/load-account.ts', {
+            index('routes/local-accounts/load-account.tsx', {
               id: 'offline-load-account',
             }),
             route(':data', 'routes/local-accounts/edit.tsx', {
@@ -199,7 +199,7 @@ export default [
           route('create', 'routes/local-accounts/create.tsx'),
 
           ...prefix(':accountId', [
-            index('routes/local-accounts/load-account.ts'),
+            index('routes/local-accounts/load-account.tsx'),
             route(':data', 'routes/local-accounts/edit.tsx'),
           ]),
 
