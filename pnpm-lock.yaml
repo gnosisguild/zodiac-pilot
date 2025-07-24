@@ -285,8 +285,8 @@ importers:
         specifier: 4.0.3
         version: 4.0.3(patch_hash=4daf2f760a7cbb2b59d59a58b14eea3a947c7f4e712aec1e6ab46482e2713d31)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@headlessui/react':
-        specifier: 2.2.4
-        version: 2.2.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 2.2.5
+        version: 2.2.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@sentry/browser':
         specifier: 9.38.0
         version: 9.38.0
@@ -478,8 +478,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       '@headlessui/react':
-        specifier: 2.2.4
-        version: 2.2.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 2.2.5
+        version: 2.2.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@icons-pack/react-simple-icons':
         specifier: 13.6.0
         version: 13.6.0(react@19.1.0)
@@ -1008,8 +1008,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       '@headlessui/react':
-        specifier: 2.2.4
-        version: 2.2.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+        specifier: 2.2.5
+        version: 2.2.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../chains
@@ -2537,8 +2537,8 @@ packages:
   '@gnosis.pm/zodiac@4.0.3':
     resolution: {integrity: sha512-yliHytBRlb4wNkeiYsaaAvYZC5VwiUBVfJ+HLEmjnWPG2EHB5tvAOUboDU7XvSQ4GUJAz8h2YUrph0XkH+/xfA==}
 
-  '@headlessui/react@2.2.4':
-    resolution: {integrity: sha512-lz+OGcAH1dK93rgSMzXmm1qKOJkBUqZf1L4M8TWLNplftQD3IkoEDdUFNfAn4ylsN6WOTVtWaLmvmaHOUk1dTA==}
+  '@headlessui/react@2.2.5':
+    resolution: {integrity: sha512-h1+2Vu1yR5pp/fBcTnwVEW8Kb94Hbxp7MXZLORfDzvSrbmGgiTyaTZ4LI/tPNZnK8eDrYD9s9cMbjm5HS5otIQ==}
     engines: {node: '>=10'}
     peerDependencies:
       react: ^18 || ^19 || ^19.0.0-rc
@@ -11280,7 +11280,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@headlessui/react@2.2.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+  '@headlessui/react@2.2.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@floating-ui/react': 0.26.28(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@react-aria/focus': 3.20.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
