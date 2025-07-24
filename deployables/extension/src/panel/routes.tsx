@@ -18,7 +18,10 @@ export const routes: RouteObject[] = [
     hasErrorBoundary: true,
     loader: Root.loader,
     children: [
-      { index: true, loader: LoadDefaultAccount.loader },
+      {
+        index: true,
+        loader: LoadDefaultAccount.loader,
+      },
       {
         path: 'no-accounts',
         Component: NoAccounts.default,
