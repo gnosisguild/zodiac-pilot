@@ -48,7 +48,7 @@
     "remix-utils": "8.7.0",
     "ser-kit": "3.10.1",
     "viem": "2.33.0",
-    "zod": "4.0.5"
+    "zod": "4.0.8"
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "1.48.3",
