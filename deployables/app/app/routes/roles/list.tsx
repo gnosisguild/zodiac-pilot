@@ -1,6 +1,6 @@
 import { authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
-import { FetchRolesDocument } from '@/graphql'
+import { FetchRolesDocument, RoleListEntryFragment } from '@/graphql'
 import { graphqlClient } from '@/graphql-client'
 import { Chain } from '@/routes-ui'
 import { invariant, invariantResponse } from '@epic-web/invariant'
@@ -54,7 +54,7 @@ export const loader = (args: Route.LoaderArgs) =>
         .reduce<
           Record<
             PrefixedAddress,
-            { account: Account; roles: { id: string; key: string }[] }
+            { account: Account; roles: RoleListEntryFragment[] }
           >
         >((result, { roles, avatar: _avatar, chainId }) => {
           if (roles.length === 0) {

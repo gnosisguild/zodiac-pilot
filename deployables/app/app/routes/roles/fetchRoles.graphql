@@ -1,11 +1,15 @@
+fragment RoleListEntry on Role {
+  id
+  key
+  lastUpdate
+}
+
 query FetchRoles($account: String!) {
   rolesModifiers(avatar: $account) {
     avatar
     chainId
     roles {
-      id
-      key
-      lastUpdate
+      ...RoleListEntry
     }
   }
 }
