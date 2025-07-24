@@ -46,9 +46,10 @@ export class TenderlyProvider extends EventEmitter {
       !this.forkProviderPromise &&
       (request.method === 'eth_sendTransaction' ||
         request.method === 'evm_snapshot' ||
-        request.method === 'evm_revert')
+        request.method === 'evm_revert' ||
+        request.method.startsWith('tenderly_'))
     ) {
-      // spawn a fork lazily when sending the first transaction
+      // spawn a fork lazily when sending the first transaction or when using any special Tenderly RPC methods
       this.forkProviderPromise = this.createFork(this.chainId)
     } else if (!this.forkProviderPromise) {
       // We have not spawned a fork currently, so we can just use the provider to get the latest on-chain state

@@ -11,6 +11,7 @@ import {
   type PropsWithChildren,
 } from 'react'
 import { ConnectionType, unprefixAddress } from 'ser-kit'
+import { z } from 'zod'
 
 const ProviderContext = createContext<ForkProvider | null>(null)
 
@@ -30,6 +31,7 @@ export const ProvideForkProvider = ({
       chainId,
       avatarAddress: address,
       simulationModuleAddress,
+      setupRequests: getSetupRequests(),
     })
 
     setProvider(provider)
@@ -121,4 +123,21 @@ const findOwnerOfAvatarAddress = (route: ExecutionRoute | null) => {
 
 const nullifyZeroAddress = (address: HexAddress) => {
   return address === ZERO_ADDRESS ? null : address
+}
+
+const jsonRpcRequestSchema = z.object({
+  method: z.string(),
+  params: z.array(z.any()).default([]),
+})
+
+const getSetupRequests = () => {
+  const url = new URL(window.location.href)
+  const setup = url.searchParams.get('setup')
+  if (!setup) return []
+  try {
+    return jsonRpcRequestSchema.array().parse(JSON.parse(setup))
+  } catch (error) {
+    console.error('Failed to parse setup requests', error)
+    return []
+  }
 }
