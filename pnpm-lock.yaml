@@ -180,16 +180,16 @@ importers:
         version: 7.7.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       remix-utils:
         specifier: 8.7.0
-        version: 8.7.0(react-router@7.7.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(zod@4.0.5)
+        version: 8.7.0(react-router@7.7.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(zod@4.0.8)
       ser-kit:
         specifier: 3.10.1
-        version: 3.10.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)
+        version: 3.10.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)
       viem:
         specifier: 2.33.0
-        version: 2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)
+        version: 2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)
       zod:
-        specifier: 4.0.5
-        version: 4.0.5
+        specifier: 4.0.8
+        version: 4.0.8
     devDependencies:
       '@dotenvx/dotenvx':
         specifier: 1.48.3
@@ -229,7 +229,7 @@ importers:
         version: 1.2.2(@react-router/dev@7.7.0(@react-router/serve@7.7.0(react-router@7.7.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3))(@types/node@22.14.1)(babel-plugin-macros@3.1.0)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.30.1)(react-router@7.7.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(sass@1.82.0)(typescript@5.8.3)(vite@7.0.4(@types/node@22.14.1)(jiti@2.4.2)(less@4.2.1)(lightningcss@1.30.1)(sass@1.82.0)(yaml@2.8.0))(wrangler@4.25.1(@cloudflare/workers-types@4.20250723.0)(bufferutil@4.0.9)(utf-8-validate@5.0.10))(yaml@2.8.0))(@react-router/node@7.7.0(react-router@7.7.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3))(isbot@5.1.28)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@wagmi/core':
         specifier: 2.17.3
-        version: 2.17.3(@tanstack/query-core@5.83.0)(@types/react@19.1.8)(react@19.1.0)(typescript@5.8.3)(use-sync-external-store@1.5.0(react@19.1.0))(viem@2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5))
+        version: 2.17.3(@tanstack/query-core@5.83.0)(@types/react@19.1.8)(react@19.1.0)(typescript@5.8.3)(use-sync-external-store@1.5.0(react@19.1.0))(viem@2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8))
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
@@ -352,13 +352,13 @@ importers:
         version: 5.0.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       ser-kit:
         specifier: 3.10.1
-        version: 3.10.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)
+        version: 3.10.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)
       viem:
         specifier: 2.33.0
-        version: 2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)
+        version: 2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)
       zod:
-        specifier: 4.0.5
-        version: 4.0.5
+        specifier: 4.0.8
+        version: 4.0.8
     devDependencies:
       '@depay/web3-mock':
         specifier: 15.3.0
@@ -637,7 +637,7 @@ importers:
         version: 0.44.3(@cloudflare/workers-types@4.20250723.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7)
       drizzle-zod:
         specifier: 0.7.1
-        version: 0.7.1(drizzle-orm@0.44.3(@cloudflare/workers-types@4.20250723.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7))(zod@4.0.5)
+        version: 0.7.1(drizzle-orm@0.44.3(@cloudflare/workers-types@4.20250723.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7))(zod@4.0.8)
       postgres:
         specifier: 3.4.7
         version: 3.4.7
@@ -646,10 +646,10 @@ importers:
         version: 19.1.0
       ser-kit:
         specifier: 3.10.1
-        version: 3.10.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)
+        version: 3.10.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)
       zod:
-        specifier: 4.0.5
-        version: 4.0.5
+        specifier: 4.0.8
+        version: 4.0.8
     devDependencies:
       '@dotenvx/dotenvx':
         specifier: 1.48.3
@@ -831,7 +831,7 @@ importers:
         version: 4.0.3(patch_hash=4daf2f760a7cbb2b59d59a58b14eea3a947c7f4e712aec1e6ab46482e2713d31)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@shazow/whatsabi':
         specifier: 0.22.2
-        version: 0.22.2(@noble/hashes@1.8.0)(typescript@5.8.3)(zod@4.0.5)
+        version: 0.22.2(@noble/hashes@1.8.0)(typescript@5.8.3)(zod@4.0.8)
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../chains
@@ -849,10 +849,10 @@ importers:
         version: 5.1.5
       ser-kit:
         specifier: 3.10.1
-        version: 3.10.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)
+        version: 3.10.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)
       zod:
-        specifier: 4.0.5
-        version: 4.0.5
+        specifier: 4.0.8
+        version: 4.0.8
       zodiac-roles-deployments:
         specifier: 3.1.0
         version: 3.1.0
@@ -914,16 +914,16 @@ importers:
         version: 1.0.0
       '@safe-global/types-kit':
         specifier: 3.0.0
-        version: 3.0.0(typescript@5.8.3)(zod@4.0.5)
+        version: 3.0.0(typescript@5.8.3)(zod@4.0.8)
       ser-kit:
         specifier: 3.10.1
-        version: 3.10.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)
+        version: 3.10.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)
       viem:
         specifier: 2.33.0
-        version: 2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)
+        version: 2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)
       zod:
-        specifier: 4.0.5
-        version: 4.0.5
+        specifier: 4.0.8
+        version: 4.0.8
     devDependencies:
       '@types/node':
         specifier: 22.14.1
@@ -9825,8 +9825,8 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
-  zod@4.0.5:
-    resolution: {integrity: sha512-/5UuuRPStvHXu7RS+gmvRf4NXrNxpSllGwDnCBcJZtQsKrviYXm54yDGV2KYNLT5kq0lHGcl7lqWJLgSaG+tgA==}
+  zod@4.0.8:
+    resolution: {integrity: sha512-+MSh9cZU9r3QKlHqrgHMTSr3QwMGv4PLfR0M4N/sYWV5/x67HgXEhIGObdBkpnX8G78pTgWnIrBL2lZcNJOtfg==}
 
   zodiac-roles-deployments@3.1.0:
     resolution: {integrity: sha512-DHqvJ6SQbk/lCfjVrnfhEglAa4bg0EHCFr2IhfzKki03PbIu16kbp6NRNFwTzrevQm8VbduG2gEfK0dp1Rw9VA==}
@@ -13224,12 +13224,12 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@safe-global/api-kit@3.0.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)':
+  '@safe-global/api-kit@3.0.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)':
     dependencies:
-      '@safe-global/protocol-kit': 6.1.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)
-      '@safe-global/types-kit': 2.0.1(typescript@5.8.3)(zod@4.0.5)
+      '@safe-global/protocol-kit': 6.1.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)
+      '@safe-global/types-kit': 2.0.1(typescript@5.8.3)(zod@4.0.8)
       node-fetch: 2.7.0
-      viem: 2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)
+      viem: 2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -13297,14 +13297,14 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@safe-global/protocol-kit@6.1.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)':
+  '@safe-global/protocol-kit@6.1.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)':
     dependencies:
       '@safe-global/safe-deployments': 1.37.36
       '@safe-global/safe-modules-deployments': 2.2.10
-      '@safe-global/types-kit': 3.0.0(typescript@5.8.3)(zod@4.0.5)
-      abitype: 1.0.8(typescript@5.8.3)(zod@4.0.5)
+      '@safe-global/types-kit': 3.0.0(typescript@5.8.3)(zod@4.0.8)
+      abitype: 1.0.8(typescript@5.8.3)(zod@4.0.8)
       semver: 7.7.2
-      viem: 2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)
+      viem: 2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)
     optionalDependencies:
       '@noble/curves': 1.9.2
       '@peculiar/asn1-schema': 2.3.15
@@ -13373,9 +13373,9 @@ snapshots:
       - typescript
       - zod
 
-  '@safe-global/types-kit@2.0.1(typescript@5.8.3)(zod@4.0.5)':
+  '@safe-global/types-kit@2.0.1(typescript@5.8.3)(zod@4.0.8)':
     dependencies:
-      abitype: 1.0.8(typescript@5.8.3)(zod@4.0.5)
+      abitype: 1.0.8(typescript@5.8.3)(zod@4.0.8)
     transitivePeerDependencies:
       - typescript
       - zod
@@ -13394,9 +13394,9 @@ snapshots:
       - typescript
       - zod
 
-  '@safe-global/types-kit@3.0.0(typescript@5.8.3)(zod@4.0.5)':
+  '@safe-global/types-kit@3.0.0(typescript@5.8.3)(zod@4.0.8)':
     dependencies:
-      abitype: 1.0.8(typescript@5.8.3)(zod@4.0.5)
+      abitype: 1.0.8(typescript@5.8.3)(zod@4.0.8)
     transitivePeerDependencies:
       - typescript
       - zod
@@ -13733,10 +13733,10 @@ snapshots:
       - encoding
       - supports-color
 
-  '@shazow/whatsabi@0.22.2(@noble/hashes@1.8.0)(typescript@5.8.3)(zod@4.0.5)':
+  '@shazow/whatsabi@0.22.2(@noble/hashes@1.8.0)(typescript@5.8.3)(zod@4.0.8)':
     dependencies:
       '@noble/hashes': 1.8.0
-      ox: 0.7.1(typescript@5.8.3)(zod@4.0.5)
+      ox: 0.7.1(typescript@5.8.3)(zod@4.0.8)
     transitivePeerDependencies:
       - typescript
       - zod
@@ -14378,11 +14378,11 @@ snapshots:
       - wagmi
       - zod
 
-  '@wagmi/core@2.17.3(@tanstack/query-core@5.83.0)(@types/react@19.1.8)(react@19.1.0)(typescript@5.8.3)(use-sync-external-store@1.5.0(react@19.1.0))(viem@2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5))':
+  '@wagmi/core@2.17.3(@tanstack/query-core@5.83.0)(@types/react@19.1.8)(react@19.1.0)(typescript@5.8.3)(use-sync-external-store@1.5.0(react@19.1.0))(viem@2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8))':
     dependencies:
       eventemitter3: 5.0.1
       mipd: 0.0.7(typescript@5.8.3)
-      viem: 2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)
+      viem: 2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)
       zustand: 5.0.0(@types/react@19.1.8)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
     optionalDependencies:
       '@tanstack/query-core': 5.83.0
@@ -14927,10 +14927,10 @@ snapshots:
       typescript: 5.8.3
       zod: 3.25.76
 
-  abitype@1.0.8(typescript@5.8.3)(zod@4.0.5):
+  abitype@1.0.8(typescript@5.8.3)(zod@4.0.8):
     optionalDependencies:
       typescript: 5.8.3
-      zod: 4.0.5
+      zod: 4.0.8
 
   accepts@1.3.8:
     dependencies:
@@ -15985,10 +15985,10 @@ snapshots:
       pg: 8.14.1
       postgres: 3.4.7
 
-  drizzle-zod@0.7.1(drizzle-orm@0.44.3(@cloudflare/workers-types@4.20250723.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7))(zod@4.0.5):
+  drizzle-zod@0.7.1(drizzle-orm@0.44.3(@cloudflare/workers-types@4.20250723.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7))(zod@4.0.8):
     dependencies:
       drizzle-orm: 0.44.3(@cloudflare/workers-types@4.20250723.0)(@opentelemetry/api@1.9.0)(@types/pg@8.6.1)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7)
-      zod: 4.0.5
+      zod: 4.0.8
 
   dunder-proto@1.0.1:
     dependencies:
@@ -18150,7 +18150,7 @@ snapshots:
     transitivePeerDependencies:
       - zod
 
-  ox@0.7.1(typescript@5.8.3)(zod@4.0.5):
+  ox@0.7.1(typescript@5.8.3)(zod@4.0.8):
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
       '@noble/ciphers': 1.3.0
@@ -18158,7 +18158,7 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      abitype: 1.0.8(typescript@5.8.3)(zod@4.0.5)
+      abitype: 1.0.8(typescript@5.8.3)(zod@4.0.8)
       eventemitter3: 5.0.1
     optionalDependencies:
       typescript: 5.8.3
@@ -18195,7 +18195,7 @@ snapshots:
     transitivePeerDependencies:
       - zod
 
-  ox@0.8.1(typescript@5.8.3)(zod@4.0.5):
+  ox@0.8.1(typescript@5.8.3)(zod@4.0.8):
     dependencies:
       '@adraffy/ens-normalize': 1.11.0
       '@noble/ciphers': 1.3.0
@@ -18203,7 +18203,7 @@ snapshots:
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      abitype: 1.0.8(typescript@5.8.3)(zod@4.0.5)
+      abitype: 1.0.8(typescript@5.8.3)(zod@4.0.8)
       eventemitter3: 5.0.1
     optionalDependencies:
       typescript: 5.8.3
@@ -18887,13 +18887,13 @@ snapshots:
       gopd: 1.2.0
       set-function-name: 2.0.2
 
-  remix-utils@8.7.0(react-router@7.7.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(zod@4.0.5):
+  remix-utils@8.7.0(react-router@7.7.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(zod@4.0.8):
     dependencies:
       type-fest: 4.41.0
     optionalDependencies:
       react: 19.1.0
       react-router: 7.7.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      zod: 4.0.5
+      zod: 4.0.8
 
   repeat-string@1.6.1: {}
 
@@ -19135,14 +19135,14 @@ snapshots:
       - utf-8-validate
       - zod
 
-  ser-kit@3.10.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5):
+  ser-kit@3.10.1(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8):
     dependencies:
       '@epic-web/invariant': 1.0.0
-      '@safe-global/api-kit': 3.0.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)
-      '@safe-global/protocol-kit': 6.1.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)
+      '@safe-global/api-kit': 3.0.2(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)
+      '@safe-global/protocol-kit': 6.1.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)
       '@safe-global/safe-deployments': 1.37.36
-      '@safe-global/types-kit': 2.0.1(typescript@5.8.3)(zod@4.0.5)
-      viem: 2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5)
+      '@safe-global/types-kit': 2.0.1(typescript@5.8.3)(zod@4.0.8)
+      viem: 2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -19971,15 +19971,15 @@ snapshots:
       - utf-8-validate
       - zod
 
-  viem@2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.5):
+  viem@2.33.0(bufferutil@4.0.9)(typescript@5.8.3)(utf-8-validate@5.0.10)(zod@4.0.8):
     dependencies:
       '@noble/curves': 1.9.2
       '@noble/hashes': 1.8.0
       '@scure/bip32': 1.7.0
       '@scure/bip39': 1.6.0
-      abitype: 1.0.8(typescript@5.8.3)(zod@4.0.5)
+      abitype: 1.0.8(typescript@5.8.3)(zod@4.0.8)
       isows: 1.0.7(ws@8.18.2)
-      ox: 0.8.1(typescript@5.8.3)(zod@4.0.5)
+      ox: 0.8.1(typescript@5.8.3)(zod@4.0.8)
       ws: 8.18.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     optionalDependencies:
       typescript: 5.8.3
@@ -20370,7 +20370,7 @@ snapshots:
   zod@3.25.76:
     optional: true
 
-  zod@4.0.5: {}
+  zod@4.0.8: {}
 
   zodiac-roles-deployments@3.1.0: {}
 
