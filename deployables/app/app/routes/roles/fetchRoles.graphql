@@ -1,0 +1,14 @@
+fragment RoleListEntry on Role {
+  id
+  key
+}
+
+query FetchRoles($account: String!) {
+  rolesModifiers(avatar: $account) {
+    avatar
+    chainId
+    roles {
+      ...RoleListEntry
+    }
+  }
+}

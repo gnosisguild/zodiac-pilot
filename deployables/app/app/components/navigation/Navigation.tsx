@@ -31,6 +31,7 @@ const Link = ({ children, to, icon: Icon, reloadDocument }: LinkProps) => {
   return (
     <NavLink
       to={to}
+      prefetch="render"
       reloadDocument={
         reloadDocument == null || typeof reloadDocument === 'boolean'
           ? reloadDocument

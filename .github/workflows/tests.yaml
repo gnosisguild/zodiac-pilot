@@ -70,6 +70,7 @@ jobs:
           cache-dependency-path: '**/pnpm-lock.yaml'
       - run: pnpm install --prefer-offline
       - run: pnpm --filter=db migrate-test
+      - run: pnpm --filter=pilot-app generate
       - run: pnpm --filter=pilot-app test
 
   db:

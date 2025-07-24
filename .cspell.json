@@ -23,6 +23,7 @@
     "cctp",
     "Checksummed",
     "Chromewebstore",
+    "Codegen",
     "connectkit",
     "cowprotocol",
     "cowswap",
@@ -117,6 +118,7 @@
     "unichain",
     "unprefix",
     "UNWRAPPER",
+    "urql",
     "vercel",
     "viem",
     "vitalik",
@@ -157,6 +159,7 @@
     "**/build/**",
     "**/*.d.ts",
     "**/docker-compose.yml",
-    "**/*.sql"
+    "**/*.sql",
+    "**/gql/**"
   ]
 }

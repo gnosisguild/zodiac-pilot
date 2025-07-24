@@ -18,7 +18,9 @@
       "@/workOS/client": ["./app/workOS/client/index.ts"],
       "@/workOS/server": ["./app/workOS/server/index.ts"],
       "@/sentry-client": ["./app/sentry/client/index.ts"],
-      "@/workspaces": ["./app/workspaces/index.ts"]
+      "@/workspaces": ["./app/workspaces/index.ts"],
+      "@/graphql": ["./graphql-client/gql/graphql.ts"],
+      "@/graphql-client": ["./graphql-client/index.ts"]
     }
   },
   "include": [
@@ -35,6 +37,7 @@
     "test-utils/**/*",
     "db/**/*",
     "auth/**/*",
-    "workOS/**/*"
+    "workOS/**/*",
+    "graphql-client/**/*"
   ]
 }

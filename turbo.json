@@ -29,10 +29,11 @@
     "PILOT_EXTENSION_ID"
   ],
   "tasks": {
-    "check-types": {},
+    "check-types": { "dependsOn": ["^generate", "generate"] },
     "check-cycles": {},
     "lint": {},
     "clean": { "cache": false },
+    "generate": {},
     "dev": {
       "persistent": true,
       "cache": false
