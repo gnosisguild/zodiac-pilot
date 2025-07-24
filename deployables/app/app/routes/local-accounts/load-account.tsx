@@ -1,3 +1,4 @@
+import { Page } from '@/components'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import { encode } from '@zodiac/schema'
 import { href, redirect } from 'react-router'
@@ -37,3 +38,15 @@ export const clientLoader = async ({
 
   return redirect(await promise)
 }
+
+clientLoader.hydrate = true as const
+
+const LoadAccount = () => {
+  return (
+    <Page>
+      <Page.Main>Loading account...</Page.Main>
+    </Page>
+  )
+}
+
+export default LoadAccount
