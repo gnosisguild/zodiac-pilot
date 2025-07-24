@@ -10,7 +10,6 @@ import { Account } from '@zodiac/db/schema'
 import { decodeRoleKey } from '@zodiac/modules'
 import { isUUID, PrefixedAddress, verifyHexAddress } from '@zodiac/schema'
 import {
-  DateValue,
   Table,
   TableBody,
   TableCell,
@@ -125,16 +124,12 @@ const Roles = ({ loaderData: { rolesByAccount } }: Route.ComponentProps) => {
               <TableHead>
                 <TableRow>
                   <TableHeader className="w-1/3">Label</TableHeader>
-                  <TableHeader>Last updated</TableHeader>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {roles.map((role) => (
                   <TableRow key={role.key}>
                     <TableCell>{decodeRoleKey(role.key)}</TableCell>
-                    <TableCell>
-                      <DateValue>{role.lastUpdate}</DateValue>
-                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

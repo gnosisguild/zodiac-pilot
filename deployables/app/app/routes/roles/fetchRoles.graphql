@@ -1,7 +1,6 @@
 fragment RoleListEntry on Role {
   id
   key
-  lastUpdate
 }
 
 query FetchRoles($account: String!) {
