@@ -39,7 +39,7 @@ const mockGetOrganization = vi.mocked(getOrganization)
 const mockGetAdminOrgId = vi.mocked(getAdminOrganizationId)
 
 const baseRender = await createRenderFramework<Register, typeof routes>(
-  new URL('../app', import.meta.url),
+  new URL(/* @vite-ignore */ '../app', import.meta.url),
   routes,
 )
 
