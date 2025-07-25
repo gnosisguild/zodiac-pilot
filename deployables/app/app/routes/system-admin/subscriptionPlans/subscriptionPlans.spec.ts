@@ -7,17 +7,18 @@ import {
   getSubscriptionPlan,
 } from '@zodiac/db'
 import {
+  dbIt,
   subscriptionPlanFactory,
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
 import { waitForPendingActions } from '@zodiac/test-utils'
 import { href } from 'react-router'
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 
 describe('Subscription plans', () => {
   describe('List', () => {
-    it('lists all plans in the system', async () => {
+    dbIt('lists all plans in the system', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -34,7 +35,7 @@ describe('Subscription plans', () => {
       ).toBeInTheDocument()
     })
 
-    it('is possible to add a new plan', async () => {
+    dbIt('is possible to add a new plan', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -60,7 +61,7 @@ describe('Subscription plans', () => {
   })
 
   describe('Default plan', () => {
-    it('shows the default plan', async () => {
+    dbIt('shows the default plan', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -77,7 +78,7 @@ describe('Subscription plans', () => {
       ).toHaveAccessibleDescription('Default')
     })
 
-    it('is possible to make a plan the default', async () => {
+    dbIt('is possible to make a plan the default', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -102,7 +103,7 @@ describe('Subscription plans', () => {
   })
 
   describe('Priority', () => {
-    it('is possible to increase the priority of a plan', async () => {
+    dbIt('is possible to increase the priority of a plan', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -125,7 +126,7 @@ describe('Subscription plans', () => {
       ).resolves.toHaveProperty('priority', 2)
     })
 
-    it('is possible to decrease the priority of a plan', async () => {
+    dbIt('is possible to decrease the priority of a plan', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 

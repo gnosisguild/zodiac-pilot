@@ -1,4 +1,5 @@
-import { dbClient, type DBClient } from '@zodiac/db'
+import { type DBClient } from '@zodiac/db'
+import { getMockedDb } from '../dbIt'
 
 type FactoryOptions<Input, Output, BuildArgs extends Array<unknown>> = {
   build: (...data: [...BuildArgs, input?: Partial<Input>]) => Input
@@ -32,7 +33,7 @@ export const createFactory = <
       return createWithoutDb(build(...data))
     },
     create(...data) {
-      return create(dbClient(), build(...data), ...data)
+      return create(getMockedDb(), build(...data), ...data)
     },
   }
 }

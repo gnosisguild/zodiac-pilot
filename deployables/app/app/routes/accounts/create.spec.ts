@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain, chainName } from '@zodiac/chains'
 import { dbClient, getAccounts } from '@zodiac/db'
-import { tenantFactory, userFactory } from '@zodiac/db/test-utils'
+import { dbIt, tenantFactory, userFactory } from '@zodiac/db/test-utils'
 import {
   autoRespondToCompanionRequest,
   CompanionAppMessageType,
@@ -19,7 +19,7 @@ import {
   waitForPendingActions,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, vi } from 'vitest'
 
 vi.mock('@/utils', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/utils')>()
@@ -57,7 +57,7 @@ describe('New SafeAccount', () => {
     mockIsSmartContractAddress.mockResolvedValue(true)
   })
 
-  it('creates a new account in the DB', async () => {
+  dbIt('creates a new account in the DB', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
 
@@ -93,7 +93,7 @@ describe('New SafeAccount', () => {
   })
 
   describe('Label', () => {
-    it('is possible to give label the account', async () => {
+    dbIt('is possible to give label the account', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -127,7 +127,7 @@ describe('New SafeAccount', () => {
     })
 
     describe('Save', () => {
-      it('redirects to the accounts page', async () => {
+      dbIt('redirects to the accounts page', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
 
@@ -165,7 +165,7 @@ describe('New SafeAccount', () => {
   })
 
   describe('Predefined account', () => {
-    it('is possible to preset the chain', async () => {
+    dbIt('is possible to preset the chain', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -185,7 +185,7 @@ describe('New SafeAccount', () => {
       expect(await screen.findByText('Gnosis')).toBeInTheDocument()
     })
 
-    it('is possible to preset the address', async () => {
+    dbIt('is possible to preset the address', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 

@@ -12,6 +12,7 @@ import {
 import type { Route } from '@zodiac/db/schema'
 import {
   accountFactory,
+  dbIt,
   routeFactory,
   tenantFactory,
   userFactory,
@@ -34,7 +35,7 @@ import {
 import { href } from 'react-router'
 import { queryInitiators, queryRoutes } from 'ser-kit'
 import { getAddress } from 'viem'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, vi } from 'vitest'
 
 vi.mock('ser-kit', async (importOriginal) => {
   const module = await importOriginal<typeof import('ser-kit')>()
@@ -57,46 +58,49 @@ describe('Routes', () => {
   })
 
   describe('Pilot Signer', () => {
-    it('lists all wallets that can be signers on the selected account', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
+    dbIt(
+      'lists all wallets that can be signers on the selected account',
+      async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      const account = await accountFactory.create(tenant, user)
+        const account = await accountFactory.create(tenant, user)
 
-      const address = randomAddress()
+        const address = randomAddress()
 
-      await walletFactory.create(user, {
-        label: 'Test Wallet',
-        address,
-      })
+        await walletFactory.create(user, {
+          label: 'Test Wallet',
+          address,
+        })
 
-      mockQueryInitiators.mockResolvedValue([address])
+        mockQueryInitiators.mockResolvedValue([address])
 
-      await render(
-        href('/workspace/:workspaceId/accounts/:accountId', {
-          accountId: account.id,
-          workspaceId: tenant.defaultWorkspaceId,
-        }),
-        {
-          tenant,
-          user,
-        },
-      )
+        await render(
+          href('/workspace/:workspaceId/accounts/:accountId', {
+            accountId: account.id,
+            workspaceId: tenant.defaultWorkspaceId,
+          }),
+          {
+            tenant,
+            user,
+          },
+        )
 
-      await userEvent.click(
-        await screen.findByRole('link', { name: 'Add route' }),
-      )
+        await userEvent.click(
+          await screen.findByRole('link', { name: 'Add route' }),
+        )
 
-      await userEvent.click(
-        await screen.findByRole('combobox', { name: 'Pilot Signer' }),
-      )
+        await userEvent.click(
+          await screen.findByRole('combobox', { name: 'Pilot Signer' }),
+        )
 
-      expect(
-        await screen.findByRole('option', { name: 'Test Wallet' }),
-      ).toBeInTheDocument()
-    })
+        expect(
+          await screen.findByRole('option', { name: 'Test Wallet' }),
+        ).toBeInTheDocument()
+      },
+    )
 
-    it('shows the current initiator', async () => {
+    dbIt('shows the current initiator', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -123,7 +127,7 @@ describe('Routes', () => {
       expect(await screen.findByText('Test Wallet')).toBeInTheDocument()
     })
 
-    it('is possible to update the initiator', async () => {
+    dbIt('is possible to update the initiator', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -165,7 +169,7 @@ describe('Routes', () => {
       })
     })
 
-    it('is possible to create an initiator wallet on the fly', async () => {
+    dbIt('is possible to create an initiator wallet on the fly', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -222,7 +226,7 @@ describe('Routes', () => {
   })
 
   describe('Default route', () => {
-    it('marks the first route as the default', async () => {
+    dbIt('marks the first route as the default', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -274,49 +278,57 @@ describe('Routes', () => {
       ).resolves.toHaveProperty('routeId', route.id)
     })
 
-    it('leaves the default route untouched when it has already been defined', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
+    dbIt(
+      'leaves the default route untouched when it has already been defined',
+      async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      const walletA = await walletFactory.create(user, { label: 'Wallet A' })
-      const walletB = await walletFactory.create(user, { label: 'Wallet B' })
-      const account = await accountFactory.create(tenant, user)
+        const walletA = await walletFactory.create(user, { label: 'Wallet A' })
+        const walletB = await walletFactory.create(user, { label: 'Wallet B' })
+        const account = await accountFactory.create(tenant, user)
 
-      const routeA = await routeFactory.create(account, walletA)
-      const routeB = await routeFactory.create(account, walletB)
+        const routeA = await routeFactory.create(account, walletA)
+        const routeB = await routeFactory.create(account, walletB)
 
-      await setDefaultRoute(dbClient(), tenant, user, routeA)
+        await setDefaultRoute(dbClient(), tenant, user, routeA)
 
-      mockQueryInitiators.mockResolvedValue([walletA.address, walletB.address])
+        mockQueryInitiators.mockResolvedValue([
+          walletA.address,
+          walletB.address,
+        ])
 
-      await render(
-        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          accountId: account.id,
-          routeId: routeB.id,
-        }),
-        { tenant, user },
-      )
+        await render(
+          href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            accountId: account.id,
+            routeId: routeB.id,
+          }),
+          { tenant, user },
+        )
 
-      await userEvent.click(
-        await screen.findByRole('combobox', { name: 'Pilot Signer' }),
-      )
-      await userEvent.click(
-        await screen.findByRole('option', { name: 'Wallet A' }),
-      )
+        await userEvent.click(
+          await screen.findByRole('combobox', { name: 'Pilot Signer' }),
+        )
+        await userEvent.click(
+          await screen.findByRole('option', { name: 'Wallet A' }),
+        )
 
-      await waitForPendingLoaders()
+        await waitForPendingLoaders()
 
-      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Save' }),
+        )
 
-      await waitForPendingActions()
+        await waitForPendingActions()
 
-      await expect(
-        getDefaultRoute(dbClient(), tenant, user, account.id),
-      ).resolves.toHaveProperty('routeId', routeA.id)
-    })
+        await expect(
+          getDefaultRoute(dbClient(), tenant, user, account.id),
+        ).resolves.toHaveProperty('routeId', routeA.id)
+      },
+    )
 
-    it('is possible to select a route as the default', async () => {
+    dbIt('is possible to select a route as the default', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -353,7 +365,7 @@ describe('Routes', () => {
       ).resolves.toHaveProperty('routeId', route.id)
     })
 
-    it('removes the current default route', async () => {
+    dbIt('removes the current default route', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -401,47 +413,50 @@ describe('Routes', () => {
       ).resolves.toHaveProperty('routeId', routeB.id)
     })
 
-    it('does not crash if the current default route stays the default', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
+    dbIt(
+      'does not crash if the current default route stays the default',
+      async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      const wallet = await walletFactory.create(user)
-      const account = await accountFactory.create(tenant, user)
+        const wallet = await walletFactory.create(user)
+        const account = await accountFactory.create(tenant, user)
 
-      const route = await routeFactory.create(account, wallet, {
-        label: 'Route',
-      })
+        const route = await routeFactory.create(account, wallet, {
+          label: 'Route',
+        })
 
-      await setDefaultRoute(dbClient(), tenant, user, route)
+        await setDefaultRoute(dbClient(), tenant, user, route)
 
-      await render(
-        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          accountId: account.id,
-          routeId: route.id,
-        }),
-        { tenant, user },
-      )
+        await render(
+          href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            accountId: account.id,
+            routeId: route.id,
+          }),
+          { tenant, user },
+        )
 
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Route options' }),
-      )
-      await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Route options' }),
+        )
+        await userEvent.click(await screen.findByRole('link', { name: 'Edit' }))
 
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Update' }),
-      )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Update' }),
+        )
 
-      await waitForPendingActions()
+        await waitForPendingActions()
 
-      await expect(
-        getDefaultRoute(dbClient(), tenant, user, account.id),
-      ).resolves.toHaveProperty('routeId', route.id)
-    })
+        await expect(
+          getDefaultRoute(dbClient(), tenant, user, account.id),
+        ).resolves.toHaveProperty('routeId', route.id)
+      },
+    )
   })
 
   describe('SER Route', () => {
-    it('auto-selects the first route', async () => {
+    dbIt('auto-selects the first route', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -500,7 +515,7 @@ describe('Routes', () => {
       expect(route).toHaveProperty('waypoints', waypoints)
     })
 
-    it('is possible to change the selected route', async () => {
+    dbIt('is possible to change the selected route', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -557,7 +572,7 @@ describe('Routes', () => {
   })
 
   describe('Routes', () => {
-    it('lists all routes', async () => {
+    dbIt('lists all routes', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -604,7 +619,7 @@ describe('Routes', () => {
       )
     })
 
-    it('is shows the initiator of the specified route', async () => {
+    dbIt('is shows the initiator of the specified route', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -633,7 +648,7 @@ describe('Routes', () => {
     })
 
     describe('Label', () => {
-      it('is possible to change the label of a route', async () => {
+      dbIt('is possible to change the label of a route', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
 
@@ -678,7 +693,7 @@ describe('Routes', () => {
     })
 
     describe('Add new', () => {
-      it('is possible to add a new route to an account', async () => {
+      dbIt('is possible to add a new route to an account', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
 
@@ -741,7 +756,7 @@ describe('Routes', () => {
       )
     }
 
-    it('is possible to remove a route', async () => {
+    dbIt('is possible to remove a route', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -772,114 +787,123 @@ describe('Routes', () => {
       ).resolves.toEqual([])
     })
 
-    it('redirects to the default route if another route has been removed', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
+    dbIt(
+      'redirects to the default route if another route has been removed',
+      async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      const wallet = await walletFactory.create(user)
-      const account = await accountFactory.create(tenant, user)
+        const wallet = await walletFactory.create(user)
+        const account = await accountFactory.create(tenant, user)
 
-      await routeFactory.create(account, wallet, {
-        label: 'Route A',
-      })
-      const routeB = await routeFactory.create(account, wallet, {
-        label: 'Route B',
-      })
-      const routeC = await routeFactory.create(account, wallet, {
-        label: 'Route C',
-      })
+        await routeFactory.create(account, wallet, {
+          label: 'Route A',
+        })
+        const routeB = await routeFactory.create(account, wallet, {
+          label: 'Route B',
+        })
+        const routeC = await routeFactory.create(account, wallet, {
+          label: 'Route C',
+        })
 
-      await setDefaultRoute(dbClient(), tenant, user, routeB)
+        await setDefaultRoute(dbClient(), tenant, user, routeB)
 
-      await render(
-        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          accountId: account.id,
-          routeId: routeC.id,
-        }),
-        { user, tenant },
-      )
+        await render(
+          href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            accountId: account.id,
+            routeId: routeC.id,
+          }),
+          { user, tenant },
+        )
 
-      await removeRoute(routeC)
+        await removeRoute(routeC)
 
-      await expectRouteToBe(
-        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          accountId: account.id,
-          routeId: routeB.id,
-        }),
-      )
-    })
+        await expectRouteToBe(
+          href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            accountId: account.id,
+            routeId: routeB.id,
+          }),
+        )
+      },
+    )
 
-    it('redirects to the first route when the default route is removed', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
+    dbIt(
+      'redirects to the first route when the default route is removed',
+      async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      const wallet = await walletFactory.create(user)
-      const account = await accountFactory.create(tenant, user)
+        const wallet = await walletFactory.create(user)
+        const account = await accountFactory.create(tenant, user)
 
-      const routeA = await routeFactory.create(account, wallet, {
-        label: 'Route A',
-      })
-      const routeB = await routeFactory.create(account, wallet, {
-        label: 'Route B',
-      })
-      await routeFactory.create(account, wallet, {
-        label: 'Route C',
-      })
+        const routeA = await routeFactory.create(account, wallet, {
+          label: 'Route A',
+        })
+        const routeB = await routeFactory.create(account, wallet, {
+          label: 'Route B',
+        })
+        await routeFactory.create(account, wallet, {
+          label: 'Route C',
+        })
 
-      await setDefaultRoute(dbClient(), tenant, user, routeB)
+        await setDefaultRoute(dbClient(), tenant, user, routeB)
 
-      await render(
-        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          accountId: account.id,
-          routeId: routeB.id,
-        }),
-        { user, tenant },
-      )
+        await render(
+          href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            accountId: account.id,
+            routeId: routeB.id,
+          }),
+          { user, tenant },
+        )
 
-      await removeRoute(routeB)
+        await removeRoute(routeB)
 
-      await expectRouteToBe(
-        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          accountId: account.id,
-          routeId: routeA.id,
-        }),
-      )
-    })
+        await expectRouteToBe(
+          href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            accountId: account.id,
+            routeId: routeA.id,
+          }),
+        )
+      },
+    )
 
-    it('redirects to the empty page when the last route is being removed', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
+    dbIt(
+      'redirects to the empty page when the last route is being removed',
+      async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      const wallet = await walletFactory.create(user)
-      const account = await accountFactory.create(tenant, user)
+        const wallet = await walletFactory.create(user)
+        const account = await accountFactory.create(tenant, user)
 
-      const route = await routeFactory.create(account, wallet, {
-        label: 'Route A',
-      })
+        const route = await routeFactory.create(account, wallet, {
+          label: 'Route A',
+        })
 
-      await setDefaultRoute(dbClient(), tenant, user, route)
+        await setDefaultRoute(dbClient(), tenant, user, route)
 
-      await render(
-        href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          accountId: account.id,
-          routeId: route.id,
-        }),
-        { user, tenant },
-      )
+        await render(
+          href('/workspace/:workspaceId/accounts/:accountId/route/:routeId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            accountId: account.id,
+            routeId: route.id,
+          }),
+          { user, tenant },
+        )
 
-      await removeRoute(route)
+        await removeRoute(route)
 
-      await expectRouteToBe(
-        href('/workspace/:workspaceId/accounts/:accountId/no-routes', {
-          workspaceId: tenant.defaultWorkspaceId,
-          accountId: account.id,
-        }),
-      )
-    })
+        await expectRouteToBe(
+          href('/workspace/:workspaceId/accounts/:accountId/no-routes', {
+            workspaceId: tenant.defaultWorkspaceId,
+            accountId: account.id,
+          }),
+        )
+      },
+    )
   })
 })

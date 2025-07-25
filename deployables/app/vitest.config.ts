@@ -30,7 +30,5 @@ export default defineConfig({
     clearMocks: true,
 
     retry: process.env.CI ? 3 : undefined,
-
-    fileParallelism: false,
   },
 })

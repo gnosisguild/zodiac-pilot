@@ -6,6 +6,7 @@ import { Chain } from '@zodiac/chains'
 import { dbClient, setDefaultRoute } from '@zodiac/db'
 import {
   accountFactory,
+  dbIt,
   routeFactory,
   tenantFactory,
   transactionProposalFactory,
@@ -17,7 +18,7 @@ import { MockJsonRpcProvider } from '@zodiac/test-utils/rpc'
 import { useAccount, useConnectorClient } from '@zodiac/web3'
 import { href } from 'react-router'
 import { planExecution, queryRoutes } from 'ser-kit'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, vi } from 'vitest'
 
 vi.mock('ser-kit', async (importOriginal) => {
   const module = await importOriginal<typeof import('ser-kit')>()
@@ -96,41 +97,44 @@ describe('Load default route', () => {
     })
   })
 
-  it('loads the default route for an account and redirects the user', async () => {
-    const user = await userFactory.create()
-    const tenant = await tenantFactory.create(user)
+  dbIt(
+    'loads the default route for an account and redirects the user',
+    async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
 
-    const wallet = await walletFactory.create(user)
-    const account = await accountFactory.create(tenant, user)
+      const wallet = await walletFactory.create(user)
+      const account = await accountFactory.create(tenant, user)
 
-    const route = await routeFactory.create(account, wallet)
+      const route = await routeFactory.create(account, wallet)
 
-    const proposal = await transactionProposalFactory.create(
-      tenant,
-      user,
-      account,
-    )
+      const proposal = await transactionProposalFactory.create(
+        tenant,
+        user,
+        account,
+      )
 
-    await setDefaultRoute(dbClient(), tenant, user, route)
+      await setDefaultRoute(dbClient(), tenant, user, route)
 
-    await render(
-      href('/workspace/:workspaceId/submit/proposal/:proposalId', {
-        proposalId: proposal.id,
-        workspaceId: tenant.defaultWorkspaceId,
-      }),
-      { tenant, user },
-    )
+      await render(
+        href('/workspace/:workspaceId/submit/proposal/:proposalId', {
+          proposalId: proposal.id,
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
+        { tenant, user },
+      )
 
-    await expectRouteToBe(
-      href('/workspace/:workspaceId/submit/proposal/:proposalId/:routeId', {
-        proposalId: proposal.id,
-        routeId: route.id,
-        workspaceId: tenant.defaultWorkspaceId,
-      }),
-    )
-  })
+      await expectRouteToBe(
+        href('/workspace/:workspaceId/submit/proposal/:proposalId/:routeId', {
+          proposalId: proposal.id,
+          routeId: route.id,
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
+      )
+    },
+  )
 
-  it('picks the first route when no default route is set', async () => {
+  dbIt('picks the first route when no default route is set', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
 
@@ -165,7 +169,7 @@ describe('Load default route', () => {
     )
   })
 
-  it('shows an error when no route has been configured', async () => {
+  dbIt('shows an error when no route has been configured', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
 

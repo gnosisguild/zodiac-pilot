@@ -6,17 +6,17 @@ import {
 import { screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { getWorkOS } from '@workos-inc/authkit-react-router'
-import { tenantFactory, userFactory } from '@zodiac/db/test-utils'
+import { dbIt, tenantFactory, userFactory } from '@zodiac/db/test-utils'
 import { waitForPendingActions } from '@zodiac/test-utils'
 import { href } from 'react-router'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, vi } from 'vitest'
 
 const mockListUsers = vi.mocked(getWorkOS().userManagement.listUsers)
 const mockGetUser = vi.mocked(getWorkOS().userManagement.getUser)
 
 describe('Users', () => {
   describe('System', () => {
-    it('lists all users', async () => {
+    dbIt('lists all users', async () => {
       const user = await userFactory.create({ fullName: 'John Doe' })
       const tenant = await tenantFactory.create(user)
 
@@ -33,7 +33,7 @@ describe('Users', () => {
   })
 
   describe('Work OS', () => {
-    it('lists users', async () => {
+    dbIt('lists users', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -55,32 +55,37 @@ describe('Users', () => {
       ).toBeInTheDocument()
     })
 
-    it('does not show users that have a matching user in our system', async () => {
-      const workOsUser = createMockWorkOsUser({
-        firstName: 'John',
-        lastName: 'Doe',
-      })
+    dbIt(
+      'does not show users that have a matching user in our system',
+      async () => {
+        const workOsUser = createMockWorkOsUser({
+          firstName: 'John',
+          lastName: 'Doe',
+        })
 
-      const user = await userFactory.create({
-        externalId: workOsUser.id,
-      })
-      const tenant = await tenantFactory.create(user)
+        const user = await userFactory.create({
+          externalId: workOsUser.id,
+        })
+        const tenant = await tenantFactory.create(user)
 
-      mockListUsers.mockResolvedValue(createMockListResult([workOsUser]))
+        mockListUsers.mockResolvedValue(createMockListResult([workOsUser]))
 
-      await render(href('/system-admin/users'), {
-        user,
-        tenant,
-        isSystemAdmin: true,
-      })
-      const { queryByRole } = within(
-        await screen.findByRole('region', { name: 'WorkOS Users' }),
-      )
+        await render(href('/system-admin/users'), {
+          user,
+          tenant,
+          isSystemAdmin: true,
+        })
+        const { queryByRole } = within(
+          await screen.findByRole('region', { name: 'WorkOS Users' }),
+        )
 
-      expect(queryByRole('cell', { name: 'John Doe' })).not.toBeInTheDocument()
-    })
+        expect(
+          queryByRole('cell', { name: 'John Doe' }),
+        ).not.toBeInTheDocument()
+      },
+    )
 
-    it('is possible to remove a work os user', async () => {
+    dbIt('is possible to remove a work os user', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 

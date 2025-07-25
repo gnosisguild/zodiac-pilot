@@ -2,17 +2,18 @@ import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import {
+  dbIt,
   tenantFactory,
   userFactory,
   workspaceFactory,
 } from '@zodiac/db/test-utils'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { href } from 'react-router'
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 
 describe('Workspace Layout', () => {
   describe('Admin link', () => {
-    it('offers a link to the admin panel', async () => {
+    dbIt('offers a link to the admin panel', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -29,7 +30,7 @@ describe('Workspace Layout', () => {
       ).toBeInTheDocument()
     })
 
-    it('does not show the link in non-admin orgs', async () => {
+    dbIt('does not show the link in non-admin orgs', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -48,7 +49,7 @@ describe('Workspace Layout', () => {
   })
 
   describe('Workspace switch', () => {
-    it('is possible to switch the workspace', async () => {
+    dbIt('is possible to switch the workspace', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -75,7 +76,7 @@ describe('Workspace Layout', () => {
       )
     })
 
-    it('defaults to the current workspace', async () => {
+    dbIt('defaults to the current workspace', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user, {
         defaultWorkspaceLabel: 'Test workspace',
@@ -95,7 +96,7 @@ describe('Workspace Layout', () => {
       expect(await screen.findByText('Test workspace')).toBeInTheDocument()
     })
 
-    it('hides the combobox when there is only one workspace', async () => {
+    dbIt('hides the combobox when there is only one workspace', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 

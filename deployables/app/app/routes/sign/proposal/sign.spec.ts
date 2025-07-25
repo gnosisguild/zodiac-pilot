@@ -17,6 +17,7 @@ import {
 } from '@zodiac/db'
 import {
   accountFactory,
+  dbIt,
   routeFactory,
   signedTransactionFactory,
   tenantFactory,
@@ -40,7 +41,7 @@ import {
   planExecution,
   queryRoutes,
 } from 'ser-kit'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, vi } from 'vitest'
 import { toSerRoute } from './toSerRoute'
 
 vi.mock('ser-kit', async (importOriginal) => {
@@ -125,7 +126,7 @@ describe('Sign', () => {
 
   describe('Route', () => {
     describe('Unknown route', () => {
-      it('shows a warning to the user', async () => {
+      dbIt('shows a warning to the user', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
 
@@ -159,7 +160,7 @@ describe('Sign', () => {
     })
 
     describe('Ser unavailability', () => {
-      it('shows the page even when ser-kit cannot query routes', async () => {
+      dbIt('shows the page even when ser-kit cannot query routes', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
 
@@ -187,7 +188,7 @@ describe('Sign', () => {
         ).resolves.not.toThrow()
       })
 
-      it('shows a warning when ser is unavailable', async () => {
+      dbIt('shows a warning when ser is unavailable', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
 
@@ -221,7 +222,7 @@ describe('Sign', () => {
         )
       })
 
-      it('enables the "Sign" button when ser is unavailable', async () => {
+      dbIt('enables the "Sign" button when ser is unavailable', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
 
@@ -252,7 +253,7 @@ describe('Sign', () => {
       })
     })
 
-    it('uses the passed route', async () => {
+    dbIt('uses the passed route', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -288,7 +289,7 @@ describe('Sign', () => {
   })
 
   describe('Permissions', () => {
-    it('shows the permission error', async () => {
+    dbIt('shows the permission error', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -325,38 +326,43 @@ describe('Sign', () => {
     })
 
     describe('Ser unavailability', () => {
-      it('shows the page even when ser-kit cannot check permissions', async () => {
-        const user = await userFactory.create()
-        const tenant = await tenantFactory.create(user)
+      dbIt(
+        'shows the page even when ser-kit cannot check permissions',
+        async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
 
-        const account = await accountFactory.create(tenant, user)
-        const wallet = await walletFactory.create(user, { address: initiator })
-        const route = await routeFactory.create(account, wallet)
-        const proposal = await transactionProposalFactory.create(
-          tenant,
-          user,
-          account,
-        )
+          const account = await accountFactory.create(tenant, user)
+          const wallet = await walletFactory.create(user, {
+            address: initiator,
+          })
+          const route = await routeFactory.create(account, wallet)
+          const proposal = await transactionProposalFactory.create(
+            tenant,
+            user,
+            account,
+          )
 
-        await setDefaultRoute(dbClient(), tenant, user, route)
+          await setDefaultRoute(dbClient(), tenant, user, route)
 
-        mockQueryRoutes.mockResolvedValue([
-          toSerRoute(toExecutionRoute({ wallet, account, route })),
-        ])
-        mockCheckPermissions.mockRejectedValue('Ser is down')
+          mockQueryRoutes.mockResolvedValue([
+            toSerRoute(toExecutionRoute({ wallet, account, route })),
+          ])
+          mockCheckPermissions.mockRejectedValue('Ser is down')
 
-        await expect(
-          render(
-            href('/workspace/:workspaceId/submit/proposal/:proposalId', {
-              proposalId: proposal.id,
-              workspaceId: tenant.defaultWorkspaceId,
-            }),
-            { tenant, user },
-          ),
-        ).resolves.not.toThrow()
-      })
+          await expect(
+            render(
+              href('/workspace/:workspaceId/submit/proposal/:proposalId', {
+                proposalId: proposal.id,
+                workspaceId: tenant.defaultWorkspaceId,
+              }),
+              { tenant, user },
+            ),
+          ).resolves.not.toThrow()
+        },
+      )
 
-      it('shows a warning when ser is unavailable', async () => {
+      dbIt('shows a warning when ser is unavailable', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
 
@@ -393,7 +399,7 @@ describe('Sign', () => {
         )
       })
 
-      it('enables the "Sign" button when ser is unavailable', async () => {
+      dbIt('enables the "Sign" button when ser is unavailable', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
 
@@ -433,7 +439,7 @@ describe('Sign', () => {
       mockQueryRoutes.mockResolvedValue([])
     })
 
-    it('does not revoke approvals by default', async () => {
+    dbIt('does not revoke approvals by default', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -478,7 +484,7 @@ describe('Sign', () => {
   })
 
   describe('Sign', () => {
-    it('stores a reference to the transaction.', async () => {
+    dbIt('stores a reference to the transaction.', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -527,7 +533,7 @@ describe('Sign', () => {
       })
     })
 
-    it('stores a reference to the multisig.', async () => {
+    dbIt('stores a reference to the multisig.', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -576,7 +582,7 @@ describe('Sign', () => {
       })
     })
 
-    it('links the proposal and the signed transaction', async () => {
+    dbIt('links the proposal and the signed transaction', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -626,7 +632,7 @@ describe('Sign', () => {
   })
 
   describe('Signed proposal', () => {
-    it('disables the sign button', async () => {
+    dbIt('disables the sign button', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -663,52 +669,55 @@ describe('Sign', () => {
       expect(await screen.findByRole('button', { name: 'Sign' })).toBeDisabled()
     })
 
-    it('shows a message that the proposal has already been signed', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
+    dbIt(
+      'shows a message that the proposal has already been signed',
+      async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      const account = await accountFactory.create(tenant, user)
-      const wallet = await walletFactory.create(user, { address: initiator })
-      const route = await routeFactory.create(account, wallet)
-      const signedTransaction = await signedTransactionFactory.create(
-        tenant,
-        user,
-        route,
-      )
-      const proposal = await transactionProposalFactory.create(
-        tenant,
-        user,
-        account,
-        {
-          transaction: signedTransaction.transaction,
-          signedTransactionId: signedTransaction.id,
-        },
-      )
+        const account = await accountFactory.create(tenant, user)
+        const wallet = await walletFactory.create(user, { address: initiator })
+        const route = await routeFactory.create(account, wallet)
+        const signedTransaction = await signedTransactionFactory.create(
+          tenant,
+          user,
+          route,
+        )
+        const proposal = await transactionProposalFactory.create(
+          tenant,
+          user,
+          account,
+          {
+            transaction: signedTransaction.transaction,
+            signedTransactionId: signedTransaction.id,
+          },
+        )
 
-      await setDefaultRoute(dbClient(), tenant, user, route)
+        await setDefaultRoute(dbClient(), tenant, user, route)
 
-      mockQueryRoutes.mockResolvedValue([])
+        mockQueryRoutes.mockResolvedValue([])
 
-      await render(
-        href('/workspace/:workspaceId/submit/proposal/:proposalId', {
-          proposalId: proposal.id,
-          workspaceId: tenant.defaultWorkspaceId,
-        }),
-        { user, tenant },
-      )
+        await render(
+          href('/workspace/:workspaceId/submit/proposal/:proposalId', {
+            proposalId: proposal.id,
+            workspaceId: tenant.defaultWorkspaceId,
+          }),
+          { user, tenant },
+        )
 
-      const dateFormatter = new Intl.DateTimeFormat('en-GB', {
-        dateStyle: 'long',
-        timeStyle: 'short',
-      })
+        const dateFormatter = new Intl.DateTimeFormat('en-GB', {
+          dateStyle: 'long',
+          timeStyle: 'short',
+        })
 
-      expect(
-        await screen.findByRole('alert', {
-          name: 'Transaction bundle already signed',
-        }),
-      ).toHaveAccessibleDescription(
-        `This transaction bundle has already been signed by ${user.fullName} on ${dateFormatter.format(signedTransaction.createdAt)}`,
-      )
-    })
+        expect(
+          await screen.findByRole('alert', {
+            name: 'Transaction bundle already signed',
+          }),
+        ).toHaveAccessibleDescription(
+          `This transaction bundle has already been signed by ${user.fullName} on ${dateFormatter.format(signedTransaction.createdAt)}`,
+        )
+      },
+    )
   })
 })

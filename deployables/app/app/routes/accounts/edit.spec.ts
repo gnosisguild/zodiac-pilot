@@ -4,13 +4,14 @@ import userEvent from '@testing-library/user-event'
 import { dbClient, getAccount } from '@zodiac/db'
 import {
   accountFactory,
+  dbIt,
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
 import { waitForPendingActions } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { queryInitiators, queryRoutes } from 'ser-kit'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, vi } from 'vitest'
 
 vi.mock('ser-kit', async (importOriginal) => {
   const module = await importOriginal<typeof import('ser-kit')>()
@@ -33,7 +34,7 @@ describe('Edit account', () => {
   })
 
   describe('Label', () => {
-    it('displays the current label', async () => {
+    dbIt('displays the current label', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -57,7 +58,7 @@ describe('Edit account', () => {
       )
     })
 
-    it('is possible to update the label', async () => {
+    dbIt('is possible to update the label', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 

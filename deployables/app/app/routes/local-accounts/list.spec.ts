@@ -20,6 +20,7 @@ import {
 } from '@zodiac/db'
 import {
   accountFactory,
+  dbIt,
   routeFactory,
   tenantFactory,
   userFactory,
@@ -41,7 +42,8 @@ import {
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { prefixAddress } from 'ser-kit'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, vi } from 'vitest'
+import { Intent } from './intents'
 
 const mockGetAvailableChains = vi.mocked(getAvailableChains)
 
@@ -51,7 +53,7 @@ describe.sequential('List Accounts', () => {
   })
 
   describe('Edit', () => {
-    it('is possible to edit a route', async () => {
+    dbIt('is possible to edit a route', async () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
 
       await render(href('/offline/accounts'), {
@@ -85,7 +87,7 @@ describe.sequential('List Accounts', () => {
   })
 
   describe('Remove', () => {
-    it('is possible to remove an account', async () => {
+    dbIt('is possible to remove an account', async () => {
       const route = createMockExecutionRoute({ label: 'Test route' })
       const mockPostMessage = vi.spyOn(window, 'postMessage')
 
@@ -115,7 +117,7 @@ describe.sequential('List Accounts', () => {
   })
 
   describe('Upload', () => {
-    it('is possible to migrate a local account to the cloud', async () => {
+    dbIt('is possible to migrate a local account to the cloud', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -160,7 +162,7 @@ describe.sequential('List Accounts', () => {
         await screen.findByRole('button', { name: 'Upload' }),
       )
 
-      await waitForPendingActions()
+      await waitForPendingActions(Intent.Upload)
 
       await waitFor(() =>
         expect(
@@ -172,7 +174,7 @@ describe.sequential('List Accounts', () => {
       )
     })
 
-    it('reuses existing accounts', async () => {
+    dbIt('reuses existing accounts', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const account = await accountFactory.create(tenant, user)
@@ -219,14 +221,14 @@ describe.sequential('List Accounts', () => {
         await screen.findByRole('button', { name: 'Upload' }),
       )
 
-      await waitForPendingActions()
+      await waitForPendingActions(Intent.Upload)
 
       await expect(
         getAccounts(dbClient(), { tenantId: tenant.id }),
       ).resolves.toHaveLength(1)
     })
 
-    it('creates a wallet for the initiator', async () => {
+    dbIt('creates a wallet for the initiator', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -270,14 +272,14 @@ describe.sequential('List Accounts', () => {
         await screen.findByRole('button', { name: 'Upload' }),
       )
 
-      await waitForPendingActions()
+      await waitForPendingActions(Intent.Upload)
 
       await expect(
         getWalletByAddress(dbClient(), user, initiator),
       ).resolves.toBeDefined()
     })
 
-    it('reuses existing wallets', async () => {
+    dbIt('reuses existing wallets', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const wallet = await walletFactory.create(user)
@@ -322,12 +324,12 @@ describe.sequential('List Accounts', () => {
         await screen.findByRole('button', { name: 'Upload' }),
       )
 
-      await waitForPendingActions()
+      await waitForPendingActions(Intent.Upload)
 
       await expect(getWallets(dbClient(), user.id)).resolves.toHaveLength(1)
     })
 
-    it('stores the selected route', async () => {
+    dbIt('stores the selected route', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -371,7 +373,7 @@ describe.sequential('List Accounts', () => {
         await screen.findByRole('button', { name: 'Upload' }),
       )
 
-      await waitForPendingActions()
+      await waitForPendingActions(Intent.Upload)
 
       const wallet = await getWalletByAddress(dbClient(), user, initiator)
       const account = await getAccountByAddress(dbClient(), {
@@ -388,7 +390,7 @@ describe.sequential('List Accounts', () => {
       expect(remoteRoute).toHaveProperty('waypoints', route.waypoints)
     })
 
-    it('marks the route as active', async () => {
+    dbIt('marks the route as active', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -432,7 +434,7 @@ describe.sequential('List Accounts', () => {
         await screen.findByRole('button', { name: 'Upload' }),
       )
 
-      await waitForPendingActions()
+      await waitForPendingActions(Intent.Upload)
 
       const wallet = await getWalletByAddress(dbClient(), user, initiator)
       const account = await getAccountByAddress(dbClient(), {
@@ -451,7 +453,7 @@ describe.sequential('List Accounts', () => {
       ).resolves.toHaveProperty('routeId', remoteRoute.id)
     })
 
-    it('does not create duplicates', async () => {
+    dbIt('does not create duplicates', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const wallet = await walletFactory.create(user)
@@ -504,7 +506,7 @@ describe.sequential('List Accounts', () => {
         await screen.findByRole('button', { name: 'Upload' }),
       )
 
-      await waitForPendingActions()
+      await waitForPendingActions(Intent.Upload)
 
       await waitFor(() =>
         expect(
@@ -523,7 +525,7 @@ describe.sequential('List Accounts', () => {
       )
     })
 
-    it('removes the local account', async () => {
+    dbIt('removes the local account', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -572,77 +574,83 @@ describe.sequential('List Accounts', () => {
       })
     })
 
-    it('does not remove the local account when the server action fails', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
+    dbIt(
+      'does not remove the local account when the server action fails',
+      async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      const route = createMockExecutionRoute({
-        avatar: randomPrefixedAddress(),
-      })
+        const route = createMockExecutionRoute({
+          avatar: randomPrefixedAddress(),
+        })
 
-      await render(
-        href('/workspace/:workspaceId/local-accounts', {
-          workspaceId: tenant.defaultWorkspaceId,
-        }),
-        {
-          availableRoutes: [route],
-          tenant,
-          user,
-          autoRespond: {
-            [CompanionAppMessageType.DELETE_ROUTE]: {
-              type: CompanionResponseMessageType.DELETED_ROUTE,
-            },
-            [CompanionAppMessageType.REQUEST_ROUTE]: {
-              type: CompanionResponseMessageType.PROVIDE_ROUTE,
-              route,
-            },
-            [CompanionAppMessageType.REQUEST_ACTIVE_ROUTE]: {
-              type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
-              activeRouteId: null,
+        await render(
+          href('/workspace/:workspaceId/local-accounts', {
+            workspaceId: tenant.defaultWorkspaceId,
+          }),
+          {
+            availableRoutes: [route],
+            tenant,
+            user,
+            autoRespond: {
+              [CompanionAppMessageType.DELETE_ROUTE]: {
+                type: CompanionResponseMessageType.DELETED_ROUTE,
+              },
+              [CompanionAppMessageType.REQUEST_ROUTE]: {
+                type: CompanionResponseMessageType.PROVIDE_ROUTE,
+                route,
+              },
+              [CompanionAppMessageType.REQUEST_ACTIVE_ROUTE]: {
+                type: CompanionResponseMessageType.PROVIDE_ACTIVE_ROUTE,
+                activeRouteId: null,
+              },
             },
           },
-        },
-      )
+        )
 
-      await loadAndActivateRoute(route)
+        await loadAndActivateRoute(route)
 
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Account options' }),
-      )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Account options' }),
+        )
 
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Upload' }),
-      )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Upload' }),
+        )
 
-      await waitForPendingActions()
+        await waitForPendingActions(Intent.Upload)
 
-      expect(window.postMessage).not.toHaveBeenCalledWith(
-        {
-          type: CompanionAppMessageType.DELETE_ROUTE,
-          routeId: route.id,
-        } satisfies CompanionAppMessage,
-        '*',
-      )
-    })
+        expect(window.postMessage).not.toHaveBeenCalledWith(
+          {
+            type: CompanionAppMessageType.DELETE_ROUTE,
+            routeId: route.id,
+          } satisfies CompanionAppMessage,
+          '*',
+        )
+      },
+    )
 
-    it('does not offer the upload options when no user is logged in', async () => {
-      const route = createMockExecutionRoute({
-        avatar: randomPrefixedAddress(),
-      })
+    dbIt(
+      'does not offer the upload options when no user is logged in',
+      async () => {
+        const route = createMockExecutionRoute({
+          avatar: randomPrefixedAddress(),
+        })
 
-      await render(href('/offline/accounts'), {
-        availableRoutes: [route],
-      })
+        await render(href('/offline/accounts'), {
+          availableRoutes: [route],
+        })
 
-      await loadAndActivateRoute(route)
+        await loadAndActivateRoute(route)
 
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Account options' }),
-      )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Account options' }),
+        )
 
-      expect(
-        screen.queryByRole('button', { name: 'Upload' }),
-      ).not.toBeInTheDocument()
-    })
+        expect(
+          screen.queryByRole('button', { name: 'Upload' }),
+        ).not.toBeInTheDocument()
+      },
+    )
   })
 })
