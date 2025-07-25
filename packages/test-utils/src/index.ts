@@ -13,7 +13,4 @@ export type { RouteModule } from './renderFramework'
 export { renderHook } from './renderHook'
 export type { RenderHookOptions } from './renderHook'
 export { sleepTillIdle } from './sleepTillIdle'
-export {
-  waitForPendingActions,
-  waitForPendingActions as waitForPendingLoaders,
-} from './WatchForActions'
+export { waitForPendingActions, waitForPendingLoaders } from './WatchForActions'

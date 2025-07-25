@@ -406,7 +406,6 @@ describe('Routes', () => {
       )
 
       await waitForPendingActions()
-      await waitForPendingLoaders()
 
       await expect(
         getDefaultRoute(dbClient(), tenant, user, account.id),
