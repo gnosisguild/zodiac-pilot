@@ -22,17 +22,18 @@ const useInline = () => {
   return inline
 }
 
-type BaseOption = { label?: string | null; value: unknown }
+export type BaseOption = { label?: string | null; value: unknown }
 
 type SelectStylesOptions = {
   inline?: boolean
 }
 
-export function selectStyles<Option extends BaseOption = BaseOption>({
-  inline,
-}: SelectStylesOptions = {}): ClassNamesConfig<
+export function selectStyles<
+  Option extends BaseOption = BaseOption,
+  isMulti extends boolean = false,
+>({ inline }: SelectStylesOptions = {}): ClassNamesConfig<
   Option,
-  false,
+  isMulti,
   GroupBase<Option>
 > {
   return {
@@ -78,10 +79,11 @@ type SelectBaseProps<Option extends BaseOption, Creatable extends boolean> = {
 export type SelectProps<
   Option extends BaseOption,
   Creatable extends boolean,
+  isMulti extends boolean = false,
 > = Creatable extends true
-  ? CreatableProps<Option, false, GroupBase<Option>> &
+  ? CreatableProps<Option, isMulti, GroupBase<Option>> &
       SelectBaseProps<Option, Creatable>
-  : Props<Option, false> & SelectBaseProps<Option, Creatable>
+  : Props<Option, isMulti> & SelectBaseProps<Option, Creatable>
 
 export function Select<
   Option extends BaseOption = BaseOption,
@@ -95,7 +97,7 @@ export function Select<
   inline = false,
   children,
   ...props
-}: SelectProps<Option, Creatable>) {
+}: SelectProps<Option, Creatable, false>) {
   const Component = allowCreate ? Creatable : BaseSelect
   const Layout = inline ? InlineLayout : InputLayout
 
@@ -109,7 +111,7 @@ export function Select<
       >
         {({ inputId }) => (
           <Layout disabled={isDisabled}>
-            <Component<Option>
+            <Component<Option, false>
               {...props}
               unstyled
               isDisabled={isDisabled}
@@ -132,7 +134,9 @@ export function Select<
   )
 }
 
-function ClearIndicator({ clearValue }: ClearIndicatorProps) {
+export function ClearIndicator<Option, isMulti extends boolean = false>({
+  clearValue,
+}: ClearIndicatorProps<Option, isMulti>) {
   return (
     <GhostButton iconOnly icon={X} size="small" onClick={clearValue}>
       {useClearLabel()}
@@ -142,16 +146,20 @@ function ClearIndicator({ clearValue }: ClearIndicatorProps) {
 
 Select.ClearIndicator = ClearIndicator
 
-const DropdownIndicator = ({ isDisabled }: DropdownIndicatorProps) => (
-  <GhostButton
-    iconOnly
-    disabled={isDisabled}
-    icon={ChevronDown}
-    size={useInline() ? 'tiny' : 'small'}
-  >
-    {useDropdownLabel()}
-  </GhostButton>
-)
+export function DropdownIndicator<Option, isMulti extends boolean = false>({
+  isDisabled,
+}: DropdownIndicatorProps<Option, isMulti>) {
+  return (
+    <GhostButton
+      iconOnly
+      disabled={isDisabled}
+      icon={ChevronDown}
+      size={useInline() ? 'tiny' : 'small'}
+    >
+      {useDropdownLabel()}
+    </GhostButton>
+  )
+}
 
 Select.DropdownIndicator = DropdownIndicator
 
@@ -162,7 +170,7 @@ type CreateOptionRendererOptions = {
   isValue?: boolean
 }
 
-function createOptionRenderer<Option extends BaseOption>(
+export function createOptionRenderer<Option extends BaseOption>(
   children: OptionRenderProps<Option> | undefined,
   { isValue = false }: CreateOptionRendererOptions = {},
 ) {

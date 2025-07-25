@@ -546,6 +546,8 @@ export const RoleTable = pgTable(
   ],
 )
 
+export type Role = typeof RoleTable.$inferSelect
+
 export const RoleMembershipTable = pgTable(
   'RoleMembership',
   {
@@ -568,6 +570,13 @@ export const RoleMembershipTable = pgTable(
     index().on(table.userId),
   ],
 )
+
+const RoleMembershipRelations = relations(RoleMembershipTable, ({ one }) => ({
+  user: one(UserTable, {
+    fields: [RoleMembershipTable.userId],
+    references: [UserTable.id],
+  }),
+}))
 
 export const ActivatedRoleTable = pgTable(
   'ActivatedRole',
@@ -621,4 +630,5 @@ export const schema = {
   ActiveSubscriptionRelations,
   SignedTransactionRelations,
   WorkspaceRelations,
+  RoleMembershipRelations,
 }

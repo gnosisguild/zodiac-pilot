@@ -11,6 +11,7 @@ import { decodeRoleKey } from '@zodiac/modules'
 import { isUUID, PrefixedAddress, verifyHexAddress } from '@zodiac/schema'
 import {
   DateValue,
+  SecondaryLinkButton,
   Table,
   TableBody,
   TableCell,
@@ -19,6 +20,7 @@ import {
   TableRow,
 } from '@zodiac/ui'
 import { Address } from '@zodiac/web3'
+import { href } from 'react-router'
 import { prefixAddress } from 'ser-kit'
 import type { Route } from './+types/list'
 
@@ -105,10 +107,21 @@ export const loader = (args: Route.LoaderArgs) =>
 
 const Roles = ({
   loaderData: { rolesByAccount, draftRoles },
+  params: { workspaceId },
 }: Route.ComponentProps) => {
   return (
     <Page>
-      <Page.Header>Roles</Page.Header>
+      <Page.Header
+        action={
+          <SecondaryLinkButton
+            to={href('/workspace/:workspaceId/roles/create', { workspaceId })}
+          >
+            Create new role
+          </SecondaryLinkButton>
+        }
+      >
+        Roles
+      </Page.Header>
       <Page.Main>
         <Table>
           <TableHead>
