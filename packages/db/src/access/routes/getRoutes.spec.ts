@@ -1,17 +1,18 @@
 import {
   accountFactory,
+  dbIt,
   routeFactory,
   tenantFactory,
   userFactory,
   walletFactory,
   workspaceFactory,
 } from '@zodiac/db/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 import { dbClient } from '../../dbClient'
 import { getRoutes } from './getRoutes'
 
 describe('getRoutes', () => {
-  it('is possible to query all routes for a single user', async () => {
+  dbIt('is possible to query all routes for a single user', async () => {
     const userA = await userFactory.create()
     const userB = await userFactory.create()
 

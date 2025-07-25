@@ -1,13 +1,17 @@
-import { subscriptionPlanFactory, userFactory } from '@zodiac/db/test-utils'
+import {
+  dbIt,
+  subscriptionPlanFactory,
+  userFactory,
+} from '@zodiac/db/test-utils'
 import { randomUUID } from 'crypto'
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 import { dbClient } from '../../dbClient'
 import { getActivePlan } from '../subscriptionPlans'
 import { getWorkspaces } from '../workspaces'
 import { createTenant } from './createTenant'
 
 describe('createTenant', () => {
-  it('assigns the default subscription plan to new tenants', async () => {
+  dbIt('assigns the default subscription plan to new tenants', async () => {
     const user = await userFactory.create()
     const plan = await subscriptionPlanFactory.create({ isDefault: true })
 
@@ -20,7 +24,7 @@ describe('createTenant', () => {
     await expect(getActivePlan(dbClient(), tenant.id)).resolves.toEqual(plan)
   })
 
-  it('creates a default workspace', async () => {
+  dbIt('creates a default workspace', async () => {
     const user = await userFactory.create()
 
     await subscriptionPlanFactory.create({ isDefault: true })

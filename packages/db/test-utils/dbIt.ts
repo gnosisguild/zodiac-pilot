@@ -7,7 +7,10 @@ import { DBClient } from '../src'
 const dbClientRef: Ref<DBClient> = { current: null }
 
 export const getMockedDb = () => {
-  invariant(dbClientRef.current != null, 'No DB has been mocked for this test')
+  invariant(
+    dbClientRef.current != null,
+    'No DB has been mocked for this test. Make sure to use `dbIt` from `@zodiac/db/test-utils` instead of the default `it` from `vitest`.',
+  )
 
   return dbClientRef.current
 }

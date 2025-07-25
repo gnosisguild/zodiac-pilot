@@ -1,14 +1,15 @@
 import {
   accountFactory,
+  dbIt,
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 import { dbClient } from '../../dbClient'
 import { activateAccount } from './activateAccount'
 
 describe('Activate account', () => {
-  it('makes sure only one account is active per tenant', async () => {
+  dbIt('makes sure only one account is active per tenant', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
 
