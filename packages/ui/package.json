@@ -22,7 +22,7 @@
     "@zodiac/chains": "workspace:*",
     "@zodiac/schema": "workspace:*",
     "classnames": "2.5.1",
-    "framer-motion": "12.23.7",
+    "framer-motion": "12.23.9",
     "lucide-react": "0.525.0",
     "nanoid": "5.1.5",
     "react-select": "5.10.2",
