@@ -39,6 +39,7 @@
     "@testing-library/react": "16.3.0",
     "@zodiac/chains": "workspace:*",
     "@zodiac/schema": "workspace:*",
+    "@zodiac/form-data": "workspace:*",
     "ethers": "6.15.0",
     "nanoid": "5.1.5",
     "vitest": "3.2.4",
