@@ -302,6 +302,20 @@
       "when": 1752174318474,
       "tag": "0042_indices and primary keys",
       "breakpoints": true
+    },
+    {
+      "idx": 43,
+      "version": "7",
+      "when": 1753442858493,
+      "tag": "0043_add roles tables",
+      "breakpoints": true
+    },
+    {
+      "idx": 44,
+      "version": "7",
+      "when": 1753443810404,
+      "tag": "0044_add created by to role draft",
+      "breakpoints": true
     }
   ]
 }

@@ -103,6 +103,13 @@ const userReference = {
     .references(() => UserTable.id, { onDelete: 'cascade' }),
 }
 
+const createdByReference = {
+  createdById: uuid()
+    .notNull()
+    .$type<UUID>()
+    .references(() => UserTable.id, { onDelete: 'cascade' }),
+}
+
 export type User = typeof UserTable.$inferSelect
 export type UserCreateInput = typeof UserTable.$inferInsert
 
@@ -519,6 +526,72 @@ const SignedTransactionRelations = relations(
   }),
 )
 
+export const RoleTable = pgTable(
+  'Role',
+  {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+
+    label: text().notNull(),
+
+    ...createdTimestamp,
+    ...updatedTimestamp,
+    ...tenantReference,
+    ...workspaceReference,
+    ...createdByReference,
+  },
+  (table) => [
+    index().on(table.tenantId),
+    index().on(table.workspaceId),
+    index().on(table.createdById),
+  ],
+)
+
+export const RoleMembershipTable = pgTable(
+  'RoleMembership',
+  {
+    roleId: uuid()
+      .notNull()
+      .$type<UUID>()
+      .references(() => RoleTable.id, { onDelete: 'cascade' }),
+    userId: uuid()
+      .notNull()
+      .$type<UUID>()
+      .references(() => UserTable.id, { onDelete: 'cascade' }),
+
+    ...createdTimestamp,
+    ...tenantReference,
+  },
+  (table) => [
+    primaryKey({ columns: [table.roleId, table.userId] }),
+    index().on(table.roleId),
+    index().on(table.tenantId),
+    index().on(table.userId),
+  ],
+)
+
+export const ActivatedRoleTable = pgTable(
+  'ActivatedRole',
+  {
+    roleId: uuid()
+      .notNull()
+      .$type<UUID>()
+      .references(() => RoleTable.id, { onDelete: 'cascade' }),
+    accountId: uuid()
+      .notNull()
+      .$type<UUID>()
+      .references(() => AccountTable.id, { onDelete: 'cascade' }),
+
+    ...createdTimestamp,
+    ...tenantReference,
+  },
+  (table) => [
+    primaryKey({ columns: [table.accountId, table.roleId] }),
+    index().on(table.accountId),
+    index().on(table.roleId),
+    index().on(table.tenantId),
+  ],
+)
+
 export const schema = {
   tenant: TenantTable,
   user: UserTable,
@@ -535,6 +608,9 @@ export const schema = {
   activeSubscriptionPlans: ActiveSubscriptionTable,
   proposedTransactions: ProposedTransactionTable,
   workspace: WorkspaceTable,
+  role: RoleTable,
+  roleMembership: RoleMembershipTable,
+  activatedRole: ActivatedRoleTable,
 
   TenantRelations,
   FeatureRelations,
