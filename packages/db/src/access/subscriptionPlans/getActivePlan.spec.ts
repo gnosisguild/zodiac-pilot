@@ -1,16 +1,17 @@
 import {
+  dbIt,
   subscriptionPlanFactory,
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
 import { addDays, subDays } from 'date-fns'
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 import { dbClient } from '../../dbClient'
 import { activatePlan } from './activatePlan'
 import { getActivePlan } from './getActivePlan'
 
 describe('getActivePlan', () => {
-  it('retrieves the active plan for a tenant', async () => {
+  dbIt('retrieves the active plan for a tenant', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
     const plan = await subscriptionPlanFactory.create()
@@ -23,7 +24,7 @@ describe('getActivePlan', () => {
     await expect(getActivePlan(dbClient(), tenant.id)).resolves.toEqual(plan)
   })
 
-  it('retrieves only plans that are already valid', async () => {
+  dbIt('retrieves only plans that are already valid', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
     const planA = await subscriptionPlanFactory.create()
@@ -43,7 +44,7 @@ describe('getActivePlan', () => {
     await expect(getActivePlan(dbClient(), tenant.id)).resolves.toEqual(planB)
   })
 
-  it('retrieves only plans that are still valid', async () => {
+  dbIt('retrieves only plans that are still valid', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
     const planA = await subscriptionPlanFactory.create()
@@ -63,7 +64,7 @@ describe('getActivePlan', () => {
     await expect(getActivePlan(dbClient(), tenant.id)).resolves.toEqual(planB)
   })
 
-  it('retrieves the pan with the highest priority', async () => {
+  dbIt('retrieves the pan with the highest priority', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
     const planA = await subscriptionPlanFactory.create({ priority: 1 })

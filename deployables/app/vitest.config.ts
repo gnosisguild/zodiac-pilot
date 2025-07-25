@@ -30,12 +30,5 @@ export default defineConfig({
     clearMocks: true,
 
     retry: process.env.CI ? 3 : undefined,
-
-    poolOptions: {
-      forks: { singleFork: true },
-      threads: { singleThread: true },
-      vmForks: { singleFork: true },
-      vmThreads: { singleThread: true },
-    },
   },
 })

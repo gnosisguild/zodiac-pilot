@@ -4,6 +4,7 @@ import userEvent from '@testing-library/user-event'
 import { dbClient, getWallet, getWallets, setDefaultRoute } from '@zodiac/db'
 import {
   accountFactory,
+  dbIt,
   routeFactory,
   tenantFactory,
   userFactory,
@@ -12,11 +13,11 @@ import {
 import { randomAddress, waitForPendingActions } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { getAddress } from 'viem'
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 
 describe('Profile', () => {
   describe('List', () => {
-    it('lists all existing wallets', async () => {
+    dbIt('lists all existing wallets', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -41,7 +42,7 @@ describe('Profile', () => {
   })
 
   describe('Create', () => {
-    it('is possible to add new wallet', async () => {
+    dbIt('is possible to add new wallet', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -80,7 +81,7 @@ describe('Profile', () => {
       expect(wallet).toHaveProperty('address', address)
     })
 
-    it('is not possible to create duplicate wallets', async () => {
+    dbIt('is not possible to create duplicate wallets', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -127,7 +128,7 @@ describe('Profile', () => {
   })
 
   describe('Remove', () => {
-    it('is possible to remove a wallet', async () => {
+    dbIt('is possible to remove a wallet', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -167,7 +168,7 @@ describe('Profile', () => {
       })
     })
 
-    it('lists accounts that use this wallet', async () => {
+    dbIt('lists accounts that use this wallet', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -209,7 +210,7 @@ describe('Profile', () => {
   })
 
   describe('Edit', () => {
-    it('is possible to rename a wallet', async () => {
+    dbIt('is possible to rename a wallet', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 

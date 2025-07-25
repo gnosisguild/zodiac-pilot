@@ -3,17 +3,18 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { dbClient, getFeatures } from '@zodiac/db'
 import {
+  dbIt,
   featureFactory,
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
 import { waitForPendingActions } from '@zodiac/test-utils'
 import { href } from 'react-router'
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 
 describe('Features', () => {
   describe('List', () => {
-    it('lists all features', async () => {
+    dbIt('lists all features', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -32,7 +33,7 @@ describe('Features', () => {
   })
 
   describe('Add', () => {
-    it('is possible to add a new feature', async () => {
+    dbIt('is possible to add a new feature', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -60,7 +61,7 @@ describe('Features', () => {
   })
 
   describe('Remove', () => {
-    it('is possible to remove a feature', async () => {
+    dbIt('is possible to remove a feature', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 

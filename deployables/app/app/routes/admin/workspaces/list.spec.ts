@@ -10,17 +10,18 @@ import {
 } from '@zodiac/db'
 import {
   accountFactory,
+  dbIt,
   tenantFactory,
   userFactory,
   workspaceFactory,
 } from '@zodiac/db/test-utils'
 import { expectRouteToBe, waitForPendingActions } from '@zodiac/test-utils'
 import { href } from 'react-router'
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 
 describe('Workspaces', () => {
   describe('List', () => {
-    it('lists all workspaces', async () => {
+    dbIt('lists all workspaces', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user, {
         defaultWorkspaceLabel: 'Default workspace',
@@ -47,7 +48,7 @@ describe('Workspaces', () => {
   })
 
   describe('Add workspace', () => {
-    it('is possible to add a new workspace', async () => {
+    dbIt('is possible to add a new workspace', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user, {
         defaultWorkspaceLabel: 'Default workspace',
@@ -76,7 +77,7 @@ describe('Workspaces', () => {
   })
 
   describe('Edit', () => {
-    it('is possible to rename a workspace', async () => {
+    dbIt('is possible to rename a workspace', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user, {
         defaultWorkspaceLabel: 'Workspace',
@@ -106,7 +107,7 @@ describe('Workspaces', () => {
       ).resolves.toHaveProperty('label', 'Workspace updated')
     })
 
-    it('is possible to set a workspace as the default one', async () => {
+    dbIt('is possible to set a workspace as the default one', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -144,7 +145,7 @@ describe('Workspaces', () => {
       )
     })
 
-    it('shows when the workspace is already the default', async () => {
+    dbIt('shows when the workspace is already the default', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -171,7 +172,7 @@ describe('Workspaces', () => {
   })
 
   describe('Remove', () => {
-    it('is possible to remove a workspace', async () => {
+    dbIt('is possible to remove a workspace', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -207,40 +208,45 @@ describe('Workspaces', () => {
       ])
     })
 
-    it('redirects to the default workspace when the current one was deleted', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
+    dbIt(
+      'redirects to the default workspace when the current one was deleted',
+      async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      const workspace = await workspaceFactory.create(tenant, user, {
-        label: 'Test workspace',
-      })
+        const workspace = await workspaceFactory.create(tenant, user, {
+          label: 'Test workspace',
+        })
 
-      await render(
-        href('/workspace/:workspaceId/admin/workspaces', {
-          workspaceId: workspace.id,
-        }),
-        { tenant, user },
-      )
+        await render(
+          href('/workspace/:workspaceId/admin/workspaces', {
+            workspaceId: workspace.id,
+          }),
+          { tenant, user },
+        )
 
-      await userEvent.click(
-        await screen.findByRole('button', {
-          name: 'Workspace options',
-          description: 'Test workspace',
-        }),
-      )
-      await userEvent.click(await screen.findByRole('link', { name: 'Remove' }))
+        await userEvent.click(
+          await screen.findByRole('button', {
+            name: 'Workspace options',
+            description: 'Test workspace',
+          }),
+        )
+        await userEvent.click(
+          await screen.findByRole('link', { name: 'Remove' }),
+        )
 
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Remove' }),
-      )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Remove' }),
+        )
 
-      await expectRouteToBe(
-        href('/workspace/:workspaceId/admin/workspaces', {
-          workspaceId: tenant.defaultWorkspaceId,
-        }),
-      )
-    })
-    it('is not possible to remove the default workspace', async () => {
+        await expectRouteToBe(
+          href('/workspace/:workspaceId/admin/workspaces', {
+            workspaceId: tenant.defaultWorkspaceId,
+          }),
+        )
+      },
+    )
+    dbIt('is not possible to remove the default workspace', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -263,55 +269,58 @@ describe('Workspaces', () => {
     })
 
     describe('Accounts', () => {
-      it('is possible to move accounts to a different workspace', async () => {
-        const user = await userFactory.create()
-        const tenant = await tenantFactory.create(user, {
-          defaultWorkspaceLabel: 'Default workspace',
-        })
+      dbIt(
+        'is possible to move accounts to a different workspace',
+        async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user, {
+            defaultWorkspaceLabel: 'Default workspace',
+          })
 
-        const workspace = await workspaceFactory.create(tenant, user, {
-          label: 'Workspace',
-        })
+          const workspace = await workspaceFactory.create(tenant, user, {
+            label: 'Workspace',
+          })
 
-        const account = await accountFactory.create(tenant, user, {
-          workspaceId: workspace.id,
-        })
+          const account = await accountFactory.create(tenant, user, {
+            workspaceId: workspace.id,
+          })
 
-        await render(
-          href('/workspace/:workspaceId/admin/workspaces', {
-            workspaceId: tenant.defaultWorkspaceId,
-          }),
-          { tenant, user },
-        )
+          await render(
+            href('/workspace/:workspaceId/admin/workspaces', {
+              workspaceId: tenant.defaultWorkspaceId,
+            }),
+            { tenant, user },
+          )
 
-        await userEvent.click(
-          await screen.findByRole('button', {
-            name: 'Workspace options',
-            description: 'Workspace',
-          }),
-        )
+          await userEvent.click(
+            await screen.findByRole('button', {
+              name: 'Workspace options',
+              description: 'Workspace',
+            }),
+          )
 
-        await userEvent.click(
-          await screen.findByRole('link', { name: 'Remove' }),
-        )
+          await userEvent.click(
+            await screen.findByRole('link', { name: 'Remove' }),
+          )
 
-        await userEvent.click(
-          await screen.findByRole('combobox', { name: 'Move accounts to' }),
-        )
-        await userEvent.click(
-          await screen.findByRole('option', { name: 'Default workspace' }),
-        )
+          await userEvent.click(
+            await screen.findByRole('combobox', { name: 'Move accounts to' }),
+          )
+          await userEvent.click(
+            await screen.findByRole('option', { name: 'Default workspace' }),
+          )
 
-        await userEvent.click(
-          await screen.findByRole('button', { name: 'Remove' }),
-        )
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Remove' }),
+          )
 
-        await waitForPendingActions()
+          await waitForPendingActions()
 
-        await expect(
-          getAccount(dbClient(), account.id),
-        ).resolves.toHaveProperty('workspaceId', tenant.defaultWorkspaceId)
-      })
+          await expect(
+            getAccount(dbClient(), account.id),
+          ).resolves.toHaveProperty('workspaceId', tenant.defaultWorkspaceId)
+        },
+      )
     })
   })
 })

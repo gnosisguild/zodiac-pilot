@@ -3,6 +3,7 @@ import { createMockExecuteTransactionAction, render } from '@/test-utils'
 import { dbClient, getProposedTransactions, setDefaultRoute } from '@zodiac/db'
 import {
   accountFactory,
+  dbIt,
   routeFactory,
   tenantFactory,
   userFactory,
@@ -13,7 +14,7 @@ import { encode } from '@zodiac/schema'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { planExecution, queryRoutes } from 'ser-kit'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, vi } from 'vitest'
 
 vi.mock('ser-kit', async (importOriginal) => {
   const module = await importOriginal<typeof import('ser-kit')>()
@@ -54,7 +55,7 @@ describe('Sign', () => {
     })
   })
 
-  it('creates a proposal', async () => {
+  dbIt('creates a proposal', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
 
@@ -84,7 +85,7 @@ describe('Sign', () => {
     expect(proposedTransaction).toHaveProperty('transaction', [transaction])
   })
 
-  it('redirects the user', async () => {
+  dbIt('redirects the user', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
 

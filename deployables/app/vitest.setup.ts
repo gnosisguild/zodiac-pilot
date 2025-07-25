@@ -28,6 +28,19 @@ mockViewport({ width: 1024, height: 768 })
 
 Element.prototype.scrollIntoView = vi.fn()
 
+vi.mock('@zodiac/db', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@zodiac/db')>()
+  const { getMockedDb } = await vi.importActual<
+    typeof import('@zodiac/db/test-utils')
+  >('@zodiac/db/test-utils')
+
+  return {
+    ...module,
+
+    dbClient: getMockedDb,
+  }
+})
+
 vi.mock('@zodiac/env', async (importOriginal) => {
   const module = await importOriginal<typeof import('@zodiac/env')>()
 

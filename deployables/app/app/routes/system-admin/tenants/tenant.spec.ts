@@ -9,6 +9,7 @@ import {
   getActivePlan,
 } from '@zodiac/db'
 import {
+  dbIt,
   featureFactory,
   subscriptionPlanFactory,
   tenantFactory,
@@ -16,11 +17,11 @@ import {
 } from '@zodiac/db/test-utils'
 import { waitForPendingActions } from '@zodiac/test-utils'
 import { href } from 'react-router'
-import { describe, expect, it } from 'vitest'
+import { describe, expect } from 'vitest'
 
 describe('Tenant', () => {
   describe('Features', () => {
-    it('is possible to activate a feature', async () => {
+    dbIt('is possible to activate a feature', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const feature = await featureFactory.create({ name: 'Test feature' })
@@ -44,7 +45,7 @@ describe('Tenant', () => {
       ])
     })
 
-    it('is possible to deactivate a feature', async () => {
+    dbIt('is possible to deactivate a feature', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const feature = await featureFactory.create({ name: 'Test feature' })
@@ -73,7 +74,7 @@ describe('Tenant', () => {
       )
     })
 
-    it('is possible to activate additional features', async () => {
+    dbIt('is possible to activate additional features', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -107,7 +108,7 @@ describe('Tenant', () => {
   })
 
   describe('Plans', () => {
-    it('is possible to assign a plan to a tenant', async () => {
+    dbIt('is possible to assign a plan to a tenant', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const plan = await subscriptionPlanFactory.create()
@@ -134,7 +135,7 @@ describe('Tenant', () => {
       await expect(getActivePlan(dbClient(), tenant.id)).resolves.toEqual(plan)
     })
 
-    it('shows the plans that are assigned to a tenant', async () => {
+    dbIt('shows the plans that are assigned to a tenant', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
       const plan = await subscriptionPlanFactory.create({ name: 'Open' })

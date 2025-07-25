@@ -70,6 +70,7 @@
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
     "@vercel/react-router": "1.2.2",
+    "@vitest/runner": "^3.2.4",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/test-utils": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
