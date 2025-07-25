@@ -162,6 +162,8 @@ export default [
 
         route('roles', 'routes/roles/list.tsx'),
 
+        ...prefix('roles', [route('create', 'routes/roles/create.tsx')]),
+
         route('accounts', 'routes/accounts/list.tsx', [
           route('delete/:accountId', 'routes/accounts/delete-account.tsx'),
           route('move/:accountId', 'routes/accounts/move-account.tsx'),

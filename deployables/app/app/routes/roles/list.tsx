@@ -5,11 +5,12 @@ import { graphqlClient } from '@/graphql-client'
 import { Chain } from '@/routes-ui'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
-import { dbClient, getAccounts, getWorkspace } from '@zodiac/db'
+import { dbClient, getAccounts, getRoles, getWorkspace } from '@zodiac/db'
 import { Account } from '@zodiac/db/schema'
 import { decodeRoleKey } from '@zodiac/modules'
 import { isUUID, PrefixedAddress, verifyHexAddress } from '@zodiac/schema'
 import {
+  DateValue,
   Table,
   TableBody,
   TableCell,
@@ -37,7 +38,7 @@ export const loader = (args: Route.LoaderArgs) =>
         tenantId: tenant.id,
       })
 
-      const roles = await Promise.all(
+      const onChainRoles = await Promise.all(
         accounts.flatMap(async (account) => {
           const { rolesModifiers } = await graphqlClient().query(
             FetchRolesDocument,
@@ -48,7 +49,7 @@ export const loader = (args: Route.LoaderArgs) =>
         }),
       )
 
-      const rolesByAccount = roles
+      const rolesByAccount = onChainRoles
         .flat()
         .reduce<
           Record<
@@ -85,7 +86,10 @@ export const loader = (args: Route.LoaderArgs) =>
           return { ...result, [prefixedAddress]: { account, roles } }
         }, {})
 
-      return { rolesByAccount }
+      return {
+        rolesByAccount,
+        draftRoles: await getRoles(dbClient(), { workspaceId }),
+      }
     },
     {
       ensureSignedIn: true,
@@ -99,11 +103,32 @@ export const loader = (args: Route.LoaderArgs) =>
     },
   )
 
-const Roles = ({ loaderData: { rolesByAccount } }: Route.ComponentProps) => {
+const Roles = ({
+  loaderData: { rolesByAccount, draftRoles },
+}: Route.ComponentProps) => {
   return (
     <Page>
       <Page.Header>Roles</Page.Header>
       <Page.Main>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableHeader>Label</TableHeader>
+              <TableHeader>Created</TableHeader>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {draftRoles.map((draft) => (
+              <TableRow key={draft.id}>
+                <TableCell>{draft.label}</TableCell>
+                <TableCell>
+                  <DateValue>{draft.createdAt}</DateValue>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+
         {Object.entries(rolesByAccount).map(([, { account, roles }]) => (
           <section
             key={account.id}
