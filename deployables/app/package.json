@@ -62,7 +62,7 @@
     "@playwright/test": "1.54.1",
     "@react-router/dev": "7.7.1",
     "@tailwindcss/vite": "4.1.11",
-    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/jest-dom": "6.6.4",
     "@testing-library/react": "16.3.0",
     "@testing-library/user-event": "14.6.1",
     "@types/chrome": "0.1.1",
