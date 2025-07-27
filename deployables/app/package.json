@@ -21,7 +21,7 @@
     "@gnosis.pm/zodiac": "4.0.3",
     "@graphql-codegen/cli": "5.0.7",
     "@graphql-typed-document-node/core": "3.2.0",
-    "@icons-pack/react-simple-icons": "13.6.0",
+    "@icons-pack/react-simple-icons": "13.7.0",
     "@radix-ui/themes": "3.2.1",
     "@react-router/node": "7.7.1",
     "@sentry/browser": "9.40.0",

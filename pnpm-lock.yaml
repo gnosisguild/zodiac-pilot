@@ -101,8 +101,8 @@ importers:
         specifier: 3.2.0
         version: 3.2.0(graphql@16.11.0)
       '@icons-pack/react-simple-icons':
-        specifier: 13.6.0
-        version: 13.6.0(react@19.1.0)
+        specifier: 13.7.0
+        version: 13.7.0(react@19.1.0)
       '@radix-ui/themes':
         specifier: 3.2.1
         version: 3.2.1(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -496,8 +496,8 @@ importers:
         specifier: 2.2.6
         version: 2.2.6(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@icons-pack/react-simple-icons':
-        specifier: 13.6.0
-        version: 13.6.0(react@19.1.0)
+        specifier: 13.7.0
+        version: 13.7.0(react@19.1.0)
       '@react-router/serve':
         specifier: 7.7.1
         version: 7.7.1(react-router@7.7.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)
@@ -2683,8 +2683,8 @@ packages:
     resolution: {integrity: sha512-xeO57FpIu4p1Ri3Jq/EXq4ClRm86dVF2z/+kvFnyqVYRavTZmaFaUBbWCOuuTh0o/g7DSsk6kc2vrS4Vl5oPOQ==}
     engines: {node: '>=18.18'}
 
-  '@icons-pack/react-simple-icons@13.6.0':
-    resolution: {integrity: sha512-q4FySfJfM3Mv8jdF+Pq9zUmsiJe1IP4zbwFjsTK7uirqS+yeroadd40mAXphiQq90f5NHLFTfFkRiJDCLZS8/A==}
+  '@icons-pack/react-simple-icons@13.7.0':
+    resolution: {integrity: sha512-Vx5mnIm/3gD/9dpCfw/EdCXwzCswmvWnvMjL6zUJTbpk2PuyCdx5zSfiX8KQKYszD/1Z2mfaiBtqCxlHuDcpuA==}
     peerDependencies:
       react: ^16.13 || ^17 || ^18 || ^19
 
@@ -12194,7 +12194,7 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.2': {}
 
-  '@icons-pack/react-simple-icons@13.6.0(react@19.1.0)':
+  '@icons-pack/react-simple-icons@13.7.0(react@19.1.0)':
     dependencies:
       react: 19.1.0
 
