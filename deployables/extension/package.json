@@ -69,7 +69,7 @@
     "@epic-web/invariant": "1.0.0",
     "@gnosis.pm/zodiac": "4.0.3",
     "@headlessui/react": "2.2.6",
-    "@sentry/browser": "9.40.0",
+    "@sentry/browser": "9.42.1",
     "@zodiac/chains": "workspace:*",
     "@zodiac/db": "workspace:*",
     "@zodiac/env": "workspace:*",
