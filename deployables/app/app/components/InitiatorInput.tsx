@@ -40,8 +40,9 @@ export const InitiatorInput = ({
       {...props}
       options={data}
     >
-      {({ data: { value }, isSelected }) =>
-        isSelected != null && (
+      {({ data: { value }, ...props }) =>
+        'isSelected' in props &&
+        props.isSelected != null && (
           <KnownFromRoutes
             routes={knownRoutes}
             address={prefixAddress(undefined, value)}

@@ -8,7 +8,7 @@ export type OptionRenderProps<
   props: OptionProps<Option, isMulti> | SingleValueProps<Option, isMulti>,
 ) => ReactNode
 
-export type BaseOption = { label?: string | null; value: string }
+export type BaseOption = { label?: string | null; value: string | number }
 
 export function useOptionRenderer<
   Option extends BaseOption,
