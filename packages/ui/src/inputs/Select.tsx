@@ -1,18 +1,23 @@
 import classNames from 'classnames'
 import { ChevronDown, X } from 'lucide-react'
-import { createContext, useContext, type ReactNode } from 'react'
+import { createContext, useContext } from 'react'
 import BaseSelect, {
   type ClassNamesConfig,
   type ClearIndicatorProps,
   type DropdownIndicatorProps,
   type GroupBase,
-  type OptionProps,
   type Props,
 } from 'react-select'
 import Creatable, { type CreatableProps } from 'react-select/creatable'
 import { GhostButton } from '../buttons'
 import { Input, useClearLabel, useDropdownLabel } from './Input'
 import { InputLayout, type InputLayoutProps } from './InputLayout'
+import {
+  BaseOption,
+  OptionRenderProps,
+  useOptionRenderer,
+  useSingleValueRenderer,
+} from './useOptionRenderer'
 
 const SelectContext = createContext({ inline: false })
 
@@ -21,8 +26,6 @@ const useInline = () => {
 
   return inline
 }
-
-export type BaseOption = { label?: string | null; value: string }
 
 type SelectStylesOptions = {
   inline?: boolean
@@ -60,6 +63,7 @@ export function selectStyles<
           'hover:bg-zinc-300/50 dark:hover:bg-zinc-700/50 cursor-pointer',
         inline ? 'px-2 py-1 overflow-hidden' : 'px-4 py-2',
       ),
+    singleValue: () => classNames('px-4'),
     indicatorsContainer: () =>
       classNames('shrink-0 flex gap-1', !inline && 'mr-2'),
     indicatorSeparator: () => 'hidden',
@@ -67,13 +71,17 @@ export function selectStyles<
   }
 }
 
-type SelectBaseProps<Option extends BaseOption, Creatable extends boolean> = {
+type SelectBaseProps<
+  Option extends BaseOption,
+  isMulti extends boolean,
+  Creatable extends boolean,
+> = {
   label: string
   clearLabel?: string
   dropdownLabel?: string
   allowCreate?: Creatable
   inline?: boolean
-  children?: OptionRenderProps<Option>
+  children?: OptionRenderProps<Option, isMulti>
 }
 
 export type SelectProps<
@@ -82,8 +90,8 @@ export type SelectProps<
   isMulti extends boolean = false,
 > = Creatable extends true
   ? CreatableProps<Option, isMulti, GroupBase<Option>> &
-      SelectBaseProps<Option, Creatable>
-  : Props<Option, isMulti> & SelectBaseProps<Option, Creatable>
+      SelectBaseProps<Option, isMulti, Creatable>
+  : Props<Option, isMulti> & SelectBaseProps<Option, isMulti, Creatable>
 
 export function Select<
   Option extends BaseOption = BaseOption,
@@ -100,6 +108,9 @@ export function Select<
 }: SelectProps<Option, Creatable, false>) {
   const Component = allowCreate ? Creatable : BaseSelect
   const Layout = inline ? InlineLayout : InputLayout
+
+  const Option = useOptionRenderer<Option, false>(children)
+  const SingleValue = useSingleValueRenderer<Option, false>(children)
 
   return (
     <SelectContext value={{ inline }}>
@@ -120,10 +131,8 @@ export function Select<
                 ClearIndicator,
                 DropdownIndicator,
 
-                Option: createOptionRenderer<Option>(children),
-                SingleValue: createOptionRenderer<Option>(children, {
-                  isValue: true,
-                }),
+                Option,
+                SingleValue,
               }}
               classNames={selectStyles<Option>({ inline })}
             />
@@ -164,35 +173,3 @@ export function DropdownIndicator<Option, isMulti extends boolean = false>({
 Select.DropdownIndicator = DropdownIndicator
 
 const InlineLayout = ({ children }: InputLayoutProps) => children
-
-type OptionRenderProps<Option> = (props: OptionProps<Option>) => ReactNode
-type CreateOptionRendererOptions = {
-  isValue?: boolean
-}
-
-export function createOptionRenderer<Option extends BaseOption>(
-  children: OptionRenderProps<Option> | undefined,
-  { isValue = false }: CreateOptionRendererOptions = {},
-) {
-  if (children == null) {
-    return (props: OptionProps<Option>) => (
-      <div
-        {...props.innerProps}
-        className={props.getClassNames('option', props)}
-        style={isValue ? { gridArea: '1 / 1 / 2 / 3 ' } : {}}
-      >
-        {props.data.label}
-      </div>
-    )
-  }
-
-  return (props: OptionProps<Option>) => (
-    <div
-      {...props.innerProps}
-      className={props.getClassNames('option', props)}
-      style={isValue ? { gridArea: '1 / 1 / 2 / 3 ' } : {}}
-    >
-      {children(props)}
-    </div>
-  )
-}

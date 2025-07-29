@@ -1,6 +1,6 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
-import { invariantResponse } from '@epic-web/invariant'
+import { invariant, invariantResponse } from '@epic-web/invariant'
 import {
   addActiveAccounts,
   addRoleMembers,
@@ -14,6 +14,7 @@ import { getString, getUUIDList } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import { Form, MultiSelect, PrimaryButton, TextInput } from '@zodiac/ui'
+import { Address } from '@zodiac/web3'
 import { href, redirect } from 'react-router'
 import { Route } from './+types/create'
 import { Intent } from './intents'
@@ -98,11 +99,17 @@ const CreateRole = ({
       <Page.Header>Create new role</Page.Header>
       <Page.Main>
         <Form>
-          <TextInput required label="Label" name="label" />
+          <TextInput
+            required
+            label="Label"
+            name="label"
+            placeholder="Give this role a descriptive name"
+          />
 
           <MultiSelect
             label="Members"
             name="members"
+            placeholder="Specify who should be affected by this role"
             options={users.map((user) => ({
               label: user.fullName,
               value: user.id,
@@ -112,11 +119,23 @@ const CreateRole = ({
           <MultiSelect
             label="Accounts"
             name="accounts"
+            placeholder="Accounts this role should be activated on"
             options={accounts.map((account) => ({
               label: account.label,
               value: account.id,
             }))}
-          />
+          >
+            {({ data: { value } }) => {
+              const account = accounts.find((account) => account.id === value)
+
+              invariant(
+                account != null,
+                `Could not render account with id "${value}"`,
+              )
+
+              return <Address label={account.label}>{account.address}</Address>
+            }}
+          </MultiSelect>
 
           <Form.Actions>
             <PrimaryButton
