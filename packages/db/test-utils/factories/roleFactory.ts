@@ -1,0 +1,41 @@
+import { faker } from '@faker-js/faker'
+import {
+  Role,
+  RoleCreateInput,
+  RoleTable,
+  Tenant,
+  User,
+} from '@zodiac/db/schema'
+import { randomUUID } from 'crypto'
+import { createFactory } from './createFactory'
+
+export const roleFactory = createFactory<
+  RoleCreateInput,
+  Role,
+  [tenant: Tenant, createdBy: User]
+>({
+  build(tenant, createdBy, data) {
+    return {
+      createdById: createdBy.id,
+      workspaceId: tenant.defaultWorkspaceId,
+      tenantId: tenant.id,
+      label: faker.word.noun(),
+
+      ...data,
+    }
+  },
+  async create(db, data) {
+    const [role] = await db.insert(RoleTable).values(data).returning()
+
+    return role
+  },
+  createWithoutDb(data) {
+    return {
+      ...data,
+
+      createdAt: new Date(),
+      id: randomUUID(),
+      updatedAt: null,
+    }
+  },
+})
