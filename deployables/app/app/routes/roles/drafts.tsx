@@ -11,6 +11,7 @@ import { isUUID } from '@zodiac/schema'
 import {
   DateValue,
   Empty,
+  GhostLinkButton,
   Info,
   Popover,
   Table,
@@ -21,6 +22,8 @@ import {
   TableRow,
 } from '@zodiac/ui'
 import { Address } from '@zodiac/web3'
+import { Pencil } from 'lucide-react'
+import { href } from 'react-router'
 import type { Route } from './+types/drafts'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -51,6 +54,7 @@ export const loader = (args: Route.LoaderArgs) =>
 
 const DraftRoles = ({
   loaderData: { draftRoles, activatedAccounts, members },
+  params: { workspaceId },
 }: Route.ComponentProps) => {
   if (draftRoles.length === 0) {
     return <Info>You don't have any draft roles</Info>
@@ -59,7 +63,7 @@ const DraftRoles = ({
   return (
     <Table>
       <TableHead>
-        <TableRow>
+        <TableRow withActions>
           <TableHeader>Label</TableHeader>
           <TableHeader>Created</TableHeader>
           <TableHeader>Created by</TableHeader>
@@ -118,6 +122,19 @@ const DraftRoles = ({
                   </Popover>
                 </span>
               )}
+            </TableCell>
+            <TableCell>
+              <GhostLinkButton
+                iconOnly
+                icon={Pencil}
+                size="tiny"
+                to={href('/workspace/:workspaceId/roles/:roleId', {
+                  workspaceId,
+                  roleId: draft.id,
+                })}
+              >
+                Edit
+              </GhostLinkButton>
             </TableCell>
           </TableRow>
         ))}
