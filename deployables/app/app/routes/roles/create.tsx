@@ -77,7 +77,9 @@ export const action = (args: Route.ActionArgs) =>
         await addActiveAccounts(tx, role, accounts)
       })
 
-      return redirect(href('/workspace/:workspaceId/roles', { workspaceId }))
+      return redirect(
+        href('/workspace/:workspaceId/roles/drafts', { workspaceId }),
+      )
     },
     {
       ensureSignedIn: true,

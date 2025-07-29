@@ -160,7 +160,11 @@ export default [
           route('delete-wallet/:walletId', 'routes/auth/delete-wallet.tsx'),
         ]),
 
-        route('roles', 'routes/roles/list.tsx'),
+        route('roles', 'routes/roles/list-layout.tsx', [
+          index('routes/roles/managed.tsx'),
+          route('drafts', 'routes/roles/drafts.tsx'),
+          route('on-chain', 'routes/roles/on-chain.tsx'),
+        ]),
 
         ...prefix('roles', [route('create', 'routes/roles/create.tsx')]),
 
