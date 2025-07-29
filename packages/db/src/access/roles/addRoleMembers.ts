@@ -14,6 +14,7 @@ export const addRoleMembers = (db: DBClient, role: Role, members: UUID[]) => {
         roleId: role.id,
         userId: member,
         tenantId: role.tenantId,
+        workspaceId: role.workspaceId,
       })),
     )
     .onConflictDoNothing()

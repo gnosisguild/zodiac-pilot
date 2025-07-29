@@ -562,12 +562,14 @@ export const RoleMembershipTable = pgTable(
 
     ...createdTimestamp,
     ...tenantReference,
+    ...workspaceReference,
   },
   (table) => [
     primaryKey({ columns: [table.roleId, table.userId] }),
     index().on(table.roleId),
     index().on(table.tenantId),
     index().on(table.userId),
+    index().on(table.workspaceId),
   ],
 )
 
@@ -592,12 +594,14 @@ export const ActivatedRoleTable = pgTable(
 
     ...createdTimestamp,
     ...tenantReference,
+    ...workspaceReference,
   },
   (table) => [
     primaryKey({ columns: [table.accountId, table.roleId] }),
     index().on(table.accountId),
     index().on(table.roleId),
     index().on(table.tenantId),
+    index().on(table.workspaceId),
   ],
 )
 

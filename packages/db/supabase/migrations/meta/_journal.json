@@ -316,6 +316,13 @@
       "when": 1753443810404,
       "tag": "0044_add created by to role draft",
       "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1753788771563,
+      "tag": "0045_add workspace refernces",
+      "breakpoints": true
     }
   ]
 }

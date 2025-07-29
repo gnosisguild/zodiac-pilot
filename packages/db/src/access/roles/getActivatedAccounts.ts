@@ -1,21 +1,21 @@
-import {
-  Account,
-  AccountTable,
-  ActivatedRoleTable,
-  Role,
-} from '@zodiac/db/schema'
+import { Account, AccountTable, ActivatedRoleTable } from '@zodiac/db/schema'
 import { UUID } from 'crypto'
-import { asc, eq } from 'drizzle-orm'
+import { and, asc, eq } from 'drizzle-orm'
 import { DBClient } from '../../dbClient'
+
+type GetActivatedAccountsOptions = {
+  workspaceId: UUID
+  roleId?: UUID
+}
 
 export const getActivatedAccounts = async (
   db: DBClient,
-  role?: Role,
+  options: GetActivatedAccountsOptions,
 ): Promise<Record<UUID, Account[]>> => {
   const results = await db
     .select()
     .from(ActivatedRoleTable)
-    .where(role == null ? undefined : eq(ActivatedRoleTable.roleId, role.id))
+    .where(getWhere(options))
     .innerJoin(AccountTable, eq(AccountTable.id, ActivatedRoleTable.accountId))
     .orderBy(asc(AccountTable.label))
 
@@ -35,4 +35,14 @@ export const getActivatedAccounts = async (
     },
     {},
   )
+}
+
+const getWhere = ({ workspaceId, roleId }: GetActivatedAccountsOptions) => {
+  const where = eq(ActivatedRoleTable.workspaceId, workspaceId)
+
+  if (roleId != null) {
+    return and(where, eq(ActivatedRoleTable.roleId, roleId))
+  }
+
+  return where
 }

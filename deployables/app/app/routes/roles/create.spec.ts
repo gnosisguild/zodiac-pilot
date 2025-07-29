@@ -83,10 +83,12 @@ describe('Create role', () => {
       workspaceId: tenant.defaultWorkspaceId,
     })
 
-    await expect(getRoleMembers(dbClient(), role)).resolves.toEqual([
-      userA,
-      userB,
-    ])
+    await expect(
+      getRoleMembers(dbClient(), {
+        workspaceId: role.workspaceId,
+        roleId: role.id,
+      }),
+    ).resolves.toHaveProperty(role.id, [userA, userB])
   })
 
   dbIt('is possible to activate the role on multiple accounts', async () => {
@@ -135,7 +137,10 @@ describe('Create role', () => {
     })
 
     await expect(
-      getActivatedAccounts(dbClient(), role),
+      getActivatedAccounts(dbClient(), {
+        workspaceId: role.workspaceId,
+        roleId: role.id,
+      }),
     ).resolves.toHaveProperty(role.id, [accountA, accountB])
   })
 })

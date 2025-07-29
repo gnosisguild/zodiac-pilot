@@ -3,12 +3,14 @@ import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
   getActivatedAccounts,
+  getRoleMembers,
   getRoles,
   getWorkspace,
 } from '@zodiac/db'
 import { isUUID } from '@zodiac/schema'
 import {
   DateValue,
+  Empty,
   Info,
   Popover,
   Table,
@@ -29,7 +31,10 @@ export const loader = (args: Route.LoaderArgs) =>
 
       return {
         draftRoles: await getRoles(dbClient(), { workspaceId }),
-        activatedAccounts: await getActivatedAccounts(dbClient()),
+        activatedAccounts: await getActivatedAccounts(dbClient(), {
+          workspaceId,
+        }),
+        members: await getRoleMembers(dbClient(), { workspaceId }),
       }
     },
     {
@@ -45,7 +50,7 @@ export const loader = (args: Route.LoaderArgs) =>
   )
 
 const DraftRoles = ({
-  loaderData: { draftRoles, activatedAccounts },
+  loaderData: { draftRoles, activatedAccounts, members },
 }: Route.ComponentProps) => {
   if (draftRoles.length === 0) {
     return <Info>You don't have any draft roles</Info>
@@ -58,6 +63,7 @@ const DraftRoles = ({
           <TableHeader>Label</TableHeader>
           <TableHeader>Created</TableHeader>
           <TableHeader>Accounts</TableHeader>
+          <TableHeader>Members</TableHeader>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -68,23 +74,48 @@ const DraftRoles = ({
               <DateValue>{draft.createdAt}</DateValue>
             </TableCell>
             <TableCell>
-              <span className="inline-flex cursor-pointer underline">
-                <Popover
-                  popover={
-                    <ol className="m-1 flex flex-col gap-2">
-                      {activatedAccounts[draft.id].map((account) => (
-                        <li key={account.id}>
-                          <Address shorten size="small" label={account.label}>
-                            {account.address}
-                          </Address>
-                        </li>
-                      ))}
-                    </ol>
-                  }
-                >
-                  {activatedAccounts[draft.id].length} accounts
-                </Popover>
-              </span>
+              {activatedAccounts[draft.id] == null ? (
+                <Empty />
+              ) : (
+                <span className="inline-flex cursor-pointer underline">
+                  <Popover
+                    popover={
+                      <ol className="m-1 flex flex-col gap-2">
+                        {activatedAccounts[draft.id].map((account) => (
+                          <li key={account.id}>
+                            <Address shorten size="small" label={account.label}>
+                              {account.address}
+                            </Address>
+                          </li>
+                        ))}
+                      </ol>
+                    }
+                  >
+                    {activatedAccounts[draft.id].length} accounts
+                  </Popover>
+                </span>
+              )}
+            </TableCell>
+            <TableCell>
+              {members[draft.id] == null ? (
+                <Empty />
+              ) : (
+                <span className="inline-flex cursor-pointer underline">
+                  <Popover
+                    popover={
+                      <ol className="m-1 flex flex-col gap-2">
+                        {members[draft.id].map((member) => (
+                          <li key={member.id} className="text-xs">
+                            {member.fullName}
+                          </li>
+                        ))}
+                      </ol>
+                    }
+                  >
+                    {members[draft.id].length} members
+                  </Popover>
+                </span>
+              )}
             </TableCell>
           </TableRow>
         ))}

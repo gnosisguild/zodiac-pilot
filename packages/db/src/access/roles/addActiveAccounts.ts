@@ -18,6 +18,7 @@ export const addActiveAccounts = (
         roleId: role.id,
         tenantId: role.tenantId,
         accountId: account,
+        workspaceId: role.workspaceId,
       })),
     )
     .onConflictDoNothing()
