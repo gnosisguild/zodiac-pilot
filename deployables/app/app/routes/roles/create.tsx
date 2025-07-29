@@ -3,12 +3,12 @@ import { Page } from '@/components'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import {
   addActiveAccounts,
-  addRoleMembers,
   createRole,
   dbClient,
   getAccounts,
   getUsers,
   getWorkspace,
+  setRoleMembers,
 } from '@zodiac/db'
 import { getString, getUUIDList } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
@@ -68,13 +68,9 @@ export const action = (args: Route.ActionArgs) =>
           workspaceId,
         })
 
-        const members = getUUIDList(data, 'members')
+        await setRoleMembers(tx, role, getUUIDList(data, 'members'))
 
-        await addRoleMembers(tx, role, members)
-
-        const accounts = getUUIDList(data, 'accounts')
-
-        await addActiveAccounts(tx, role, accounts)
+        await addActiveAccounts(tx, role, getUUIDList(data, 'accounts'))
       })
 
       return redirect(

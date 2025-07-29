@@ -2,17 +2,20 @@ import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
 import {
-  addRoleMembers,
   dbClient,
   getRole,
+  getRoleMembers,
   getUsers,
+  setRoleMembers,
   updateRole,
 } from '@zodiac/db'
 import { getString, getUUIDList } from '@zodiac/form-data'
+import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import { Form, MultiSelect, PrimaryButton, TextInput } from '@zodiac/ui'
 import { href, redirect } from 'react-router'
 import { Route } from './+types/edit'
+import { Intent } from './intents'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -25,9 +28,12 @@ export const loader = (args: Route.LoaderArgs) =>
     }) => {
       invariantResponse(isUUID(roleId), '"roleId" is not a UUID')
 
+      const members = await getRoleMembers(dbClient(), { roleId })
+
       return {
         role: await getRole(dbClient(), roleId),
         users: await getUsers(dbClient(), { tenantId: tenant.id }),
+        members: roleId in members ? members[roleId] : [],
       }
     },
     {
@@ -59,7 +65,7 @@ export const action = (args: Route.ActionArgs) =>
           await updateRole(tx, roleId, { label: getString(data, 'label') })
         }
 
-        await addRoleMembers(tx, role, getUUIDList(data, 'members'))
+        await setRoleMembers(tx, role, getUUIDList(data, 'members'))
       })
 
       return redirect(
@@ -78,7 +84,9 @@ export const action = (args: Route.ActionArgs) =>
     },
   )
 
-const EditRole = ({ loaderData: { role, users } }: Route.ComponentProps) => {
+const EditRole = ({
+  loaderData: { role, users, members },
+}: Route.ComponentProps) => {
   return (
     <Page>
       <Page.Header>Edit role</Page.Header>
@@ -93,10 +101,20 @@ const EditRole = ({ loaderData: { role, users } }: Route.ComponentProps) => {
               label: user.fullName,
               value: user.id,
             }))}
+            defaultValue={members.map((member) => ({
+              label: member.fullName,
+              value: member.id,
+            }))}
           />
 
           <Form.Actions>
-            <PrimaryButton submit>Save</PrimaryButton>
+            <PrimaryButton
+              submit
+              intent={Intent.Save}
+              busy={useIsPending(Intent.Save)}
+            >
+              Save
+            </PrimaryButton>
           </Form.Actions>
         </Form>
       </Page.Main>

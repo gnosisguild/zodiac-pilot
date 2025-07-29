@@ -1,7 +1,7 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { dbClient, getRole, getRoleMembers } from '@zodiac/db'
+import { dbClient, getRole, getRoleMembers, setRoleMembers } from '@zodiac/db'
 import {
   dbIt,
   roleFactory,
@@ -70,6 +70,34 @@ describe('Edit role', () => {
       await expect(
         getRoleMembers(dbClient(), { roleId: role.id }),
       ).resolves.toHaveProperty(role.id, [user])
+    })
+
+    dbIt('is possible to remove members', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const role = await roleFactory.create(tenant, user)
+
+      await setRoleMembers(dbClient(), role, [user.id])
+
+      await render(
+        href('/workspace/:workspaceId/roles/:roleId', {
+          workspaceId: tenant.defaultWorkspaceId,
+          roleId: role.id,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Remove' }),
+      )
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      await expect(
+        getRoleMembers(dbClient(), { roleId: role.id }),
+      ).resolves.not.toHaveProperty(role.id)
     })
   })
 })
