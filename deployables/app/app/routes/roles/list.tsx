@@ -5,11 +5,14 @@ import { graphqlClient } from '@/graphql-client'
 import { Chain } from '@/routes-ui'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
-import { dbClient, getAccounts, getWorkspace } from '@zodiac/db'
+import { dbClient, getAccounts, getRoles, getWorkspace } from '@zodiac/db'
 import { Account } from '@zodiac/db/schema'
 import { decodeRoleKey } from '@zodiac/modules'
 import { isUUID, PrefixedAddress, verifyHexAddress } from '@zodiac/schema'
 import {
+  DateValue,
+  Info,
+  SecondaryLinkButton,
   Table,
   TableBody,
   TableCell,
@@ -18,6 +21,7 @@ import {
   TableRow,
 } from '@zodiac/ui'
 import { Address } from '@zodiac/web3'
+import { href } from 'react-router'
 import { prefixAddress } from 'ser-kit'
 import type { Route } from './+types/list'
 
@@ -37,7 +41,7 @@ export const loader = (args: Route.LoaderArgs) =>
         tenantId: tenant.id,
       })
 
-      const roles = await Promise.all(
+      const onChainRoles = await Promise.all(
         accounts.flatMap(async (account) => {
           const { rolesModifiers } = await graphqlClient().query(
             FetchRolesDocument,
@@ -48,7 +52,7 @@ export const loader = (args: Route.LoaderArgs) =>
         }),
       )
 
-      const rolesByAccount = roles
+      const rolesByAccount = onChainRoles
         .flat()
         .reduce<
           Record<
@@ -85,7 +89,10 @@ export const loader = (args: Route.LoaderArgs) =>
           return { ...result, [prefixedAddress]: { account, roles } }
         }, {})
 
-      return { rolesByAccount }
+      return {
+        rolesByAccount,
+        draftRoles: await getRoles(dbClient(), { workspaceId }),
+      }
     },
     {
       ensureSignedIn: true,
@@ -99,43 +106,86 @@ export const loader = (args: Route.LoaderArgs) =>
     },
   )
 
-const Roles = ({ loaderData: { rolesByAccount } }: Route.ComponentProps) => {
+const Roles = ({
+  loaderData: { rolesByAccount, draftRoles },
+  params: { workspaceId },
+}: Route.ComponentProps) => {
   return (
     <Page>
-      <Page.Header>Roles</Page.Header>
-      <Page.Main>
-        {Object.entries(rolesByAccount).map(([, { account, roles }]) => (
-          <section
-            key={account.id}
-            className="flex flex-col gap-4 rounded border p-4 dark:border-zinc-700"
+      <Page.Header
+        action={
+          <SecondaryLinkButton
+            to={href('/workspace/:workspaceId/roles/create', { workspaceId })}
           >
-            <h2 className="font-semibold">
-              {account.label}
+            Create new role
+          </SecondaryLinkButton>
+        }
+      >
+        Roles
+      </Page.Header>
+      <Page.Main>
+        <section>
+          <h2 className="text-lg">Draft roles</h2>
 
-              <span className="mt-1.5 flex items-center gap-8 text-xs text-zinc-300">
-                <Chain chainId={account.chainId} />
-                <Address size="small" shorten>
-                  {account.address}
-                </Address>
-              </span>
-            </h2>
+          {draftRoles.length === 0 && (
+            <Info>You don't have any draft roles</Info>
+          )}
 
-            <Table bleed dense className="[--gutter:--spacing(4)]">
+          {draftRoles.map((draft) => (
+            <Table>
               <TableHead>
                 <TableRow>
-                  <TableHeader className="w-1/3">Label</TableHeader>
+                  <TableHeader>Label</TableHeader>
+                  <TableHeader>Created</TableHeader>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {roles.map((role) => (
-                  <TableRow key={role.key}>
-                    <TableCell>{decodeRoleKey(role.key)}</TableCell>
-                  </TableRow>
-                ))}
+                <TableRow key={draft.id}>
+                  <TableCell>{draft.label}</TableCell>
+                  <TableCell>
+                    <DateValue>{draft.createdAt}</DateValue>
+                  </TableCell>
+                </TableRow>
               </TableBody>
             </Table>
-          </section>
-        ))}
+          ))}
+        </section>
+
+        <section className="flex flex-col gap-8">
+          <h2 className="text-lg">On-Chain roles</h2>
+          {Object.entries(rolesByAccount).map(([, { account, roles }]) => (
+            <section
+              key={account.id}
+              className="flex flex-col gap-4 rounded border p-4 dark:border-zinc-700"
+            >
+              <h2 className="font-semibold">
+                {account.label}
+
+                <span className="mt-1.5 flex items-center gap-8 text-xs text-zinc-300">
+                  <Chain chainId={account.chainId} />
+                  <Address size="small" shorten>
+                    {account.address}
+                  </Address>
+                </span>
+              </h2>
+
+              <Table bleed dense className="[--gutter:--spacing(4)]">
+                <TableHead>
+                  <TableRow>
+                    <TableHeader className="w-1/3">Label</TableHeader>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {roles.map((role) => (
+                    <TableRow key={role.key}>
+                      <TableCell>{decodeRoleKey(role.key)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </section>
+          ))}
+        </section>
       </Page.Main>
     </Page>
   )
