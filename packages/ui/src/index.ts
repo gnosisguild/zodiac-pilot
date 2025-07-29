@@ -1,6 +1,7 @@
 export * from './alerts'
 export { Breadcrumbs } from './Breadcrumbs'
 export * from './buttons'
+export { Card } from './Card'
 export * from './catalyst'
 export { Strong, TextLink } from './catalyst'
 export { Collapsible } from './Collapsible'

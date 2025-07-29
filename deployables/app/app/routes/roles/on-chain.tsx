@@ -9,6 +9,7 @@ import { Account } from '@zodiac/db/schema'
 import { decodeRoleKey } from '@zodiac/modules'
 import { isUUID, verifyHexAddress } from '@zodiac/schema'
 import {
+  Card,
   Table,
   TableBody,
   TableCell,
@@ -52,7 +53,7 @@ export const loader = (args: Route.LoaderArgs) =>
         .reduce<
           Record<
             PrefixedAddress,
-            { account: Account; roles: RoleListEntryFragment[] }
+            { account: Account; id: string; roles: RoleListEntryFragment[] }
           >
         >((result, { roles, avatar: _avatar, chainId }) => {
           if (roles.length === 0) {
@@ -81,7 +82,10 @@ export const loader = (args: Route.LoaderArgs) =>
             }
           }
 
-          return { ...result, [prefixedAddress]: { account, roles } }
+          return {
+            ...result,
+            [prefixedAddress]: { account, roles },
+          }
         }, {})
 
       return {
@@ -104,20 +108,13 @@ const OnChainRoles = ({
   loaderData: { rolesByAccount },
 }: Route.ComponentProps) => {
   return Object.entries(rolesByAccount).map(([, { account, roles }]) => (
-    <section
-      key={account.id}
-      className="flex flex-col gap-4 rounded border p-4 dark:border-zinc-700"
-    >
-      <h2 className="font-semibold">
-        {account.label}
-
-        <span className="mt-1.5 flex items-center gap-8 text-xs text-zinc-300">
-          <Chain chainId={account.chainId} />
-          <Address size="small" shorten>
-            {account.address}
-          </Address>
-        </span>
-      </h2>
+    <Card key={account.id} title={account.label}>
+      <span className="mt-1.5 flex items-center gap-8 text-xs text-zinc-300">
+        <Chain chainId={account.chainId} />
+        <Address size="small" shorten>
+          {account.address}
+        </Address>
+      </span>
 
       <Table bleed dense className="[--gutter:--spacing(4)]">
         <TableHead>
@@ -128,12 +125,14 @@ const OnChainRoles = ({
         <TableBody>
           {roles.map((role) => (
             <TableRow key={role.key}>
-              <TableCell>{decodeRoleKey(role.key)}</TableCell>
+              <TableCell>
+                {decodeRoleKey(role.key)} {role.id}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-    </section>
+    </Card>
   ))
 }
 
