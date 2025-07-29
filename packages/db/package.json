@@ -53,7 +53,7 @@
     "@dotenvx/dotenvx": "1.48.3",
     "@faker-js/faker": "9.9.0",
     "@types/node": "22.14.1",
-    "@types/react": "19.1.8",
+    "@types/react": "19.1.9",
     "@workos-inc/node": "7.62.1",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/test-utils": "workspace:*",
