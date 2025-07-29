@@ -2,9 +2,11 @@ import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
 import {
+  addActiveAccounts,
   addRoleMembers,
   createRole,
   dbClient,
+  getAccounts,
   getUsers,
   getWorkspace,
 } from '@zodiac/db'
@@ -23,8 +25,16 @@ export const loader = async (args: Route.LoaderArgs) =>
       context: {
         auth: { tenant },
       },
+      params: { workspaceId },
     }) => {
-      return { users: await getUsers(dbClient(), { tenantId: tenant.id }) }
+      invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID')
+
+      const [users, accounts] = await Promise.all([
+        getUsers(dbClient(), { tenantId: tenant.id }),
+        getAccounts(dbClient(), { tenantId: tenant.id, workspaceId }),
+      ])
+
+      return { users, accounts }
     },
     {
       ensureSignedIn: true,
@@ -60,6 +70,10 @@ export const action = (args: Route.ActionArgs) =>
         const members = getUUIDList(data, 'members')
 
         await addRoleMembers(tx, role, members)
+
+        const accounts = getUUIDList(data, 'accounts')
+
+        await addActiveAccounts(tx, role, accounts)
       })
 
       return redirect(href('/workspace/:workspaceId/roles', { workspaceId }))
@@ -76,7 +90,9 @@ export const action = (args: Route.ActionArgs) =>
     },
   )
 
-const CreateRole = ({ loaderData: { users } }: Route.ComponentProps) => {
+const CreateRole = ({
+  loaderData: { users, accounts },
+}: Route.ComponentProps) => {
   return (
     <Page>
       <Page.Header>Create new role</Page.Header>
@@ -90,6 +106,15 @@ const CreateRole = ({ loaderData: { users } }: Route.ComponentProps) => {
             options={users.map((user) => ({
               label: user.fullName,
               value: user.id,
+            }))}
+          />
+
+          <MultiSelect
+            label="Accounts"
+            name="accounts"
+            options={accounts.map((account) => ({
+              label: account.label,
+              value: account.id,
             }))}
           />
 

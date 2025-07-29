@@ -1,8 +1,19 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { addUserToTenant, dbClient, getRoleMembers, getRoles } from '@zodiac/db'
-import { dbIt, tenantFactory, userFactory } from '@zodiac/db/test-utils'
+import {
+  addUserToTenant,
+  dbClient,
+  getActivatedAccounts,
+  getRoleMembers,
+  getRoles,
+} from '@zodiac/db'
+import {
+  accountFactory,
+  dbIt,
+  tenantFactory,
+  userFactory,
+} from '@zodiac/db/test-utils'
 import { waitForPendingActions } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { describe, expect } from 'vitest'
@@ -53,7 +64,6 @@ describe('Create role', () => {
     await userEvent.click(
       await screen.findByRole('combobox', { name: 'Members' }),
     )
-
     await userEvent.click(
       await screen.findByRole('option', { name: userA.fullName }),
     )
@@ -76,6 +86,57 @@ describe('Create role', () => {
     await expect(getRoleMembers(dbClient(), role)).resolves.toEqual([
       userA,
       userB,
+    ])
+  })
+
+  dbIt('is possible to activate the role on multiple accounts', async () => {
+    const user = await userFactory.create()
+    const tenant = await tenantFactory.create(user)
+
+    const accountA = await accountFactory.create(tenant, user, {
+      label: 'Account A',
+    })
+    const accountB = await accountFactory.create(tenant, user, {
+      label: 'Account B',
+    })
+
+    await render(
+      href('/workspace/:workspaceId/roles/create', {
+        workspaceId: tenant.defaultWorkspaceId,
+      }),
+      { tenant, user },
+    )
+
+    await userEvent.type(
+      await screen.findByRole('textbox', { name: 'Label' }),
+      'New role',
+    )
+
+    await userEvent.click(
+      await screen.findByRole('combobox', { name: 'Accounts' }),
+    )
+    await userEvent.click(
+      await screen.findByRole('option', { name: 'Account A' }),
+    )
+
+    await userEvent.click(
+      await screen.findByRole('combobox', { name: 'Accounts' }),
+    )
+    await userEvent.click(
+      await screen.findByRole('option', { name: 'Account B' }),
+    )
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Create' }))
+
+    await waitForPendingActions()
+
+    const [role] = await getRoles(dbClient(), {
+      workspaceId: tenant.defaultWorkspaceId,
+    })
+
+    await expect(getActivatedAccounts(dbClient(), role)).resolves.toEqual([
+      accountA,
+      accountB,
     ])
   })
 })

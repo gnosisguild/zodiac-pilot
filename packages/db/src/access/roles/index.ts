@@ -1,4 +1,6 @@
+export { addActiveAccounts } from './addActiveAccounts'
 export { addRoleMembers } from './addRoleMembers'
 export { createRole } from './createRole'
+export { getActivatedAccounts } from './getActivatedAccounts'
 export { getRoleMembers } from './getRoleMembers'
 export { getRoles } from './getRoles'
