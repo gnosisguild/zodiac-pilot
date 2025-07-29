@@ -33,6 +33,7 @@ export function ReviewAccountSection({
   waypoints,
   defaultSafeNonces,
 }: ReviewAccountSectionProps) {
+  const defaultSafeNoncesEntries = Object.entries(defaultSafeNonces)
   return (
     <>
       {!isValidRoute && (
@@ -73,36 +74,38 @@ export function ReviewAccountSection({
           </Routes>
         )}
       </Labeled>
-      <div className="flex flex-col gap-4">
-        <Collapsible title="Define custom Safe transaction nonce">
-          {Object.entries(defaultSafeNonces).map(
-            ([safePrefixedAddress, defaultNonce]) => {
-              const wp = waypoints.find(
-                (wp) => wp.account.prefixedAddress === safePrefixedAddress,
-              )
-              invariant(wp, 'waypoint not found')
-              return (
-                <div
-                  key={wp.account.prefixedAddress}
-                  className="flex flex-col items-end gap-4 md:flex-row"
-                >
-                  <div className="w-full md:w-1/3">
-                    <Waypoint account={wp.account} />
+      {defaultSafeNoncesEntries.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <Collapsible title="Define custom Safe transaction nonce">
+            {defaultSafeNoncesEntries.map(
+              ([safePrefixedAddress, defaultNonce]) => {
+                const wp = waypoints.find(
+                  (wp) => wp.account.prefixedAddress === safePrefixedAddress,
+                )
+                invariant(wp, 'waypoint not found')
+                return (
+                  <div
+                    key={wp.account.prefixedAddress}
+                    className="flex flex-col items-end gap-4 md:flex-row"
+                  >
+                    <div className="w-full md:w-1/3">
+                      <Waypoint account={wp.account} />
+                    </div>
+                    <div className="mr-1 w-full md:w-3/4">
+                      <NumberInput
+                        label="Nonce"
+                        name={`customSafeNonce[${wp.account.prefixedAddress}]`}
+                        placeholder={defaultNonce.toString()}
+                        min={0}
+                      />
+                    </div>
                   </div>
-                  <div className="mr-1 w-full md:w-3/4">
-                    <NumberInput
-                      label="Nonce"
-                      name={`customSafeNonce[${wp.account.prefixedAddress}]`}
-                      placeholder={defaultNonce.toString()}
-                      min={0}
-                    />
-                  </div>
-                </div>
-              )
-            },
-          )}
-        </Collapsible>
-      </div>
+                )
+              },
+            )}
+          </Collapsible>
+        </div>
+      )}
     </>
   )
 }
