@@ -160,6 +160,7 @@
     "**/*.d.ts",
     "**/docker-compose.yml",
     "**/*.sql",
-    "**/gql/**"
+    "**/gql/**",
+    "**/meta/**"
   ]
 }
