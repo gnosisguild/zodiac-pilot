@@ -59,7 +59,7 @@ function SelectInput<Option extends BaseOption>({
       {values.length > 0 && (
         <ul className="mb-2 flex flex-col gap-1 text-sm">
           {values.map((value) => (
-            <li className="flex items-center justify-between">
+            <li className="flex items-center justify-between" key={value.value}>
               {value.label}
               <GhostButton
                 iconOnly

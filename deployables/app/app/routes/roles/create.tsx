@@ -1,8 +1,14 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
-import { createRole, dbClient, getUsers, getWorkspace } from '@zodiac/db'
-import { getString } from '@zodiac/form-data'
+import {
+  addRoleMembers,
+  createRole,
+  dbClient,
+  getUsers,
+  getWorkspace,
+} from '@zodiac/db'
+import { getString, getUUIDList } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import { Form, MultiSelect, PrimaryButton, TextInput } from '@zodiac/ui'
@@ -45,9 +51,15 @@ export const action = (args: Route.ActionArgs) =>
       const data = await request.formData()
       invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID')
 
-      await createRole(dbClient(), user, tenant, {
-        label: getString(data, 'label'),
-        workspaceId,
+      await dbClient().transaction(async (tx) => {
+        const role = await createRole(tx, user, tenant, {
+          label: getString(data, 'label'),
+          workspaceId,
+        })
+
+        const members = getUUIDList(data, 'members')
+
+        await addRoleMembers(tx, role, members)
       })
 
       return redirect(href('/workspace/:workspaceId/roles', { workspaceId }))
@@ -74,6 +86,7 @@ const CreateRole = ({ loaderData: { users } }: Route.ComponentProps) => {
 
           <MultiSelect
             label="Members"
+            name="members"
             options={users.map((user) => ({
               label: user.fullName,
               value: user.id,
