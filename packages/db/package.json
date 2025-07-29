@@ -67,6 +67,6 @@
     "vitest": "3.2.4"
   },
   "peerDependencies": {
-    "react": "19.1.0"
+    "react": "19.1.1"
   }
 }

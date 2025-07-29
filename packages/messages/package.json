@@ -30,6 +30,6 @@
     "eslint": "9.32.0"
   },
   "peerDependencies": {
-    "react": "19.1.0"
+    "react": "19.1.1"
   }
 }

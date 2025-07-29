@@ -14,8 +14,8 @@
     "classnames": "2.5.1",
     "isbot": "5.1.28",
     "lucide-react": "0.526.0",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
     "react-router": "7.7.1",
     "rough-notation": "0.5.1"
   },
