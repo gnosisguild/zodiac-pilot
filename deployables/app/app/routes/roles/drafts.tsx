@@ -62,6 +62,7 @@ const DraftRoles = ({
         <TableRow>
           <TableHeader>Label</TableHeader>
           <TableHeader>Created</TableHeader>
+          <TableHeader>Created by</TableHeader>
           <TableHeader>Accounts</TableHeader>
           <TableHeader>Members</TableHeader>
         </TableRow>
@@ -73,6 +74,7 @@ const DraftRoles = ({
             <TableCell>
               <DateValue>{draft.createdAt}</DateValue>
             </TableCell>
+            <TableCell>{draft.createBy.fullName}</TableCell>
             <TableCell>
               {activatedAccounts[draft.id] == null ? (
                 <Empty />

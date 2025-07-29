@@ -125,9 +125,7 @@ const OnChainRoles = ({
         <TableBody>
           {roles.map((role) => (
             <TableRow key={role.key}>
-              <TableCell>
-                {decodeRoleKey(role.key)} {role.id}
-              </TableCell>
+              <TableCell>{decodeRoleKey(role.key)}</TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -548,6 +548,13 @@ export const RoleTable = pgTable(
 
 export type Role = typeof RoleTable.$inferSelect
 
+const RoleRelations = relations(RoleTable, ({ one }) => ({
+  createBy: one(UserTable, {
+    fields: [RoleTable.createdById],
+    references: [UserTable.id],
+  }),
+}))
+
 export const RoleMembershipTable = pgTable(
   'RoleMembership',
   {
@@ -635,4 +642,5 @@ export const schema = {
   SignedTransactionRelations,
   WorkspaceRelations,
   RoleMembershipRelations,
+  RoleRelations,
 }
