@@ -1,14 +1,16 @@
 import { authorizedLoader } from '@/auth-server'
-import { FetchRolesDocument, RoleListEntryFragment } from '@/graphql'
-import { graphqlClient } from '@/graphql-client'
-import { invariant, invariantResponse } from '@epic-web/invariant'
-import { verifyChainId } from '@zodiac/chains'
-import { dbClient, getAccounts, getRoles, getWorkspace } from '@zodiac/db'
-import { Account } from '@zodiac/db/schema'
-import { isUUID, PrefixedAddress, verifyHexAddress } from '@zodiac/schema'
+import { invariantResponse } from '@epic-web/invariant'
+import {
+  dbClient,
+  getActivatedAccounts,
+  getRoles,
+  getWorkspace,
+} from '@zodiac/db'
+import { isUUID } from '@zodiac/schema'
 import {
   DateValue,
   Info,
+  Popover,
   Table,
   TableBody,
   TableCell,
@@ -16,76 +18,18 @@ import {
   TableHeader,
   TableRow,
 } from '@zodiac/ui'
-import { prefixAddress } from 'ser-kit'
+import { Address } from '@zodiac/web3'
 import type { Route } from './+types/drafts'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
-    async ({
-      params: { workspaceId },
-      context: {
-        auth: { tenant },
-      },
-    }) => {
+    async ({ params: { workspaceId } }) => {
       invariantResponse(isUUID(workspaceId), '"workspaceId" is no UUID')
 
-      const accounts = await getAccounts(dbClient(), {
-        workspaceId,
-        tenantId: tenant.id,
-      })
-
-      const onChainRoles = await Promise.all(
-        accounts.flatMap(async (account) => {
-          const { rolesModifiers } = await graphqlClient().query(
-            FetchRolesDocument,
-            { account: prefixAddress(account.chainId, account.address) },
-          )
-
-          return rolesModifiers
-        }),
-      )
-
-      const rolesByAccount = onChainRoles
-        .flat()
-        .reduce<
-          Record<
-            PrefixedAddress,
-            { account: Account; roles: RoleListEntryFragment[] }
-          >
-        >((result, { roles, avatar: _avatar, chainId }) => {
-          if (roles.length === 0) {
-            return result
-          }
-
-          const avatar = verifyHexAddress(_avatar)
-          const prefixedAddress = prefixAddress(verifyChainId(chainId), avatar)
-          const account = accounts.find(
-            (a) => a.address === avatar && a.chainId === chainId,
-          )
-
-          invariant(
-            account != null,
-            `Could not find account with address "${avatar}" on chain "${chainId}"`,
-          )
-
-          if (prefixedAddress in result) {
-            return {
-              ...result,
-
-              [avatar]: {
-                account,
-                roles: [...result[prefixedAddress].roles, ...roles],
-              },
-            }
-          }
-
-          return { ...result, [prefixedAddress]: { account, roles } }
-        }, {})
-
       return {
-        rolesByAccount,
         draftRoles: await getRoles(dbClient(), { workspaceId }),
+        activatedAccounts: await getActivatedAccounts(dbClient()),
       }
     },
     {
@@ -100,7 +44,9 @@ export const loader = (args: Route.LoaderArgs) =>
     },
   )
 
-const DraftRoles = ({ loaderData: { draftRoles } }: Route.ComponentProps) => {
+const DraftRoles = ({
+  loaderData: { draftRoles, activatedAccounts },
+}: Route.ComponentProps) => {
   if (draftRoles.length === 0) {
     return <Info>You don't have any draft roles</Info>
   }
@@ -111,6 +57,7 @@ const DraftRoles = ({ loaderData: { draftRoles } }: Route.ComponentProps) => {
         <TableRow>
           <TableHeader>Label</TableHeader>
           <TableHeader>Created</TableHeader>
+          <TableHeader>Accounts</TableHeader>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -119,6 +66,25 @@ const DraftRoles = ({ loaderData: { draftRoles } }: Route.ComponentProps) => {
             <TableCell>{draft.label}</TableCell>
             <TableCell>
               <DateValue>{draft.createdAt}</DateValue>
+            </TableCell>
+            <TableCell>
+              <span className="inline-flex cursor-pointer underline">
+                <Popover
+                  popover={
+                    <ol className="m-1 flex flex-col gap-2">
+                      {activatedAccounts[draft.id].map((account) => (
+                        <li key={account.id}>
+                          <Address shorten size="small" label={account.label}>
+                            {account.address}
+                          </Address>
+                        </li>
+                      ))}
+                    </ol>
+                  }
+                >
+                  {activatedAccounts[draft.id].length} accounts
+                </Popover>
+              </span>
             </TableCell>
           </TableRow>
         ))}

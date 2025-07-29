@@ -134,9 +134,8 @@ describe('Create role', () => {
       workspaceId: tenant.defaultWorkspaceId,
     })
 
-    await expect(getActivatedAccounts(dbClient(), role)).resolves.toEqual([
-      accountA,
-      accountB,
-    ])
+    await expect(
+      getActivatedAccounts(dbClient(), role),
+    ).resolves.toHaveProperty(role.id, [accountA, accountB])
   })
 })
