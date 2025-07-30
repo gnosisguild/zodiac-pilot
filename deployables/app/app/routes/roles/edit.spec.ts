@@ -5,6 +5,7 @@ import {
   dbClient,
   getActivatedAccounts,
   getRole,
+  getRoleActionAssets,
   getRoleActions,
   getRoleMembers,
   setActiveAccounts,
@@ -269,6 +270,45 @@ describe('Edit role', () => {
       expect(
         await screen.findByRole('region', { name: 'Test action updated' }),
       ).toBeInTheDocument()
+    })
+
+    describe('Assets', () => {
+      dbIt('is possible to add an asset', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+
+        const role = await roleFactory.create(tenant, user)
+        const action = await roleActionFactory.create(role, user)
+
+        await render(
+          href('/workspace/:workspaceId/roles/:roleId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            roleId: role.id,
+          }),
+          { tenant, user },
+        )
+
+        await userEvent.click(
+          await screen.findByRole('link', { name: 'Add assets' }),
+        )
+
+        await userEvent.click(
+          await screen.findByRole('combobox', { name: 'Assets' }),
+        )
+        await userEvent.click(
+          await screen.findByRole('option', { name: 'WETH' }),
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Add' }),
+        )
+
+        await waitForPendingActions()
+
+        const [asset] = await getRoleActionAssets(dbClient(), action.id)
+
+        expect(asset).toMatchObject({ roleActionId: action.id, symbol: 'WETH' })
+      })
     })
   })
 })

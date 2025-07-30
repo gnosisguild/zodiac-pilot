@@ -654,6 +654,31 @@ const RoleActionRelations = relations(RoleActionTable, ({ one }) => ({
   }),
 }))
 
+export const ActionAssetTable = pgTable(
+  'ActionAsset',
+  {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+
+    roleActionId: uuid()
+      .notNull()
+      .$type<UUID>()
+      .references(() => RoleActionTable.id, { onDelete: 'cascade' }),
+
+    address: text().$type<HexAddress>(),
+    symbol: text().notNull(),
+
+    ...createdTimestamp,
+    ...updatedTimestamp,
+    ...tenantReference,
+    ...workspaceReference,
+  },
+  (table) => [
+    index().on(table.roleActionId),
+    index().on(table.tenantId),
+    index().on(table.workspaceId),
+  ],
+)
+
 export const schema = {
   tenant: TenantTable,
   user: UserTable,
@@ -674,6 +699,7 @@ export const schema = {
   roleMembership: RoleMembershipTable,
   activatedRole: ActivatedRoleTable,
   roleAction: RoleActionTable,
+  roleActionAsset: ActionAssetTable,
 
   TenantRelations,
   FeatureRelations,

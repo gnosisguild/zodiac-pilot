@@ -219,7 +219,25 @@ const EditRole = ({
                     </GhostLinkButton>
                   </div>
                 }
-              ></Card>
+              >
+                <FormLayout>
+                  <FormLayout.Actions>
+                    <GhostLinkButton
+                      size="small"
+                      to={href(
+                        '/workspace/:workspaceId/roles/:roleId/add-asset/:actionId',
+                        {
+                          workspaceId,
+                          roleId: action.roleId,
+                          actionId: action.id,
+                        },
+                      )}
+                    >
+                      Add assets
+                    </GhostLinkButton>
+                  </FormLayout.Actions>
+                </FormLayout>
+              </Card>
             ))}
 
             {actions.length === 0 && (

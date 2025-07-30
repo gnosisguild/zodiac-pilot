@@ -330,6 +330,13 @@
       "when": 1753870164486,
       "tag": "0046_add role actions",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1753879167964,
+      "tag": "0047_add assets",
+      "breakpoints": true
     }
   ]
 }
