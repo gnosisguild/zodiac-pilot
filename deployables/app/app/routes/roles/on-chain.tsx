@@ -101,7 +101,7 @@ const OnChainRoles = ({
 }: Route.ComponentProps) => {
   return Object.entries(rolesByAccount).map(([, { account, roles }]) => (
     <Card key={account.id} title={account.label}>
-      <span className="mt-1.5 flex items-center gap-8 text-xs text-zinc-300">
+      <span className="mt-1.5 flex items-center gap-8 text-xs text-zinc-500 dark:text-zinc-300">
         <Chain chainId={account.chainId} />
         <Address size="small" shorten>
           {account.address}
