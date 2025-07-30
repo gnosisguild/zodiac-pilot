@@ -33,13 +33,19 @@ export const loader = (args: Route.LoaderArgs) =>
       invariantResponse(isUUID(roleId), '"roleId" is not a UUID')
       invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID')
 
-      const members = await getRoleMembers(dbClient(), { roleId })
-      const activeAccounts = await getActivatedAccounts(dbClient(), { roleId })
+      const [members, activeAccounts, role, users, accounts] =
+        await Promise.all([
+          getRoleMembers(dbClient(), { roleId }),
+          getActivatedAccounts(dbClient(), { roleId }),
+          getRole(dbClient(), roleId),
+          getUsers(dbClient(), { tenantId: tenant.id }),
+          getAccounts(dbClient(), { workspaceId }),
+        ])
 
       return {
-        role: await getRole(dbClient(), roleId),
-        users: await getUsers(dbClient(), { tenantId: tenant.id }),
-        accounts: await getAccounts(dbClient(), { workspaceId }),
+        role,
+        users,
+        accounts,
         activeAccounts: roleId in activeAccounts ? activeAccounts[roleId] : [],
         members: roleId in members ? members[roleId] : [],
       }
