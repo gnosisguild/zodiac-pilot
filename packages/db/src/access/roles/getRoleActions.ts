@@ -9,4 +9,7 @@ export const getRoleActions = (db: DBClient, roleId: UUID) =>
     orderBy(fields, { asc }) {
       return asc(fields.label)
     },
+    with: {
+      createdBy: { columns: { fullName: true } },
+    },
   })

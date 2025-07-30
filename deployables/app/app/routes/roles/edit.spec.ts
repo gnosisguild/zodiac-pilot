@@ -232,7 +232,7 @@ describe('Edit role', () => {
       )
 
       expect(
-        await screen.findByRole('cell', { name: 'Test action' }),
+        await screen.findByRole('region', { name: 'Test action' }),
       ).toBeInTheDocument()
     })
   })

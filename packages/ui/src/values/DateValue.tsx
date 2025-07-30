@@ -15,7 +15,7 @@ export const DateValue = ({ children }: DateValueProps) => {
   }
 
   return (
-    <span className="text-sm slashed-zero tabular-nums">
+    <span className="slashed-zero tabular-nums">
       {dateFormatter.format(children)}
     </span>
   )

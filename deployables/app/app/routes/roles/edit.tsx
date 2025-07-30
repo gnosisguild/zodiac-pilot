@@ -17,20 +17,19 @@ import { getString, getUUIDList } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import {
+  Card,
+  DateValue,
   Form,
   FormLayout,
   GhostLinkButton,
   MultiSelect,
+  Popover,
   PrimaryButton,
   SecondaryLinkButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Tag,
   TextInput,
 } from '@zodiac/ui'
+import { ArrowRightLeft } from 'lucide-react'
 import { href, Outlet, redirect } from 'react-router'
 import { Route } from './+types/edit'
 import { AccountSelect } from './AccountSelect'
@@ -171,22 +170,39 @@ const EditRole = ({
 
         <FormLayout>
           <Form.Section title="Actions">
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableHeader>Label</TableHeader>
-                  <TableHeader>Type</TableHeader>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {actions.map((action) => (
-                  <TableRow key={action.id}>
-                    <TableCell>{action.label}</TableCell>
-                    <TableCell>{action.type}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            {actions.map((action) => (
+              <Card
+                key={action.id}
+                titleId={action.id}
+                title={
+                  <div className="flex items-center gap-4">
+                    <Popover
+                      popover={
+                        <span className="text-xs uppercase">{action.type}</span>
+                      }
+                    >
+                      <Tag head={<ArrowRightLeft />} />
+                    </Popover>
+
+                    <h2>
+                      <span id={action.id} className="font-semibold">
+                        {action.label}
+                      </span>
+                      <div className="text-xs text-zinc-500 dark:text-zinc-400">
+                        Created by{' '}
+                        <span className="text-zinc-600 dark:text-zinc-300">
+                          {action.createdBy.fullName}
+                        </span>{' '}
+                        on{' '}
+                        <span className="text-zinc-600 dark:text-zinc-300">
+                          <DateValue>{action.createdAt}</DateValue>
+                        </span>
+                      </div>
+                    </h2>
+                  </div>
+                }
+              ></Card>
+            ))}
 
             <FormLayout.Actions>
               <SecondaryLinkButton
