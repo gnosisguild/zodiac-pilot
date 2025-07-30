@@ -5,10 +5,11 @@ import { RoleActionType } from '@zodiac/db/schema'
 import { getString } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
-import { Form, Modal, PrimaryButton, Select, TextInput } from '@zodiac/ui'
+import { Form, Modal, PrimaryButton, TextInput } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/add-action'
 import { Intent } from './intents'
+import { RoleActionTypeSelect } from './RoleActionTypeSelect'
 
 export const action = (args: Route.ActionArgs) =>
   authorizedAction(
@@ -67,12 +68,7 @@ const AddAction = ({
       <Form>
         <TextInput required label="Action label" name="label" />
 
-        <Select
-          isDisabled
-          label="Type"
-          options={[{ label: 'Swapper', value: RoleActionType.Swapper }]}
-          defaultValue={[{ label: 'Swapper', value: RoleActionType.Swapper }]}
-        />
+        <RoleActionTypeSelect />
 
         <Modal.Actions>
           <PrimaryButton

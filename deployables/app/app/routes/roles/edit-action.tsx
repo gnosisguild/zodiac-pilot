@@ -8,6 +8,7 @@ import { Form, Modal, PrimaryButton, TextInput } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/edit-action'
 import { Intent } from './intents'
+import { RoleActionTypeSelect } from './RoleActionTypeSelect'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -96,6 +97,8 @@ const EditAction = ({
           name="label"
           defaultValue={action.label}
         />
+
+        <RoleActionTypeSelect />
 
         <Modal.Actions>
           <PrimaryButton

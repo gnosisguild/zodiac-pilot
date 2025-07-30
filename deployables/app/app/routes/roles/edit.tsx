@@ -22,6 +22,7 @@ import {
   Form,
   FormLayout,
   GhostLinkButton,
+  Info,
   MultiSelect,
   Popover,
   PrimaryButton,
@@ -138,6 +139,7 @@ const EditRole = ({
             <MultiSelect
               label="Members"
               name="members"
+              placeholder="Specify who should be affected by this role"
               options={users.map((user) => ({
                 label: user.fullName,
                 value: user.id,
@@ -219,6 +221,12 @@ const EditRole = ({
                 }
               ></Card>
             ))}
+
+            {actions.length === 0 && (
+              <Info title="No actions">
+                You have not added any actions to this role, yet.
+              </Info>
+            )}
 
             <FormLayout.Actions>
               <SecondaryLinkButton

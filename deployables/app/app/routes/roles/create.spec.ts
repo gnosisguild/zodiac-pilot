@@ -37,9 +37,13 @@ describe('Create role', () => {
 
     await userEvent.click(await screen.findByRole('button', { name: 'Create' }))
 
-    expect(
-      await screen.findByRole('cell', { name: 'New role' }),
-    ).toBeInTheDocument()
+    await waitForPendingActions()
+
+    const [role] = await getRoles(dbClient(), {
+      workspaceId: tenant.defaultWorkspaceId,
+    })
+
+    expect(role).toMatchObject({ label: 'New role', createdById: user.id })
   })
 
   dbIt('is possible to add members', async () => {
