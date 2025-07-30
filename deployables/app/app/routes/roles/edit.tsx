@@ -2,12 +2,13 @@ import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
 import {
-  addActiveAccounts,
   dbClient,
   getAccounts,
+  getActivatedAccounts,
   getRole,
   getRoleMembers,
   getUsers,
+  setActiveAccounts,
   setRoleMembers,
   updateRole,
 } from '@zodiac/db'
@@ -33,11 +34,13 @@ export const loader = (args: Route.LoaderArgs) =>
       invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID')
 
       const members = await getRoleMembers(dbClient(), { roleId })
+      const activeAccounts = await getActivatedAccounts(dbClient(), { roleId })
 
       return {
         role: await getRole(dbClient(), roleId),
         users: await getUsers(dbClient(), { tenantId: tenant.id }),
         accounts: await getAccounts(dbClient(), { workspaceId }),
+        activeAccounts: roleId in activeAccounts ? activeAccounts[roleId] : [],
         members: roleId in members ? members[roleId] : [],
       }
     },
@@ -71,7 +74,7 @@ export const action = (args: Route.ActionArgs) =>
         }
 
         await setRoleMembers(tx, role, getUUIDList(data, 'members'))
-        await addActiveAccounts(tx, role, getUUIDList(data, 'accounts'))
+        await setActiveAccounts(tx, role, getUUIDList(data, 'accounts'))
       })
 
       return redirect(
@@ -91,7 +94,7 @@ export const action = (args: Route.ActionArgs) =>
   )
 
 const EditRole = ({
-  loaderData: { role, users, members, accounts },
+  loaderData: { role, users, members, accounts, activeAccounts },
 }: Route.ComponentProps) => {
   return (
     <Page>
@@ -113,7 +116,7 @@ const EditRole = ({
             }))}
           />
 
-          <AccountSelect accounts={accounts} />
+          <AccountSelect accounts={accounts} defaultValue={activeAccounts} />
 
           <Form.Actions>
             <PrimaryButton

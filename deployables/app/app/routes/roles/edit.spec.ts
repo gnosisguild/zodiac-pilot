@@ -6,6 +6,7 @@ import {
   getActivatedAccounts,
   getRole,
   getRoleMembers,
+  setActiveAccounts,
   setRoleMembers,
 } from '@zodiac/db'
 import {
@@ -141,6 +142,39 @@ describe('Edit role', () => {
       await expect(
         getActivatedAccounts(dbClient(), { roleId: role.id }),
       ).resolves.toHaveProperty(role.id, [account])
+    })
+
+    dbIt('is possible to remove an accounts from a role', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const account = await accountFactory.create(tenant, user, {
+        label: 'Test account',
+      })
+
+      const role = await roleFactory.create(tenant, user)
+
+      await setActiveAccounts(dbClient(), role, [account.id])
+
+      await render(
+        href('/workspace/:workspaceId/roles/:roleId', {
+          workspaceId: tenant.defaultWorkspaceId,
+          roleId: role.id,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Remove' }),
+      )
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      await expect(
+        getActivatedAccounts(dbClient(), { roleId: role.id }),
+      ).resolves.not.toHaveProperty(role.id)
     })
   })
 })

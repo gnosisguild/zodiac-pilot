@@ -5,15 +5,23 @@ import { Address } from '@zodiac/web3'
 
 type AccountSelectProps = {
   accounts: Account[]
+  defaultValue?: Account[]
 }
 
-export const AccountSelect = ({ accounts }: AccountSelectProps) => {
+export const AccountSelect = ({
+  accounts,
+  defaultValue = [],
+}: AccountSelectProps) => {
   return (
     <MultiSelect
       label="Accounts"
       name="accounts"
       placeholder="Accounts this role should be activated on"
       options={accounts.map((account) => ({
+        label: account.label,
+        value: account.id,
+      }))}
+      defaultValue={defaultValue.map((account) => ({
         label: account.label,
         value: account.id,
       }))}
