@@ -6,6 +6,7 @@ import {
   getAccounts,
   getActivatedAccounts,
   getRole,
+  getRoleActions,
   getRoleMembers,
   getUsers,
   setActiveAccounts,
@@ -15,8 +16,22 @@ import {
 import { getString, getUUIDList } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
-import { Form, MultiSelect, PrimaryButton, TextInput } from '@zodiac/ui'
-import { href, redirect } from 'react-router'
+import {
+  Card,
+  DateValue,
+  Form,
+  FormLayout,
+  GhostLinkButton,
+  Info,
+  MultiSelect,
+  Popover,
+  PrimaryButton,
+  SecondaryLinkButton,
+  Tag,
+  TextInput,
+} from '@zodiac/ui'
+import { ArrowRightLeft, Pencil } from 'lucide-react'
+import { href, Outlet, redirect } from 'react-router'
 import { Route } from './+types/edit'
 import { AccountSelect } from './AccountSelect'
 import { Intent } from './intents'
@@ -33,13 +48,14 @@ export const loader = (args: Route.LoaderArgs) =>
       invariantResponse(isUUID(roleId), '"roleId" is not a UUID')
       invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID')
 
-      const [members, activeAccounts, role, users, accounts] =
+      const [members, activeAccounts, role, users, accounts, actions] =
         await Promise.all([
           getRoleMembers(dbClient(), { roleId }),
           getActivatedAccounts(dbClient(), { roleId }),
           getRole(dbClient(), roleId),
           getUsers(dbClient(), { tenantId: tenant.id }),
           getAccounts(dbClient(), { workspaceId }),
+          getRoleActions(dbClient(), roleId),
         ])
 
       return {
@@ -48,6 +64,7 @@ export const loader = (args: Route.LoaderArgs) =>
         accounts,
         activeAccounts: roleId in activeAccounts ? activeAccounts[roleId] : [],
         members: roleId in members ? members[roleId] : [],
+        actions,
       }
     },
     {
@@ -100,41 +117,132 @@ export const action = (args: Route.ActionArgs) =>
   )
 
 const EditRole = ({
-  loaderData: { role, users, members, accounts, activeAccounts },
+  loaderData: { role, users, members, accounts, activeAccounts, actions },
+  params: { workspaceId, roleId },
 }: Route.ComponentProps) => {
   return (
     <Page>
       <Page.Header>Edit role</Page.Header>
       <Page.Main>
         <Form>
-          <TextInput label="Label" name="label" defaultValue={role.label} />
+          <Form.Section
+            title="Base configuration"
+            description="Defines the basics for this role. Who should it be enabled for and what accounts are affected."
+          >
+            <TextInput
+              required
+              label="Label"
+              name="label"
+              defaultValue={role.label}
+            />
 
-          <MultiSelect
-            label="Members"
-            name="members"
-            options={users.map((user) => ({
-              label: user.fullName,
-              value: user.id,
-            }))}
-            defaultValue={members.map((member) => ({
-              label: member.fullName,
-              value: member.id,
-            }))}
-          />
+            <MultiSelect
+              label="Members"
+              name="members"
+              placeholder="Specify who should be affected by this role"
+              options={users.map((user) => ({
+                label: user.fullName,
+                value: user.id,
+              }))}
+              defaultValue={members.map((member) => ({
+                label: member.fullName,
+                value: member.id,
+              }))}
+            />
 
-          <AccountSelect accounts={accounts} defaultValue={activeAccounts} />
+            <AccountSelect accounts={accounts} defaultValue={activeAccounts} />
 
-          <Form.Actions>
-            <PrimaryButton
-              submit
-              intent={Intent.Save}
-              busy={useIsPending(Intent.Save)}
-            >
-              Save
-            </PrimaryButton>
-          </Form.Actions>
+            <Form.Actions>
+              <PrimaryButton
+                submit
+                intent={Intent.Save}
+                busy={useIsPending(Intent.Save)}
+              >
+                Save
+              </PrimaryButton>
+
+              <GhostLinkButton
+                to={href('/workspace/:workspaceId/roles', { workspaceId })}
+              >
+                Cancel
+              </GhostLinkButton>
+            </Form.Actions>
+          </Form.Section>
         </Form>
+
+        <FormLayout>
+          <Form.Section title="Actions">
+            {actions.map((action) => (
+              <Card
+                key={action.id}
+                titleId={action.id}
+                title={
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <Popover
+                        popover={
+                          <span className="text-xs uppercase">
+                            {action.type}
+                          </span>
+                        }
+                      >
+                        <Tag head={<ArrowRightLeft />} />
+                      </Popover>
+
+                      <h2>
+                        <span id={action.id} className="font-semibold">
+                          {action.label}
+                        </span>
+                        <div className="text-xs text-zinc-500 dark:text-zinc-400">
+                          Created by{' '}
+                          <span className="text-zinc-600 dark:text-zinc-300">
+                            {action.createdBy.fullName}
+                          </span>{' '}
+                          on{' '}
+                          <span className="text-zinc-600 dark:text-zinc-300">
+                            <DateValue>{action.createdAt}</DateValue>
+                          </span>
+                        </div>
+                      </h2>
+                    </div>
+
+                    <GhostLinkButton
+                      iconOnly
+                      size="small"
+                      icon={Pencil}
+                      to={href(
+                        '/workspace/:workspaceId/roles/:roleId/edit-action/:actionId',
+                        { workspaceId, roleId, actionId: action.id },
+                      )}
+                    >
+                      Edit action
+                    </GhostLinkButton>
+                  </div>
+                }
+              ></Card>
+            ))}
+
+            {actions.length === 0 && (
+              <Info title="No actions">
+                You have not added any actions to this role, yet.
+              </Info>
+            )}
+
+            <FormLayout.Actions>
+              <SecondaryLinkButton
+                to={href('/workspace/:workspaceId/roles/:roleId/add-action', {
+                  workspaceId,
+                  roleId,
+                })}
+              >
+                Add new action
+              </SecondaryLinkButton>
+            </FormLayout.Actions>
+          </Form.Section>
+        </FormLayout>
       </Page.Main>
+
+      <Outlet />
     </Page>
   )
 }

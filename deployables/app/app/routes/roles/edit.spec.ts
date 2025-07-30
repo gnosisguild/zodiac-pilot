@@ -5,13 +5,16 @@ import {
   dbClient,
   getActivatedAccounts,
   getRole,
+  getRoleActions,
   getRoleMembers,
   setActiveAccounts,
   setRoleMembers,
 } from '@zodiac/db'
+import { RoleActionType } from '@zodiac/db/schema'
 import {
   accountFactory,
   dbIt,
+  roleActionFactory,
   roleFactory,
   tenantFactory,
   userFactory,
@@ -175,6 +178,97 @@ describe('Edit role', () => {
       await expect(
         getActivatedAccounts(dbClient(), { roleId: role.id }),
       ).resolves.not.toHaveProperty(role.id)
+    })
+  })
+
+  describe('Role actions', async () => {
+    dbIt('is possible to add a new action', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const role = await roleFactory.create(tenant, user)
+
+      await render(
+        href('/workspace/:workspaceId/roles/:roleId', {
+          workspaceId: tenant.defaultWorkspaceId,
+          roleId: role.id,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('link', { name: 'Add new action' }),
+      )
+      await userEvent.type(
+        await screen.findByRole('textbox', { name: 'Action label' }),
+        'Test action',
+      )
+      await userEvent.click(await screen.findByRole('button', { name: 'Add' }))
+
+      await waitForPendingActions()
+
+      const [action] = await getRoleActions(dbClient(), role.id)
+
+      expect(action).toMatchObject({
+        label: 'Test action',
+        type: RoleActionType.Swapper,
+      })
+    })
+
+    dbIt('lists all current actions', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const role = await roleFactory.create(tenant, user)
+
+      await roleActionFactory.create(role, user, { label: 'Test action' })
+
+      await render(
+        href('/workspace/:workspaceId/roles/:roleId', {
+          workspaceId: tenant.defaultWorkspaceId,
+          roleId: role.id,
+        }),
+        { tenant, user },
+      )
+
+      expect(
+        await screen.findByRole('region', { name: 'Test action' }),
+      ).toBeInTheDocument()
+    })
+
+    dbIt('is possible to edit an action', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const role = await roleFactory.create(tenant, user)
+
+      await roleActionFactory.create(role, user, { label: 'Test action' })
+
+      await render(
+        href('/workspace/:workspaceId/roles/:roleId', {
+          workspaceId: tenant.defaultWorkspaceId,
+          roleId: role.id,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('link', { name: 'Edit action' }),
+      )
+
+      await userEvent.type(
+        await screen.findByRole('textbox', { name: 'Action label' }),
+        ' updated',
+      )
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Update' }),
+      )
+
+      await waitForPendingActions()
+
+      expect(
+        await screen.findByRole('region', { name: 'Test action updated' }),
+      ).toBeInTheDocument()
     })
   })
 })

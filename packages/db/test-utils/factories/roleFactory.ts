@@ -31,11 +31,11 @@ export const roleFactory = createFactory<
   },
   createWithoutDb(data) {
     return {
-      ...data,
-
       createdAt: new Date(),
       id: randomUUID(),
       updatedAt: null,
+
+      ...data,
     }
   },
 })

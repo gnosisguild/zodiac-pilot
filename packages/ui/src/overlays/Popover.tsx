@@ -27,7 +27,7 @@ export const Popover = ({
     <Stick
       autoFlipHorizontally
       position={getStickPosition(position)}
-      className={classNames(inline && 'inline')}
+      className={classNames(inline ? 'inline' : 'flex')}
       node={
         <Transition show={hover}>
           <div
