@@ -6,7 +6,7 @@ import { getString } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import { Form, Modal, PrimaryButton, Select, TextInput } from '@zodiac/ui'
-import { href, useNavigate } from 'react-router'
+import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/add-action'
 import { Intent } from './intents'
 
@@ -15,7 +15,7 @@ export const action = (args: Route.ActionArgs) =>
     args,
     async ({
       request,
-      params: { roleId },
+      params: { roleId, workspaceId },
       context: {
         auth: { user },
       },
@@ -29,6 +29,10 @@ export const action = (args: Route.ActionArgs) =>
         label: getString(data, 'label'),
         type: RoleActionType.Swapper,
       })
+
+      return redirect(
+        href('/workspace/:workspaceId/roles/:roleId', { workspaceId, roleId }),
+      )
     },
     {
       ensureSignedIn: true,

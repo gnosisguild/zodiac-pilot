@@ -14,6 +14,7 @@ import { RoleActionType } from '@zodiac/db/schema'
 import {
   accountFactory,
   dbIt,
+  roleActionFactory,
   roleFactory,
   tenantFactory,
   userFactory,
@@ -212,6 +213,27 @@ describe('Edit role', () => {
         label: 'Test action',
         type: RoleActionType.Swapper,
       })
+    })
+
+    dbIt('lists all current actions', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const role = await roleFactory.create(tenant, user)
+
+      await roleActionFactory.create(role, user, { label: 'Test action' })
+
+      await render(
+        href('/workspace/:workspaceId/roles/:roleId', {
+          workspaceId: tenant.defaultWorkspaceId,
+          roleId: role.id,
+        }),
+        { tenant, user },
+      )
+
+      expect(
+        await screen.findByRole('cell', { name: 'Test action' }),
+      ).toBeInTheDocument()
     })
   })
 })

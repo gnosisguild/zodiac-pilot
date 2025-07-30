@@ -6,6 +6,7 @@ import {
   getAccounts,
   getActivatedAccounts,
   getRole,
+  getRoleActions,
   getRoleMembers,
   getUsers,
   setActiveAccounts,
@@ -18,9 +19,16 @@ import { isUUID } from '@zodiac/schema'
 import {
   Form,
   FormLayout,
+  GhostLinkButton,
   MultiSelect,
   PrimaryButton,
   SecondaryLinkButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   TextInput,
 } from '@zodiac/ui'
 import { href, Outlet, redirect } from 'react-router'
@@ -40,13 +48,14 @@ export const loader = (args: Route.LoaderArgs) =>
       invariantResponse(isUUID(roleId), '"roleId" is not a UUID')
       invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID')
 
-      const [members, activeAccounts, role, users, accounts] =
+      const [members, activeAccounts, role, users, accounts, actions] =
         await Promise.all([
           getRoleMembers(dbClient(), { roleId }),
           getActivatedAccounts(dbClient(), { roleId }),
           getRole(dbClient(), roleId),
           getUsers(dbClient(), { tenantId: tenant.id }),
           getAccounts(dbClient(), { workspaceId }),
+          getRoleActions(dbClient(), roleId),
         ])
 
       return {
@@ -55,6 +64,7 @@ export const loader = (args: Route.LoaderArgs) =>
         accounts,
         activeAccounts: roleId in activeAccounts ? activeAccounts[roleId] : [],
         members: roleId in members ? members[roleId] : [],
+        actions,
       }
     },
     {
@@ -107,7 +117,7 @@ export const action = (args: Route.ActionArgs) =>
   )
 
 const EditRole = ({
-  loaderData: { role, users, members, accounts, activeAccounts },
+  loaderData: { role, users, members, accounts, activeAccounts, actions },
   params: { workspaceId, roleId },
 }: Route.ComponentProps) => {
   return (
@@ -119,7 +129,12 @@ const EditRole = ({
             title="Base configuration"
             description="Defines the basics for this role. Who should it be enabled for and what accounts are affected."
           >
-            <TextInput label="Label" name="label" defaultValue={role.label} />
+            <TextInput
+              required
+              label="Label"
+              name="label"
+              defaultValue={role.label}
+            />
 
             <MultiSelect
               label="Members"
@@ -144,23 +159,46 @@ const EditRole = ({
               >
                 Save
               </PrimaryButton>
+
+              <GhostLinkButton
+                to={href('/workspace/:workspaceId/roles', { workspaceId })}
+              >
+                Cancel
+              </GhostLinkButton>
             </Form.Actions>
           </Form.Section>
         </Form>
 
         <FormLayout>
-          <Form.Section title="Actions"></Form.Section>
+          <Form.Section title="Actions">
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableHeader>Label</TableHeader>
+                  <TableHeader>Type</TableHeader>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {actions.map((action) => (
+                  <TableRow key={action.id}>
+                    <TableCell>{action.label}</TableCell>
+                    <TableCell>{action.type}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
 
-          <FormLayout.Actions>
-            <SecondaryLinkButton
-              to={href('/workspace/:workspaceId/roles/:roleId/add-action', {
-                workspaceId,
-                roleId,
-              })}
-            >
-              Add new action
-            </SecondaryLinkButton>
-          </FormLayout.Actions>
+            <FormLayout.Actions>
+              <SecondaryLinkButton
+                to={href('/workspace/:workspaceId/roles/:roleId/add-action', {
+                  workspaceId,
+                  roleId,
+                })}
+              >
+                Add new action
+              </SecondaryLinkButton>
+            </FormLayout.Actions>
+          </Form.Section>
         </FormLayout>
       </Page.Main>
 
