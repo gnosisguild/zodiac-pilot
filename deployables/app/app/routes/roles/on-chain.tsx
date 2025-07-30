@@ -24,18 +24,10 @@ import { Route } from './+types/on-chain'
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
-    async ({
-      params: { workspaceId },
-      context: {
-        auth: { tenant },
-      },
-    }) => {
+    async ({ params: { workspaceId } }) => {
       invariantResponse(isUUID(workspaceId), '"workspaceId" is no UUID')
 
-      const accounts = await getAccounts(dbClient(), {
-        workspaceId,
-        tenantId: tenant.id,
-      })
+      const accounts = await getAccounts(dbClient(), { workspaceId })
 
       const onChainRoles = await Promise.all(
         accounts.flatMap(async (account) => {

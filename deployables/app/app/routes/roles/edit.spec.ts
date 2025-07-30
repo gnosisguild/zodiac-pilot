@@ -1,8 +1,15 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { dbClient, getRole, getRoleMembers, setRoleMembers } from '@zodiac/db'
 import {
+  dbClient,
+  getActivatedAccounts,
+  getRole,
+  getRoleMembers,
+  setRoleMembers,
+} from '@zodiac/db'
+import {
+  accountFactory,
   dbIt,
   roleFactory,
   tenantFactory,
@@ -98,6 +105,42 @@ describe('Edit role', () => {
       await expect(
         getRoleMembers(dbClient(), { roleId: role.id }),
       ).resolves.not.toHaveProperty(role.id)
+    })
+  })
+
+  describe('Accounts', () => {
+    dbIt('is possible to add an account', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const account = await accountFactory.create(tenant, user, {
+        label: 'Test account',
+      })
+
+      const role = await roleFactory.create(tenant, user)
+
+      await render(
+        href('/workspace/:workspaceId/roles/:roleId', {
+          workspaceId: tenant.defaultWorkspaceId,
+          roleId: role.id,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('combobox', { name: 'Accounts' }),
+      )
+      await userEvent.click(
+        await screen.findByRole('option', { name: 'Test account' }),
+      )
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+
+      await waitForPendingActions()
+
+      await expect(
+        getActivatedAccounts(dbClient(), { roleId: role.id }),
+      ).resolves.toHaveProperty(role.id, [account])
     })
   })
 })

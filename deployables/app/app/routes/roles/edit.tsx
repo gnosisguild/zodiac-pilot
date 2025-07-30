@@ -2,7 +2,9 @@ import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
 import {
+  addActiveAccounts,
   dbClient,
+  getAccounts,
   getRole,
   getRoleMembers,
   getUsers,
@@ -15,24 +17,27 @@ import { isUUID } from '@zodiac/schema'
 import { Form, MultiSelect, PrimaryButton, TextInput } from '@zodiac/ui'
 import { href, redirect } from 'react-router'
 import { Route } from './+types/edit'
+import { AccountSelect } from './AccountSelect'
 import { Intent } from './intents'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
     async ({
-      params: { roleId },
+      params: { roleId, workspaceId },
       context: {
         auth: { tenant },
       },
     }) => {
       invariantResponse(isUUID(roleId), '"roleId" is not a UUID')
+      invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID')
 
       const members = await getRoleMembers(dbClient(), { roleId })
 
       return {
         role: await getRole(dbClient(), roleId),
         users: await getUsers(dbClient(), { tenantId: tenant.id }),
+        accounts: await getAccounts(dbClient(), { workspaceId }),
         members: roleId in members ? members[roleId] : [],
       }
     },
@@ -66,6 +71,7 @@ export const action = (args: Route.ActionArgs) =>
         }
 
         await setRoleMembers(tx, role, getUUIDList(data, 'members'))
+        await addActiveAccounts(tx, role, getUUIDList(data, 'accounts'))
       })
 
       return redirect(
@@ -85,7 +91,7 @@ export const action = (args: Route.ActionArgs) =>
   )
 
 const EditRole = ({
-  loaderData: { role, users, members },
+  loaderData: { role, users, members, accounts },
 }: Route.ComponentProps) => {
   return (
     <Page>
@@ -106,6 +112,8 @@ const EditRole = ({
               value: member.id,
             }))}
           />
+
+          <AccountSelect accounts={accounts} />
 
           <Form.Actions>
             <PrimaryButton

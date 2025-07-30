@@ -52,10 +52,7 @@ export const loader = (args: Route.LoaderArgs) =>
       invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID"')
 
       const [accounts, activeAccount, workspaceCount] = await Promise.all([
-        getAccounts(dbClient(), {
-          tenantId: tenant.id,
-          workspaceId,
-        }),
+        getAccounts(dbClient(), { workspaceId }),
         findActiveAccount(dbClient(), tenant, user),
         countWorkspaces(dbClient(), { tenantId: tenant.id }),
       ])
