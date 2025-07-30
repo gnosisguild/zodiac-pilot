@@ -14,6 +14,7 @@ import {
   index,
   integer,
   json,
+  pgEnum,
   pgTable,
   primaryKey,
   text,
@@ -24,6 +25,7 @@ import {
 } from 'drizzle-orm/pg-core'
 import { createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
+import { enumToPgEnum } from './enumToPgEnum'
 
 const createdTimestamp = {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
@@ -549,6 +551,13 @@ export const RoleTable = pgTable(
 export type Role = typeof RoleTable.$inferSelect
 export type RoleCreateInput = typeof RoleTable.$inferInsert
 
+const roleReference = {
+  roleId: uuid()
+    .notNull()
+    .$type<UUID>()
+    .references(() => RoleTable.id, { onDelete: 'cascade' }),
+}
+
 const RoleRelations = relations(RoleTable, ({ one }) => ({
   createBy: one(UserTable, {
     fields: [RoleTable.createdById],
@@ -559,15 +568,8 @@ const RoleRelations = relations(RoleTable, ({ one }) => ({
 export const RoleMembershipTable = pgTable(
   'RoleMembership',
   {
-    roleId: uuid()
-      .notNull()
-      .$type<UUID>()
-      .references(() => RoleTable.id, { onDelete: 'cascade' }),
-    userId: uuid()
-      .notNull()
-      .$type<UUID>()
-      .references(() => UserTable.id, { onDelete: 'cascade' }),
-
+    ...userReference,
+    ...roleReference,
     ...createdTimestamp,
     ...tenantReference,
     ...workspaceReference,
@@ -591,15 +593,8 @@ const RoleMembershipRelations = relations(RoleMembershipTable, ({ one }) => ({
 export const ActivatedRoleTable = pgTable(
   'ActivatedRole',
   {
-    roleId: uuid()
-      .notNull()
-      .$type<UUID>()
-      .references(() => RoleTable.id, { onDelete: 'cascade' }),
-    accountId: uuid()
-      .notNull()
-      .$type<UUID>()
-      .references(() => AccountTable.id, { onDelete: 'cascade' }),
-
+    ...roleReference,
+    ...accountReference,
     ...createdTimestamp,
     ...tenantReference,
     ...workspaceReference,
@@ -612,6 +607,45 @@ export const ActivatedRoleTable = pgTable(
     index().on(table.workspaceId),
   ],
 )
+
+export enum RoleActionType {
+  Swapper = 'swapper',
+  Stake = 'stake',
+  Bridge = 'bridge',
+  Transfer = 'transfer',
+  Custom = 'custom',
+}
+
+export const RoleActionTypeEnum = pgEnum(
+  'RoleActionType',
+  enumToPgEnum(RoleActionType),
+)
+
+export const RoleActionTable = pgTable(
+  'RoleAction',
+  {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+
+    label: text().notNull(),
+    type: RoleActionTypeEnum().notNull(),
+
+    ...roleReference,
+    ...workspaceReference,
+    ...tenantReference,
+    ...createdByReference,
+    ...createdTimestamp,
+    ...updatedTimestamp,
+  },
+  (table) => [
+    index().on(table.createdById),
+    index().on(table.roleId),
+    index().on(table.tenantId),
+    index().on(table.workspaceId),
+  ],
+)
+
+export type RoleAction = typeof RoleActionTable.$inferSelect
+export type RoleActionCreateInput = typeof RoleActionTable.$inferInsert
 
 export const schema = {
   tenant: TenantTable,
@@ -632,6 +666,7 @@ export const schema = {
   role: RoleTable,
   roleMembership: RoleMembershipTable,
   activatedRole: ActivatedRoleTable,
+  roleAction: RoleActionTable,
 
   TenantRelations,
   FeatureRelations,

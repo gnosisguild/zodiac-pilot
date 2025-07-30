@@ -15,8 +15,15 @@ import {
 import { getString, getUUIDList } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
-import { Form, MultiSelect, PrimaryButton, TextInput } from '@zodiac/ui'
-import { href, redirect } from 'react-router'
+import {
+  Form,
+  FormLayout,
+  MultiSelect,
+  PrimaryButton,
+  SecondaryLinkButton,
+  TextInput,
+} from '@zodiac/ui'
+import { href, Outlet, redirect } from 'react-router'
 import { Route } from './+types/edit'
 import { AccountSelect } from './AccountSelect'
 import { Intent } from './intents'
@@ -101,40 +108,63 @@ export const action = (args: Route.ActionArgs) =>
 
 const EditRole = ({
   loaderData: { role, users, members, accounts, activeAccounts },
+  params: { workspaceId, roleId },
 }: Route.ComponentProps) => {
   return (
     <Page>
       <Page.Header>Edit role</Page.Header>
       <Page.Main>
         <Form>
-          <TextInput label="Label" name="label" defaultValue={role.label} />
+          <Form.Section
+            title="Base configuration"
+            description="Defines the basics for this role. Who should it be enabled for and what accounts are affected."
+          >
+            <TextInput label="Label" name="label" defaultValue={role.label} />
 
-          <MultiSelect
-            label="Members"
-            name="members"
-            options={users.map((user) => ({
-              label: user.fullName,
-              value: user.id,
-            }))}
-            defaultValue={members.map((member) => ({
-              label: member.fullName,
-              value: member.id,
-            }))}
-          />
+            <MultiSelect
+              label="Members"
+              name="members"
+              options={users.map((user) => ({
+                label: user.fullName,
+                value: user.id,
+              }))}
+              defaultValue={members.map((member) => ({
+                label: member.fullName,
+                value: member.id,
+              }))}
+            />
 
-          <AccountSelect accounts={accounts} defaultValue={activeAccounts} />
+            <AccountSelect accounts={accounts} defaultValue={activeAccounts} />
 
-          <Form.Actions>
-            <PrimaryButton
-              submit
-              intent={Intent.Save}
-              busy={useIsPending(Intent.Save)}
-            >
-              Save
-            </PrimaryButton>
-          </Form.Actions>
+            <Form.Actions>
+              <PrimaryButton
+                submit
+                intent={Intent.Save}
+                busy={useIsPending(Intent.Save)}
+              >
+                Save
+              </PrimaryButton>
+            </Form.Actions>
+          </Form.Section>
         </Form>
+
+        <FormLayout>
+          <Form.Section title="Actions"></Form.Section>
+
+          <FormLayout.Actions>
+            <SecondaryLinkButton
+              to={href('/workspace/:workspaceId/roles/:roleId/add-action', {
+                workspaceId,
+                roleId,
+              })}
+            >
+              Add new action
+            </SecondaryLinkButton>
+          </FormLayout.Actions>
+        </FormLayout>
       </Page.Main>
+
+      <Outlet />
     </Page>
   )
 }

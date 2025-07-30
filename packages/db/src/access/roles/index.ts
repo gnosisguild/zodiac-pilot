@@ -1,6 +1,8 @@
 export { createRole } from './createRole'
+export { createRoleAction } from './createRoleAction'
 export { getActivatedAccounts } from './getActivatedAccounts'
 export { getRole } from './getRole'
+export { getRoleActions } from './getRoleActions'
 export { getRoleMembers } from './getRoleMembers'
 export { getRoles } from './getRoles'
 export { setActiveAccounts } from './setActiveAccounts'

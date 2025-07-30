@@ -168,7 +168,9 @@ export default [
 
         ...prefix('roles', [
           route('create', 'routes/roles/create.tsx'),
-          route(':roleId', 'routes/roles/edit.tsx'),
+          route(':roleId', 'routes/roles/edit.tsx', [
+            route('add-action', 'routes/roles/add-action.tsx'),
+          ]),
         ]),
 
         route('accounts', 'routes/accounts/list.tsx', [

@@ -323,6 +323,13 @@
       "when": 1753788771563,
       "tag": "0045_add workspace refernces",
       "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1753870164486,
+      "tag": "0046_add role actions",
+      "breakpoints": true
     }
   ]
 }

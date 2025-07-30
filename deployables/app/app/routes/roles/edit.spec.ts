@@ -5,10 +5,12 @@ import {
   dbClient,
   getActivatedAccounts,
   getRole,
+  getRoleActions,
   getRoleMembers,
   setActiveAccounts,
   setRoleMembers,
 } from '@zodiac/db'
+import { RoleActionType } from '@zodiac/db/schema'
 import {
   accountFactory,
   dbIt,
@@ -175,6 +177,41 @@ describe('Edit role', () => {
       await expect(
         getActivatedAccounts(dbClient(), { roleId: role.id }),
       ).resolves.not.toHaveProperty(role.id)
+    })
+  })
+
+  describe('Role actions', async () => {
+    dbIt('is possible to add a new action', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const role = await roleFactory.create(tenant, user)
+
+      await render(
+        href('/workspace/:workspaceId/roles/:roleId', {
+          workspaceId: tenant.defaultWorkspaceId,
+          roleId: role.id,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('link', { name: 'Add new action' }),
+      )
+      await userEvent.type(
+        await screen.findByRole('textbox', { name: 'Action label' }),
+        'Test action',
+      )
+      await userEvent.click(await screen.findByRole('button', { name: 'Add' }))
+
+      await waitForPendingActions()
+
+      const [action] = await getRoleActions(dbClient(), role.id)
+
+      expect(action).toMatchObject({
+        label: 'Test action',
+        type: RoleActionType.Swapper,
+      })
     })
   })
 })
