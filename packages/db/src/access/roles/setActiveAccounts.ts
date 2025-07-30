@@ -1,19 +1,23 @@
 import { ActivatedRoleTable, Role } from '@zodiac/db/schema'
 import { UUID } from 'crypto'
+import { eq } from 'drizzle-orm'
 import { DBClient } from '../../dbClient'
 
-export const addActiveAccounts = (
+export const setActiveAccounts = (
   db: DBClient,
   role: Role,
   accounts: UUID[],
 ) => {
-  if (accounts.length === 0) {
-    return
-  }
+  return db.transaction(async (tx) => {
+    await tx
+      .delete(ActivatedRoleTable)
+      .where(eq(ActivatedRoleTable.roleId, role.id))
 
-  return db
-    .insert(ActivatedRoleTable)
-    .values(
+    if (accounts.length === 0) {
+      return
+    }
+
+    return tx.insert(ActivatedRoleTable).values(
       accounts.map((account) => ({
         roleId: role.id,
         tenantId: role.tenantId,
@@ -21,5 +25,5 @@ export const addActiveAccounts = (
         workspaceId: role.workspaceId,
       })),
     )
-    .onConflictDoNothing()
+  })
 }

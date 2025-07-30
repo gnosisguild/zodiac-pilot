@@ -547,6 +547,7 @@ export const RoleTable = pgTable(
 )
 
 export type Role = typeof RoleTable.$inferSelect
+export type RoleCreateInput = typeof RoleTable.$inferInsert
 
 const RoleRelations = relations(RoleTable, ({ one }) => ({
   createBy: one(UserTable, {

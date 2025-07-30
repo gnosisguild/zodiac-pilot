@@ -1,22 +1,22 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
-import { invariant, invariantResponse } from '@epic-web/invariant'
+import { invariantResponse } from '@epic-web/invariant'
 import {
-  addActiveAccounts,
-  addRoleMembers,
   createRole,
   dbClient,
   getAccounts,
   getUsers,
   getWorkspace,
+  setActiveAccounts,
+  setRoleMembers,
 } from '@zodiac/db'
 import { getString, getUUIDList } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import { Form, MultiSelect, PrimaryButton, TextInput } from '@zodiac/ui'
-import { Address } from '@zodiac/web3'
 import { href, redirect } from 'react-router'
 import { Route } from './+types/create'
+import { AccountSelect } from './AccountSelect'
 import { Intent } from './intents'
 
 export const loader = async (args: Route.LoaderArgs) =>
@@ -32,7 +32,7 @@ export const loader = async (args: Route.LoaderArgs) =>
 
       const [users, accounts] = await Promise.all([
         getUsers(dbClient(), { tenantId: tenant.id }),
-        getAccounts(dbClient(), { tenantId: tenant.id, workspaceId }),
+        getAccounts(dbClient(), { workspaceId }),
       ])
 
       return { users, accounts }
@@ -68,13 +68,8 @@ export const action = (args: Route.ActionArgs) =>
           workspaceId,
         })
 
-        const members = getUUIDList(data, 'members')
-
-        await addRoleMembers(tx, role, members)
-
-        const accounts = getUUIDList(data, 'accounts')
-
-        await addActiveAccounts(tx, role, accounts)
+        await setRoleMembers(tx, role, getUUIDList(data, 'members'))
+        await setActiveAccounts(tx, role, getUUIDList(data, 'accounts'))
       })
 
       return redirect(
@@ -118,26 +113,7 @@ const CreateRole = ({
             }))}
           />
 
-          <MultiSelect
-            label="Accounts"
-            name="accounts"
-            placeholder="Accounts this role should be activated on"
-            options={accounts.map((account) => ({
-              label: account.label,
-              value: account.id,
-            }))}
-          >
-            {({ data: { value } }) => {
-              const account = accounts.find((account) => account.id === value)
-
-              invariant(
-                account != null,
-                `Could not render account with id "${value}"`,
-              )
-
-              return <Address label={account.label}>{account.address}</Address>
-            }}
-          </MultiSelect>
+          <AccountSelect accounts={accounts} />
 
           <Form.Actions>
             <PrimaryButton

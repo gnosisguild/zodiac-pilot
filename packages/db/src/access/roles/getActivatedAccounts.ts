@@ -1,12 +1,17 @@
 import { Account, AccountTable, ActivatedRoleTable } from '@zodiac/db/schema'
 import { UUID } from 'crypto'
-import { and, asc, eq } from 'drizzle-orm'
+import { asc, eq } from 'drizzle-orm'
 import { DBClient } from '../../dbClient'
 
-type GetActivatedAccountsOptions = {
+type GetByWorkspace = {
   workspaceId: UUID
-  roleId?: UUID
 }
+
+type GetByRole = {
+  roleId: UUID
+}
+
+type GetActivatedAccountsOptions = GetByWorkspace | GetByRole
 
 export const getActivatedAccounts = async (
   db: DBClient,
@@ -37,12 +42,10 @@ export const getActivatedAccounts = async (
   )
 }
 
-const getWhere = ({ workspaceId, roleId }: GetActivatedAccountsOptions) => {
-  const where = eq(ActivatedRoleTable.workspaceId, workspaceId)
-
-  if (roleId != null) {
-    return and(where, eq(ActivatedRoleTable.roleId, roleId))
+const getWhere = (options: GetActivatedAccountsOptions) => {
+  if ('workspaceId' in options) {
+    return eq(ActivatedRoleTable.workspaceId, options.workspaceId)
   }
 
-  return where
+  return eq(ActivatedRoleTable.roleId, options.roleId)
 }
