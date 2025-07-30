@@ -221,6 +221,10 @@ const EditRole = ({
                 }
               >
                 <FormLayout>
+                  <Info title="No assets">
+                    Add assets to define custom allowances
+                  </Info>
+
                   <FormLayout.Actions>
                     <GhostLinkButton
                       size="small"

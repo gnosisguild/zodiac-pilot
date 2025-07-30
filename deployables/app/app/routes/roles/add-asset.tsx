@@ -32,6 +32,7 @@ const AddAsset = ({
   return (
     <Modal
       open
+      title="Add assets"
       onClose={() =>
         navigate(
           href('/workspace/:workspaceId/roles/:roleId', {
