@@ -170,6 +170,7 @@ export default [
           route('create', 'routes/roles/create.tsx'),
           route(':roleId', 'routes/roles/edit.tsx', [
             route('add-action', 'routes/roles/add-action.tsx'),
+            route('edit-action/:actionId', 'routes/roles/edit-action.tsx'),
           ]),
         ]),
 

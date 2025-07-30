@@ -29,7 +29,7 @@ import {
   Tag,
   TextInput,
 } from '@zodiac/ui'
-import { ArrowRightLeft } from 'lucide-react'
+import { ArrowRightLeft, Pencil } from 'lucide-react'
 import { href, Outlet, redirect } from 'react-router'
 import { Route } from './+types/edit'
 import { AccountSelect } from './AccountSelect'
@@ -175,30 +175,46 @@ const EditRole = ({
                 key={action.id}
                 titleId={action.id}
                 title={
-                  <div className="flex items-center gap-4">
-                    <Popover
-                      popover={
-                        <span className="text-xs uppercase">{action.type}</span>
-                      }
-                    >
-                      <Tag head={<ArrowRightLeft />} />
-                    </Popover>
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <Popover
+                        popover={
+                          <span className="text-xs uppercase">
+                            {action.type}
+                          </span>
+                        }
+                      >
+                        <Tag head={<ArrowRightLeft />} />
+                      </Popover>
 
-                    <h2>
-                      <span id={action.id} className="font-semibold">
-                        {action.label}
-                      </span>
-                      <div className="text-xs text-zinc-500 dark:text-zinc-400">
-                        Created by{' '}
-                        <span className="text-zinc-600 dark:text-zinc-300">
-                          {action.createdBy.fullName}
-                        </span>{' '}
-                        on{' '}
-                        <span className="text-zinc-600 dark:text-zinc-300">
-                          <DateValue>{action.createdAt}</DateValue>
+                      <h2>
+                        <span id={action.id} className="font-semibold">
+                          {action.label}
                         </span>
-                      </div>
-                    </h2>
+                        <div className="text-xs text-zinc-500 dark:text-zinc-400">
+                          Created by{' '}
+                          <span className="text-zinc-600 dark:text-zinc-300">
+                            {action.createdBy.fullName}
+                          </span>{' '}
+                          on{' '}
+                          <span className="text-zinc-600 dark:text-zinc-300">
+                            <DateValue>{action.createdAt}</DateValue>
+                          </span>
+                        </div>
+                      </h2>
+                    </div>
+
+                    <GhostLinkButton
+                      iconOnly
+                      size="small"
+                      icon={Pencil}
+                      to={href(
+                        '/workspace/:workspaceId/roles/:roleId/edit-action/:actionId',
+                        { workspaceId, roleId, actionId: action.id },
+                      )}
+                    >
+                      Edit action
+                    </GhostLinkButton>
                   </div>
                 }
               ></Card>
