@@ -21,7 +21,7 @@
     "@safe-global/types-kit": "3.0.0",
     "ser-kit": "3.10.1",
     "viem": "2.33.1",
-    "zod": "4.0.10"
+    "zod": "4.0.14"
   },
   "devDependencies": {
     "@types/node": "22.14.1",
