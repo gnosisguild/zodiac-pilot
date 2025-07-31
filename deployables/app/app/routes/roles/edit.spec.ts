@@ -1,10 +1,13 @@
 import { render } from '@/test-utils'
+import { getAssets, getVerifiedAssets } from '@/token-list'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Chain } from '@zodiac/chains'
 import {
   dbClient,
   getActivatedAccounts,
   getRole,
+  getRoleActionAssets,
   getRoleActions,
   getRoleMembers,
   setActiveAccounts,
@@ -14,16 +17,34 @@ import { RoleActionType } from '@zodiac/db/schema'
 import {
   accountFactory,
   dbIt,
+  roleActionAssetFactory,
   roleActionFactory,
   roleFactory,
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
-import { waitForPendingActions } from '@zodiac/test-utils'
+import {
+  randomPrefixedAddress,
+  waitForPendingActions,
+} from '@zodiac/test-utils'
 import { href } from 'react-router'
-import { describe, expect } from 'vitest'
+import { beforeEach, describe, expect, vi } from 'vitest'
+
+vi.mock('@/token-list', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/token-list')>()
+
+  return { ...module, getAssets: vi.fn(), getVerifiedAssets: vi.fn() }
+})
+
+const mockGetAssets = vi.mocked(getAssets)
+const mockGetVerifiedAssets = vi.mocked(getVerifiedAssets)
 
 describe('Edit role', () => {
+  beforeEach(() => {
+    mockGetAssets.mockResolvedValue({})
+    mockGetVerifiedAssets.mockResolvedValue([])
+  })
+
   dbIt('is possible to update the label', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
@@ -269,6 +290,86 @@ describe('Edit role', () => {
       expect(
         await screen.findByRole('region', { name: 'Test action updated' }),
       ).toBeInTheDocument()
+    })
+
+    describe('Assets', () => {
+      dbIt('is possible to add an asset', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+
+        const account = await accountFactory.create(tenant, user, {
+          chainId: Chain.ETH,
+        })
+
+        const role = await roleFactory.create(tenant, user)
+        const action = await roleActionFactory.create(role, user)
+
+        await setActiveAccounts(dbClient(), role, [account.id])
+
+        const address = randomPrefixedAddress()
+        const weth = {
+          chainId: Chain.ETH,
+          logoURI: '',
+          name: 'Wrapped Ether',
+          symbol: 'WETH',
+          address,
+        }
+
+        mockGetAssets.mockResolvedValue({ [address]: weth })
+        mockGetVerifiedAssets.mockResolvedValue([weth])
+
+        await render(
+          href('/workspace/:workspaceId/roles/:roleId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            roleId: role.id,
+          }),
+          { tenant, user },
+        )
+
+        await userEvent.click(
+          await screen.findByRole('link', { name: 'Add assets' }),
+        )
+
+        await userEvent.click(
+          await screen.findByRole('combobox', { name: 'Assets' }),
+        )
+
+        await userEvent.click(
+          await screen.findByRole('option', { name: 'WETH' }),
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Add' }),
+        )
+
+        await waitForPendingActions()
+
+        const [asset] = await getRoleActionAssets(dbClient(), action.id)
+
+        expect(asset).toMatchObject({ roleActionId: action.id, symbol: 'WETH' })
+      })
+
+      dbIt('lists current assets', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+
+        const role = await roleFactory.create(tenant, user)
+        const action = await roleActionFactory.create(role, user)
+
+        await roleActionAssetFactory.create(action, { symbol: 'WETH' })
+
+        await render(
+          href('/workspace/:workspaceId/roles/:roleId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            roleId: role.id,
+          }),
+          { tenant, user },
+        )
+
+        expect(
+          await screen.findByRole('cell', { name: 'WETH' }),
+        ).toBeInTheDocument()
+      })
     })
   })
 })

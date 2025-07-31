@@ -20,7 +20,8 @@
       "@/sentry-client": ["./app/sentry/client/index.ts"],
       "@/workspaces": ["./app/workspaces/index.ts"],
       "@/graphql": ["./graphql-client/gql/graphql.ts"],
-      "@/graphql-client": ["./graphql-client/index.ts"]
+      "@/graphql-client": ["./graphql-client/index.ts"],
+      "@/token-list": ["./app/tokenList/index.ts"]
     }
   },
   "include": [

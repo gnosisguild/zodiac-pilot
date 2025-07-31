@@ -11,5 +11,6 @@ export const getRoleActions = (db: DBClient, roleId: UUID) =>
     },
     with: {
       createdBy: { columns: { fullName: true } },
+      assets: true,
     },
   })

@@ -19,6 +19,7 @@ export {
   contractSchema,
   executionRouteSchema,
   isHexAddress,
+  prefixedAddressSchema,
   verifyHexAddress,
   verifyPrefixedAddress,
   waypointsSchema,

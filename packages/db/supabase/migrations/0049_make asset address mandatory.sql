@@ -1,0 +1,1 @@
+ALTER TABLE "ActionAsset" ALTER COLUMN "address" SET NOT NULL;

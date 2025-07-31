@@ -171,6 +171,7 @@ export default [
           route(':roleId', 'routes/roles/edit.tsx', [
             route('add-action', 'routes/roles/add-action.tsx'),
             route('edit-action/:actionId', 'routes/roles/edit-action.tsx'),
+            route('add-asset/:actionId', 'routes/roles/add-asset.tsx'),
           ]),
         ]),
 
@@ -313,6 +314,7 @@ export default [
 
   ...prefix('/system', [
     route('get-plan/:prefixedAddress', 'routes/system/get-plan.ts'),
+    route('token-icon/:prefixedAddress', 'routes/system/token-icon.ts'),
   ]),
 
   ...prefix('/vnet', [index('routes/vnet.ts')]),

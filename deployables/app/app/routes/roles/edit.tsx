@@ -1,5 +1,6 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
+import { Chain } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
@@ -27,11 +28,18 @@ import {
   Popover,
   PrimaryButton,
   SecondaryLinkButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   Tag,
   TextInput,
 } from '@zodiac/ui'
 import { ArrowRightLeft, Pencil } from 'lucide-react'
 import { href, Outlet, redirect } from 'react-router'
+import { prefixAddress } from 'ser-kit'
 import { Route } from './+types/edit'
 import { AccountSelect } from './AccountSelect'
 import { Intent } from './intents'
@@ -219,7 +227,69 @@ const EditRole = ({
                     </GhostLinkButton>
                   </div>
                 }
-              ></Card>
+              >
+                <FormLayout>
+                  {action.assets.length === 0 && (
+                    <Info title="No assets">
+                      Add assets to define custom allowances
+                    </Info>
+                  )}
+
+                  {action.assets.length > 0 && (
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableHeader>Asset</TableHeader>
+                          <TableHeader>Chain</TableHeader>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {action.assets.map((asset) => (
+                          <TableRow key={asset.id}>
+                            <TableCell>
+                              <div className="flex items-center gap-1">
+                                <img
+                                  src={href(
+                                    '/system/token-icon/:prefixedAddress',
+                                    {
+                                      prefixedAddress: prefixAddress(
+                                        asset.chainId,
+                                        asset.address,
+                                      ),
+                                    },
+                                  )}
+                                  alt=""
+                                  className="size-4 rounded-full"
+                                />
+                                {asset.symbol}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              <Chain chainId={asset.chainId} />
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
+
+                  <FormLayout.Actions>
+                    <GhostLinkButton
+                      size="small"
+                      to={href(
+                        '/workspace/:workspaceId/roles/:roleId/add-asset/:actionId',
+                        {
+                          workspaceId,
+                          roleId: action.roleId,
+                          actionId: action.id,
+                        },
+                      )}
+                    >
+                      Add assets
+                    </GhostLinkButton>
+                  </FormLayout.Actions>
+                </FormLayout>
+              </Card>
             ))}
 
             {actions.length === 0 && (

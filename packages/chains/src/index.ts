@@ -1,5 +1,5 @@
 export type { ChainId } from 'ser-kit'
-export { Chain, HIDDEN_CHAINS, chains } from './chains'
+export { Chain, HIDDEN_CHAINS, chains, isEnabledChain } from './chains'
 export * from './const'
 export { getChainId } from './getChainId'
 export { rpc } from './rpc'
