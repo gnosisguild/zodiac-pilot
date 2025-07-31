@@ -16,6 +16,7 @@ import { RoleActionType } from '@zodiac/db/schema'
 import {
   accountFactory,
   dbIt,
+  roleActionAssetFactory,
   roleActionFactory,
   roleFactory,
   tenantFactory,
@@ -346,6 +347,28 @@ describe('Edit role', () => {
         const [asset] = await getRoleActionAssets(dbClient(), action.id)
 
         expect(asset).toMatchObject({ roleActionId: action.id, symbol: 'WETH' })
+      })
+
+      dbIt('lists current assets', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+
+        const role = await roleFactory.create(tenant, user)
+        const action = await roleActionFactory.create(role, user)
+
+        await roleActionAssetFactory.create(action, { symbol: 'WETH' })
+
+        await render(
+          href('/workspace/:workspaceId/roles/:roleId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            roleId: role.id,
+          }),
+          { tenant, user },
+        )
+
+        expect(
+          await screen.findByRole('cell', { name: 'WETH' }),
+        ).toBeInTheDocument()
       })
     })
   })

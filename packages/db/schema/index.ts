@@ -647,11 +647,12 @@ export const RoleActionTable = pgTable(
 export type RoleAction = typeof RoleActionTable.$inferSelect
 export type RoleActionCreateInput = typeof RoleActionTable.$inferInsert
 
-const RoleActionRelations = relations(RoleActionTable, ({ one }) => ({
+const RoleActionRelations = relations(RoleActionTable, ({ one, many }) => ({
   createdBy: one(UserTable, {
     fields: [RoleActionTable.createdById],
     references: [UserTable.id],
   }),
+  assets: many(ActionAssetTable),
 }))
 
 export const ActionAssetTable = pgTable(
@@ -679,6 +680,16 @@ export const ActionAssetTable = pgTable(
     index().on(table.workspaceId),
   ],
 )
+
+export type RoleActionAsset = typeof ActionAssetTable.$inferSelect
+export type RoleActionAssetCreateInput = typeof ActionAssetTable.$inferInsert
+
+const ActionAssetRelations = relations(ActionAssetTable, ({ one }) => ({
+  roleAction: one(RoleActionTable, {
+    fields: [ActionAssetTable.roleActionId],
+    references: [RoleActionTable.id],
+  }),
+}))
 
 export const schema = {
   tenant: TenantTable,
@@ -714,4 +725,5 @@ export const schema = {
   RoleMembershipRelations,
   RoleRelations,
   RoleActionRelations,
+  ActionAssetRelations,
 }

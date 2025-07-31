@@ -1,5 +1,6 @@
 export { accountFactory } from './accountFactory'
 export { featureFactory } from './featureFactory'
+export { roleActionAssetFactory } from './roleActionAssetFactory'
 export { roleActionFactory } from './roleActionFactory'
 export { roleFactory } from './roleFactory'
 export { routeFactory } from './routeFactory'

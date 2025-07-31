@@ -1,5 +1,6 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
+import { Chain } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
@@ -27,6 +28,12 @@ import {
   Popover,
   PrimaryButton,
   SecondaryLinkButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   Tag,
   TextInput,
 } from '@zodiac/ui'
@@ -221,9 +228,32 @@ const EditRole = ({
                 }
               >
                 <FormLayout>
-                  <Info title="No assets">
-                    Add assets to define custom allowances
-                  </Info>
+                  {action.assets.length === 0 && (
+                    <Info title="No assets">
+                      Add assets to define custom allowances
+                    </Info>
+                  )}
+
+                  {action.assets.length > 0 && (
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableHeader>Asset</TableHeader>
+                          <TableHeader>Chain</TableHeader>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {action.assets.map((asset) => (
+                          <TableRow key={asset.id}>
+                            <TableCell>{asset.symbol}</TableCell>
+                            <TableCell>
+                              <Chain chainId={asset.chainId} />
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  )}
 
                   <FormLayout.Actions>
                     <GhostLinkButton
