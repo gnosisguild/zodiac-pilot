@@ -1,5 +1,6 @@
 export { createRole } from './createRole'
 export { createRoleAction } from './createRoleAction'
+export { createRoleActionAssets } from './createRoleActionAssets'
 export { getActivatedAccounts } from './getActivatedAccounts'
 export { getRole } from './getRole'
 export { getRoleAction } from './getRoleAction'

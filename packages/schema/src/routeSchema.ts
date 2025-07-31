@@ -52,7 +52,7 @@ export const addressSchema = hexSchema.transform<HexAddress>(
 
 export const verifyHexAddress = (value?: string) => addressSchema.parse(value)
 
-const prefixedAddressSchema = z.custom<PrefixedAddress>((value) => {
+export const prefixedAddressSchema = z.custom<PrefixedAddress>((value) => {
   if (typeof value !== 'string') {
     return false
   }

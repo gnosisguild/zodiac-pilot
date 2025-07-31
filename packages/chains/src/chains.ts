@@ -94,3 +94,15 @@ export const HIDDEN_CHAINS = [
   Chain.KATANA,
   Chain.LINEA,
 ]
+
+export const isEnabledChain = (chain: number) => {
+  if (!Object.values(Chain).includes(chain)) {
+    return false
+  }
+
+  if (HIDDEN_CHAINS.includes(chain)) {
+    return false
+  }
+
+  return true
+}

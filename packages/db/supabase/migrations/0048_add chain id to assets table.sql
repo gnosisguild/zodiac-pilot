@@ -1,0 +1,1 @@
+ALTER TABLE "ActionAsset" ADD COLUMN "chainId" integer NOT NULL;

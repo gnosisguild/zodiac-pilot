@@ -664,6 +664,7 @@ export const ActionAssetTable = pgTable(
       .$type<UUID>()
       .references(() => RoleActionTable.id, { onDelete: 'cascade' }),
 
+    chainId: integer().$type<ChainId>().notNull(),
     address: text().$type<HexAddress>(),
     symbol: text().notNull(),
 

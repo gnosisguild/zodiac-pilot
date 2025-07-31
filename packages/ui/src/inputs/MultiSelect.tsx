@@ -26,7 +26,10 @@ function selectStyles<Option extends BaseOption>(): ClassNamesConfig<
   true,
   GroupBase<Option>
 > {
-  return { ...baseSelectStyles(), singleValue: () => classNames('py-2') }
+  return {
+    ...baseSelectStyles(),
+    singleValue: () => classNames('py-2 flex-1'),
+  }
 }
 
 export const MultiSelect = <Option extends BaseOption = BaseOption>({
@@ -86,7 +89,10 @@ function SelectContainer<Option extends BaseOption>({
       {values.length > 0 && (
         <ul className="-mb-1 flex flex-col divide-y divide-zinc-300 rounded-t border border-zinc-300 bg-zinc-50 pb-2 pl-4 pr-2 pt-1 text-sm dark:divide-zinc-700 dark:border-zinc-700 dark:bg-zinc-950">
           {values.map((value) => (
-            <li className="flex items-center justify-between" key={value.value}>
+            <li
+              className="flex items-center justify-between gap-2"
+              key={value.value}
+            >
               {selectProps.components.SingleValue && (
                 <selectProps.components.SingleValue
                   {...props}

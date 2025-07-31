@@ -1,6 +1,7 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Chain } from '@zodiac/chains'
 import {
   dbClient,
   getActivatedAccounts,
@@ -20,11 +21,29 @@ import {
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
-import { waitForPendingActions } from '@zodiac/test-utils'
+import {
+  randomPrefixedAddress,
+  waitForPendingActions,
+} from '@zodiac/test-utils'
 import { href } from 'react-router'
-import { describe, expect } from 'vitest'
+import { beforeEach, describe, expect, vi } from 'vitest'
+import { getAssets, getVerifiedAssets } from './getAssets'
+
+vi.mock('./getAssets', async (importOriginal) => {
+  const module = await importOriginal<typeof import('./getAssets')>()
+
+  return { ...module, getAssets: vi.fn(), getVerifiedAssets: vi.fn() }
+})
+
+const mockGetAssets = vi.mocked(getAssets)
+const mockGetVerifiedAssets = vi.mocked(getVerifiedAssets)
 
 describe('Edit role', () => {
+  beforeEach(() => {
+    mockGetAssets.mockResolvedValue({})
+    mockGetVerifiedAssets.mockResolvedValue([])
+  })
+
   dbIt('is possible to update the label', async () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
@@ -277,8 +296,26 @@ describe('Edit role', () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
 
+        const account = await accountFactory.create(tenant, user, {
+          chainId: Chain.ETH,
+        })
+
         const role = await roleFactory.create(tenant, user)
         const action = await roleActionFactory.create(role, user)
+
+        await setActiveAccounts(dbClient(), role, [account.id])
+
+        const address = randomPrefixedAddress()
+        const weth = {
+          chainId: Chain.ETH,
+          logoURI: '',
+          name: 'Wrapped Ether',
+          symbol: 'WETH',
+          address,
+        }
+
+        mockGetAssets.mockResolvedValue({ [address]: weth })
+        mockGetVerifiedAssets.mockResolvedValue([weth])
 
         await render(
           href('/workspace/:workspaceId/roles/:roleId', {
@@ -295,6 +332,7 @@ describe('Edit role', () => {
         await userEvent.click(
           await screen.findByRole('combobox', { name: 'Assets' }),
         )
+
         await userEvent.click(
           await screen.findByRole('option', { name: 'WETH' }),
         )
