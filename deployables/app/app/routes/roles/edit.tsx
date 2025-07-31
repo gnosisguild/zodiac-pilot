@@ -20,11 +20,13 @@ import { isUUID } from '@zodiac/schema'
 import {
   Card,
   DateValue,
+  Empty,
   Form,
   FormLayout,
   GhostLinkButton,
   Info,
   MultiSelect,
+  NumberValue,
   Popover,
   PrimaryButton,
   SecondaryLinkButton,
@@ -242,6 +244,7 @@ const EditRole = ({
                         <TableRow withActions>
                           <TableHeader>Asset</TableHeader>
                           <TableHeader>Chain</TableHeader>
+                          <TableHeader>Allowance</TableHeader>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -267,6 +270,16 @@ const EditRole = ({
                             </TableCell>
                             <TableCell>
                               <Chain chainId={asset.chainId} />
+                            </TableCell>
+                            <TableCell>
+                              {asset.allowance == null ? (
+                                <Empty />
+                              ) : (
+                                <div className="flex items-center gap-2">
+                                  <NumberValue>{asset.allowance}</NumberValue>
+                                  <Tag color="gray">{asset.interval}</Tag>
+                                </div>
+                              )}
                             </TableCell>
                             <TableCell>
                               <TableRowActions>
