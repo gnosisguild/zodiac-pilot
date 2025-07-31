@@ -1,9 +1,10 @@
 import { useMemo } from 'react'
+import { Empty } from '../Empty'
 import { Popover } from '../overlays'
 import { Delta } from './Delta'
 
 type NumberValueProps = {
-  children: number | Intl.StringNumericLiteral
+  children: number | bigint | Intl.StringNumericLiteral | null
   delta?: `${number}`
   precision?: number
 }
@@ -36,6 +37,10 @@ export const NumberValue = ({
   const absDelta = delta?.startsWith('-')
     ? (delta.slice(1) as `${number}`)
     : delta
+
+  if (children == null) {
+    return <Empty />
+  }
 
   return (
     <Popover

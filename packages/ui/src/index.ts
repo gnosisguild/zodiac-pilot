@@ -1,3 +1,5 @@
+import 'react-toastify/ReactToastify.css'
+
 export * from './alerts'
 export { Breadcrumbs } from './Breadcrumbs'
 export * from './buttons'

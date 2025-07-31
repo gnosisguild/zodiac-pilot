@@ -351,6 +351,13 @@
       "when": 1753955045327,
       "tag": "0049_make asset address mandatory",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "7",
+      "when": 1753958732243,
+      "tag": "0050_add allowance to assets",
+      "breakpoints": true
     }
   ]
 }

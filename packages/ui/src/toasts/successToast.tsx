@@ -5,7 +5,7 @@ const SuccessToast = ({
   data: { title, message },
   closeToast,
 }: DerivedToastProps) => (
-  <Toast className="border-green-300/80 bg-green-200 dark:border-green-500/80 dark:bg-green-600">
+  <Toast className="border-green-300/80 bg-green-200 dark:border-green-500/80 dark:bg-green-800">
     <Toast.Header>
       <Toast.Title className="text-green-900 dark:text-white">
         {title}

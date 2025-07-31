@@ -7,13 +7,14 @@ import {
   dbClient,
   getActivatedAccounts,
   getRole,
+  getRoleActionAsset,
   getRoleActionAssets,
   getRoleActions,
   getRoleMembers,
   setActiveAccounts,
   setRoleMembers,
 } from '@zodiac/db'
-import { RoleActionType } from '@zodiac/db/schema'
+import { AllowanceInterval, RoleActionType } from '@zodiac/db/schema'
 import {
   accountFactory,
   dbIt,
@@ -369,6 +370,99 @@ describe('Edit role', () => {
         expect(
           await screen.findByRole('cell', { name: 'WETH' }),
         ).toBeInTheDocument()
+      })
+
+      describe('Allowance', () => {
+        dbIt('is possible to add an allowance to an asset', async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
+
+          const role = await roleFactory.create(tenant, user)
+          const action = await roleActionFactory.create(role, user)
+
+          const asset = await roleActionAssetFactory.create(action, {
+            symbol: 'WETH',
+          })
+
+          await render(
+            href('/workspace/:workspaceId/roles/:roleId', {
+              workspaceId: tenant.defaultWorkspaceId,
+              roleId: role.id,
+            }),
+            { tenant, user },
+          )
+
+          await userEvent.click(
+            await screen.findByRole('link', { name: 'Edit asset' }),
+          )
+
+          await userEvent.type(
+            await screen.findByRole('spinbutton', { name: 'Allowance' }),
+            '1000',
+          )
+
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Update' }),
+          )
+
+          await waitForPendingActions()
+
+          await expect(
+            getRoleActionAsset(dbClient(), asset.id),
+          ).resolves.toMatchObject({
+            allowance: 1000n,
+            interval: AllowanceInterval.Monthly,
+          })
+        })
+
+        dbIt('is possible to define the interval of an allowance', async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
+
+          const role = await roleFactory.create(tenant, user)
+          const action = await roleActionFactory.create(role, user)
+
+          const asset = await roleActionAssetFactory.create(action, {
+            symbol: 'WETH',
+          })
+
+          await render(
+            href('/workspace/:workspaceId/roles/:roleId', {
+              workspaceId: tenant.defaultWorkspaceId,
+              roleId: role.id,
+            }),
+            { tenant, user },
+          )
+
+          await userEvent.click(
+            await screen.findByRole('link', { name: 'Edit asset' }),
+          )
+
+          await userEvent.type(
+            await screen.findByRole('spinbutton', { name: 'Allowance' }),
+            '1000',
+          )
+
+          await userEvent.click(
+            await screen.findByRole('combobox', { name: 'Interval' }),
+          )
+          await userEvent.click(
+            await screen.findByRole('option', { name: 'Daily' }),
+          )
+
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Update' }),
+          )
+
+          await waitForPendingActions()
+
+          await expect(
+            getRoleActionAsset(dbClient(), asset.id),
+          ).resolves.toMatchObject({
+            allowance: 1000n,
+            interval: AllowanceInterval.Daily,
+          })
+        })
       })
     })
   })

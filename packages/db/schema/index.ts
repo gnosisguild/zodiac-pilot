@@ -10,6 +10,7 @@ import {
 import type { UUID } from 'crypto'
 import { relations } from 'drizzle-orm'
 import {
+  bigint,
   boolean,
   index,
   integer,
@@ -655,6 +656,19 @@ const RoleActionRelations = relations(RoleActionTable, ({ one, many }) => ({
   assets: many(ActionAssetTable),
 }))
 
+export enum AllowanceInterval {
+  Daily = 'daily',
+  Weekly = 'weekly',
+  Monthly = 'monthly',
+  Quarterly = 'quarterly',
+  Yearly = 'yearly',
+}
+
+export const AllowanceIntervalEnum = pgEnum(
+  'AllowanceInterval',
+  enumToPgEnum(AllowanceInterval),
+)
+
 export const ActionAssetTable = pgTable(
   'ActionAsset',
   {
@@ -668,6 +682,9 @@ export const ActionAssetTable = pgTable(
     chainId: integer().$type<ChainId>().notNull(),
     address: text().$type<HexAddress>().notNull(),
     symbol: text().notNull(),
+
+    allowance: bigint({ mode: 'bigint' }),
+    interval: AllowanceIntervalEnum(),
 
     ...createdTimestamp,
     ...updatedTimestamp,

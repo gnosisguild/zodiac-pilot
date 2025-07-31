@@ -10,7 +10,7 @@ import {
   type ToastOptions as BaseToastOptions,
   type ToastContent,
   type ToastContentProps,
-} from 'react-toastify'
+} from 'react-toastify/unstyled'
 
 type ToastData = { message: ReactNode; title: string }
 
