@@ -300,8 +300,8 @@ importers:
         specifier: 4.0.3
         version: 4.0.3(patch_hash=4daf2f760a7cbb2b59d59a58b14eea3a947c7f4e712aec1e6ab46482e2713d31)(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       '@headlessui/react':
-        specifier: 2.2.6
-        version: 2.2.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        specifier: 2.2.7
+        version: 2.2.7(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@sentry/browser':
         specifier: 9.42.1
         version: 9.42.1
@@ -493,8 +493,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       '@headlessui/react':
-        specifier: 2.2.6
-        version: 2.2.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        specifier: 2.2.7
+        version: 2.2.7(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@icons-pack/react-simple-icons':
         specifier: 13.7.0
         version: 13.7.0(react@19.1.1)
@@ -1026,8 +1026,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0
       '@headlessui/react':
-        specifier: 2.2.6
-        version: 2.2.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        specifier: 2.2.7
+        version: 2.2.7(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@zodiac/chains':
         specifier: workspace:*
         version: link:../chains
@@ -2656,8 +2656,8 @@ packages:
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
 
-  '@headlessui/react@2.2.6':
-    resolution: {integrity: sha512-gN5CT8Kf4IWwL04GQOjZ/ZnHMFoeFHZmVSFoDKeTmbtmy9oFqQqJMthdBiO3Pl5LXk2w03fGFLpQV6EW84vjjQ==}
+  '@headlessui/react@2.2.7':
+    resolution: {integrity: sha512-WKdTymY8Y49H8/gUc/lIyYK1M+/6dq0Iywh4zTZVAaiTDprRfioxSgD0wnXTQTBpjpGJuTL1NO/mqEvc//5SSg==}
     engines: {node: '>=10'}
     peerDependencies:
       react: ^18 || ^19 || ^19.0.0-rc
@@ -12175,7 +12175,7 @@ snapshots:
     dependencies:
       graphql: 16.11.0
 
-  '@headlessui/react@2.2.6(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
+  '@headlessui/react@2.2.7(react-dom@19.1.1(react@19.1.1))(react@19.1.1)':
     dependencies:
       '@floating-ui/react': 0.26.28(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       '@react-aria/focus': 3.20.2(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
