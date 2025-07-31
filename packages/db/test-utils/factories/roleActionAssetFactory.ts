@@ -34,7 +34,6 @@ export const roleActionAssetFactory = createFactory<
   createWithoutDb(data) {
     return {
       id: randomUUID(),
-      address: data.address ?? randomAddress(),
       createdAt: new Date(),
       updatedAt: null,
 

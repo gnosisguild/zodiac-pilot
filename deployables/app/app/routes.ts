@@ -314,6 +314,7 @@ export default [
 
   ...prefix('/system', [
     route('get-plan/:prefixedAddress', 'routes/system/get-plan.ts'),
+    route('token-icon/:prefixedAddress', 'routes/system/token-icon.ts'),
   ]),
 
   ...prefix('/vnet', [index('routes/vnet.ts')]),

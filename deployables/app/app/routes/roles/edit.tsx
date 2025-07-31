@@ -39,6 +39,7 @@ import {
 } from '@zodiac/ui'
 import { ArrowRightLeft, Pencil } from 'lucide-react'
 import { href, Outlet, redirect } from 'react-router'
+import { prefixAddress } from 'ser-kit'
 import { Route } from './+types/edit'
 import { AccountSelect } from './AccountSelect'
 import { Intent } from './intents'
@@ -245,7 +246,24 @@ const EditRole = ({
                       <TableBody>
                         {action.assets.map((asset) => (
                           <TableRow key={asset.id}>
-                            <TableCell>{asset.symbol}</TableCell>
+                            <TableCell>
+                              <div className="flex items-center gap-1">
+                                <img
+                                  src={href(
+                                    '/system/token-icon/:prefixedAddress',
+                                    {
+                                      prefixedAddress: prefixAddress(
+                                        asset.chainId,
+                                        asset.address,
+                                      ),
+                                    },
+                                  )}
+                                  alt=""
+                                  className="size-4 rounded-full"
+                                />
+                                {asset.symbol}
+                              </div>
+                            </TableCell>
                             <TableCell>
                               <Chain chainId={asset.chainId} />
                             </TableCell>

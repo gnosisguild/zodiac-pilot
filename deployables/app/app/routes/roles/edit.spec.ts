@@ -1,4 +1,5 @@
 import { render } from '@/test-utils'
+import { getAssets, getVerifiedAssets } from '@/token-list'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain } from '@zodiac/chains'
@@ -28,10 +29,9 @@ import {
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { beforeEach, describe, expect, vi } from 'vitest'
-import { getAssets, getVerifiedAssets } from './getAssets'
 
-vi.mock('./getAssets', async (importOriginal) => {
-  const module = await importOriginal<typeof import('./getAssets')>()
+vi.mock('@/token-list', async (importOriginal) => {
+  const module = await importOriginal<typeof import('@/token-list')>()
 
   return { ...module, getAssets: vi.fn(), getVerifiedAssets: vi.fn() }
 })

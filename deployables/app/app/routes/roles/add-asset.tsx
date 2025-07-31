@@ -1,6 +1,7 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Token } from '@/components'
 import { Chain } from '@/routes-ui'
+import { getAssets, getVerifiedAssets } from '@/token-list'
 import { invariantResponse } from '@epic-web/invariant'
 import { getChainId } from '@zodiac/chains'
 import {
@@ -15,7 +16,6 @@ import { isUUID } from '@zodiac/schema'
 import { Form, Modal, MultiSelect, PrimaryButton } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/add-asset'
-import { getAssets, getVerifiedAssets } from './getAssets'
 import { Intent } from './intents'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -99,6 +99,7 @@ const AddAsset = ({
     <Modal
       open
       title="Add assets"
+      description="Add one ore more assets to this action."
       onClose={() =>
         navigate(
           href('/workspace/:workspaceId/roles/:roleId', {

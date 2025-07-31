@@ -344,6 +344,13 @@
       "when": 1753951813754,
       "tag": "0048_add chain id to assets table",
       "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "7",
+      "when": 1753955045327,
+      "tag": "0049_make asset address mandatory",
+      "breakpoints": true
     }
   ]
 }
