@@ -100,10 +100,11 @@ const EditAsset = ({
             workspaceId,
             roleId,
           }),
+          { replace: true },
         )
       }
     >
-      <Form>
+      <Form replace>
         <NumberInput
           required
           label="Allowance"

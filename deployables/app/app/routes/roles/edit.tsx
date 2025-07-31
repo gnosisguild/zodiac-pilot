@@ -15,7 +15,7 @@ import {
   updateRole,
 } from '@zodiac/db'
 import { getString, getUUIDList } from '@zodiac/form-data'
-import { useIsPending } from '@zodiac/hooks'
+import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import {
   Card,
@@ -30,6 +30,7 @@ import {
   Popover,
   PrimaryButton,
   SecondaryLinkButton,
+  successToast,
   Table,
   TableBody,
   TableCell,
@@ -41,7 +42,7 @@ import {
   TextInput,
 } from '@zodiac/ui'
 import { ArrowRightLeft, Pencil } from 'lucide-react'
-import { href, Outlet, redirect } from 'react-router'
+import { href, Outlet } from 'react-router'
 import { prefixAddress } from 'ser-kit'
 import { Route } from './+types/edit'
 import { AccountSelect } from './AccountSelect'
@@ -93,7 +94,7 @@ export const loader = (args: Route.LoaderArgs) =>
 export const action = (args: Route.ActionArgs) =>
   authorizedAction(
     args,
-    async ({ params: { roleId, workspaceId }, request }) => {
+    async ({ params: { roleId }, request }) => {
       invariantResponse(isUUID(roleId), '"roleId" is not a UUID')
 
       const data = await request.formData()
@@ -111,9 +112,7 @@ export const action = (args: Route.ActionArgs) =>
         await setActiveAccounts(tx, role, getUUIDList(data, 'accounts'))
       })
 
-      return redirect(
-        href('/workspace/:workspaceId/roles/drafts', { workspaceId }),
-      )
+      return null
     },
     {
       ensureSignedIn: true,
@@ -131,6 +130,13 @@ const EditRole = ({
   loaderData: { role, users, members, accounts, activeAccounts, actions },
   params: { workspaceId, roleId },
 }: Route.ComponentProps) => {
+  useAfterSubmit(Intent.Save, () =>
+    successToast({
+      title: 'Role saved',
+      message: 'Your changes to this role have been saved',
+    }),
+  )
+
   return (
     <Page>
       <Page.Header>Edit role</Page.Header>
@@ -219,6 +225,7 @@ const EditRole = ({
 
                     <GhostLinkButton
                       iconOnly
+                      replace
                       size="small"
                       icon={Pencil}
                       to={href(
@@ -285,6 +292,7 @@ const EditRole = ({
                               <TableRowActions>
                                 <GhostLinkButton
                                   iconOnly
+                                  replace
                                   icon={Pencil}
                                   size="tiny"
                                   to={href(
@@ -309,6 +317,7 @@ const EditRole = ({
 
                   <FormLayout.Actions>
                     <GhostLinkButton
+                      replace
                       size="small"
                       to={href(
                         '/workspace/:workspaceId/roles/:roleId/action/:actionId/add-asset',

@@ -96,7 +96,7 @@ export default function App({
             </ProvideUser>
           </ProvideExtensionVersion>
         </ProvideDevelopmentContext>
-        <ToastContainer />
+        <ToastContainer position="top-right" />
         <ScrollRestoration />
         <Scripts />
       </body>

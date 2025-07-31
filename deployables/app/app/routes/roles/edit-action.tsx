@@ -81,16 +81,18 @@ const EditAction = ({
   return (
     <Modal
       open
+      title="Edit action"
       onClose={() =>
         navigate(
           href('/workspace/:workspaceId/roles/:roleId', {
             workspaceId,
             roleId,
           }),
+          { replace: true },
         )
       }
     >
-      <Form>
+      <Form replace>
         <TextInput
           required
           label="Action label"

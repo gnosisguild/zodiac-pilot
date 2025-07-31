@@ -106,10 +106,11 @@ const AddAsset = ({
             workspaceId,
             roleId,
           }),
+          { replace: true },
         )
       }
     >
-      <Form>
+      <Form replace>
         <MultiSelect
           required
           name="assets"

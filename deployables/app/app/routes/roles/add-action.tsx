@@ -62,10 +62,11 @@ const AddAction = ({
             workspaceId,
             roleId,
           }),
+          { replace: true },
         )
       }
     >
-      <Form>
+      <Form replace>
         <TextInput required label="Action label" name="label" />
 
         <RoleActionTypeSelect />
