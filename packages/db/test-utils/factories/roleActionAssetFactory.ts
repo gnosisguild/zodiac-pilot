@@ -36,6 +36,8 @@ export const roleActionAssetFactory = createFactory<
       id: randomUUID(),
       createdAt: new Date(),
       updatedAt: null,
+      allowance: null,
+      interval: null,
 
       ...data,
     }

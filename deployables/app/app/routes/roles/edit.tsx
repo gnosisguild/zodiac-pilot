@@ -34,6 +34,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableRowActions,
   Tag,
   TextInput,
 } from '@zodiac/ui'
@@ -219,7 +220,7 @@ const EditRole = ({
                       size="small"
                       icon={Pencil}
                       to={href(
-                        '/workspace/:workspaceId/roles/:roleId/edit-action/:actionId',
+                        '/workspace/:workspaceId/roles/:roleId/action/:actionId',
                         { workspaceId, roleId, actionId: action.id },
                       )}
                     >
@@ -238,7 +239,7 @@ const EditRole = ({
                   {action.assets.length > 0 && (
                     <Table>
                       <TableHead>
-                        <TableRow>
+                        <TableRow withActions>
                           <TableHeader>Asset</TableHeader>
                           <TableHeader>Chain</TableHeader>
                         </TableRow>
@@ -267,6 +268,26 @@ const EditRole = ({
                             <TableCell>
                               <Chain chainId={asset.chainId} />
                             </TableCell>
+                            <TableCell>
+                              <TableRowActions>
+                                <GhostLinkButton
+                                  iconOnly
+                                  icon={Pencil}
+                                  size="tiny"
+                                  to={href(
+                                    '/workspace/:workspaceId/roles/:roleId/action/:actionId/asset/:assetId',
+                                    {
+                                      workspaceId,
+                                      roleId,
+                                      actionId: asset.roleActionId,
+                                      assetId: asset.id,
+                                    },
+                                  )}
+                                >
+                                  Edit asset
+                                </GhostLinkButton>
+                              </TableRowActions>
+                            </TableCell>
                           </TableRow>
                         ))}
                       </TableBody>
@@ -277,7 +298,7 @@ const EditRole = ({
                     <GhostLinkButton
                       size="small"
                       to={href(
-                        '/workspace/:workspaceId/roles/:roleId/add-asset/:actionId',
+                        '/workspace/:workspaceId/roles/:roleId/action/:actionId/add-asset',
                         {
                           workspaceId,
                           roleId: action.roleId,

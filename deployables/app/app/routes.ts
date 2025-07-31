@@ -170,8 +170,15 @@ export default [
           route('create', 'routes/roles/create.tsx'),
           route(':roleId', 'routes/roles/edit.tsx', [
             route('add-action', 'routes/roles/add-action.tsx'),
-            route('edit-action/:actionId', 'routes/roles/edit-action.tsx'),
-            route('add-asset/:actionId', 'routes/roles/add-asset.tsx'),
+
+            ...prefix('action/:actionId', [
+              index('routes/roles/edit-action.tsx'),
+              route('add-asset', 'routes/roles/add-asset.tsx'),
+
+              ...prefix('asset/:assetId', [
+                index('routes/roles/edit-asset.tsx'),
+              ]),
+            ]),
           ]),
         ]),
 

@@ -4,4 +4,5 @@ export enum Intent {
   AddAction = 'AddAction',
   EditAction = 'EditAction',
   AddAsset = 'AddAsset',
+  EditAsset = 'EditAsset',
 }

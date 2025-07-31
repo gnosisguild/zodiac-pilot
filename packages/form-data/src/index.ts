@@ -1,5 +1,6 @@
 export { formData } from './formData'
 export { getBoolean } from './getBoolean'
+export { getEnumValue } from './getEnumValue'
 export { getHexString, getOptionalHexString } from './getHexString'
 export { getInt } from './getInt'
 export { getMap } from './getMap'
