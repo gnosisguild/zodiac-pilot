@@ -43,7 +43,7 @@ esbuild
       '.html': 'text',
     },
 
-    target: ['chrome96'],
+    target: ['es2022'],
     outdir: './public/build',
     publicPath: '/build',
     inject: [

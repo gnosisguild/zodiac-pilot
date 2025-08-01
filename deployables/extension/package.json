@@ -31,7 +31,7 @@
     "@dotenvx/dotenvx": "1.48.4",
     "@playwright/test": "1.54.1",
     "@safe-global/safe-gateway-typescript-sdk": "3.23.1",
-    "@sentry/esbuild-plugin": "3.6.1",
+    "@sentry/esbuild-plugin": "4.0.2",
     "@tailwindcss/postcss": "4.1.11",
     "@testing-library/dom": "10.4.1",
     "@testing-library/jest-dom": "6.6.4",
