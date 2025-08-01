@@ -28,6 +28,7 @@ const LinkTab = ({ children, icon: Icon, ...props }: LinkTabProps) => {
     <NavLink
       {...props}
       role="tab"
+      prefetch="render"
       className={({ isActive }) =>
         classNames(
           'flex items-center gap-2 whitespace-nowrap border-b-2 px-1 py-4 text-sm font-medium',

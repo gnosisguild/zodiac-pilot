@@ -29,6 +29,7 @@ export const RouteTab = ({ route, isDefault }: RouteTabProps) => {
 
       <MeatballMenu label="Route options" size="tiny">
         <GhostLinkButton
+          replace
           size="tiny"
           align="left"
           to={href(
@@ -45,6 +46,7 @@ export const RouteTab = ({ route, isDefault }: RouteTabProps) => {
         </GhostLinkButton>
 
         <GhostLinkButton
+          replace
           size="tiny"
           align="left"
           style="critical"

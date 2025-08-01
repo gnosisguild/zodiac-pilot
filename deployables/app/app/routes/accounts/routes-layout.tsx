@@ -48,6 +48,7 @@ const RoutesLayout = ({
           action={
             <div className="py-2">
               <SecondaryLinkButton
+                replace
                 icon={Plus}
                 size="small"
                 to={
