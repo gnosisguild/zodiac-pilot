@@ -6,6 +6,7 @@ import {
 } from '@/companion'
 import { getRoute, saveLastUsedAccountId } from '@/execution-routes'
 import {
+  callListeners,
   chromeMock,
   createConfirmedTransaction,
   createMockRoute,
@@ -32,6 +33,7 @@ import {
 } from '@zodiac/db/test-utils'
 import { getCompanionAppUrl } from '@zodiac/env'
 import {
+  CompanionAppMessageType,
   CompanionResponseMessageType,
   type CompanionResponseMessage,
 } from '@zodiac/messages'
@@ -227,6 +229,32 @@ describe('Transactions', () => {
   })
 
   describe('Sign', () => {
+    it('clears transactions when the user has signed the transaction bundle', async () => {
+      await mockRoute({
+        id: 'test-route',
+        initiator: randomPrefixedAddress(),
+      })
+
+      const transaction = createConfirmedTransaction()
+
+      const { mockedTab } = await render('/test-route', {
+        initialState: { executed: [transaction] },
+      })
+
+      await userEvent.click(await screen.findByRole('link', { name: 'Sign' }))
+
+      await callListeners(
+        chromeMock.runtime.onMessage,
+        { type: CompanionAppMessageType.SUBMIT_SUCCESS },
+        { tab: mockedTab },
+        vi.fn(),
+      )
+
+      expect(
+        await screen.findByRole('alert', { name: 'No transactions' }),
+      ).toBeInTheDocument()
+    })
+
     describe('Logged out', () => {
       it('disables the sign button when there are no transactions', async () => {
         await mockRoute({
