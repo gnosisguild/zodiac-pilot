@@ -183,8 +183,10 @@ export default [
         ]),
 
         route('accounts', 'routes/accounts/list.tsx', [
-          route('delete/:accountId', 'routes/accounts/delete-account.tsx'),
-          route('move/:accountId', 'routes/accounts/move-account.tsx'),
+          ...prefix(':accountId', [
+            route('delete', 'routes/accounts/delete-account.tsx'),
+            route('move', 'routes/accounts/move-account.tsx'),
+          ]),
         ]),
 
         ...prefix('accounts', [

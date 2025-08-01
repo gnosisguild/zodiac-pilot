@@ -52,11 +52,12 @@ const RemoveRoute = ({
             accountId,
             routeId,
           }),
+          { replace: true },
         )
       }
     >
       <Modal.Actions>
-        <InlineForm>
+        <InlineForm replace>
           <PrimaryButton
             submit
             style="critical"

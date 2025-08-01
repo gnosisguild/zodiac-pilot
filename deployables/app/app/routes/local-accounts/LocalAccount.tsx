@@ -75,6 +75,7 @@ const Actions = ({ routeId }: { routeId: string }) => {
       </GhostLinkButton>
 
       <GhostLinkButton
+        replace
         to={
           workspaceId
             ? href('/workspace/:workspaceId/local-accounts/delete/:accountId', {
