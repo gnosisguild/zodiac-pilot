@@ -2,10 +2,7 @@ import { sentry } from '@/sentry-client'
 import { jsonRpcProvider } from '@/utils'
 import { explorerUrl } from '@zodiac/chains'
 import { useIsPending, useStableHandler } from '@zodiac/hooks'
-import {
-  CompanionAppMessageType,
-  type CompanionAppMessage,
-} from '@zodiac/messages'
+import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import { multisigTransactionUrl } from '@zodiac/safe'
 import type { HexAddress } from '@zodiac/schema'
 import { errorToast, PrimaryButton, successToast } from '@zodiac/ui'
@@ -73,6 +70,8 @@ export const SignTransaction = ({
           },
         )
 
+        companionRequest({ type: CompanionAppMessageType.SUBMIT_SUCCESS })
+
         const safeTxHash =
           state[
             executionPlan.findIndex(
@@ -119,6 +118,7 @@ export const SignTransaction = ({
             console.debug(
               `Transaction batch has been submitted with transaction hash ${txHash}`,
             )
+
             const receipt =
               await jsonRpcProvider(chainId).waitForTransaction(txHash)
 
@@ -146,13 +146,6 @@ export const SignTransaction = ({
             })
           }
         }
-
-        window.postMessage(
-          {
-            type: CompanionAppMessageType.SUBMIT_SUCCESS,
-          } satisfies CompanionAppMessage,
-          '*',
-        )
       } catch (error) {
         console.debug({ error })
 

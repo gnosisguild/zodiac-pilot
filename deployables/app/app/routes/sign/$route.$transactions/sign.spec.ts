@@ -1,7 +1,9 @@
 import { simulateTransactionBundle } from '@/simulation-server'
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { Chain } from '@zodiac/chains'
+import { CompanionAppMessageType } from '@zodiac/messages'
 import {
   createMockExecutionRoute,
   createMockSerRoute,
@@ -11,12 +13,15 @@ import { encode } from '@zodiac/schema'
 import {
   randomAddress,
   randomEoaAddress,
+  randomHex,
   randomPrefixedAddress,
+  waitForPendingActions,
 } from '@zodiac/test-utils'
 import { useAccount, useConnectorClient } from '@zodiac/web3'
 import { href } from 'react-router'
 import {
   checkPermissions,
+  execute,
   PermissionViolation,
   planExecution,
   queryRoutes,
@@ -24,18 +29,22 @@ import {
 } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+const mockPostMessage = vi.spyOn(window, 'postMessage')
+
 vi.mock('ser-kit', async (importOriginal) => {
   const module = await importOriginal<typeof import('ser-kit')>()
 
   return {
     ...module,
 
+    execute: vi.fn(),
     planExecution: vi.fn(),
     queryRoutes: vi.fn(),
     checkPermissions: vi.fn(),
   }
 })
 
+const mockExecute = vi.mocked(execute)
 const mockQueryRoutes = vi.mocked(queryRoutes)
 const mockCheckPermissions = vi.mocked(checkPermissions)
 
@@ -308,6 +317,39 @@ describe('Sign', () => {
       expect(
         await screen.findByRole('checkbox', { name: 'Revoke all approvals' }),
       ).not.toBeChecked()
+    })
+  })
+
+  describe('Extension', () => {
+    it('signals to the extension when a transaction bundle has been signed', async () => {
+      const currentRoute = createMockSerRoute({ initiator })
+      const transaction = createMockTransactionRequest()
+
+      mockQueryRoutes.mockResolvedValue([currentRoute])
+
+      const testHash = randomHex(18)
+
+      mockExecute.mockImplementation(async (_, state = []) => {
+        state.push(testHash)
+      })
+
+      await render(
+        href('/offline/submit/:route/:transactions', {
+          route: encode(currentRoute),
+          transactions: encode([transaction]),
+        }),
+      )
+
+      await userEvent.click(await screen.findByRole('button', { name: 'Sign' }))
+
+      await waitForPendingActions()
+
+      expect(mockPostMessage).toHaveBeenCalledWith(
+        {
+          type: CompanionAppMessageType.SUBMIT_SUCCESS,
+        },
+        '*',
+      )
     })
   })
 })
