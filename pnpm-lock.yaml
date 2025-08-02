@@ -125,8 +125,8 @@ importers:
         specifier: 0.6.1
         version: 0.6.1(express@5.1.0)(react-dom@19.1.1(react@19.1.1))(react-router@7.7.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
       '@workos-inc/node':
-        specifier: 7.62.1
-        version: 7.62.1(express@5.1.0)
+        specifier: 7.63.0
+        version: 7.63.0(express@5.1.0)
       '@workos-inc/widgets':
         specifier: 1.2.1
         version: 1.2.1(@radix-ui/themes@3.2.1(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(@tanstack/react-query@5.84.1(react@19.1.1))(@types/react-dom@19.1.7(@types/react@19.1.9))(@types/react@19.1.9)(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -679,8 +679,8 @@ importers:
         specifier: 19.1.9
         version: 19.1.9
       '@workos-inc/node':
-        specifier: 7.62.1
-        version: 7.62.1(express@5.1.0)
+        specifier: 7.63.0
+        version: 7.63.0(express@5.1.0)
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
@@ -5122,8 +5122,8 @@ packages:
       react-dom: ^18.0 || ^19.0.0
       react-router: ^7.2.0
 
-  '@workos-inc/node@7.62.1':
-    resolution: {integrity: sha512-MSeEpWLLVsk7HVKdnwaWj0S03bUquLwNCXah/fBun5nZIZhQLDZtK3s1nAexhU+UEUclB4T+xYeaegYK6sshoQ==}
+  '@workos-inc/node@7.63.0':
+    resolution: {integrity: sha512-DjCZmdi2fXKr7C5Rq5xtFcRHQsHpXQP/hyzDwLyrUsium1+yqGgM2547RZ30nDKjkYT/LebYG8wR5zVMQrPvXA==}
     engines: {node: '>=16'}
 
   '@workos-inc/widgets@1.2.1':
@@ -15912,7 +15912,7 @@ snapshots:
 
   '@workos-inc/authkit-react-router@0.6.1(express@5.1.0)(react-dom@19.1.1(react@19.1.1))(react-router@7.7.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)':
     dependencies:
-      '@workos-inc/node': 7.62.1(express@5.1.0)
+      '@workos-inc/node': 7.63.0(express@5.1.0)
       iron-session: 8.0.4
       jose: 5.10.0
       react: 19.1.1
@@ -15923,7 +15923,7 @@ snapshots:
       - koa
       - next
 
-  '@workos-inc/node@7.62.1(express@5.1.0)':
+  '@workos-inc/node@7.63.0(express@5.1.0)':
     dependencies:
       iron-session: 6.3.1(express@5.1.0)
       jose: 5.6.3
