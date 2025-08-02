@@ -11,6 +11,7 @@ const NoRoutes = ({
         You have not defined any routes leading to this account, yet.
         <Info.Actions>
           <SecondaryLinkButton
+            replace
             size="small"
             to={href(
               '/workspace/:workspaceId/accounts/:accountId/no-routes/add',

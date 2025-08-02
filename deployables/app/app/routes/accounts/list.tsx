@@ -211,8 +211,9 @@ const ListRoutes = ({
                       </GhostLinkButton>
 
                       <GhostLinkButton
+                        replace
                         to={href(
-                          '/workspace/:workspaceId/accounts/move/:accountId',
+                          '/workspace/:workspaceId/accounts/:accountId/move',
                           {
                             accountId: account.id,
                             workspaceId: account.workspaceId,
@@ -227,8 +228,9 @@ const ListRoutes = ({
                       </GhostLinkButton>
 
                       <GhostLinkButton
+                        replace
                         to={href(
-                          '/workspace/:workspaceId/accounts/delete/:accountId',
+                          '/workspace/:workspaceId/accounts/:accountId/delete',
                           {
                             workspaceId: account.workspaceId,
                             accountId: account.id,
