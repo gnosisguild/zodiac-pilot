@@ -194,8 +194,8 @@ importers:
         specifier: 7.7.1
         version: 7.7.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       remix-utils:
-        specifier: 8.7.0
-        version: 8.7.0(react-router@7.7.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)(zod@4.0.14)
+        specifier: 8.8.0
+        version: 8.8.0(react-router@7.7.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)(zod@4.0.14)
       ser-kit:
         specifier: 3.10.1
         version: 3.10.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.0.14)
@@ -9046,8 +9046,8 @@ packages:
   remedial@1.0.8:
     resolution: {integrity: sha512-/62tYiOe6DzS5BqVsNpH/nkGlX45C/Sp6V+NtiN6JQNS1Viay7cWkazmRkrQrdFj2eshDe96SIQNIoMxqhzBOg==}
 
-  remix-utils@8.7.0:
-    resolution: {integrity: sha512-oRumofsYFaxHyPtqLuYe3g2nQi4SMYjCoebaeed0gYHIOKBiPPYdNP6cgmQbFjQQ5pwXV+uQiKLqO6pM9ep3VA==}
+  remix-utils@8.8.0:
+    resolution: {integrity: sha512-5CR4a3YwPaCoPUHg+O69UMek05tnFMrtQsoXTU4KzsyU7heDO94IFTjKVzEFhi+s+SSo+ebRMxWvjf/QiPpqiQ==}
     engines: {node: '>=20.0.0'}
     peerDependencies:
       '@edgefirst-dev/batcher': ^1.0.0
@@ -9055,6 +9055,7 @@ packages:
       '@edgefirst-dev/server-timing': ^0.0.1
       '@oslojs/crypto': ^1.0.1
       '@oslojs/encoding': ^1.1.0
+      '@standard-schema/spec': ^1.0.0
       intl-parse-accept-language: ^1.0.0
       is-ip: ^5.0.1
       react: ^18.0.0 || ^19.0.0
@@ -9070,6 +9071,8 @@ packages:
       '@oslojs/crypto':
         optional: true
       '@oslojs/encoding':
+        optional: true
+      '@standard-schema/spec':
         optional: true
       intl-parse-accept-language:
         optional: true
@@ -20417,7 +20420,7 @@ snapshots:
 
   remedial@1.0.8: {}
 
-  remix-utils@8.7.0(react-router@7.7.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)(zod@4.0.14):
+  remix-utils@8.8.0(react-router@7.7.1(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)(zod@4.0.14):
     dependencies:
       type-fest: 4.41.0
     optionalDependencies:
