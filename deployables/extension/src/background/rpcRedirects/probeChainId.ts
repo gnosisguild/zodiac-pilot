@@ -42,4 +42,15 @@ const fastTrack = {
   'https://rpc.ankr.com/eth': Chain.ETH,
 
   'https://www.shadow.so': Chain.SONIC,
+
+  'https://eth.drpc.org': Chain.ETH,
+  'https://optimism.drpc.org': Chain.OETH,
+  'https://arbitrum.drpc.org': Chain.ARB1,
+  'https://avalanche.drpc.org': Chain.AVAX,
+  'https://polygon.drpc.org': Chain.MATIC,
+  'https://mantle.drpc.org': Chain.MANTLE,
+  'https://base.drpc.org': Chain.BASE,
+  'https://celo.drpc.org': Chain.CELO,
+  'https://berachain.drpc.org': Chain.BERACHAIN,
+  'https://sonic.drpc.org': Chain.SONIC,
 }
