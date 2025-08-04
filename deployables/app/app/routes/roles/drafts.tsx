@@ -1,18 +1,23 @@
-import { authorizedLoader } from '@/auth-server'
+import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
   getActivatedAccounts,
+  getRole,
   getRoleMembers,
   getRoles,
   getWorkspace,
 } from '@zodiac/db'
+import { getUUID } from '@zodiac/form-data'
+import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import {
   DateValue,
   Empty,
+  GhostButton,
   GhostLinkButton,
   Info,
+  InlineForm,
   Popover,
   Table,
   TableBody,
@@ -20,11 +25,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableRowActions,
 } from '@zodiac/ui'
 import { Address } from '@zodiac/web3'
-import { Pencil } from 'lucide-react'
+import { UUID } from 'crypto'
+import { CloudUpload, Pencil } from 'lucide-react'
 import { href } from 'react-router'
 import type { Route } from './+types/drafts'
+import { Intent } from './intents'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -39,6 +47,27 @@ export const loader = (args: Route.LoaderArgs) =>
         }),
         members: await getRoleMembers(dbClient(), { workspaceId }),
       }
+    },
+    {
+      ensureSignedIn: true,
+      async hasAccess({ params: { workspaceId }, tenant }) {
+        invariantResponse(isUUID(workspaceId), '"workspaceId" is no UUID')
+
+        const workspace = await getWorkspace(dbClient(), workspaceId)
+
+        return workspace.tenantId === tenant.id
+      },
+    },
+  )
+
+export const action = (args: Route.ActionArgs) =>
+  authorizedAction(
+    args,
+    async ({ request }) => {
+      const data = await request.formData()
+      const draft = await getRole(dbClient(), getUUID(data, 'draftId'))
+
+      return null
     },
     {
       ensureSignedIn: true,
@@ -124,17 +153,21 @@ const DraftRoles = ({
               )}
             </TableCell>
             <TableCell>
-              <GhostLinkButton
-                iconOnly
-                icon={Pencil}
-                size="tiny"
-                to={href('/workspace/:workspaceId/roles/:roleId', {
-                  workspaceId,
-                  roleId: draft.id,
-                })}
-              >
-                Edit
-              </GhostLinkButton>
+              <TableRowActions>
+                <GhostLinkButton
+                  iconOnly
+                  icon={Pencil}
+                  size="tiny"
+                  to={href('/workspace/:workspaceId/roles/:roleId', {
+                    workspaceId,
+                    roleId: draft.id,
+                  })}
+                >
+                  Edit
+                </GhostLinkButton>
+
+                <DeployDraft draftId={draft.id} />
+              </TableRowActions>
             </TableCell>
           </TableRow>
         ))}
@@ -144,3 +177,23 @@ const DraftRoles = ({
 }
 
 export default DraftRoles
+
+const DeployDraft = ({ draftId }: { draftId: UUID }) => {
+  return (
+    <InlineForm context={{ draftId }}>
+      <GhostButton
+        submit
+        iconOnly
+        size="tiny"
+        icon={CloudUpload}
+        intent={Intent.Deploy}
+        busy={useIsPending(
+          Intent.Deploy,
+          (data) => data.get('draftId') === draftId,
+        )}
+      >
+        Deploy
+      </GhostButton>
+    </InlineForm>
+  )
+}
