@@ -17,7 +17,10 @@ type LoaderFunction<Params, Context> = (args: {
 
 export async function authorizedLoader<
   Args extends LoaderFunctionArgs,
-  Fn extends LoaderFunction<Args['params'], { auth: AuthorizedData }>,
+  Fn extends LoaderFunction<
+    Args['params'],
+    { auth: AuthorizedData & { accessToken: string } }
+  >,
 >(
   args: Args,
   fn: Fn,
@@ -27,14 +30,18 @@ export async function authorizedLoader<
   Args extends LoaderFunctionArgs,
   Fn extends LoaderFunction<
     Args['params'],
-    { auth: AuthorizedData | UnauthorizedData }
+    {
+      auth: (AuthorizedData | UnauthorizedData) & { accessToken: string | null }
+    }
   >,
 >(args: Args, fn: Fn): Promise<Awaited<ReturnType<typeof fn>>>
 export async function authorizedLoader<
   Args extends LoaderFunctionArgs,
   Fn extends LoaderFunction<
     Args['params'],
-    { auth: AuthorizedData | UnauthorizedData }
+    {
+      auth: (AuthorizedData | UnauthorizedData) & { accessToken: string | null }
+    }
   >,
 >(
   { request, params, context }: Args,
