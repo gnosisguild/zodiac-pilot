@@ -7,12 +7,15 @@ import {
   getRoles,
   getWorkspace,
 } from '@zodiac/db'
+import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import {
   DateValue,
   Empty,
+  GhostButton,
   GhostLinkButton,
   Info,
+  InlineForm,
   Popover,
   Table,
   TableBody,
@@ -22,9 +25,11 @@ import {
   TableRow,
 } from '@zodiac/ui'
 import { Address } from '@zodiac/web3'
-import { Pencil } from 'lucide-react'
+import { UUID } from 'crypto'
+import { CloudUpload, Pencil } from 'lucide-react'
 import { href } from 'react-router'
 import type { Route } from './+types/managed'
+import { Intent } from './intents'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -135,6 +140,8 @@ const ManagedRoles = ({
               >
                 Edit
               </GhostLinkButton>
+
+              <DeployRole roleId={role.id} />
             </TableCell>
           </TableRow>
         ))}
@@ -144,3 +151,23 @@ const ManagedRoles = ({
 }
 
 export default ManagedRoles
+
+const DeployRole = ({ roleId }: { roleId: UUID }) => {
+  return (
+    <InlineForm context={{ roleId }}>
+      <GhostButton
+        submit
+        iconOnly
+        size="tiny"
+        icon={CloudUpload}
+        intent={Intent.Deploy}
+        busy={useIsPending(
+          Intent.Deploy,
+          (data) => data.get('roleId') === roleId,
+        )}
+      >
+        Deploy
+      </GhostButton>
+    </InlineForm>
+  )
+}
