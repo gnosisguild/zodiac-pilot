@@ -166,7 +166,17 @@ export const render = async (
     const auth = createAuth(workOsUser)
 
     if (loaderOrOptions != null && typeof loaderOrOptions === 'function') {
-      const loaderResult = await loaderOrOptions({ ...loaderArgs, auth })
+      const loaderResult = await loaderOrOptions({
+        ...loaderArgs,
+        auth,
+        getAccessToken() {
+          if (workOsUser == null) {
+            return null
+          }
+
+          return ''
+        },
+      })
 
       return data({ ...loaderResult, ...auth })
     }
@@ -249,28 +259,24 @@ const RenderWrapper = ({ children, user, features }: RenderWrapperOptions) => (
 const createAuth = (user?: AuthorizedData['user'] | null) => {
   if (user == null) {
     return {
-      accessToken: null,
       entitlements: null,
       impersonator: null,
       organizationId: null,
       permissions: null,
       featureFlags: null,
       role: null,
-      sealedSession: null,
       sessionId: null,
       user: null,
     } satisfies UnauthorizedData
   }
 
   return {
-    accessToken: '',
     entitlements: [],
     impersonator: null,
     organizationId: '',
     permissions: [],
     featureFlags: [],
     role: 'admin',
-    sealedSession: '',
     sessionId: '',
     user,
   } satisfies AuthorizedData

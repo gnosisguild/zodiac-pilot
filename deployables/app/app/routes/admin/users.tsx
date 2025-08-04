@@ -1,18 +1,24 @@
+import { authorizedLoader } from '@/auth-server'
 import { Widgets } from '@/workOS/client'
-import { invariantResponse } from '@epic-web/invariant'
-import { authkitLoader } from '@workos-inc/authkit-react-router'
 import { UsersManagement } from '@workos-inc/widgets'
 import type { Route } from './+types/users'
 
 export const loader = (args: Route.LoaderArgs) =>
-  authkitLoader(
+  authorizedLoader(
     args,
-    ({ auth: { role } }) => {
-      invariantResponse(role === 'admin', 'User is no admin')
-
-      return {}
+    ({
+      context: {
+        auth: { accessToken },
+      },
+    }) => {
+      return { accessToken }
     },
-    { ensureSignedIn: true },
+    {
+      ensureSignedIn: true,
+      hasAccess({ role }) {
+        return role === 'admin'
+      },
+    },
   )
 
 const OrganizationAdmin = ({

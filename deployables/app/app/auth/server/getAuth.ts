@@ -70,12 +70,12 @@ export const getAuth = <Params>(
   options?: GetAuthOptions<Params>,
 ) => {
   const { promise, resolve, reject } = Promise.withResolvers<
-    AuthorizedData | UnauthorizedData
+    (AuthorizedData | UnauthorizedData) & { accessToken: string | null }
   >()
 
   authkitLoader(
     { request, params: {}, context: {} },
-    async ({ auth }) => {
+    async ({ auth, getAccessToken }) => {
       if (auth.user == null) {
         if (options && options.hasAccess != null) {
           invariantResponse(
@@ -105,6 +105,7 @@ export const getAuth = <Params>(
 
         resolve({
           ...auth,
+          accessToken: null,
           tenant: null,
           user: null,
           workOsUser: null,
@@ -159,6 +160,7 @@ export const getAuth = <Params>(
           workOsUser: auth.user,
           workOsOrganization,
           isSystemAdmin,
+          accessToken: getAccessToken(),
         })
       }
 
