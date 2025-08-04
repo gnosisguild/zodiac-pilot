@@ -39,10 +39,9 @@ export const companionEnablement = (
 
         // Clean up any existing listener for this tab
         if (activeListeners.has(tabId)) {
-          const existingDispose = activeListeners.get(tabId)!
-          console.debug(`Cleaning up existing listener for tab ${tabId}`)
-          existingDispose()
-          activeListeners.delete(tabId)
+          const dispose = activeListeners.get(tabId)!
+
+          dispose()
         }
 
         const dispose = onSimulationUpdate.addListener(async (fork) => {
@@ -57,7 +56,15 @@ export const companionEnablement = (
         })
 
         // Store the dispose function for this tab
-        activeListeners.set(tabId, dispose)
+        activeListeners.set(tabId, () => {
+          console.debug(`Cleaning up existing listener for tab ${tabId}`)
+
+          dispose()
+
+          activeListeners.delete(tabId)
+
+          console.debug(`Remaining listeners: ${activeListeners.size}`)
+        })
         console.debug(
           `Added simulation update listener for tab ${tabId}. Total listeners: ${activeListeners.size}`,
         )
@@ -71,11 +78,9 @@ export const companionEnablement = (
 
           // Clean up the listener
           if (activeListeners.has(tabId)) {
-            const disposeFn = activeListeners.get(tabId)!
-            console.debug(`Cleaning up listener for closed tab ${tabId}`)
-            disposeFn()
-            activeListeners.delete(tabId)
-            console.debug(`Remaining listeners: ${activeListeners.size}`)
+            const dispose = activeListeners.get(tabId)!
+
+            dispose()
           }
         }
 
