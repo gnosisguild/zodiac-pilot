@@ -93,10 +93,12 @@ const MoveAccount = ({
       title="Move account"
       description="Please select the workspace this account should be moved into. You can always move it back later if you need to."
       onClose={() =>
-        navigate(href('/workspace/:workspaceId/accounts', { workspaceId }))
+        navigate(href('/workspace/:workspaceId/accounts', { workspaceId }), {
+          replace: true,
+        })
       }
     >
-      <Form>
+      <Form replace>
         <Select
           required
           label="Target workspace"

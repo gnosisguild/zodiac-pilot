@@ -40,13 +40,14 @@ const DeleteLocalAccount = ({
           workspaceId == null
             ? href('/offline/accounts')
             : href('/workspace/:workspaceId/local-accounts', { workspaceId }),
+          { replace: true },
         )
       }
       title="Confirm delete"
       description="Are you sure you want to delete this account? This action cannot be undone."
     >
       <Modal.Actions>
-        <InlineForm>
+        <InlineForm replace>
           <PrimaryButton
             submit
             name="routeId"

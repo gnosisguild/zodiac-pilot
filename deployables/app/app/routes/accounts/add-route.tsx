@@ -148,10 +148,11 @@ const AddRoute = ({
             workspaceId,
             accountId,
           }),
+          { replace: true },
         )
       }
     >
-      <Form>
+      <Form replace>
         <TextInput
           required
           label="Label"

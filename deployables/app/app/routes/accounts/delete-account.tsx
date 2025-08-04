@@ -52,11 +52,13 @@ const DeleteAccount = ({ params: { workspaceId } }: Route.ComponentProps) => {
       undone."
       open
       onClose={() =>
-        navigate(href('/workspace/:workspaceId/accounts', { workspaceId }))
+        navigate(href('/workspace/:workspaceId/accounts', { workspaceId }), {
+          replace: true,
+        })
       }
     >
       <Modal.Actions>
-        <InlineForm>
+        <InlineForm replace>
           <PrimaryButton
             submit
             intent={Intent.DeleteAccount}

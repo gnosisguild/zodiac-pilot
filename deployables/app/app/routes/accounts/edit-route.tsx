@@ -120,10 +120,11 @@ const EditRoute = ({
             accountId,
             routeId,
           }),
+          { replace: true },
         )
       }
     >
-      <Form>
+      <Form replace>
         <TextInput
           label="Label"
           name="label"
