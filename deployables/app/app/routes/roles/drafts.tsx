@@ -31,8 +31,11 @@ import { Address } from '@zodiac/web3'
 import { UUID } from 'crypto'
 import { CloudUpload, Pencil } from 'lucide-react'
 import { href } from 'react-router'
+import { AccountType, predictAddress, type Account } from 'ser-kit'
 import type { Route } from './+types/drafts'
 import { Intent } from './intents'
+
+type Role = Extract<Account, { type: AccountType.ROLES }>
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -66,6 +69,14 @@ export const action = (args: Route.ActionArgs) =>
     async ({ request }) => {
       const data = await request.formData()
       const draft = await getRole(dbClient(), getUUID(data, 'draftId'))
+
+      const role = {
+        type: AccountType.ROLES,
+        address: predictAddress(
+          { type: AccountType.ROLES, prefixedAddress },
+          0n,
+        ),
+      } satisfies Role
 
       return null
     },
