@@ -1,14 +1,29 @@
 import { sendMessageToTab } from '@/utils'
-import { Chain, type ChainId } from '@zodiac/chains'
+import { Chain, verifyChainId, type ChainId } from '@zodiac/chains'
 import { RpcMessageType } from '@zodiac/messages'
 
 export const probeChainId = async (tabId: number, url: string) => {
-  const knownChain = Object.entries(fastTrack).find(([urlPrefix]) =>
-    url.startsWith(urlPrefix),
+  const knownChain = Object.entries(fastTrack).reduce<ChainId | null>(
+    (result, [chainId, urlPrefixes]) => {
+      if (result != null) {
+        return result
+      }
+
+      const isKnownUrl = urlPrefixes.some((urlPrefix) =>
+        url.startsWith(urlPrefix),
+      )
+
+      if (isKnownUrl) {
+        return verifyChainId(parseInt(chainId))
+      }
+
+      return result
+    },
+    null,
   )
 
   if (knownChain != null) {
-    return knownChain[1]
+    return knownChain
   }
 
   return timeout<ChainId>(
@@ -27,30 +42,44 @@ const timeout = <T>(promise: Promise<T>, errorMessage: string) =>
     ),
   ])
 
-const fastTrack = {
-  'https://arbitrum-mainnet.infura.io/v3': Chain.ARB1,
-  'https://arbitrum-sepolia.infura.io/v3': Chain.SEP,
-  'https://avalanche-mainnet.infura.io/v3': Chain.AVAX,
-  'https://base-mainnet.infura.io/v3': Chain.BASE,
-  'https://celo-mainnet.infura.io/v3': Chain.CELO,
-  'https://mainnet.infura.io/v3': Chain.ETH,
-  'https://optimism-mainnet.infura.io/v3': Chain.OETH,
-  'https://polygon-mainnet.infura.io/v3': Chain.MATIC,
-
-  'https://eth.merkle.io': Chain.ETH,
-
-  'https://rpc.ankr.com/eth': Chain.ETH,
-
-  'https://www.shadow.so': Chain.SONIC,
-
-  'https://eth.drpc.org': Chain.ETH,
-  'https://optimism.drpc.org': Chain.OETH,
-  'https://arbitrum.drpc.org': Chain.ARB1,
-  'https://avalanche.drpc.org': Chain.AVAX,
-  'https://polygon.drpc.org': Chain.MATIC,
-  'https://mantle.drpc.org': Chain.MANTLE,
-  'https://base.drpc.org': Chain.BASE,
-  'https://celo.drpc.org': Chain.CELO,
-  'https://berachain.drpc.org': Chain.BERACHAIN,
-  'https://sonic.drpc.org': Chain.SONIC,
+const fastTrack: Record<Chain, string[]> = {
+  [Chain.ETH]: [
+    'https://mainnet.infura.io/v3',
+    'https://eth.merkle.io',
+    'https://rpc.ankr.com/eth',
+    'https://eth.drpc.org',
+    'https://ethereum-rpc.publicnode.com',
+  ],
+  [Chain.OETH]: [
+    'https://optimism-mainnet.infura.io/v3',
+    'https://optimism.drpc.org',
+  ],
+  [Chain.GNO]: [],
+  [Chain.SEP]: ['https://arbitrum-sepolia.infura.io/v3'],
+  [Chain.MATIC]: [
+    'https://polygon-mainnet.infura.io/v3',
+    'https://polygon.drpc.org',
+  ],
+  [Chain.ZKEVM]: [],
+  [Chain.ARB1]: [
+    'https://arbitrum-mainnet.infura.io/v3',
+    'https://arbitrum.drpc.org',
+  ],
+  [Chain.AVAX]: [
+    'https://avalanche-mainnet.infura.io/v3',
+    'https://avalanche.drpc.org',
+  ],
+  [Chain.BASE]: ['https://base-mainnet.infura.io/v3', 'https://base.drpc.org'],
+  [Chain.BASESEP]: [],
+  [Chain.CELO]: ['https://celo-mainnet.infura.io/v3', 'https://celo.drpc.org'],
+  [Chain.SONIC]: ['https://www.shadow.so', 'https://sonic.drpc.org'],
+  [Chain.BERACHAIN]: ['https://berachain.drpc.org'],
+  [Chain.UNICHAIN]: [],
+  [Chain.WORLDCHAIN]: [],
+  [Chain.BOB]: [],
+  [Chain.MANTLE]: ['https://mantle.drpc.org'],
+  [Chain.HEMI]: [],
+  [Chain.KATANA]: [],
+  [Chain.LINEA]: [],
+  [Chain.INK]: [],
 }
