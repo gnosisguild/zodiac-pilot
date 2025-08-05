@@ -11,5 +11,11 @@ export const loader = async ({ params }: Route.LoaderArgs) => {
     return null
   }
 
-  return await fetch(chain.logo_url)
+  const response = await fetch(chain.logo_url)
+
+  return new Response(response.body, {
+    headers: {
+      ['Cache-Control']: 'public, max-age=604800, stale-while-revalidate=86400',
+    },
+  })
 }
