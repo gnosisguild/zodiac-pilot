@@ -28,15 +28,11 @@ export const loader = (args: Route.LoaderArgs) =>
         roleId,
       })
 
-      if (roleId in activatedAccounts) {
-        const accounts = activatedAccounts[roleId]
-
-        return {
-          assets: await getAssets(accounts.map(({ chainId }) => chainId)),
-        }
+      return {
+        assets: await getAssets(
+          activatedAccounts.map(({ chainId }) => chainId),
+        ),
       }
-
-      return { assets: {} }
     },
     {
       ensureSignedIn: true,

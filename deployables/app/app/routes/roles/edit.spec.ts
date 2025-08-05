@@ -102,7 +102,7 @@ describe('Edit role', () => {
 
       await expect(
         getRoleMembers(dbClient(), { roleId: role.id }),
-      ).resolves.toHaveProperty(role.id, [user])
+      ).resolves.toEqual([user])
     })
 
     dbIt('is possible to remove members', async () => {
@@ -166,7 +166,7 @@ describe('Edit role', () => {
 
       await expect(
         getActivatedAccounts(dbClient(), { roleId: role.id }),
-      ).resolves.toHaveProperty(role.id, [account])
+      ).resolves.toEqual([account])
     })
 
     dbIt('is possible to remove an accounts from a role', async () => {

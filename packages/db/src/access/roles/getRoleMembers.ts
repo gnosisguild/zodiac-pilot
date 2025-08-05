@@ -13,16 +13,28 @@ type GetByRole = {
 
 type GetRoleMembersOptions = GetByWorkspace | GetByRole
 
-export const getRoleMembers = async (
+export async function getRoleMembers(
+  db: DBClient,
+  options: GetByWorkspace,
+): Promise<Record<UUID, User[]>>
+export async function getRoleMembers(
+  db: DBClient,
+  options: GetByRole,
+): Promise<User[]>
+export async function getRoleMembers(
   db: DBClient,
   options: GetRoleMembersOptions,
-): Promise<Record<UUID, User[]>> => {
+): Promise<Record<UUID, User[]> | User[]> {
   const members = await db
     .select()
     .from(RoleMembershipTable)
     .where(getWhere(options))
     .innerJoin(UserTable, eq(RoleMembershipTable.userId, UserTable.id))
     .orderBy(asc(UserTable.fullName))
+
+  if ('roleId' in options) {
+    return members.map(({ User }) => User)
+  }
 
   return members.reduce<Record<UUID, User[]>>(
     (result, { RoleMembership, User }) => {
