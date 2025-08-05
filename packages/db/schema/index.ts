@@ -96,7 +96,7 @@ export const UserTable = pgTable(
     externalId: text(),
     nonce: bigint({ mode: 'bigint' })
       .notNull()
-      .$defaultFn(() => randomBigInt(128)),
+      .$defaultFn(() => randomBigInt(63)),
 
     ...createdTimestamp,
     ...updatedTimestamp,

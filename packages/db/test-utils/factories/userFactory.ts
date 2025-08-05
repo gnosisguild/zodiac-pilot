@@ -25,7 +25,7 @@ export const userFactory = createFactory<UserCreateInput, User>({
       fullName: faker.person.fullName(),
       externalId: randomUUID(),
       updatedAt: null,
-      nonce: randomBigInt(128),
+      nonce: randomBigInt(63),
 
       ...data,
     }
