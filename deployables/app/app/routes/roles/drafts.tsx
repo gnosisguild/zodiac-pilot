@@ -1,5 +1,6 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { invariantResponse } from '@epic-web/invariant'
+import { Chain, ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@zodiac/chains'
 import {
   dbClient,
   getActivatedAccounts,
@@ -34,6 +35,7 @@ import { href } from 'react-router'
 import {
   AccountType,
   planApplyAccounts,
+  predictAddress,
   prefixAddress,
   queryAccounts,
   type Account,
@@ -86,7 +88,27 @@ export const action = (args: Route.ActionArgs) =>
         ),
       )
 
-      planApplyAccounts({
+      const nonce = 1n
+
+      const rolesMod = {
+        type: AccountType.ROLES,
+        address: ZERO_ADDRESS,
+        prefixedAddress: ETH_ZERO_ADDRESS,
+        chain: Chain.ETH,
+        roles: [],
+        allowances: [],
+        avatar: ZERO_ADDRESS,
+        owner: ZERO_ADDRESS,
+        target: ZERO_ADDRESS,
+        modules: [],
+        version: 2,
+        nonce,
+        multisend: [],
+      } satisfies Account
+
+      const newAddress = predictAddress(rolesMod, nonce)
+
+      const foo = await planApplyAccounts({
         desired: [
           ...currentActivatedAccounts.map((account) => {
             invariantResponse(
@@ -97,10 +119,13 @@ export const action = (args: Route.ActionArgs) =>
             return {
               type: AccountType.ROLES,
               avatar: account.address,
+              owner: account.address,
+              target: account.address,
               chain: account.chain,
               allowances: [],
               modules: [],
               roles: [],
+              multisend: [],
               version: 2,
             } satisfies Account
           }),
