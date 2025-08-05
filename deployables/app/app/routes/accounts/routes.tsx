@@ -8,13 +8,13 @@ import {
   getWallet,
   getWallets,
 } from '@zodiac/db'
-import { queryRoutes } from '@zodiac/modules'
+import { queryInitiators, queryRoutes } from '@zodiac/modules'
 import { addressSchema, isUUID, type HexAddress } from '@zodiac/schema'
-import { Form } from '@zodiac/ui'
+import { Form, Warning } from '@zodiac/ui'
 import { AddressSelect } from '@zodiac/web3'
 import type { UUID } from 'crypto'
 import { Outlet, useOutletContext } from 'react-router'
-import { prefixAddress, queryInitiators } from 'ser-kit'
+import { prefixAddress } from 'ser-kit'
 import type { Route } from './+types/routes'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -41,7 +41,7 @@ export const loader = (args: Route.LoaderArgs) =>
         routeId == null ? null : await getRoute(dbClient(), routeId),
       ])
 
-      const initiators = await queryInitiators(
+      const { initiators, error } = await queryInitiators(
         prefixAddress(account.chainId, account.address),
       )
 
@@ -61,16 +61,20 @@ export const loader = (args: Route.LoaderArgs) =>
       const [defaultProposedRoute] = possibleRoutes.routes
 
       return {
-        possibleInitiators: [
-          ...wallets
-            .filter((wallet) => initiators.includes(wallet.address))
-            .map(({ address, label }) => ({ address, label })),
-          ...initiators
-            .filter((address) =>
-              wallets.every((wallet) => wallet.address !== address),
-            )
-            .map((address) => ({ address, label: address })),
-        ],
+        couldQueryInitiators: error == null,
+        possibleInitiators:
+          error == null
+            ? [
+                ...wallets
+                  .filter((wallet) => initiators.includes(wallet.address))
+                  .map(({ address, label }) => ({ address, label })),
+                ...initiators
+                  .filter((address) =>
+                    wallets.every((wallet) => wallet.address !== address),
+                  )
+                  .map((address) => ({ address, label: address })),
+              ]
+            : wallets.map(({ address, label }) => ({ address, label })),
         initiatorAddress,
         possibleRoutes: possibleRoutes.routes,
         comparableId:
@@ -90,6 +94,7 @@ const Routes = ({
     possibleInitiators,
     possibleRoutes,
     comparableId,
+    couldQueryInitiators,
   },
   params: { routeId },
 }: Route.ComponentProps) => {
@@ -107,17 +112,25 @@ const Routes = ({
 
       <Form method="GET">
         {({ submit }) => (
-          <AddressSelect
-            key={routeId}
-            isMulti={false}
-            label="Pilot Signer"
-            clearLabel="Remove Pilot Signer"
-            name="transient-initiator"
-            placeholder="Select a wallet form the list"
-            defaultValue={initiatorAddress ?? undefined}
-            options={possibleInitiators}
-            onChange={submit}
-          />
+          <>
+            {!couldQueryInitiators && (
+              <Warning title="Could not retrieve signers">
+                We could not query possible pilot signers for this account.
+              </Warning>
+            )}
+
+            <AddressSelect
+              key={routeId}
+              isMulti={false}
+              label="Pilot Signer"
+              clearLabel="Remove Pilot Signer"
+              name="transient-initiator"
+              placeholder="Select a wallet form the list"
+              defaultValue={initiatorAddress ?? undefined}
+              options={possibleInitiators}
+              onChange={submit}
+            />
+          </>
         )}
       </Form>
 
