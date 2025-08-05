@@ -11,12 +11,12 @@ import {
 } from '@zodiac/db'
 import { getHexString, getString } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
-import { queryRoutes } from '@zodiac/modules'
+import { queryInitiators, queryRoutes } from '@zodiac/modules'
 import { isUUID } from '@zodiac/schema'
-import { Form, Modal, PrimaryButton, TextInput } from '@zodiac/ui'
+import { Form, Modal, PrimaryButton, TextInput, Warning } from '@zodiac/ui'
 import { AddressSelect } from '@zodiac/web3'
 import { href, redirect, useNavigate } from 'react-router'
-import { prefixAddress, queryInitiators } from 'ser-kit'
+import { prefixAddress } from 'ser-kit'
 import type { Route } from './+types/add-route'
 import { Intent } from './intents'
 
@@ -36,21 +36,25 @@ export const loader = (args: Route.LoaderArgs) =>
         getAccount(dbClient(), accountId),
       ])
 
-      const initiators = await queryInitiators(
+      const { error, initiators } = await queryInitiators(
         prefixAddress(account.chainId, account.address),
       )
 
       return {
-        possibleInitiators: [
-          ...wallets
-            .filter((wallet) => initiators.includes(wallet.address))
-            .map(({ address, label }) => ({ address, label })),
-          ...initiators
-            .filter((address) =>
-              wallets.every((wallet) => wallet.address !== address),
-            )
-            .map((address) => ({ address, label: address })),
-        ],
+        couldQueryInitiators: error == null,
+        possibleInitiators:
+          error == null
+            ? [
+                ...wallets
+                  .filter((wallet) => initiators.includes(wallet.address))
+                  .map(({ address, label }) => ({ address, label })),
+                ...initiators
+                  .filter((address) =>
+                    wallets.every((wallet) => wallet.address !== address),
+                  )
+                  .map((address) => ({ address, label: address })),
+              ]
+            : wallets.map(({ address, label }) => ({ address, label })),
       }
     },
     {
@@ -133,7 +137,7 @@ export const action = (args: Route.ActionArgs) =>
   )
 
 const AddRoute = ({
-  loaderData: { possibleInitiators },
+  loaderData: { possibleInitiators, couldQueryInitiators },
   params: { workspaceId, accountId },
 }: Route.ComponentProps) => {
   const navigate = useNavigate()
@@ -153,6 +157,12 @@ const AddRoute = ({
       }
     >
       <Form replace>
+        {!couldQueryInitiators && (
+          <Warning title="Could not retrieve signers">
+            We could not query possible pilot signers for this account.
+          </Warning>
+        )}
+
         <TextInput
           required
           label="Label"
