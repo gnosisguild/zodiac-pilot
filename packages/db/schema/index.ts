@@ -8,6 +8,7 @@ import {
   type Waypoints,
 } from '@zodiac/schema'
 import type { UUID } from 'crypto'
+import randomBigInt from 'crypto-random-bigint'
 import { relations } from 'drizzle-orm'
 import {
   bigint,
@@ -93,6 +94,10 @@ export const UserTable = pgTable(
     id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
     fullName: text().notNull().default(''),
     externalId: text(),
+    nonce: bigint({ mode: 'bigint' })
+      .notNull()
+      .$defaultFn(() => randomBigInt(63)),
+
     ...createdTimestamp,
     ...updatedTimestamp,
   },

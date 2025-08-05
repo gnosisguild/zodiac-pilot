@@ -647,6 +647,9 @@ importers:
       '@zodiac/schema':
         specifier: workspace:*
         version: link:../schema
+      crypto-random-bigint:
+        specifier: 2.1.1
+        version: 2.1.1
       drizzle-orm:
         specifier: 0.44.4
         version: 0.44.4(@cloudflare/workers-types@4.20250805.0)(@opentelemetry/api@1.9.0)(@types/pg@8.15.4)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7)
@@ -5843,6 +5846,9 @@ packages:
     resolution: {integrity: sha512-r4ESw/IlusD17lgQi1O20Fa3qNnsckR126TdUuBgAu7GBYSIPvdNyONd3Zrxh0xCwA4+6w/TDArBPsMvhur+KQ==}
     engines: {node: '>= 0.10'}
 
+  crypto-random-bigint@2.1.1:
+    resolution: {integrity: sha512-96+FDrenXybkpnLML/60S8NcG32KgJ5Y8yvNNCYPW02r+ssoXFR5XKenuIQcHLWumnGj8UPqUUHBzXNrDGkDmQ==}
+
   cspell-config-lib@9.2.0:
     resolution: {integrity: sha512-Yc8+hT+uIWWCi6WMhOL6HDYbBCP2qig1tgKGThHVeOx6GviieV10TZ5kQ+P7ONgoqw2nmm7uXIC19dGYx3DblQ==}
     engines: {node: '>=20'}
@@ -9634,6 +9640,9 @@ packages:
     resolution: {integrity: sha512-9phl76Cqm6FhSX9Xe1ZUAMLtm1BLkKj2Qd5ApyWkXzsMRaA7dgr81kf4wJmQf/hAvg8EEyJxDo3du/0KlhPiKQ==}
     engines: {node: '>=0.6.0'}
 
+  tiny-webcrypto@1.0.3:
+    resolution: {integrity: sha512-LQQdNMAgz9BXNT2SKbYh3eCb+fLV0p7JB7MwUjzY6IOlQLGIadfnFqRpshERsS5Dl2OM/hs0+4I/XmSrF+RBbw==}
+
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
 
@@ -9841,6 +9850,9 @@ packages:
 
   ufo@1.6.1:
     resolution: {integrity: sha512-9a4/uxlTWJ4+a5i0ooc1rU7C7YOw3wT+UGqdeNNHWnOF9qcMBgLRS+4IYUqbczewFx4mLEig6gawh7X6mFlEkA==}
+
+  uint-rng@1.2.1:
+    resolution: {integrity: sha512-swhDg5H+3DX2sIvnYA7VMBMXV/t8mPxvh49CjCDkwFmj/3OZIDOQwJANBgM1MPSUBrUHNIlXmU7/GcL7m4907g==}
 
   uint8arrays@3.1.0:
     resolution: {integrity: sha512-ei5rfKtoRO8OyOIor2Rz5fhzjThwIHJZ3uyDPnDHTXbP0aMQ1RN/6AI5B5d9dBxJOU+BvOAk7ZQ1xphsX8Lrog==}
@@ -16742,6 +16754,10 @@ snapshots:
       randombytes: 2.1.0
       randomfill: 1.0.4
 
+  crypto-random-bigint@2.1.1:
+    dependencies:
+      uint-rng: 1.2.1
+
   cspell-config-lib@9.2.0:
     dependencies:
       '@cspell/cspell-types': 9.2.0
@@ -21107,6 +21123,8 @@ snapshots:
     dependencies:
       setimmediate: 1.0.5
 
+  tiny-webcrypto@1.0.3: {}
+
   tinybench@2.9.0: {}
 
   tinyexec@0.3.2: {}
@@ -21306,6 +21324,10 @@ snapshots:
       - encoding
 
   ufo@1.6.1: {}
+
+  uint-rng@1.2.1:
+    dependencies:
+      tiny-webcrypto: 1.0.3
 
   uint8arrays@3.1.0:
     dependencies:
