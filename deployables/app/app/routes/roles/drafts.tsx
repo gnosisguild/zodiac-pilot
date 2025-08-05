@@ -31,7 +31,13 @@ import { Address } from '@zodiac/web3'
 import { UUID } from 'crypto'
 import { CloudUpload, Pencil } from 'lucide-react'
 import { href } from 'react-router'
-import { AccountType, predictAddress, type Account } from 'ser-kit'
+import {
+  AccountType,
+  planApplyAccounts,
+  prefixAddress,
+  queryAccounts,
+  type Account,
+} from 'ser-kit'
 import type { Route } from './+types/drafts'
 import { Intent } from './intents'
 
@@ -70,13 +76,36 @@ export const action = (args: Route.ActionArgs) =>
       const data = await request.formData()
       const draft = await getRole(dbClient(), getUUID(data, 'draftId'))
 
-      const role = {
-        type: AccountType.ROLES,
-        address: predictAddress(
-          { type: AccountType.ROLES, prefixedAddress },
-          0n,
+      const activatedAccounts = await getActivatedAccounts(dbClient(), {
+        roleId: draft.id,
+      })
+
+      const currentActivatedAccounts = await queryAccounts(
+        activatedAccounts.map((account) =>
+          prefixAddress(account.chainId, account.address),
         ),
-      } satisfies Role
+      )
+
+      planApplyAccounts({
+        desired: [
+          ...currentActivatedAccounts.map((account) => {
+            invariantResponse(
+              account.type === AccountType.SAFE,
+              'Account is not a safe',
+            )
+
+            return {
+              type: AccountType.ROLES,
+              avatar: account.address,
+              chain: account.chain,
+              allowances: [],
+              modules: [],
+              roles: [],
+              version: 2,
+            } satisfies Account
+          }),
+        ],
+      })
 
       return null
     },
