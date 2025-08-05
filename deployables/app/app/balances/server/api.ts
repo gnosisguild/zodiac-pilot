@@ -23,5 +23,6 @@ export const api = async <Schema extends ZodTypeAny>(
   })
 
   const json = await response.json()
+
   return schema.parse(json) as z.infer<Schema>
 }
