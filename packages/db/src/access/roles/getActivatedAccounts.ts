@@ -13,16 +13,28 @@ type GetByRole = {
 
 type GetActivatedAccountsOptions = GetByWorkspace | GetByRole
 
-export const getActivatedAccounts = async (
+export async function getActivatedAccounts(
+  db: DBClient,
+  options: GetByWorkspace,
+): Promise<Record<UUID, Account[]>>
+export async function getActivatedAccounts(
+  db: DBClient,
+  options: GetByRole,
+): Promise<Account[]>
+export async function getActivatedAccounts(
   db: DBClient,
   options: GetActivatedAccountsOptions,
-): Promise<Record<UUID, Account[]>> => {
+): Promise<Record<UUID, Account[]> | Account[]> {
   const results = await db
     .select()
     .from(ActivatedRoleTable)
     .where(getWhere(options))
     .innerJoin(AccountTable, eq(AccountTable.id, ActivatedRoleTable.accountId))
     .orderBy(asc(AccountTable.label))
+
+  if ('roleId' in options) {
+    return results.map(({ Account }) => Account)
+  }
 
   return results.reduce<Record<UUID, Account[]>>(
     (result, { Account, ActivatedRole }) => {

@@ -74,8 +74,8 @@ export const loader = (args: Route.LoaderArgs) =>
         role,
         users,
         accounts,
-        activeAccounts: roleId in activeAccounts ? activeAccounts[roleId] : [],
-        members: roleId in members ? members[roleId] : [],
+        activeAccounts,
+        members,
         actions,
       }
     },
