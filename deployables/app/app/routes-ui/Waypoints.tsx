@@ -1,15 +1,16 @@
+import { chainName } from '@zodiac/chains'
 import type { Account } from '@zodiac/schema'
 import { Popover } from '@zodiac/ui'
 import { Address } from '@zodiac/web3'
 import classNames from 'classnames'
 import { MoveDown, MoveRight } from 'lucide-react'
 import { Children, cloneElement, type ReactElement } from 'react'
+import { href } from 'react-router'
 import {
   AccountType,
   splitPrefixedAddress,
   type Connection as SerConnection,
 } from 'ser-kit'
-import { useChain } from './ChainContext'
 import { Connection } from './Connection'
 import { useOrientation } from './Routes'
 
@@ -64,7 +65,6 @@ type WaypointProps = {
 
 export const Waypoint = ({ account, highlight = false }: WaypointProps) => {
   const [chainId] = splitPrefixedAddress(account.prefixedAddress)
-  const chain = useChain(chainId)
 
   return (
     <li
@@ -74,16 +74,22 @@ export const Waypoint = ({ account, highlight = false }: WaypointProps) => {
       )}
     >
       <h3 className="flex items-center gap-2 text-xs font-semibold uppercase">
-        {chain && chain.logo_url && (
+        {chainId && (
           <Popover
             position="top"
             popover={
               <span className="text-xs font-semibold uppercase">
-                {chain.name}
+                {chainName(chainId)}
               </span>
             }
           >
-            <img src={chain.logo_url} alt={chain.name} className="size-4" />
+            <img
+              src={href('/system/chain-icon/:chainId', {
+                chainId: `${chainId}`,
+              })}
+              alt={chainName(chainId)}
+              className="size-4"
+            />
           </Popover>
         )}
 

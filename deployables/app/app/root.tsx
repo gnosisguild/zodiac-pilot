@@ -1,6 +1,5 @@
 import { ProvideUser } from '@/auth-client'
 import { authorizedLoader } from '@/auth-server'
-import { getAvailableChains } from '@/balances-server'
 import {
   ProvideDevelopmentContext,
   ProvideExtensionVersion,
@@ -21,7 +20,6 @@ import {
 } from 'react-router'
 import type { Route } from './+types/root'
 import './app.css'
-import { ProvideChains } from './routes-ui'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Zodiac OS' }]
 
@@ -37,7 +35,6 @@ export const loader = (args: Route.LoaderArgs) =>
       const url = new URL(request.url)
 
       const isDev = process.env.NODE_ENV === 'development'
-      const chains = await getAvailableChains()
 
       const routeFeatures = url.searchParams.getAll('feature')
 
@@ -45,7 +42,6 @@ export const loader = (args: Route.LoaderArgs) =>
         return {
           isDev,
           user: null,
-          chains,
           features: routeFeatures,
         }
       }
@@ -56,7 +52,6 @@ export const loader = (args: Route.LoaderArgs) =>
         {
           isDev,
           user,
-          chains,
           features: [...features.map(({ name }) => name), ...routeFeatures],
         },
         { headers: { 'Document-Policy': 'js-profiling' } },
@@ -65,7 +60,7 @@ export const loader = (args: Route.LoaderArgs) =>
   )
 
 export default function App({
-  loaderData: { isDev, user, chains, features },
+  loaderData: { isDev, user, features },
 }: Route.ComponentProps) {
   useEffect(() => {
     if (typeof document === 'undefined') {
@@ -88,11 +83,9 @@ export default function App({
         <ProvideDevelopmentContext isDev={isDev}>
           <ProvideExtensionVersion>
             <ProvideUser user={user}>
-              <ProvideChains chains={chains}>
-                <FeatureProvider features={features}>
-                  <Outlet />
-                </FeatureProvider>
-              </ProvideChains>
+              <FeatureProvider features={features}>
+                <Outlet />
+              </FeatureProvider>
             </ProvideUser>
           </ProvideExtensionVersion>
         </ProvideDevelopmentContext>
