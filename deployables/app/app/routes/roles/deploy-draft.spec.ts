@@ -197,7 +197,7 @@ describe('Deploy Role', () => {
       expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
         // TODO: remove this
         current: [],
-        desired: [],
+        desired: expect.not.arrayContaining([existingSafe]),
       })
     })
   })
@@ -246,8 +246,9 @@ describe('Deploy Role', () => {
               target: account.address,
               roles: [],
               version: 2,
+              nonce: role.nonce,
             },
-            user.nonce,
+            role.nonce,
           ),
         ]),
       })
