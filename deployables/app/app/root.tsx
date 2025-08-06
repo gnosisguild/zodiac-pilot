@@ -6,6 +6,8 @@ import {
 } from '@/components'
 import * as Sentry from '@sentry/react-router'
 import { inject } from '@vercel/analytics'
+import { computeRoute } from '@vercel/speed-insights'
+import { SpeedInsights as SpeedInsightsScript } from '@vercel/speed-insights/react'
 import { dbClient, getActiveFeatures } from '@zodiac/db'
 import { FeatureProvider, ToastContainer } from '@zodiac/ui'
 import { useEffect } from 'react'
@@ -17,6 +19,8 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
+  useParams,
 } from 'react-router'
 import type { Route } from './+types/root'
 import './app.css'
@@ -90,6 +94,7 @@ export default function App({
           </ProvideExtensionVersion>
         </ProvideDevelopmentContext>
         <ToastContainer position="top-right" />
+        <SpeedInsights />
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -128,4 +133,36 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       )}
     </main>
   )
+}
+
+const SpeedInsights = () => {
+  const route = useRoute()
+
+  return (
+    <SpeedInsightsScript
+      route={route}
+      framework="remix"
+      basePath={getBasePath()}
+    />
+  )
+}
+
+const useRoute = (): string | null => {
+  const params = useParams()
+  const location = useLocation()
+
+  return computeRoute(location.pathname, params as never)
+}
+
+function getBasePath(): string | undefined {
+  // !! important !!
+  // do not access env variables using import.meta.env[varname]
+  // some bundles won't replace the value at build time.
+  try {
+    return import.meta.env.VITE_VERCEL_OBSERVABILITY_BASEPATH as
+      | string
+      | undefined
+  } catch {
+    // do nothing
+  }
 }
