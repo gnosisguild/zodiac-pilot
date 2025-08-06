@@ -45,7 +45,7 @@
     "@zodiac/schema": "workspace:*",
     "crypto-random-bigint": "2.1.1",
     "drizzle-orm": "0.44.4",
-    "drizzle-zod": "0.8.2",
+    "drizzle-zod": "0.8.3",
     "postgres": "3.4.7",
     "ser-kit": "3.10.1",
     "zod": "4.0.15"
