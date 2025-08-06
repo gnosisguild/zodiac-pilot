@@ -38,13 +38,19 @@ export const MultiSelect = <Option extends BaseOption = BaseOption>({
   clearLabel,
   dropdownLabel,
   children,
+  description,
   ...props
 }: SelectProps<Option, false, true>) => {
   const Option = useOptionRenderer<Option, true>(children)
   const SingleValue = useSingleValueRenderer<Option, true>(children)
 
   return (
-    <Input label={label} clearLabel={clearLabel} dropdownLabel={dropdownLabel}>
+    <Input
+      label={label}
+      clearLabel={clearLabel}
+      dropdownLabel={dropdownLabel}
+      description={description}
+    >
       {({ inputId }) => (
         <Select<Option, true>
           {...props}

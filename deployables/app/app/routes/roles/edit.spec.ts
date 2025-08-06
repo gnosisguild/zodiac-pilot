@@ -46,105 +46,15 @@ describe('Edit role', () => {
     mockGetVerifiedAssets.mockResolvedValue([])
   })
 
-  dbIt('is possible to update the label', async () => {
-    const user = await userFactory.create()
-    const tenant = await tenantFactory.create(user)
-
-    const role = await roleFactory.create(tenant, user, { label: 'Test role' })
-
-    await render(
-      href('/workspace/:workspaceId/roles/:roleId', {
-        workspaceId: tenant.defaultWorkspaceId,
-        roleId: role.id,
-      }),
-      { tenant, user },
-    )
-
-    await userEvent.type(
-      await screen.findByRole('textbox', { name: 'Label' }),
-      ' updated',
-    )
-    await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
-
-    await waitForPendingActions()
-
-    await expect(getRole(dbClient(), role.id)).resolves.toHaveProperty(
-      'label',
-      'Test role updated',
-    )
-  })
-
-  describe('Members', () => {
-    dbIt('is possible to add members', async () => {
+  describe('General', () => {
+    dbIt('is possible to update the label', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
-      const role = await roleFactory.create(tenant, user)
-
-      await render(
-        href('/workspace/:workspaceId/roles/:roleId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          roleId: role.id,
-        }),
-        { tenant, user },
-      )
-
-      await userEvent.click(
-        await screen.findByRole('combobox', { name: 'Members' }),
-      )
-      await userEvent.click(
-        await screen.findByRole('option', { name: user.fullName }),
-      )
-
-      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
-
-      await waitForPendingActions()
-
-      await expect(
-        getRoleMembers(dbClient(), { roleId: role.id }),
-      ).resolves.toEqual([user])
-    })
-
-    dbIt('is possible to remove members', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
-
-      const role = await roleFactory.create(tenant, user)
-
-      await setRoleMembers(dbClient(), role, [user.id])
-
-      await render(
-        href('/workspace/:workspaceId/roles/:roleId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          roleId: role.id,
-        }),
-        { tenant, user },
-      )
-
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Remove' }),
-      )
-      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
-
-      await waitForPendingActions()
-
-      await expect(
-        getRoleMembers(dbClient(), { roleId: role.id }),
-      ).resolves.not.toHaveProperty(role.id)
-    })
-  })
-
-  describe('Accounts', () => {
-    dbIt('is possible to add an account', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
-
-      const account = await accountFactory.create(tenant, user, {
-        label: 'Test account',
+      const role = await roleFactory.create(tenant, user, {
+        label: 'Test role',
       })
 
-      const role = await roleFactory.create(tenant, user)
-
       await render(
         href('/workspace/:workspaceId/roles/:roleId', {
           workspaceId: tenant.defaultWorkspaceId,
@@ -153,53 +63,183 @@ describe('Edit role', () => {
         { tenant, user },
       )
 
-      await userEvent.click(
-        await screen.findByRole('combobox', { name: 'Accounts' }),
+      await userEvent.type(
+        await screen.findByRole('textbox', { name: 'Label' }),
+        ' updated',
       )
-      await userEvent.click(
-        await screen.findByRole('option', { name: 'Test account' }),
-      )
-
       await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
 
       await waitForPendingActions()
 
-      await expect(
-        getActivatedAccounts(dbClient(), { roleId: role.id }),
-      ).resolves.toEqual([account])
+      await expect(getRole(dbClient(), role.id)).resolves.toHaveProperty(
+        'label',
+        'Test role updated',
+      )
     })
 
-    dbIt('is possible to remove an accounts from a role', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
+    describe('Members', () => {
+      dbIt('is possible to add members', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      const account = await accountFactory.create(tenant, user, {
-        label: 'Test account',
+        const role = await roleFactory.create(tenant, user)
+
+        await render(
+          href('/workspace/:workspaceId/roles/:roleId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            roleId: role.id,
+          }),
+          { tenant, user },
+        )
+
+        await userEvent.click(
+          await screen.findByRole('combobox', { name: 'Members' }),
+        )
+        await userEvent.click(
+          await screen.findByRole('option', { name: user.fullName }),
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Save' }),
+        )
+
+        await waitForPendingActions()
+
+        await expect(
+          getRoleMembers(dbClient(), { roleId: role.id }),
+        ).resolves.toEqual([user])
       })
 
-      const role = await roleFactory.create(tenant, user)
+      dbIt('is possible to remove members', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      await setActiveAccounts(dbClient(), role, [account.id])
+        const role = await roleFactory.create(tenant, user)
 
-      await render(
-        href('/workspace/:workspaceId/roles/:roleId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          roleId: role.id,
-        }),
-        { tenant, user },
+        await setRoleMembers(dbClient(), role, [user.id])
+
+        await render(
+          href('/workspace/:workspaceId/roles/:roleId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            roleId: role.id,
+          }),
+          { tenant, user },
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Remove' }),
+        )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Save' }),
+        )
+
+        await waitForPendingActions()
+
+        await expect(
+          getRoleMembers(dbClient(), { roleId: role.id }),
+        ).resolves.not.toHaveProperty(role.id)
+      })
+
+      dbIt(
+        'issues a warning when a member does not have a default wallet set for a configured chain',
+        async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
+
+          const role = await roleFactory.create(tenant, user)
+          const account = await accountFactory.create(tenant, user)
+
+          await setRoleMembers(dbClient(), role, [user.id])
+          await setActiveAccounts(dbClient(), role, [account.id])
+
+          await render(
+            href('/workspace/:workspaceId/roles/:roleId', {
+              workspaceId: tenant.defaultWorkspaceId,
+              roleId: role.id,
+            }),
+            { tenant, user },
+          )
+
+          expect(
+            await screen.findByRole('alert', {
+              name: 'Default wallet missing',
+            }),
+          ).toHaveTextContent('User has no default wallet set for: Ethereum')
+        },
       )
+    })
 
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Remove' }),
-      )
+    describe('Accounts', () => {
+      dbIt('is possible to add an account', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      await userEvent.click(await screen.findByRole('button', { name: 'Save' }))
+        const account = await accountFactory.create(tenant, user, {
+          label: 'Test account',
+        })
 
-      await waitForPendingActions()
+        const role = await roleFactory.create(tenant, user)
 
-      await expect(
-        getActivatedAccounts(dbClient(), { roleId: role.id }),
-      ).resolves.not.toHaveProperty(role.id)
+        await render(
+          href('/workspace/:workspaceId/roles/:roleId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            roleId: role.id,
+          }),
+          { tenant, user },
+        )
+
+        await userEvent.click(
+          await screen.findByRole('combobox', { name: 'Accounts' }),
+        )
+        await userEvent.click(
+          await screen.findByRole('option', { name: 'Test account' }),
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Save' }),
+        )
+
+        await waitForPendingActions()
+
+        await expect(
+          getActivatedAccounts(dbClient(), { roleId: role.id }),
+        ).resolves.toEqual([account])
+      })
+
+      dbIt('is possible to remove an accounts from a role', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+
+        const account = await accountFactory.create(tenant, user, {
+          label: 'Test account',
+        })
+
+        const role = await roleFactory.create(tenant, user)
+
+        await setActiveAccounts(dbClient(), role, [account.id])
+
+        await render(
+          href('/workspace/:workspaceId/roles/:roleId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            roleId: role.id,
+          }),
+          { tenant, user },
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Remove' }),
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Save' }),
+        )
+
+        await waitForPendingActions()
+
+        await expect(
+          getActivatedAccounts(dbClient(), { roleId: role.id }),
+        ).resolves.not.toHaveProperty(role.id)
+      })
     })
   })
 

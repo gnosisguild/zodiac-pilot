@@ -77,6 +77,7 @@ type SelectBaseProps<
   Creatable extends boolean,
 > = {
   label: string
+  description?: string
   hideLabel?: boolean
   clearLabel?: string
   dropdownLabel?: string
@@ -103,6 +104,7 @@ export function Select<
   hideLabel = false,
   dropdownLabel,
   allowCreate,
+  description,
   isDisabled,
   inline = false,
   children,
@@ -121,6 +123,7 @@ export function Select<
         label={label}
         clearLabel={clearLabel}
         dropdownLabel={dropdownLabel}
+        description={description}
       >
         {({ inputId }) => (
           <Layout disabled={isDisabled}>
