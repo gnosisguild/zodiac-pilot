@@ -42,7 +42,7 @@ export const loader = (args: Route.LoaderArgs) =>
       )
 
       const memberSafes = await getMemberSafes(draft.id, activeChains)
-      const rolesMods = await getRolesMods(draft.id)
+      const rolesMods = await getRolesMods(draft.id, draft.nonce)
 
       const desired = [...memberSafes, ...rolesMods]
 
@@ -106,22 +106,25 @@ const getMemberSafes = async (
   return safes
 }
 
-const getRolesMods = async (roleId: UUID): Promise<Role[]> => {
+const getRolesMods = async (roleId: UUID, nonce: bigint): Promise<Role[]> => {
   const activeAccounts = await getActivatedAccounts(dbClient(), { roleId })
 
   return activeAccounts.map((account) =>
-    withPredictedAddress<Role>({
-      type: AccountType.ROLES,
-      allowances: [],
-      avatar: account.address,
-      chain: account.chainId,
-      modules: [],
-      multisend: [],
-      owner: account.address,
-      roles: [],
-      target: account.address,
-      version: 2,
-    }),
+    withPredictedAddress<Role>(
+      {
+        type: AccountType.ROLES,
+        allowances: [],
+        avatar: account.address,
+        chain: account.chainId,
+        modules: [],
+        multisend: [],
+        owner: account.address,
+        roles: [],
+        target: account.address,
+        version: 2,
+      },
+      nonce,
+    ),
   )
 }
 
