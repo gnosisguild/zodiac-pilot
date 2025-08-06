@@ -7,7 +7,7 @@ import {
   getRole,
   getRoleMembers,
 } from '@zodiac/db'
-import { isUUID } from '@zodiac/schema'
+import { isUUID, jsonStringify } from '@zodiac/schema'
 import { Modal } from '@zodiac/ui'
 import { UUID } from 'crypto'
 import { Suspense } from 'react'
@@ -41,9 +41,13 @@ export const loader = (args: Route.LoaderArgs) =>
 
       const memberSafes = await getMemberSafes(draft.id, activeChains)
 
+      const desired = [...memberSafes]
+
+      console.log(jsonStringify(desired, 2))
+
       return {
         plan: planApplyAccounts({
-          desired: [...memberSafes],
+          desired,
         }),
       }
     },
@@ -83,6 +87,7 @@ const getMemberSafes = async (
             modules: [],
             owners: [defaultWallets[chainId].address],
             threshold: 1,
+            nonce: member.nonce,
           },
           member.nonce,
         ),
