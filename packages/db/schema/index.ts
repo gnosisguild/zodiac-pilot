@@ -565,6 +565,9 @@ export const RoleTable = pgTable(
     id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
 
     label: text().notNull(),
+    nonce: bigint({ mode: 'bigint' })
+      .notNull()
+      .$defaultFn(() => randomBigInt(63)),
 
     ...createdTimestamp,
     ...updatedTimestamp,

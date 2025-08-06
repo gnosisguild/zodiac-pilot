@@ -379,6 +379,13 @@
       "when": 1754472437838,
       "tag": "0053_change primary key",
       "breakpoints": true
+    },
+    {
+      "idx": 54,
+      "version": "7",
+      "when": 1754488560041,
+      "tag": "0054_add nonce to roles",
+      "breakpoints": true
     }
   ]
 }
