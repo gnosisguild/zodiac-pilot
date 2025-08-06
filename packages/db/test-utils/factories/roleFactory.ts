@@ -7,6 +7,7 @@ import {
   User,
 } from '@zodiac/db/schema'
 import { randomUUID } from 'crypto'
+import randomBigInt from 'crypto-random-bigint'
 import { createFactory } from './createFactory'
 
 export const roleFactory = createFactory<
@@ -34,6 +35,7 @@ export const roleFactory = createFactory<
       createdAt: new Date(),
       id: randomUUID(),
       updatedAt: null,
+      nonce: randomBigInt(63),
 
       ...data,
     }
