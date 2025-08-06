@@ -41,6 +41,7 @@ const mockPlanApplyAccounts = vi.mocked(planApplyAccounts)
 describe('Deploy Role', () => {
   beforeEach(() => {
     mockQueryAccounts.mockResolvedValue([])
+    mockPlanApplyAccounts.mockResolvedValue([])
   })
 
   describe('Member Safes', () => {
@@ -72,6 +73,8 @@ describe('Deploy Role', () => {
       )
 
       expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
+        // TODO: remove this
+        current: [],
         desired: expect.arrayContaining([
           withPredictedAddress<Extract<Account, { type: AccountType.SAFE }>>(
             {
@@ -121,6 +124,8 @@ describe('Deploy Role', () => {
       )
 
       expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
+        // TODO: remove this
+        current: [],
         desired: expect.arrayContaining([
           withPredictedAddress<Extract<Account, { type: AccountType.SAFE }>>(
             {
@@ -145,7 +150,55 @@ describe('Deploy Role', () => {
         ]),
       })
     })
-    dbIt.todo('re-uses Safes when they already exist')
+
+    dbIt('re-uses Safes when they already exist', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const wallet = await walletFactory.create(user)
+
+      await setDefaultWallet(dbClient(), user, {
+        walletId: wallet.id,
+        chainId: Chain.ETH,
+      })
+
+      const account = await accountFactory.create(tenant, user, {
+        chainId: Chain.ETH,
+      })
+      const role = await roleFactory.create(tenant, user)
+
+      await setRoleMembers(dbClient(), role, [user.id])
+      await setActiveAccounts(dbClient(), role, [account.id])
+
+      const existingSafe = withPredictedAddress<
+        Extract<Account, { type: AccountType.SAFE }>
+      >(
+        {
+          type: AccountType.SAFE,
+          chain: Chain.ETH,
+          modules: [],
+          threshold: 1,
+          owners: [wallet.address],
+        },
+        user.nonce,
+      )
+
+      mockQueryAccounts.mockResolvedValue([existingSafe])
+
+      await render(
+        href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+          workspaceId: tenant.defaultWorkspaceId,
+          draftId: role.id,
+        }),
+        { tenant, user },
+      )
+
+      expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
+        // TODO: remove this
+        current: [],
+        desired: [],
+      })
+    })
   })
 
   describe('Roles mods', () => {
