@@ -106,3 +106,16 @@ export const isEnabledChain = (chain: number) => {
 
   return true
 }
+
+export const getEnabledChains = () =>
+  Object.values(Chain).reduce<Chain[]>((result, value) => {
+    if (typeof value === 'string') {
+      return result
+    }
+
+    if (isEnabledChain(value)) {
+      return [...result, value]
+    }
+
+    return result
+  }, [])

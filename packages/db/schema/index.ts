@@ -276,6 +276,10 @@ const ActiveSubscriptionRelations = relations(
   }),
 )
 
+const chainReference = {
+  chainId: integer().$type<ChainId>().notNull(),
+}
+
 export const AccountTable = pgTable(
   'Account',
   {
@@ -285,9 +289,9 @@ export const AccountTable = pgTable(
       .$type<UUID>()
       .references(() => UserTable.id, { onDelete: 'cascade' }),
     label: text(),
-    chainId: integer().$type<ChainId>().notNull(),
     address: text().$type<HexAddress>().notNull(),
 
+    ...chainReference,
     ...tenantReference,
     ...workspaceReference,
     ...createdTimestamp,
@@ -347,6 +351,27 @@ const walletReference = {
 
 export type Wallet = typeof WalletTable.$inferSelect
 export type WalletCreateInput = typeof WalletTable.$inferInsert
+
+export const DefaultWalletTable = pgTable(
+  'DefaultWallet',
+  {
+    ...chainReference,
+    ...userReference,
+    ...walletReference,
+  },
+  (table) => [
+    primaryKey({ columns: [table.chainId, table.userId] }),
+    index().on(table.userId),
+    index().on(table.walletId),
+  ],
+)
+
+const DefaultWalletRelations = relations(DefaultWalletTable, ({ one }) => ({
+  wallet: one(WalletTable, {
+    fields: [DefaultWalletTable.walletId],
+    references: [WalletTable.id],
+  }),
+}))
 
 export const RouteTable = pgTable(
   'Route',
@@ -684,13 +709,13 @@ export const ActionAssetTable = pgTable(
       .$type<UUID>()
       .references(() => RoleActionTable.id, { onDelete: 'cascade' }),
 
-    chainId: integer().$type<ChainId>().notNull(),
     address: text().$type<HexAddress>().notNull(),
     symbol: text().notNull(),
 
     allowance: bigint({ mode: 'bigint' }),
     interval: AllowanceIntervalEnum(),
 
+    ...chainReference,
     ...createdTimestamp,
     ...updatedTimestamp,
     ...tenantReference,
@@ -734,6 +759,7 @@ export const schema = {
   activatedRole: ActivatedRoleTable,
   roleAction: RoleActionTable,
   roleActionAsset: ActionAssetTable,
+  defaultWallet: DefaultWalletTable,
 
   TenantRelations,
   FeatureRelations,
@@ -748,4 +774,5 @@ export const schema = {
   RoleRelations,
   RoleActionRelations,
   ActionAssetRelations,
+  DefaultWalletRelations,
 }

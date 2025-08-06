@@ -1,12 +1,21 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
+import { Chain } from '@/routes-ui'
 import { Widgets } from '@/workOS/client'
 import { useWorkspaceId } from '@/workspaces'
 import { signOut } from '@workos-inc/authkit-react-router'
 import { UserProfile, UserSecurity, UserSessions } from '@workos-inc/widgets'
-import { dbClient, getWallets, updateWalletLabel } from '@zodiac/db'
+import { chainName, getEnabledChains, verifyChainId } from '@zodiac/chains'
+import {
+  dbClient,
+  getDefaultWallets,
+  getWallets,
+  removeDefaultWallet,
+  setDefaultWallet,
+  updateWalletLabel,
+} from '@zodiac/db'
 import type { Wallet } from '@zodiac/db/schema'
-import { getString, getUUID } from '@zodiac/form-data'
+import { getInt, getOptionalUUID, getString, getUUID } from '@zodiac/form-data'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import {
   FormLayout,
@@ -15,6 +24,8 @@ import {
   InlineForm,
   SecondaryButton,
   SecondaryLinkButton,
+  Select,
+  successToast,
   Table,
   TableBody,
   TableCell,
@@ -28,6 +39,7 @@ import { Check, Edit, Trash2 } from 'lucide-react'
 import { useId, useState } from 'react'
 import { href, Outlet } from 'react-router'
 import type { Route } from './+types/profile'
+import { Intent } from './intents'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -41,6 +53,7 @@ export const loader = (args: Route.LoaderArgs) =>
         accessToken,
         sessionId,
         wallets: await getWallets(dbClient(), user.id),
+        defaultWallets: await getDefaultWallets(dbClient(), user.id),
       }
     },
     {
@@ -51,7 +64,12 @@ export const loader = (args: Route.LoaderArgs) =>
 export const action = async (args: Route.ActionArgs) =>
   authorizedAction(
     args,
-    async ({ request }) => {
+    async ({
+      request,
+      context: {
+        auth: { user },
+      },
+    }) => {
       const data = await request.formData()
 
       switch (getString(data, 'intent')) {
@@ -70,6 +88,19 @@ export const action = async (args: Route.ActionArgs) =>
 
           return null
         }
+
+        case Intent.UpdateDefaultWallet: {
+          const walletId = getOptionalUUID(data, 'walletId')
+          const chainId = verifyChainId(getInt(data, 'chainId'))
+
+          if (walletId == null) {
+            await removeDefaultWallet(dbClient(), user, chainId)
+          } else {
+            await setDefaultWallet(dbClient(), user, { walletId, chainId })
+          }
+
+          return null
+        }
       }
     },
     {
@@ -78,10 +109,18 @@ export const action = async (args: Route.ActionArgs) =>
   )
 
 const Profile = ({
-  loaderData: { accessToken, sessionId, wallets },
+  loaderData: { accessToken, sessionId, wallets, defaultWallets },
   params: { workspaceId },
 }: Route.ComponentProps) => {
   const signingOut = useIsPending(Intent.SignOut)
+  const updatingDefaultWallet = useIsPending(Intent.UpdateDefaultWallet)
+
+  useAfterSubmit(Intent.UpdateDefaultWallet, () =>
+    successToast({
+      title: 'Success',
+      message: 'Default wallet has been updated',
+    }),
+  )
 
   return (
     <Page>
@@ -138,6 +177,60 @@ const Profile = ({
                   Add Wallet
                 </SecondaryLinkButton>
               </div>
+            </FormLayout.Section>
+
+            <FormLayout.Section
+              title="Default wallets"
+              description="Define a default wallet for each chain. It will be used to grant you access when new roles are being created inside this organization."
+            >
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableHeader>Chain</TableHeader>
+                    <TableHeader>Default wallet</TableHeader>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {getEnabledChains().map((chainId) => (
+                    <TableRow key={`${chainId}`}>
+                      <TableCell>
+                        <Chain chainId={chainId} />
+                      </TableCell>
+                      <TableCell>
+                        <InlineForm
+                          intent={Intent.UpdateDefaultWallet}
+                          context={{ chainId }}
+                        >
+                          {({ submit }) => (
+                            <Select
+                              hideLabel
+                              isClearable
+                              clearLabel={`Remove default wallet for ${chainName(chainId)}`}
+                              onChange={submit}
+                              name="walletId"
+                              isDisabled={updatingDefaultWallet}
+                              defaultValue={
+                                defaultWallets[chainId] == null
+                                  ? undefined
+                                  : {
+                                      value: defaultWallets[chainId].id,
+                                      label: defaultWallets[chainId].label,
+                                    }
+                              }
+                              placeholder={`Default wallet for ${chainName(chainId)}`}
+                              label={`Default wallet for ${chainName(chainId)}`}
+                              options={wallets.map((wallet) => ({
+                                label: wallet.label,
+                                value: wallet.id,
+                              }))}
+                            />
+                          )}
+                        </InlineForm>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </FormLayout.Section>
 
             <FormLayout.Actions>
@@ -243,8 +336,3 @@ const Wallet = ({ wallet }: { wallet: Wallet }) => {
 }
 
 export default Profile
-
-enum Intent {
-  SignOut = 'SignOut',
-  RenameWallet = 'RenameWallet',
-}

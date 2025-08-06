@@ -1,0 +1,2 @@
+ALTER TABLE "DefaultWallet" DROP CONSTRAINT "DefaultWallet_chainId_userId_walletId_pk";--> statement-breakpoint
+ALTER TABLE "DefaultWallet" ADD CONSTRAINT "DefaultWallet_chainId_userId_pk" PRIMARY KEY("chainId","userId");
