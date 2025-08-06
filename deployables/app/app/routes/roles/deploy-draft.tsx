@@ -23,6 +23,7 @@ import {
 import { Route } from './+types/deploy-draft'
 
 type Safe = Extract<Account, { type: AccountType.SAFE }>
+type Role = Extract<Account, { type: AccountType.ROLES }>
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -41,8 +42,9 @@ export const loader = (args: Route.LoaderArgs) =>
       )
 
       const memberSafes = await getMemberSafes(draft.id, activeChains)
+      const rolesMods = await getRolesMods(draft.id)
 
-      const desired = [...memberSafes]
+      const desired = [...memberSafes, ...rolesMods]
 
       console.log(jsonStringify(desired, 2))
 
@@ -102,6 +104,25 @@ const getMemberSafes = async (
   }
 
   return safes
+}
+
+const getRolesMods = async (roleId: UUID): Promise<Role[]> => {
+  const activeAccounts = await getActivatedAccounts(dbClient(), { roleId })
+
+  return activeAccounts.map((account) =>
+    withPredictedAddress<Role>({
+      type: AccountType.ROLES,
+      allowances: [],
+      avatar: account.address,
+      chain: account.chainId,
+      modules: [],
+      multisend: [],
+      owner: account.address,
+      roles: [],
+      target: account.address,
+      version: 2,
+    }),
+  )
 }
 
 const DeployDraft = ({
