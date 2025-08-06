@@ -9,11 +9,13 @@ import {
 import {
   accountFactory,
   dbIt,
+  roleActionFactory,
   roleFactory,
   tenantFactory,
   userFactory,
   walletFactory,
 } from '@zodiac/db/test-utils'
+import { encodeRoleKey } from '@zodiac/modules'
 import { href } from 'react-router'
 import {
   Account,
@@ -203,7 +205,7 @@ describe('Deploy Role', () => {
   })
 
   describe('Roles mods', () => {
-    dbIt('creates a roles mod on each chain', async () => {
+    dbIt('creates a roles mod', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -219,7 +221,6 @@ describe('Deploy Role', () => {
       })
       const role = await roleFactory.create(tenant, user)
 
-      await setRoleMembers(dbClient(), role, [user.id])
       await setActiveAccounts(dbClient(), role, [account.id])
 
       await render(
@@ -245,6 +246,65 @@ describe('Deploy Role', () => {
               owner: account.address,
               target: account.address,
               roles: [],
+              version: 2,
+              nonce: role.nonce,
+            },
+            role.nonce,
+          ),
+        ]),
+      })
+    })
+
+    dbIt('adds roles for the respective actions', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const wallet = await walletFactory.create(user)
+
+      await setDefaultWallet(dbClient(), user, {
+        walletId: wallet.id,
+        chainId: Chain.ETH,
+      })
+
+      const account = await accountFactory.create(tenant, user, {
+        chainId: Chain.ETH,
+      })
+      const role = await roleFactory.create(tenant, user)
+      const action = await roleActionFactory.create(role, user)
+
+      await setActiveAccounts(dbClient(), role, [account.id])
+
+      await render(
+        href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+          workspaceId: tenant.defaultWorkspaceId,
+          draftId: role.id,
+        }),
+        { tenant, user },
+      )
+
+      expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
+        // TODO: remove this
+        current: [],
+        desired: expect.arrayContaining([
+          withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
+            {
+              type: AccountType.ROLES,
+              chain: Chain.ETH,
+              modules: [],
+              allowances: [],
+              multisend: [],
+              avatar: account.address,
+              owner: account.address,
+              target: account.address,
+              roles: [
+                {
+                  key: encodeRoleKey(action.label),
+                  members: [],
+                  annotations: [],
+                  lastUpdate: 0,
+                  targets: [],
+                },
+              ],
               version: 2,
               nonce: role.nonce,
             },

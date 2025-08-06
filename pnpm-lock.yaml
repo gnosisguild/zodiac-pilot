@@ -208,6 +208,9 @@ importers:
       zod:
         specifier: 4.0.17
         version: 4.0.17
+      zodiac-roles-sdk:
+        specifier: 3.2.0
+        version: 3.2.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     devDependencies:
       '@dotenvx/dotenvx':
         specifier: 1.48.4
