@@ -28,7 +28,7 @@ function selectStyles<Option extends BaseOption>(): ClassNamesConfig<
 > {
   return {
     ...baseSelectStyles(),
-    singleValue: () => classNames('py-2 flex-1'),
+    singleValue: () => classNames('py-2 flex-1 overflow-hidden'),
   }
 }
 
@@ -56,6 +56,7 @@ export const MultiSelect = <Option extends BaseOption = BaseOption>({
           {...props}
           unstyled
           isMulti
+          isClearable={false}
           inputId={inputId}
           isDisabled={isDisabled}
           controlShouldRenderValue={false}

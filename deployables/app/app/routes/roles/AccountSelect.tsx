@@ -37,7 +37,9 @@ export const AccountSelect = ({
 
         return (
           <div className="flex justify-between gap-2">
-            <Address label={account.label}>{account.address}</Address>
+            <Address shorten label={account.label}>
+              {account.address}
+            </Address>
             <Tag color="gray">{chainName(account.chainId)}</Tag>
           </div>
         )
