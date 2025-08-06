@@ -1,29 +1,42 @@
 import { authorizedLoader } from '@/auth-server'
 import { invariantResponse } from '@epic-web/invariant'
-import { Chain, ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@zodiac/chains'
-import { dbClient, getActivatedAccounts, getRole } from '@zodiac/db'
-import { getUUID } from '@zodiac/form-data'
+import {
+  dbClient,
+  getActivatedAccounts,
+  getDefaultWallets,
+  getRole,
+  getRoleMembers,
+} from '@zodiac/db'
 import { isUUID } from '@zodiac/schema'
+import { UUID } from 'crypto'
 import {
   Account,
   AccountType,
+  ChainId,
   planApplyAccounts,
-  predictAddress,
   prefixAddress,
   queryAccounts,
+  withPredictedAddress,
 } from 'ser-kit'
 import { Route } from './+types/deploy-draft'
+
+type Safe = Extract<Account, { type: AccountType.SAFE }>
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
-    async ({ request }) => {
-      const data = await request.formData()
-      const draft = await getRole(dbClient(), getUUID(data, 'draftId'))
+    async ({ params: { draftId } }) => {
+      invariantResponse(isUUID(draftId), '"draftId" is not a UUID')
+
+      const draft = await getRole(dbClient(), draftId)
 
       const activatedAccounts = await getActivatedAccounts(dbClient(), {
         roleId: draft.id,
       })
+
+      const activeChains = Array.from(
+        new Set(activatedAccounts.map((account) => account.chainId)),
+      )
 
       const currentActivatedAccounts = await queryAccounts(
         activatedAccounts.map((account) =>
@@ -31,51 +44,13 @@ export const loader = (args: Route.LoaderArgs) =>
         ),
       )
 
-      const nonce = 1n
+      const memberSafes = await getMemberSafes(draft.id, activeChains)
 
-      const rolesMod = {
-        type: AccountType.ROLES,
-        address: ZERO_ADDRESS,
-        prefixedAddress: ETH_ZERO_ADDRESS,
-        chain: Chain.ETH,
-        roles: [],
-        allowances: [],
-        avatar: ZERO_ADDRESS,
-        owner: ZERO_ADDRESS,
-        target: ZERO_ADDRESS,
-        modules: [],
-        version: 2,
-        nonce,
-        multisend: [],
-      } satisfies Account
-
-      const newAddress = predictAddress(rolesMod, nonce)
-
-      const foo = await planApplyAccounts({
-        desired: [
-          ...currentActivatedAccounts.map((account) => {
-            invariantResponse(
-              account.type === AccountType.SAFE,
-              'Account is not a safe',
-            )
-
-            return {
-              type: AccountType.ROLES,
-              avatar: account.address,
-              owner: account.address,
-              target: account.address,
-              chain: account.chain,
-              allowances: [],
-              modules: [],
-              roles: [],
-              multisend: [],
-              version: 2,
-            } satisfies Account
-          }),
-        ],
-      })
-
-      return null
+      return {
+        plan: await planApplyAccounts({
+          desired: [...memberSafes],
+        }),
+      }
     },
     {
       ensureSignedIn: true,
@@ -94,3 +69,37 @@ const DeployDraft = () => {
 }
 
 export default DeployDraft
+
+const getMemberSafes = async (
+  roleId: UUID,
+  activeChains: ChainId[],
+): Promise<Account[]> => {
+  const members = await getRoleMembers(dbClient(), { roleId })
+
+  const safes: Account[] = []
+
+  for (const member of members) {
+    const defaultWallets = await getDefaultWallets(dbClient(), member.id)
+
+    for (const chainId of activeChains) {
+      if (defaultWallets[chainId] == null) {
+        continue
+      }
+
+      safes.push(
+        withPredictedAddress<Safe>(
+          {
+            type: AccountType.SAFE,
+            chain: chainId,
+            modules: [],
+            owners: [defaultWallets[chainId].address],
+            threshold: 1,
+          },
+          member.nonce,
+        ),
+      )
+    }
+  }
+
+  return safes
+}
