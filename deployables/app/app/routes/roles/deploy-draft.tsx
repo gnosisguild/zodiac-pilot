@@ -17,6 +17,7 @@ import {
   AccountType,
   ChainId,
   planApplyAccounts,
+  queryAccounts,
   withPredictedAddress,
 } from 'ser-kit'
 import { Route } from './+types/deploy-draft'
@@ -47,6 +48,8 @@ export const loader = (args: Route.LoaderArgs) =>
 
       return {
         plan: planApplyAccounts({
+          // TODO: remove this
+          current: [],
           desired,
         }),
       }
@@ -79,19 +82,22 @@ const getMemberSafes = async (
         continue
       }
 
-      safes.push(
-        withPredictedAddress<Safe>(
-          {
-            type: AccountType.SAFE,
-            chain: chainId,
-            modules: [],
-            owners: [defaultWallets[chainId].address],
-            threshold: 1,
-            nonce: member.nonce,
-          },
-          member.nonce,
-        ),
+      const safe = withPredictedAddress<Safe>(
+        {
+          type: AccountType.SAFE,
+          chain: chainId,
+          modules: [],
+          owners: [defaultWallets[chainId].address],
+          threshold: 1,
+        },
+        member.nonce,
       )
+
+      const [existingSafe] = await queryAccounts([safe.prefixedAddress])
+
+      if (existingSafe == null) {
+        safes.push(safe)
+      }
     }
   }
 
@@ -112,20 +118,21 @@ const DeployDraft = ({
         navigate(href('/workspace/:workspaceId/roles/drafts', { workspaceId }))
       }
     >
+      <Suspense>
+        <Await resolve={plan}>
+          {(plan) =>
+            plan.map(({ account, steps }) => (
+              <div key={account.prefixedAddress}>
+                {steps.map((step, index) => (
+                  <div key={index}>{step.call.call}</div>
+                ))}
+              </div>
+            ))
+          }
+        </Await>
+      </Suspense>
+
       <Modal.Actions>
-        <Suspense>
-          <Await resolve={plan}>
-            {(plan) =>
-              plan.map(({ account, steps }) => (
-                <div key={account.prefixedAddress}>
-                  {steps.map((step, index) => (
-                    <div key={index}>{step.call.call}</div>
-                  ))}
-                </div>
-              ))
-            }
-          </Await>
-        </Suspense>
         <Modal.CloseAction>Close</Modal.CloseAction>
       </Modal.Actions>
     </Modal>
