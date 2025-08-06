@@ -8,14 +8,15 @@ import {
   getRoleMembers,
 } from '@zodiac/db'
 import { isUUID } from '@zodiac/schema'
+import { Modal } from '@zodiac/ui'
 import { UUID } from 'crypto'
+import { Suspense } from 'react'
+import { Await, href, useNavigate } from 'react-router'
 import {
   Account,
   AccountType,
   ChainId,
   planApplyAccounts,
-  prefixAddress,
-  queryAccounts,
   withPredictedAddress,
 } from 'ser-kit'
 import { Route } from './+types/deploy-draft'
@@ -38,16 +39,10 @@ export const loader = (args: Route.LoaderArgs) =>
         new Set(activatedAccounts.map((account) => account.chainId)),
       )
 
-      const currentActivatedAccounts = await queryAccounts(
-        activatedAccounts.map((account) =>
-          prefixAddress(account.chainId, account.address),
-        ),
-      )
-
       const memberSafes = await getMemberSafes(draft.id, activeChains)
 
       return {
-        plan: await planApplyAccounts({
+        plan: planApplyAccounts({
           desired: [...memberSafes],
         }),
       }
@@ -63,12 +58,6 @@ export const loader = (args: Route.LoaderArgs) =>
       },
     },
   )
-
-const DeployDraft = () => {
-  return null
-}
-
-export default DeployDraft
 
 const getMemberSafes = async (
   roleId: UUID,
@@ -103,3 +92,39 @@ const getMemberSafes = async (
 
   return safes
 }
+
+const DeployDraft = ({
+  loaderData: { plan },
+  params: { workspaceId },
+}: Route.ComponentProps) => {
+  const navigate = useNavigate()
+
+  return (
+    <Modal
+      open
+      title="Deploy draft"
+      onClose={() =>
+        navigate(href('/workspace/:workspaceId/roles/drafts', { workspaceId }))
+      }
+    >
+      <Modal.Actions>
+        <Suspense>
+          <Await resolve={plan}>
+            {(plan) =>
+              plan.map(({ account, steps }) => (
+                <div key={account.prefixedAddress}>
+                  {steps.map((step, index) => (
+                    <div key={index}>{step.call.call}</div>
+                  ))}
+                </div>
+              ))
+            }
+          </Await>
+        </Suspense>
+        <Modal.CloseAction>Close</Modal.CloseAction>
+      </Modal.Actions>
+    </Modal>
+  )
+}
+
+export default DeployDraft
