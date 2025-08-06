@@ -365,6 +365,20 @@
       "when": 1754402256777,
       "tag": "0051_add nonce to users",
       "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "7",
+      "when": 1754470342606,
+      "tag": "0052_add default wallet per chain",
+      "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "7",
+      "when": 1754472437838,
+      "tag": "0053_change primary key",
+      "breakpoints": true
     }
   ]
 }

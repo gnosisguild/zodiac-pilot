@@ -12,5 +12,6 @@ export {
 export type { RouteModule } from './renderFramework'
 export { renderHook } from './renderHook'
 export type { RenderHookOptions } from './renderHook'
+export { selectOption } from './selectOption'
 export { sleepTillIdle } from './sleepTillIdle'
 export { waitForPendingActions, waitForPendingLoaders } from './WatchForActions'
