@@ -2,10 +2,12 @@ import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { Chain } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
+import { chainName } from '@zodiac/chains'
 import {
   dbClient,
   getAccounts,
   getActivatedAccounts,
+  getDefaultWallets,
   getRole,
   getRoleActions,
   getRoleMembers,
@@ -42,6 +44,7 @@ import {
   TextInput,
 } from '@zodiac/ui'
 import { ArrowRightLeft, Pencil } from 'lucide-react'
+import { UUID } from 'node:crypto'
 import { href, Outlet } from 'react-router'
 import { prefixAddress } from 'ser-kit'
 import { Route } from './+types/edit'
@@ -70,6 +73,26 @@ export const loader = (args: Route.LoaderArgs) =>
           getRoleActions(dbClient(), roleId),
         ])
 
+      const activeChains = Array.from(
+        new Set(activeAccounts.map((account) => account.chainId)),
+      )
+      const missingDefaultWallets: Record<UUID, string[]> = {}
+
+      for (const member of members) {
+        const defaultWallets = await getDefaultWallets(dbClient(), member.id)
+
+        missingDefaultWallets[member.id] = activeChains.reduce<string[]>(
+          (result, chainId) => {
+            if (defaultWallets[chainId] == null) {
+              return [...result, chainName(chainId)]
+            }
+
+            return result
+          },
+          [],
+        )
+      }
+
       return {
         role,
         users,
@@ -77,6 +100,7 @@ export const loader = (args: Route.LoaderArgs) =>
         activeAccounts,
         members,
         actions,
+        missingDefaultWallets,
       }
     },
     {
@@ -127,7 +151,15 @@ export const action = (args: Route.ActionArgs) =>
   )
 
 const EditRole = ({
-  loaderData: { role, users, members, accounts, activeAccounts, actions },
+  loaderData: {
+    role,
+    users,
+    members,
+    accounts,
+    activeAccounts,
+    actions,
+    missingDefaultWallets,
+  },
   params: { workspaceId, roleId },
 }: Route.ComponentProps) => {
   useAfterSubmit(Intent.Save, () =>
@@ -165,7 +197,26 @@ const EditRole = ({
                 label: member.fullName,
                 value: member.id,
               }))}
-            />
+            >
+              {({ data: { label, value } }) => (
+                <div className="flex flex-col gap-1">
+                  {label}
+                  {value in missingDefaultWallets &&
+                    missingDefaultWallets[value].length > 0 && (
+                      <span
+                        role="alert"
+                        className="text-xs text-red-400"
+                        aria-label="Default wallet missing"
+                      >
+                        User has no default wallet set for:{' '}
+                        <span className="text-red-300">
+                          {missingDefaultWallets[value].join(', ')}
+                        </span>
+                      </span>
+                    )}
+                </div>
+              )}
+            </MultiSelect>
 
             <AccountSelect accounts={accounts} defaultValue={activeAccounts} />
 
