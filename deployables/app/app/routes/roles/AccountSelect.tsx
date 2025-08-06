@@ -1,6 +1,7 @@
 import { invariant } from '@epic-web/invariant'
+import { chainName } from '@zodiac/chains'
 import { Account } from '@zodiac/db/schema'
-import { MultiSelect } from '@zodiac/ui'
+import { MultiSelect, Tag } from '@zodiac/ui'
 import { Address } from '@zodiac/web3'
 
 type AccountSelectProps = {
@@ -34,7 +35,12 @@ export const AccountSelect = ({
           `Could not render account with id "${value}"`,
         )
 
-        return <Address label={account.label}>{account.address}</Address>
+        return (
+          <div className="flex justify-between gap-2">
+            <Address label={account.label}>{account.address}</Address>
+            <Tag color="gray">{chainName(account.chainId)}</Tag>
+          </div>
+        )
       }}
     </MultiSelect>
   )
