@@ -100,10 +100,11 @@ const EditWorkspace = ({
       onClose={() =>
         navigate(
           href('/workspace/:workspaceId/admin/workspaces', { workspaceId }),
+          { replace: true },
         )
       }
     >
-      <Form>
+      <Form replace>
         <TextInput required label="Label" name="label" defaultValue={label} />
 
         <Checkbox name="useAsDefault" defaultChecked={isDefaultWorkspace}>

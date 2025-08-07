@@ -49,10 +49,11 @@ const AddWorkspace = ({ params: { workspaceId } }: Route.ComponentProps) => {
           href('/workspace/:workspaceId/admin/workspaces', {
             workspaceId,
           }),
+          { replace: true },
         )
       }
     >
-      <Form>
+      <Form replace>
         <TextInput
           required
           label="Label"

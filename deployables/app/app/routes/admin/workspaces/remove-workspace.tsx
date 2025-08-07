@@ -127,10 +127,11 @@ const RemoveWorkspace = ({
       onClose={() =>
         navigate(
           href('/workspace/:workspaceId/admin/workspaces', { workspaceId }),
+          { replace: true },
         )
       }
     >
-      <Form>
+      <Form replace>
         <Select
           label="Move accounts to"
           name="targetWorkspaceId"
