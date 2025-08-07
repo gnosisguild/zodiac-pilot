@@ -24,11 +24,11 @@ import {
   MultiSelect,
   NumberInput,
   PrimaryButton,
-  Select,
 } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/add-asset'
 import { AllowanceIntervalSelect } from './AllowanceIntervalSelect'
+import { AssetPermission, SellBuyPermission } from './AssetPermission'
 import { Intent } from './intents'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -120,12 +120,6 @@ export const action = (args: Route.ActionArgs) =>
     },
   )
 
-enum SellBuyPermission {
-  Sell = 'Sell',
-  Buy = 'Buy',
-  SellAndBuy = 'SellAndBuy',
-}
-
 const AddAsset = ({
   loaderData: { assets },
   params: { workspaceId, roleId },
@@ -176,20 +170,7 @@ const AddAsset = ({
           }}
         </MultiSelect>
 
-        <Select
-          required
-          label="Permission"
-          name="permission"
-          defaultValue={{
-            label: 'Sell & Buy',
-            value: SellBuyPermission.SellAndBuy,
-          }}
-          options={[
-            { label: 'Sell', value: SellBuyPermission.Sell },
-            { label: 'Buy', value: SellBuyPermission.Buy },
-            { label: 'Sell & Buy', value: SellBuyPermission.SellAndBuy },
-          ]}
-        />
+        <AssetPermission required label="Permission" name="permission" />
 
         <div className="grid grid-cols-2 gap-4">
           <NumberInput label="Allowance" name="allowance" min={0} />

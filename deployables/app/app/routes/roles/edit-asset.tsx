@@ -5,15 +5,21 @@ import {
   getRoleAction,
   getRoleActionAsset,
   updateAllowance,
+  updatePermissions,
 } from '@zodiac/db'
 import { AllowanceInterval } from '@zodiac/db/schema'
-import { getEnumValue, getNumber } from '@zodiac/form-data'
+import { getEnumValue, getNumber, getOptionalInt } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import { Form, Modal, NumberInput, PrimaryButton } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/edit-asset'
 import { AllowanceIntervalSelect } from './AllowanceIntervalSelect'
+import {
+  AssetPermission,
+  getPermission,
+  SellBuyPermission,
+} from './AssetPermission'
 import { Intent } from './intents'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -54,9 +60,26 @@ export const action = (args: Route.ActionArgs) =>
 
       const data = await request.formData()
 
-      await updateAllowance(dbClient(), assetId, {
-        allowance: BigInt(getNumber(data, 'allowance')),
-        interval: getEnumValue(AllowanceInterval, data, 'interval'),
+      await dbClient().transaction(async (tx) => {
+        const allowanceAmount = getOptionalInt(data, 'allowance')
+
+        if (allowanceAmount != null) {
+          await updateAllowance(tx, assetId, {
+            allowance: BigInt(getNumber(data, 'allowance')),
+            interval: getEnumValue(AllowanceInterval, data, 'interval'),
+          })
+        }
+
+        const permission = getEnumValue(SellBuyPermission, data, 'permission')
+
+        await updatePermissions(tx, assetId, {
+          allowBuy:
+            permission === SellBuyPermission.Buy ||
+            permission === SellBuyPermission.SellAndBuy,
+          allowSell:
+            permission === SellBuyPermission.Sell ||
+            permission === SellBuyPermission.SellAndBuy,
+        })
       })
 
       return redirect(
@@ -106,26 +129,33 @@ const EditAsset = ({
       }
     >
       <Form replace>
-        <NumberInput
+        <AssetPermission
           required
-          label="Allowance"
-          name="allowance"
-          min={0}
-          defaultValue={
-            asset.allowance == null ? '' : asset.allowance.toString()
-          }
+          label="Permission"
+          name="permission"
+          defaultValue={getPermission(asset)}
         />
 
-        <AllowanceIntervalSelect
-          required
-          label="Interval"
-          name="interval"
-          defaultValue={
-            asset.interval == null
-              ? { label: 'Monthly', value: AllowanceInterval.Monthly }
-              : { label: capitalize(asset.interval), value: asset.interval }
-          }
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <NumberInput
+            label="Allowance"
+            name="allowance"
+            min={0}
+            defaultValue={
+              asset.allowance == null ? '' : asset.allowance.toString()
+            }
+          />
+
+          <AllowanceIntervalSelect
+            label="Interval"
+            name="interval"
+            defaultValue={
+              asset.interval == null
+                ? { label: 'Monthly', value: AllowanceInterval.Monthly }
+                : { label: capitalize(asset.interval), value: asset.interval }
+            }
+          />
+        </div>
 
         <Modal.Actions>
           <PrimaryButton
