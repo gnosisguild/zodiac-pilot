@@ -126,16 +126,8 @@ describe('Fork provider', () => {
 
       expect(statusResult).toEqual({
         id: 'test-bundle',
-        status: 'confirmed',
-        transactions: [
-          {
-            hash: 'test-hash',
-            status: 'confirmed',
-            blockNumber: '0x1234',
-            gasUsed: '0x5208',
-            effectiveGasPrice: '0x3b9aca00',
-          },
-        ],
+        status: 200,
+        receipts: [mockReceipt],
         atomic: true,
       })
     })
