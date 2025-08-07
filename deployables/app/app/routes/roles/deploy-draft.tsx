@@ -10,7 +10,6 @@ import {
 } from '@zodiac/db'
 import { encodeRoleKey } from '@zodiac/modules'
 import { isUUID, jsonStringify } from '@zodiac/schema'
-import { randomAddress } from '@zodiac/test-utils'
 import { Modal } from '@zodiac/ui'
 import { UUID } from 'crypto'
 import { Suspense } from 'react'
@@ -23,8 +22,6 @@ import {
   queryAccounts,
   withPredictedAddress,
 } from 'ser-kit'
-import { processPermissions } from 'zodiac-roles-sdk'
-import { allowCowOrderSigning } from 'zodiac-roles-sdk/swaps'
 import { Route } from './+types/deploy-draft'
 
 type Safe = Extract<Account, { type: AccountType.SAFE }>
@@ -115,12 +112,6 @@ const getRolesMods = async (roleId: UUID, nonce: bigint): Promise<Role[]> => {
   const activeAccounts = await getActivatedAccounts(dbClient(), { roleId })
   const actions = await getRoleActions(dbClient(), roleId)
 
-  const permissions = allowCowOrderSigning({
-    sell: [randomAddress()],
-    buy: [randomAddress()],
-  })
-  const { annotations, targets } = processPermissions(permissions)
-
   return activeAccounts.map((account) =>
     withPredictedAddress<Role>(
       {
@@ -134,8 +125,8 @@ const getRolesMods = async (roleId: UUID, nonce: bigint): Promise<Role[]> => {
         roles: actions.map((action) => ({
           key: encodeRoleKey(action.label),
           members: [],
-          annotations,
-          targets,
+          annotations: [],
+          targets: [],
           lastUpdate: 0,
         })),
         target: account.address,
