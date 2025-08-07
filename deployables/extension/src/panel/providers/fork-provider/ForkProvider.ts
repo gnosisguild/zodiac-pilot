@@ -41,6 +41,14 @@ export type TransactionResult = {
   hash: string
 }
 
+enum BatchStatus {
+  Pending = 100,
+  Confirmed = 200,
+  FailedOffChain = 400,
+  Reverted = 500,
+  PartiallyReverted = 600,
+}
+
 /** This is separated from TenderlyProvider to provide an abstraction over Tenderly implementation details. That way we will be able to more easily plug in alternative simulation back-ends. */
 export class ForkProvider extends EventEmitter {
   private provider: TenderlyProvider
@@ -227,6 +235,7 @@ export class ForkProvider extends EventEmitter {
       }
 
       // EIP-5792 support
+      // https://docs.metamask.io/wallet/reference/json-rpc-methods/wallet_getcallsstatus/
       case 'wallet_getCallsStatus': {
         const [id] = params
         const uniqueId = injectionId + '_' + id
@@ -258,43 +267,21 @@ export class ForkProvider extends EventEmitter {
         )
         const anyFailed = receipts.some((receipt) => receipt?.status === '0x0')
 
-        let status: 'pending' | 'confirmed' | 'failed'
+        let status: BatchStatus
         if (!allReceiptsFound) {
-          status = 'pending'
+          status = BatchStatus.Pending
         } else if (anyFailed) {
-          status = 'failed'
+          status = BatchStatus.FailedOffChain
         } else if (allSuccessful) {
-          status = 'confirmed'
+          status = BatchStatus.Confirmed
         } else {
-          status = 'pending'
+          status = BatchStatus.Pending
         }
-
-        // Map transaction hashes to their individual statuses
-        const transactions = txHashes.map((hash, index) => {
-          const receipt = receipts[index]
-          let transactionStatus: 'pending' | 'confirmed' | 'failed'
-
-          if (!receipt) {
-            transactionStatus = 'pending'
-          } else if (receipt.status === '0x1') {
-            transactionStatus = 'confirmed'
-          } else {
-            transactionStatus = 'failed'
-          }
-
-          return {
-            hash,
-            status: transactionStatus,
-            blockNumber: receipt?.blockNumber,
-            gasUsed: receipt?.gasUsed,
-            effectiveGasPrice: receipt?.effectiveGasPrice,
-          }
-        })
 
         return {
           id,
           status,
-          transactions,
+          receipts,
           atomic: true,
         }
       }

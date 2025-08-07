@@ -6,11 +6,11 @@ import {
   getAccountsByWalletId,
   getWallet,
 } from '@zodiac/db'
-import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
+import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import { Divider, Form, Modal, PrimaryButton } from '@zodiac/ui'
 import { useId } from 'react'
-import { href, useNavigate } from 'react-router'
+import { href, redirect, useNavigate } from 'react-router'
 import type { Route } from './+types/delete-wallet'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -24,10 +24,12 @@ export const loader = (args: Route.LoaderArgs) =>
     }) => {
       invariantResponse(isUUID(walletId), 'Wallet ID is not a UUID')
 
-      return {
-        wallet: await getWallet(dbClient(), walletId),
-        accounts: await getAccountsByWalletId(dbClient(), tenant, walletId),
-      }
+      const [wallet, accounts] = await Promise.all([
+        getWallet(dbClient(), walletId),
+        getAccountsByWalletId(dbClient(), tenant, walletId),
+      ])
+
+      return { wallet, accounts }
     },
     {
       ensureSignedIn: true,
@@ -45,7 +47,7 @@ export const action = (args: Route.ActionArgs) =>
   authorizedAction(
     args,
     async ({
-      params: { walletId },
+      params: { walletId, workspaceId },
       context: {
         auth: { user },
       },
@@ -54,7 +56,7 @@ export const action = (args: Route.ActionArgs) =>
 
       await deleteWallet(dbClient(), user, walletId)
 
-      return null
+      return redirect(href('/workspace/:workspaceId/profile', { workspaceId }))
     },
     {
       ensureSignedIn: true,
@@ -76,16 +78,14 @@ const DeleteWallet = ({
 
   const accountListId = useId()
 
-  useAfterSubmit(Intent.Delete, () =>
-    navigate(href('/workspace/:workspaceId/profile', { workspaceId })),
-  )
-
   return (
     <Modal
       open
       title="Remove wallet"
       onClose={() =>
-        navigate(href('/workspace/:workspaceId/profile', { workspaceId }))
+        navigate(href('/workspace/:workspaceId/profile', { workspaceId }), {
+          replace: true,
+        })
       }
     >
       <div className="flex flex-col gap-4">
@@ -120,7 +120,7 @@ const DeleteWallet = ({
       </div>
 
       <Modal.Actions>
-        <Form>
+        <Form replace>
           <PrimaryButton
             submit
             busy={useIsPending()}
