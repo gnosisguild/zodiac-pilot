@@ -170,6 +170,7 @@ const Profile = ({
 
               <div className="flex justify-end">
                 <SecondaryLinkButton
+                  replace
                   to={href('/workspace/:workspaceId/profile/add-wallet', {
                     workspaceId,
                   })}
@@ -316,6 +317,7 @@ const Wallet = ({ wallet }: { wallet: Wallet }) => {
 
           <GhostLinkButton
             iconOnly
+            replace
             to={href(
               '/workspace/:workspaceId/profile/delete-wallet/:walletId',
               {

@@ -51,11 +51,13 @@ const AddWallet = ({
     <Modal
       open
       onClose={() =>
-        navigate(href('/workspace/:workspaceId/profile', { workspaceId }))
+        navigate(href('/workspace/:workspaceId/profile', { workspaceId }), {
+          replace: true,
+        })
       }
       title="Add Wallet"
     >
-      <Form intent={Intent.AddWallet}>
+      <Form replace>
         {actionData != null && (
           <Error title="Wallet already exists">{actionData.error}</Error>
         )}
@@ -64,7 +66,11 @@ const AddWallet = ({
         <AddressInput required label="Address" name="address" />
 
         <Modal.Actions>
-          <PrimaryButton submit busy={useIsPending(Intent.AddWallet)}>
+          <PrimaryButton
+            submit
+            intent={Intent.AddWallet}
+            busy={useIsPending(Intent.AddWallet)}
+          >
             Add
           </PrimaryButton>
 
