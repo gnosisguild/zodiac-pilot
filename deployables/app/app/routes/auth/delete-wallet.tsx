@@ -8,7 +8,7 @@ import {
 } from '@zodiac/db'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
-import { Divider, Form, Modal, PrimaryButton } from '@zodiac/ui'
+import { Form, Modal, PrimaryButton } from '@zodiac/ui'
 import { useId } from 'react'
 import { href, redirect, useNavigate } from 'react-router'
 import type { Route } from './+types/delete-wallet'
@@ -82,6 +82,7 @@ const DeleteWallet = ({
     <Modal
       open
       title="Remove wallet"
+      description={`Are you sure that you want to remove the wallet "${wallet.label}"?`}
       onClose={() =>
         navigate(href('/workspace/:workspaceId/profile', { workspaceId }), {
           replace: true,
@@ -89,13 +90,6 @@ const DeleteWallet = ({
       }
     >
       <div className="flex flex-col gap-4">
-        <p>
-          Are you sure that you want to remove the wallet{' '}
-          <strong>{wallet.label}</strong>?
-        </p>
-
-        <Divider />
-
         <div className="text-sm">
           {accounts.length > 0 ? (
             <>

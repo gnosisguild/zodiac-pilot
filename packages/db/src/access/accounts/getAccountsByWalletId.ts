@@ -13,20 +13,25 @@ export const getAccountsByWalletId = async (
   tenant: Tenant,
   walletId: UUID,
 ): Promise<Account[]> => {
-  const routes = await db
+  const route = db.$with('r').as(
+    db
+      .selectDistinct({ toId: RouteTable.toId })
+      .from(RouteTable)
+      .where(
+        and(
+          eq(RouteTable.fromId, walletId),
+          eq(RouteTable.tenantId, tenant.id),
+        ),
+      ),
+  )
+
+  const result = await db
+    .with(route)
     .select()
-    .from(RouteTable)
-    .where(
-      and(eq(RouteTable.tenantId, tenant.id), eq(RouteTable.fromId, walletId)),
-    )
-    .leftJoin(AccountTable, eq(RouteTable.toId, AccountTable.id))
+    .from(AccountTable)
+    .where(eq(AccountTable.deleted, false))
+    .innerJoin(route, eq(route.toId, AccountTable.id))
     .orderBy(asc(AccountTable.label))
 
-  return routes.reduce<Account[]>((result, { Account }) => {
-    if (Account == null) {
-      return result
-    }
-
-    return [...result, Account]
-  }, [])
+  return result.map(({ Account }) => Account)
 }
