@@ -108,6 +108,7 @@ export function Select<
   isDisabled,
   inline = false,
   children,
+  required = false,
   ...props
 }: SelectProps<Option, Creatable, false>) {
   const Component = allowCreate ? Creatable : BaseSelect
@@ -124,6 +125,7 @@ export function Select<
         clearLabel={clearLabel}
         dropdownLabel={dropdownLabel}
         description={description}
+        required={required}
       >
         {({ inputId }) => (
           <Layout disabled={isDisabled}>
@@ -131,6 +133,7 @@ export function Select<
               {...props}
               unstyled
               isDisabled={isDisabled}
+              required={required}
               inputId={inputId}
               components={{
                 ClearIndicator,

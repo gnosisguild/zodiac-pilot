@@ -19,9 +19,15 @@ export const NumberInput = ({
   before,
   placeholder = '0',
   ref,
+  required = false,
   ...props
 }: NumberInputProps) => (
-  <Input label={label} description={description} error={error}>
+  <Input
+    label={label}
+    description={description}
+    error={error}
+    required={required}
+  >
     {({ inputId, descriptionId }) => (
       <InputLayout disabled={disabled} before={before} after={after}>
         <BareInput
@@ -29,6 +35,7 @@ export const NumberInput = ({
           ref={ref}
           type="number"
           id={inputId}
+          required={required}
           disabled={disabled}
           aria-describedby={descriptionId}
           aria-errormessage={error ?? undefined}

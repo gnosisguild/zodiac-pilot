@@ -28,6 +28,7 @@ export const AddressInput = ({
   placeholder = ZERO_ADDRESS,
   hideLabel,
   onChange,
+  required = false,
   ...props
 }: AddressInputProps) => (
   <Input
@@ -35,6 +36,7 @@ export const AddressInput = ({
     description={description}
     error={error}
     hideLabel={hideLabel}
+    required={required}
   >
     {({ inputId, descriptionId }) => (
       <InputLayout
@@ -52,6 +54,7 @@ export const AddressInput = ({
           type="text"
           pattern="0x\w{40}"
           id={inputId}
+          required={required}
           disabled={disabled}
           value={value == null ? undefined : getAddress(value)}
           defaultValue={defaultValue}

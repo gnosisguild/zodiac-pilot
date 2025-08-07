@@ -20,6 +20,7 @@ export const TextInput = ({
   after,
   before,
   hideLabel,
+  required = false,
 
   ...props
 }: TextInputProps) => (
@@ -28,11 +29,13 @@ export const TextInput = ({
     label={label}
     description={description}
     error={error}
+    required={required}
   >
     {({ inputId, descriptionId }) => (
       <InputLayout disabled={disabled} before={before} after={after}>
         <BareInput
           {...props}
+          required={required}
           type="text"
           id={inputId}
           disabled={disabled}
