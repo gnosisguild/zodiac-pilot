@@ -16,6 +16,10 @@ export const Label = ({
     className="text-sm font-semibold dark:text-zinc-50"
   >
     {children}
-    {required && <span className="ml-1 font-semibold text-red-400">*</span>}
+    {required && (
+      <span aria-hidden className="ml-1 font-semibold text-red-400">
+        *
+      </span>
+    )}
   </label>
 )
