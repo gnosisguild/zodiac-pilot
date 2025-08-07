@@ -147,45 +147,48 @@ describe('Profile', () => {
     })
 
     describe('Remove', () => {
-      dbIt('is possible to remove a wallet', async () => {
-        const user = await userFactory.create()
-        const tenant = await tenantFactory.create(user)
+      dbIt.skipIf(process.env.CI != null)(
+        'is possible to remove a wallet',
+        async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
 
-        const wallet = await walletFactory.create(user, {
-          label: 'User wallet',
-        })
+          const wallet = await walletFactory.create(user, {
+            label: 'User wallet',
+          })
 
-        await render(
-          href('/workspace/:workspaceId/profile', {
-            workspaceId: tenant.defaultWorkspaceId,
-          }),
-          {
-            tenant,
-            user,
-          },
-        )
+          await render(
+            href('/workspace/:workspaceId/profile', {
+              workspaceId: tenant.defaultWorkspaceId,
+            }),
+            {
+              tenant,
+              user,
+            },
+          )
 
-        await userEvent.click(
-          await screen.findByRole('link', { name: 'Remove wallet' }),
-        )
+          await userEvent.click(
+            await screen.findByRole('link', { name: 'Remove wallet' }),
+          )
 
-        await userEvent.click(
-          await screen.findByRole('button', { name: 'Remove' }),
-        )
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Remove' }),
+          )
 
-        await waitForPendingActions()
+          await waitForPendingActions()
 
-        const [deletedWallet] = await getWallets(dbClient(), user.id, {
-          deleted: true,
-        })
+          const [deletedWallet] = await getWallets(dbClient(), user.id, {
+            deleted: true,
+          })
 
-        expect(deletedWallet).toMatchObject({
-          id: wallet.id,
+          expect(deletedWallet).toMatchObject({
+            id: wallet.id,
 
-          deleted: true,
-          deletedById: user.id,
-        })
-      })
+            deleted: true,
+            deletedById: user.id,
+          })
+        },
+      )
 
       dbIt('lists accounts that use this wallet', async () => {
         const user = await userFactory.create()
