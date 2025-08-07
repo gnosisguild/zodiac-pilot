@@ -10,9 +10,10 @@ import { AllowanceInterval } from '@zodiac/db/schema'
 import { getEnumValue, getNumber } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
-import { Form, Modal, NumberInput, PrimaryButton, Select } from '@zodiac/ui'
+import { Form, Modal, NumberInput, PrimaryButton } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/edit-asset'
+import { AllowanceIntervalSelect } from './AllowanceIntervalSelect'
 import { Intent } from './intents'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -115,7 +116,7 @@ const EditAsset = ({
           }
         />
 
-        <Select
+        <AllowanceIntervalSelect
           required
           label="Interval"
           name="interval"
@@ -124,13 +125,6 @@ const EditAsset = ({
               ? { label: 'Monthly', value: AllowanceInterval.Monthly }
               : { label: capitalize(asset.interval), value: asset.interval }
           }
-          options={[
-            { label: 'Daily', value: AllowanceInterval.Daily },
-            { label: 'Weekly', value: AllowanceInterval.Weekly },
-            { label: 'Monthly', value: AllowanceInterval.Monthly },
-            { label: 'Quarterly', value: AllowanceInterval.Quarterly },
-            { label: 'Yearly', value: AllowanceInterval.Yearly },
-          ]}
         />
 
         <Modal.Actions>
