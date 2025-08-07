@@ -1,5 +1,9 @@
 import { getChainId } from '@zodiac/chains'
-import { ActionAssetTable, RoleAction } from '@zodiac/db/schema'
+import {
+  ActionAssetTable,
+  AllowanceInterval,
+  RoleAction,
+} from '@zodiac/db/schema'
 import { PrefixedAddress } from '@zodiac/schema'
 import { unprefixAddress } from 'ser-kit'
 import { DBClient } from '../../dbClient'
@@ -9,10 +13,16 @@ type CreateRoleActionAssetsOptions = {
   address: PrefixedAddress
 }
 
+type AllowanceOptions = {
+  allowance: bigint
+  interval: AllowanceInterval
+}
+
 export const createRoleActionAssets = (
   db: DBClient,
   action: RoleAction,
   assets: CreateRoleActionAssetsOptions[],
+  allowance?: AllowanceOptions,
 ) => {
   if (assets.length === 0) {
     return []
@@ -23,6 +33,8 @@ export const createRoleActionAssets = (
       roleActionId: action.id,
       tenantId: action.tenantId,
       workspaceId: action.workspaceId,
+
+      ...allowance,
 
       symbol,
       chainId: getChainId(address),

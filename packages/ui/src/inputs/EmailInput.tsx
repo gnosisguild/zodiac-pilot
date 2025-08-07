@@ -20,6 +20,7 @@ export const EmailInput = ({
   after,
   before,
   hideLabel,
+  required = false,
 
   ...props
 }: EmailInputProps) => (
@@ -28,12 +29,14 @@ export const EmailInput = ({
     label={label}
     description={description}
     error={error}
+    required={required}
   >
     {({ inputId, descriptionId }) => (
       <InputLayout disabled={disabled} before={before} after={after}>
         <BareInput
           {...props}
           type="email"
+          required={required}
           id={inputId}
           disabled={disabled}
           aria-describedby={descriptionId}

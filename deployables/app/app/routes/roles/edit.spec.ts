@@ -26,6 +26,7 @@ import {
 } from '@zodiac/db/test-utils'
 import {
   randomPrefixedAddress,
+  selectOption,
   waitForPendingActions,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
@@ -371,13 +372,7 @@ describe('Edit role', () => {
           await screen.findByRole('link', { name: 'Add assets' }),
         )
 
-        await userEvent.click(
-          await screen.findByRole('combobox', { name: 'Assets' }),
-        )
-
-        await userEvent.click(
-          await screen.findByRole('option', { name: 'WETH' }),
-        )
+        await selectOption('Assets', 'WETH')
 
         await userEvent.click(
           await screen.findByRole('button', { name: 'Add' }),
@@ -483,12 +478,7 @@ describe('Edit role', () => {
             '1000',
           )
 
-          await userEvent.click(
-            await screen.findByRole('combobox', { name: 'Interval' }),
-          )
-          await userEvent.click(
-            await screen.findByRole('option', { name: 'Daily' }),
-          )
+          await selectOption('Interval', 'Daily')
 
           await userEvent.click(
             await screen.findByRole('button', { name: 'Update' }),
@@ -499,6 +489,61 @@ describe('Edit role', () => {
           await expect(
             getRoleActionAsset(dbClient(), asset.id),
           ).resolves.toMatchObject({
+            allowance: 1000n,
+            interval: AllowanceInterval.Daily,
+          })
+        })
+
+        dbIt('is possible to create allowances on asset creation', async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
+
+          const role = await roleFactory.create(tenant, user)
+
+          const action = await roleActionFactory.create(role, user)
+
+          const address = randomPrefixedAddress()
+          const weth = {
+            chainId: Chain.ETH,
+            logoURI: '',
+            name: 'Wrapped Ether',
+            symbol: 'WETH',
+            address,
+          }
+
+          mockGetAssets.mockResolvedValue({ [address]: weth })
+          mockGetVerifiedAssets.mockResolvedValue([weth])
+
+          await render(
+            href('/workspace/:workspaceId/roles/:roleId', {
+              workspaceId: tenant.defaultWorkspaceId,
+              roleId: role.id,
+            }),
+            { tenant, user },
+          )
+
+          await userEvent.click(
+            await screen.findByRole('link', { name: 'Add assets' }),
+          )
+
+          await selectOption('Assets', 'WETH')
+
+          await userEvent.type(
+            await screen.findByRole('spinbutton', { name: 'Allowance' }),
+            '1000',
+          )
+
+          await selectOption('Interval', 'Daily')
+
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Add' }),
+          )
+
+          await waitForPendingActions()
+
+          const [asset] = await getRoleActionAssets(dbClient(), action.id)
+
+          expect(asset).toMatchObject({
             allowance: 1000n,
             interval: AllowanceInterval.Daily,
           })

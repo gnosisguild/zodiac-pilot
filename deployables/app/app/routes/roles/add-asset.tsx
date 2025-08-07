@@ -10,12 +10,24 @@ import {
   getActivatedAccounts,
   getRoleAction,
 } from '@zodiac/db'
-import { getPrefixedAddressList } from '@zodiac/form-data'
+import { AllowanceInterval } from '@zodiac/db/schema'
+import {
+  getEnumValue,
+  getOptionalInt,
+  getPrefixedAddressList,
+} from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
-import { Form, Modal, MultiSelect, PrimaryButton } from '@zodiac/ui'
+import {
+  Form,
+  Modal,
+  MultiSelect,
+  NumberInput,
+  PrimaryButton,
+} from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/add-asset'
+import { AllowanceIntervalSelect } from './AllowanceIntervalSelect'
 import { Intent } from './intents'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -63,7 +75,16 @@ export const action = (args: Route.ActionArgs) =>
 
       const action = await getRoleAction(dbClient(), actionId)
 
-      await createRoleActionAssets(dbClient(), action, verifiedAssets)
+      const allowanceAmount = getOptionalInt(data, 'allowance')
+
+      if (allowanceAmount != null) {
+        await createRoleActionAssets(dbClient(), action, verifiedAssets, {
+          allowance: BigInt(allowanceAmount),
+          interval: getEnumValue(AllowanceInterval, data, 'interval'),
+        })
+      } else {
+        await createRoleActionAssets(dbClient(), action, verifiedAssets)
+      }
 
       return redirect(
         href('/workspace/:workspaceId/roles/:roleId', { workspaceId, roleId }),
@@ -111,6 +132,7 @@ const AddAsset = ({
           required
           name="assets"
           label="Assets"
+          placeholder="Select one or more assets"
           options={Object.values(assets).map((asset) => ({
             label: asset.symbol,
             value: asset.address,
@@ -133,6 +155,10 @@ const AddAsset = ({
             )
           }}
         </MultiSelect>
+
+        <NumberInput label="Allowance" name="allowance" min={0} />
+
+        <AllowanceIntervalSelect label="Interval" name="interval" />
 
         <Modal.Actions>
           <PrimaryButton

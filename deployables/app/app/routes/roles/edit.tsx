@@ -205,11 +205,11 @@ const EditRole = ({
                     missingDefaultWallets[value].length > 0 && (
                       <span
                         role="alert"
-                        className="text-xs text-red-400"
+                        className="text-xs text-red-600 dark:text-red-400"
                         aria-label="Default wallet missing"
                       >
                         User has no default wallet set for:{' '}
-                        <span className="text-red-300">
+                        <span className="font-semibold dark:font-normal dark:text-red-300">
                           {missingDefaultWallets[value].join(', ')}
                         </span>
                       </span>

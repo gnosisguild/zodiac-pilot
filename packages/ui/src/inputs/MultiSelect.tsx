@@ -39,6 +39,7 @@ export const MultiSelect = <Option extends BaseOption = BaseOption>({
   dropdownLabel,
   children,
   description,
+  required = false,
   ...props
 }: SelectProps<Option, false, true>) => {
   const Option = useOptionRenderer<Option, true>(children)
@@ -50,12 +51,14 @@ export const MultiSelect = <Option extends BaseOption = BaseOption>({
       clearLabel={clearLabel}
       dropdownLabel={dropdownLabel}
       description={description}
+      required={required}
     >
       {({ inputId }) => (
         <Select<Option, true>
           {...props}
           unstyled
           isMulti
+          required={required}
           isClearable={false}
           inputId={inputId}
           isDisabled={isDisabled}

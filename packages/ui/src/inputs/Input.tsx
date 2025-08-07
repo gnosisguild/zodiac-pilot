@@ -13,11 +13,12 @@ type InputContextOptions = {
 const InputContext = createContext<InputContextOptions>({})
 
 type InputProps = ComposableLabeledProps & {
+  required: boolean
   error?: string | null
   children: (props: LabeledRenderProps) => ReactNode
 } & InputContextOptions
 
-export type ComposableInputProps = Omit<InputProps, 'children'>
+export type ComposableInputProps = Omit<InputProps, 'children' | 'required'>
 
 export const Input = ({
   children,
@@ -27,8 +28,14 @@ export const Input = ({
   clearLabel,
   hideLabel,
   dropdownLabel,
+  required,
 }: InputProps) => (
-  <Labeled hideLabel={hideLabel} label={label} description={description}>
+  <Labeled
+    hideLabel={hideLabel}
+    label={label}
+    description={description}
+    required={required}
+  >
     {({ inputId, descriptionId }) => (
       <>
         <InputContext value={{ clearLabel, dropdownLabel }}>

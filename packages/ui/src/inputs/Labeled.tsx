@@ -8,6 +8,7 @@ export type LabeledRenderProps = {
 
 export type ComposableLabeledProps = {
   label: string
+  required?: boolean
   hideLabel?: boolean
   description?: string | null
 }
@@ -21,6 +22,7 @@ export const Labeled = ({
   hideLabel = false,
   label,
   description,
+  required = false,
 }: LabeledProps) => {
   const inputId = useId()
   const descriptionId = useId()
@@ -48,7 +50,9 @@ export const Labeled = ({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center gap-1">
-        <Label htmlFor={inputId}>{label}</Label>
+        <Label htmlFor={inputId} required={required}>
+          {label}
+        </Label>
 
         {description && (
           <span className="text-sm opacity-70">
