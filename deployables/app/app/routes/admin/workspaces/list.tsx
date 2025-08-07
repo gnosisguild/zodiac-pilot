@@ -48,6 +48,7 @@ const Workspaces = ({
     <>
       <div className="flex justify-end">
         <SecondaryLinkButton
+          replace
           icon={Plus}
           size="small"
           to={href('/workspace/:workspaceId/admin/workspaces/add', {
