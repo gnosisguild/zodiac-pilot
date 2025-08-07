@@ -43,7 +43,7 @@ import {
   Tag,
   TextInput,
 } from '@zodiac/ui'
-import { ArrowRightLeft, Pencil } from 'lucide-react'
+import { ArrowRightLeft, Check, Pencil, X } from 'lucide-react'
 import { UUID } from 'node:crypto'
 import { href, Outlet } from 'react-router'
 import { prefixAddress } from 'ser-kit'
@@ -302,6 +302,8 @@ const EditRole = ({
                         <TableRow withActions>
                           <TableHeader>Asset</TableHeader>
                           <TableHeader>Chain</TableHeader>
+                          <TableHeader>Buy</TableHeader>
+                          <TableHeader>Sell</TableHeader>
                           <TableHeader>Allowance</TableHeader>
                         </TableRow>
                       </TableHead>
@@ -328,6 +330,20 @@ const EditRole = ({
                             </TableCell>
                             <TableCell>
                               <Chain chainId={asset.chainId} />
+                            </TableCell>
+                            <TableCell>
+                              {asset.allowBuy ? (
+                                <Check className="size-4 text-green-600 dark:text-green-400" />
+                              ) : (
+                                <X className="size-4 text-red-600 dark:text-red-400" />
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {asset.allowSell ? (
+                                <Check className="size-4 text-green-600 dark:text-green-400" />
+                              ) : (
+                                <X className="size-4 text-red-600 dark:text-red-400" />
+                              )}
                             </TableCell>
                             <TableCell>
                               {asset.allowance == null ? (

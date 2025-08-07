@@ -28,6 +28,7 @@ import {
 import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/add-asset'
 import { AllowanceIntervalSelect } from './AllowanceIntervalSelect'
+import { AssetPermission, SellBuyPermission } from './AssetPermission'
 import { Intent } from './intents'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -76,15 +77,28 @@ export const action = (args: Route.ActionArgs) =>
       const action = await getRoleAction(dbClient(), actionId)
 
       const allowanceAmount = getOptionalInt(data, 'allowance')
+      const permission = getEnumValue(SellBuyPermission, data, 'permission')
 
-      if (allowanceAmount != null) {
-        await createRoleActionAssets(dbClient(), action, verifiedAssets, {
-          allowance: BigInt(allowanceAmount),
-          interval: getEnumValue(AllowanceInterval, data, 'interval'),
-        })
-      } else {
-        await createRoleActionAssets(dbClient(), action, verifiedAssets)
-      }
+      await createRoleActionAssets(
+        dbClient(),
+        action,
+        {
+          allowBuy:
+            permission === SellBuyPermission.Buy ||
+            permission === SellBuyPermission.SellAndBuy,
+          allowSell:
+            permission === SellBuyPermission.Sell ||
+            permission === SellBuyPermission.SellAndBuy,
+          allowance:
+            allowanceAmount == null
+              ? undefined
+              : {
+                  allowance: BigInt(allowanceAmount),
+                  interval: getEnumValue(AllowanceInterval, data, 'interval'),
+                },
+        },
+        verifiedAssets,
+      )
 
       return redirect(
         href('/workspace/:workspaceId/roles/:roleId', { workspaceId, roleId }),
@@ -156,9 +170,13 @@ const AddAsset = ({
           }}
         </MultiSelect>
 
-        <NumberInput label="Allowance" name="allowance" min={0} />
+        <AssetPermission required label="Permission" name="permission" />
 
-        <AllowanceIntervalSelect label="Interval" name="interval" />
+        <div className="grid grid-cols-2 gap-4">
+          <NumberInput label="Allowance" name="allowance" min={0} />
+
+          <AllowanceIntervalSelect label="Interval" name="interval" />
+        </div>
 
         <Modal.Actions>
           <PrimaryButton

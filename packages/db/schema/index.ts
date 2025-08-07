@@ -718,6 +718,9 @@ export const ActionAssetTable = pgTable(
     allowance: bigint({ mode: 'bigint' }),
     interval: AllowanceIntervalEnum(),
 
+    allowBuy: boolean().notNull(),
+    allowSell: boolean().notNull(),
+
     ...chainReference,
     ...createdTimestamp,
     ...updatedTimestamp,

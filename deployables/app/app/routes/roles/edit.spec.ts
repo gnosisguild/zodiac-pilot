@@ -335,6 +335,20 @@ describe('Edit role', () => {
     })
 
     describe('Assets', () => {
+      beforeEach(() => {
+        const address = randomPrefixedAddress()
+        const weth = {
+          chainId: Chain.ETH,
+          logoURI: '',
+          name: 'Wrapped Ether',
+          symbol: 'WETH',
+          address,
+        }
+
+        mockGetAssets.mockResolvedValue({ [address]: weth })
+        mockGetVerifiedAssets.mockResolvedValue([weth])
+      })
+
       dbIt('is possible to add an asset', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
@@ -347,18 +361,6 @@ describe('Edit role', () => {
         const action = await roleActionFactory.create(role, user)
 
         await setActiveAccounts(dbClient(), role, [account.id])
-
-        const address = randomPrefixedAddress()
-        const weth = {
-          chainId: Chain.ETH,
-          logoURI: '',
-          name: 'Wrapped Ether',
-          symbol: 'WETH',
-          address,
-        }
-
-        mockGetAssets.mockResolvedValue({ [address]: weth })
-        mockGetVerifiedAssets.mockResolvedValue([weth])
 
         await render(
           href('/workspace/:workspaceId/roles/:roleId', {
@@ -502,18 +504,6 @@ describe('Edit role', () => {
 
           const action = await roleActionFactory.create(role, user)
 
-          const address = randomPrefixedAddress()
-          const weth = {
-            chainId: Chain.ETH,
-            logoURI: '',
-            name: 'Wrapped Ether',
-            symbol: 'WETH',
-            address,
-          }
-
-          mockGetAssets.mockResolvedValue({ [address]: weth })
-          mockGetVerifiedAssets.mockResolvedValue([weth])
-
           await render(
             href('/workspace/:workspaceId/roles/:roleId', {
               workspaceId: tenant.defaultWorkspaceId,
@@ -548,6 +538,120 @@ describe('Edit role', () => {
             interval: AllowanceInterval.Daily,
           })
         })
+      })
+
+      describe('Sell & Buy', () => {
+        dbIt(
+          'is possible to specify an asset that is only allowed to be sold',
+          async () => {
+            const user = await userFactory.create()
+            const tenant = await tenantFactory.create(user)
+
+            const role = await roleFactory.create(tenant, user)
+
+            const action = await roleActionFactory.create(role, user)
+
+            await render(
+              href('/workspace/:workspaceId/roles/:roleId', {
+                workspaceId: tenant.defaultWorkspaceId,
+                roleId: role.id,
+              }),
+              { tenant, user },
+            )
+
+            await userEvent.click(
+              await screen.findByRole('link', { name: 'Add assets' }),
+            )
+
+            await selectOption('Assets', 'WETH')
+
+            await selectOption('Permission', 'Sell')
+
+            await userEvent.click(
+              await screen.findByRole('button', { name: 'Add' }),
+            )
+
+            await waitForPendingActions()
+
+            const [asset] = await getRoleActionAssets(dbClient(), action.id)
+
+            expect(asset).toMatchObject({ allowSell: true, allowBuy: false })
+          },
+        )
+        dbIt(
+          'is possible to specify an asset that is only allowed to be bought',
+          async () => {
+            const user = await userFactory.create()
+            const tenant = await tenantFactory.create(user)
+
+            const role = await roleFactory.create(tenant, user)
+
+            const action = await roleActionFactory.create(role, user)
+
+            await render(
+              href('/workspace/:workspaceId/roles/:roleId', {
+                workspaceId: tenant.defaultWorkspaceId,
+                roleId: role.id,
+              }),
+              { tenant, user },
+            )
+
+            await userEvent.click(
+              await screen.findByRole('link', { name: 'Add assets' }),
+            )
+
+            await selectOption('Assets', 'WETH')
+
+            await selectOption('Permission', 'Buy')
+
+            await userEvent.click(
+              await screen.findByRole('button', { name: 'Add' }),
+            )
+
+            await waitForPendingActions()
+
+            const [asset] = await getRoleActionAssets(dbClient(), action.id)
+
+            expect(asset).toMatchObject({ allowSell: false, allowBuy: true })
+          },
+        )
+        dbIt(
+          'is possible to specify an asset that can be bought and sold',
+          async () => {
+            const user = await userFactory.create()
+            const tenant = await tenantFactory.create(user)
+
+            const role = await roleFactory.create(tenant, user)
+
+            const action = await roleActionFactory.create(role, user)
+
+            await render(
+              href('/workspace/:workspaceId/roles/:roleId', {
+                workspaceId: tenant.defaultWorkspaceId,
+                roleId: role.id,
+              }),
+              { tenant, user },
+            )
+
+            await userEvent.click(
+              await screen.findByRole('link', { name: 'Add assets' }),
+            )
+
+            await selectOption('Assets', 'WETH')
+
+            await selectOption('Permission', 'Sell & Buy')
+
+            await userEvent.click(
+              await screen.findByRole('button', { name: 'Add' }),
+            )
+
+            await waitForPendingActions()
+
+            const [asset] = await getRoleActionAssets(dbClient(), action.id)
+
+            expect(asset).toMatchObject({ allowSell: true, allowBuy: true })
+          },
+        )
       })
     })
   })

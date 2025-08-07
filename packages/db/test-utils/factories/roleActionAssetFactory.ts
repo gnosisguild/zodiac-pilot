@@ -22,6 +22,8 @@ export const roleActionAssetFactory = createFactory<
       roleActionId: action.id,
       tenantId: action.tenantId,
       workspaceId: action.workspaceId,
+      allowBuy: true,
+      allowSell: true,
 
       ...data,
     }
