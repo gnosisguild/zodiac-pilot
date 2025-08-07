@@ -13,16 +13,20 @@ type CreateRoleActionAssetsOptions = {
   address: PrefixedAddress
 }
 
-type AllowanceOptions = {
-  allowance: bigint
-  interval: AllowanceInterval
+type GeneraleCreateAssetOptions = {
+  allowSell: boolean
+  allowBuy: boolean
+  allowance?: {
+    allowance: bigint
+    interval: AllowanceInterval
+  }
 }
 
 export const createRoleActionAssets = (
   db: DBClient,
   action: RoleAction,
+  { allowance, allowBuy, allowSell }: GeneraleCreateAssetOptions,
   assets: CreateRoleActionAssetsOptions[],
-  allowance?: AllowanceOptions,
 ) => {
   if (assets.length === 0) {
     return []
@@ -33,6 +37,9 @@ export const createRoleActionAssets = (
       roleActionId: action.id,
       tenantId: action.tenantId,
       workspaceId: action.workspaceId,
+
+      allowSell,
+      allowBuy,
 
       ...allowance,
 

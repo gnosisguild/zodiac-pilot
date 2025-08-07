@@ -386,6 +386,13 @@
       "when": 1754488560041,
       "tag": "0054_add nonce to roles",
       "breakpoints": true
+    },
+    {
+      "idx": 55,
+      "version": "7",
+      "when": 1754569711864,
+      "tag": "0055_add sell-buy flags to assets",
+      "breakpoints": true
     }
   ]
 }

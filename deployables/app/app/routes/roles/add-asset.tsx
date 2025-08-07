@@ -24,6 +24,7 @@ import {
   MultiSelect,
   NumberInput,
   PrimaryButton,
+  Select,
 } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/add-asset'
@@ -76,15 +77,28 @@ export const action = (args: Route.ActionArgs) =>
       const action = await getRoleAction(dbClient(), actionId)
 
       const allowanceAmount = getOptionalInt(data, 'allowance')
+      const permission = getEnumValue(SellBuyPermission, data, 'permission')
 
-      if (allowanceAmount != null) {
-        await createRoleActionAssets(dbClient(), action, verifiedAssets, {
-          allowance: BigInt(allowanceAmount),
-          interval: getEnumValue(AllowanceInterval, data, 'interval'),
-        })
-      } else {
-        await createRoleActionAssets(dbClient(), action, verifiedAssets)
-      }
+      await createRoleActionAssets(
+        dbClient(),
+        action,
+        {
+          allowBuy:
+            permission === SellBuyPermission.Buy ||
+            permission === SellBuyPermission.SellAndBuy,
+          allowSell:
+            permission === SellBuyPermission.Sell ||
+            permission === SellBuyPermission.SellAndBuy,
+          allowance:
+            allowanceAmount == null
+              ? undefined
+              : {
+                  allowance: BigInt(allowanceAmount),
+                  interval: getEnumValue(AllowanceInterval, data, 'interval'),
+                },
+        },
+        verifiedAssets,
+      )
 
       return redirect(
         href('/workspace/:workspaceId/roles/:roleId', { workspaceId, roleId }),
@@ -105,6 +119,12 @@ export const action = (args: Route.ActionArgs) =>
       },
     },
   )
+
+enum SellBuyPermission {
+  Sell = 'Sell',
+  Buy = 'Buy',
+  SellAndBuy = 'SellAndBuy',
+}
 
 const AddAsset = ({
   loaderData: { assets },
@@ -156,9 +176,26 @@ const AddAsset = ({
           }}
         </MultiSelect>
 
-        <NumberInput label="Allowance" name="allowance" min={0} />
+        <Select
+          required
+          label="Permission"
+          name="permission"
+          defaultValue={{
+            label: 'Sell & Buy',
+            value: SellBuyPermission.SellAndBuy,
+          }}
+          options={[
+            { label: 'Sell', value: SellBuyPermission.Sell },
+            { label: 'Buy', value: SellBuyPermission.Buy },
+            { label: 'Sell & Buy', value: SellBuyPermission.SellAndBuy },
+          ]}
+        />
 
-        <AllowanceIntervalSelect label="Interval" name="interval" />
+        <div className="grid grid-cols-2 gap-4">
+          <NumberInput label="Allowance" name="allowance" min={0} />
+
+          <AllowanceIntervalSelect label="Interval" name="interval" />
+        </div>
 
         <Modal.Actions>
           <PrimaryButton
