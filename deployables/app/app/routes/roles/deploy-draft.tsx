@@ -5,10 +5,10 @@ import {
   getActivatedAccounts,
   getDefaultWallets,
   getRole,
-  getRoleActionAssets,
   getRoleActions,
   getRoleMembers,
 } from '@zodiac/db'
+import { type Role as DbRole } from '@zodiac/db/schema'
 import { encodeRoleKey } from '@zodiac/modules'
 import { isUUID, jsonStringify } from '@zodiac/schema'
 import { Modal } from '@zodiac/ui'
@@ -44,10 +44,13 @@ export const loader = (args: Route.LoaderArgs) =>
         new Set(activatedAccounts.map((account) => account.chainId)),
       )
 
-      const memberSafes = await getMemberSafes(draft.id, activeChains)
-      const rolesMods = await getRolesMods(draft.id, draft.nonce)
+      const { newSafes, allSafes } = await getMemberSafes(
+        draft.id,
+        activeChains,
+      )
+      const rolesMods = await getRolesMods(draft, allSafes)
 
-      const desired = [...memberSafes, ...rolesMods]
+      const desired = [...newSafes, ...rolesMods]
 
       console.log(jsonStringify(desired, 2))
 
@@ -74,10 +77,11 @@ export const loader = (args: Route.LoaderArgs) =>
 const getMemberSafes = async (
   roleId: UUID,
   activeChains: ChainId[],
-): Promise<Account[]> => {
+): Promise<{ newSafes: Account[]; allSafes: Account[] }> => {
   const members = await getRoleMembers(dbClient(), { roleId })
 
-  const safes: Account[] = []
+  const newSafes: Account[] = []
+  const allSafes: Account[] = []
 
   for (const member of members) {
     const defaultWallets = await getDefaultWallets(dbClient(), member.id)
@@ -101,46 +105,46 @@ const getMemberSafes = async (
       const [existingSafe] = await queryAccounts([safe.prefixedAddress])
 
       if (existingSafe == null) {
-        safes.push(safe)
+        newSafes.push(safe)
       }
+
+      allSafes.push(safe)
     }
   }
 
-  return safes
+  return { newSafes, allSafes }
 }
 
-const getRolesMods = async (roleId: UUID, nonce: bigint): Promise<Role[]> => {
-  const activeAccounts = await getActivatedAccounts(dbClient(), { roleId })
-  const actions = await getRoleActions(dbClient(), roleId)
+const getRolesMods = async (
+  draft: DbRole,
+  members: Account[],
+): Promise<Role[]> => {
+  const activeAccounts = await getActivatedAccounts(dbClient(), {
+    roleId: draft.id,
+  })
+  const actions = await getRoleActions(dbClient(), draft.id)
 
   return Promise.all(
     activeAccounts.map(async (account) =>
       withPredictedAddress<Role>(
         {
           type: AccountType.ROLES,
-          allowances: await Promise.all(
-            actions.map(async (action) => {
-              const assets = await getRoleActionAssets(dbClient(), action.id)
-
-              return assets
-            }),
-          ),
+          allowances: [],
           avatar: account.address,
           chain: account.chainId,
           modules: [],
           multisend: [],
           owner: account.address,
           roles: actions.map((action) => ({
-            key: encodeRoleKey(action.label),
-            members: [],
+            key: encodeRoleKey(action.key),
+            members: members.map((member) => member.address),
             annotations: [],
             targets: [],
-            lastUpdate: 0,
           })),
           target: account.address,
           version: 2,
         },
-        nonce,
+        draft.nonce,
       ),
     ),
   )
