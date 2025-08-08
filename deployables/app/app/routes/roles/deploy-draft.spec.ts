@@ -6,9 +6,11 @@ import {
   setDefaultWallet,
   setRoleMembers,
 } from '@zodiac/db'
+import { AllowanceInterval } from '@zodiac/db/schema'
 import {
   accountFactory,
   dbIt,
+  roleActionAssetFactory,
   roleActionFactory,
   roleFactory,
   tenantFactory,
@@ -25,6 +27,7 @@ import {
   withPredictedAddress,
 } from 'ser-kit'
 import { beforeEach, describe, expect, vi } from 'vitest'
+import { getRefillPeriod } from './getRefillPeriod'
 
 vi.mock('ser-kit', async (importOriginal) => {
   const module = await importOriginal<typeof import('ser-kit')>()
@@ -292,6 +295,79 @@ describe('Deploy Role', () => {
               chain: Chain.ETH,
               modules: [],
               allowances: [],
+              multisend: [],
+              avatar: account.address,
+              owner: account.address,
+              target: account.address,
+              roles: [
+                {
+                  key: encodeRoleKey(action.label),
+                  members: [],
+                  annotations: [],
+                  lastUpdate: 0,
+                  targets: [],
+                },
+              ],
+              version: 2,
+              nonce: role.nonce,
+            },
+            role.nonce,
+          ),
+        ]),
+      })
+    })
+
+    dbIt('sets up allowances for the declared assets', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const wallet = await walletFactory.create(user)
+
+      await setDefaultWallet(dbClient(), user, {
+        walletId: wallet.id,
+        chainId: Chain.ETH,
+      })
+
+      const account = await accountFactory.create(tenant, user, {
+        chainId: Chain.ETH,
+      })
+      const role = await roleFactory.create(tenant, user)
+      const action = await roleActionFactory.create(role, user)
+
+      await setActiveAccounts(dbClient(), role, [account.id])
+
+      const asset = await roleActionAssetFactory.create(action, {
+        allowance: 1000n,
+        interval: AllowanceInterval.Daily,
+      })
+
+      await render(
+        href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+          workspaceId: tenant.defaultWorkspaceId,
+          draftId: role.id,
+        }),
+        { tenant, user },
+      )
+
+      expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
+        // TODO: remove this
+        current: [],
+        desired: expect.arrayContaining([
+          withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
+            {
+              type: AccountType.ROLES,
+              chain: Chain.ETH,
+              modules: [],
+              allowances: [
+                {
+                  refill: 1000n,
+                  balance: 1000n,
+                  key: asset.id,
+                  maxRefill: 1000n,
+                  period: getRefillPeriod(AllowanceInterval.Daily),
+                  timestamp: 0n,
+                },
+              ],
               multisend: [],
               avatar: account.address,
               owner: account.address,
