@@ -9,11 +9,13 @@ import {
   getRoleMembers,
 } from '@zodiac/db'
 import { type Role as DbRole } from '@zodiac/db/schema'
-import { encodeRoleKey } from '@zodiac/modules'
+import { decodeRoleKey, encodeRoleKey } from '@zodiac/modules'
 import { isUUID, jsonStringify } from '@zodiac/schema'
 import { Modal } from '@zodiac/ui'
+import { Address } from '@zodiac/web3'
 import { UUID } from 'crypto'
-import { Suspense } from 'react'
+import { LucideIcon, Plus, UserRoundPlus } from 'lucide-react'
+import { PropsWithChildren, ReactNode, Suspense } from 'react'
 import { Await, href, useNavigate } from 'react-router'
 import {
   Account,
@@ -22,6 +24,7 @@ import {
   planApplyAccounts,
   queryAccounts,
   withPredictedAddress,
+  type AccountBuilderCall,
 } from 'ser-kit'
 import { Route } from './+types/deploy-draft'
 
@@ -60,6 +63,8 @@ export const loader = (args: Route.LoaderArgs) =>
           current: [],
           desired,
         }),
+        draft,
+        accounts: activatedAccounts,
       }
     },
     {
@@ -160,21 +165,28 @@ const DeployDraft = ({
     <Modal
       open
       title="Deploy draft"
+      description="The following changes need to be applies to deploy this role. Please execute one transaction after the other."
       onClose={() =>
         navigate(href('/workspace/:workspaceId/roles/drafts', { workspaceId }))
       }
     >
       <Suspense>
         <Await resolve={plan}>
-          {(plan) =>
-            plan.map(({ account, steps }) => (
-              <div key={account.prefixedAddress}>
-                {steps.map((step, index) => (
-                  <div key={index}>{step.call.call}</div>
-                ))}
+          {(plan) => {
+            console.log({ plan })
+
+            return (
+              <div className="flex flex-col gap-4 divide-y divide-zinc-700">
+                {plan.map(({ account, steps }) =>
+                  steps.map((step, index) => (
+                    <div key={account.prefixedAddress} className="pb-4">
+                      <Call key={index} {...step.call} />
+                    </div>
+                  )),
+                )}
               </div>
-            ))
-          }
+            )
+          }}
         </Await>
       </Suspense>
 
@@ -186,3 +198,136 @@ const DeployDraft = ({
 }
 
 export default DeployDraft
+
+type CallProps = AccountBuilderCall
+
+const Call = (props: CallProps) => {
+  switch (props.call) {
+    case 'createNode': {
+      return <CreateNodeCall {...props} />
+    }
+    case 'assignRoles': {
+      return <AssignRolesCall {...props} />
+    }
+
+    default: {
+      return (
+        <div className="text-xs">{`Missing node type for call "${props.call}"`}</div>
+      )
+    }
+  }
+}
+
+const AssignRolesCall = (
+  props: Extract<AccountBuilderCall, { call: 'assignRoles' }>,
+) => {
+  return (
+    <FeedEntry
+      icon={UserRoundPlus}
+      title={
+        <div className="flex gap-2">
+          Add{' '}
+          <Address size="tiny" shorten>
+            {props.member}
+          </Address>{' '}
+          to{' '}
+          <span className="font-semibold">{decodeRoleKey(props.roleKey)}</span>
+        </div>
+      }
+    />
+  )
+}
+
+const CreateNodeCall = (
+  props: Extract<AccountBuilderCall, { call: 'createNode' }>,
+) => {
+  switch (props.accountType) {
+    case AccountType.SAFE: {
+      return (
+        <FeedEntry
+          icon={Plus}
+          title={
+            <>
+              Create <span className="font-semibold">Safe</span>
+            </>
+          }
+        >
+          <div className="flex flex-col gap-2">
+            <span>Address</span>
+
+            <Address size="tiny" shorten>
+              {props.deploymentAddress}
+            </Address>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <span>Owners</span>
+
+            <ul>
+              {props.args.owners.map((owner) => (
+                <li key={owner}>
+                  <Address size="tiny" shorten>
+                    {owner}
+                  </Address>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </FeedEntry>
+      )
+    }
+    case AccountType.ROLES: {
+      return (
+        <FeedEntry
+          icon={Plus}
+          title={
+            <>
+              Create <span className="font-semibold">Role</span>
+            </>
+          }
+        >
+          <div className="flex flex-col gap-2">
+            <span>Address</span>
+
+            <Address shorten size="tiny">
+              {props.deploymentAddress}
+            </Address>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <span>Account</span>
+
+            <Address shorten size="tiny">
+              {props.args.target}
+            </Address>
+          </div>
+        </FeedEntry>
+      )
+    }
+  }
+
+  return null
+}
+
+type FeedEntryProps = PropsWithChildren<{
+  icon: LucideIcon
+  title: ReactNode
+}>
+
+const FeedEntry = ({ title, icon: Icon, children }: FeedEntryProps) => (
+  <div className="grid grid-cols-10 items-center gap-4 text-xs">
+    <div className="flex items-start justify-center">
+      <div className="rounded-full border border-zinc-700 bg-zinc-800 p-1">
+        <Icon className="size-3" />
+      </div>
+    </div>
+
+    <div className="col-span-9">{title}</div>
+
+    {children && (
+      <div className="col-span-9 col-start-2 flex flex-col gap-4">
+        {children}
+      </div>
+    )}
+  </div>
+)

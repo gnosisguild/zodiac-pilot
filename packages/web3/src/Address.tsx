@@ -81,7 +81,7 @@ export const Address = ({
       <code
         aria-hidden={label != null}
         className={classNames(
-          'max-w-full flex-1 overflow-hidden text-ellipsis text-nowrap font-mono',
+          'inline-flex max-w-full flex-1 overflow-hidden text-ellipsis text-nowrap font-mono',
           shorten && 'cursor-default',
           size === 'small' && 'text-xs',
           size === 'tiny' && 'text-xs',
