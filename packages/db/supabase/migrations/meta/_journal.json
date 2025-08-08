@@ -393,6 +393,13 @@
       "when": 1754569711864,
       "tag": "0055_add sell-buy flags to assets",
       "breakpoints": true
+    },
+    {
+      "idx": 56,
+      "version": "7",
+      "when": 1754642369404,
+      "tag": "0056_add key to role action",
+      "breakpoints": true
     }
   ]
 }

@@ -23,6 +23,7 @@ import {
   timestamp,
   unique,
   uuid,
+  varchar,
   type AnyPgColumn,
 } from 'drizzle-orm/pg-core'
 import { createSelectSchema } from 'drizzle-zod'
@@ -661,6 +662,7 @@ export const RoleActionTable = pgTable(
     id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
 
     label: text().notNull(),
+    key: varchar({ length: 32 }).notNull(),
     type: RoleActionTypeEnum().notNull(),
 
     ...roleReference,
