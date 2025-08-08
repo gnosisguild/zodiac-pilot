@@ -1,18 +1,15 @@
 import { authorizedAction } from '@/auth-server'
 import { invariantResponse } from '@epic-web/invariant'
-import {
-  createRoleAction,
-  dbClient,
-  getRole,
-  getRoleActionKey,
-} from '@zodiac/db'
+import { createRoleAction, dbClient, getRole } from '@zodiac/db'
 import { RoleActionType } from '@zodiac/db/schema'
 import { getString } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
+import { getRoleActionKey } from '@zodiac/modules'
 import { isUUID } from '@zodiac/schema'
-import { Form, Modal, PrimaryButton, TextInput } from '@zodiac/ui'
+import { Form, Modal, PrimaryButton } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/add-action'
+import { ActionLabelInput } from './ActionLabelInput'
 import { Intent } from './intents'
 import { RoleActionTypeSelect } from './RoleActionTypeSelect'
 
@@ -75,7 +72,7 @@ const AddAction = ({
       }
     >
       <Form replace>
-        <TextInput required label="Action label" name="label" />
+        <ActionLabelInput required label="Action label" name="label" />
 
         <RoleActionTypeSelect />
 
