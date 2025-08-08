@@ -1,13 +1,20 @@
 import { authorizedAction } from '@/auth-server'
 import { invariantResponse } from '@epic-web/invariant'
-import { createRoleAction, dbClient, getRole } from '@zodiac/db'
+import {
+  createRoleAction,
+  dbClient,
+  findRoleActionByKey,
+  getRole,
+} from '@zodiac/db'
 import { RoleActionType } from '@zodiac/db/schema'
 import { getString } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
+import { getRoleActionKey } from '@zodiac/modules'
 import { isUUID } from '@zodiac/schema'
-import { Form, Modal, PrimaryButton, TextInput } from '@zodiac/ui'
+import { Error, Form, Modal, PrimaryButton } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/add-action'
+import { ActionLabelInput } from './ActionLabelInput'
 import { Intent } from './intents'
 import { RoleActionTypeSelect } from './RoleActionTypeSelect'
 
@@ -26,8 +33,18 @@ export const action = (args: Route.ActionArgs) =>
       const data = await request.formData()
       const role = await getRole(dbClient(), roleId)
 
+      const label = getString(data, 'label')
+      const key = getRoleActionKey(label)
+
+      const existingAction = await findRoleActionByKey(dbClient(), roleId, key)
+
+      if (existingAction != null) {
+        return { error: 'duplicate-action' }
+      }
+
       await createRoleAction(dbClient(), role, user, {
-        label: getString(data, 'label'),
+        label,
+        key,
         type: RoleActionType.Swapper,
       })
 
@@ -49,6 +66,7 @@ export const action = (args: Route.ActionArgs) =>
 
 const AddAction = ({
   params: { workspaceId, roleId },
+  actionData,
 }: Route.ComponentProps) => {
   const navigate = useNavigate()
 
@@ -67,9 +85,16 @@ const AddAction = ({
       }
     >
       <Form replace>
-        <TextInput required label="Action label" name="label" />
+        <ActionLabelInput required label="Action label" name="label" />
 
         <RoleActionTypeSelect />
+
+        {actionData != null && (
+          <Error title="Could not add action">
+            An action with this name already exists. Please choose another
+            label.
+          </Error>
+        )}
 
         <Modal.Actions>
           <PrimaryButton

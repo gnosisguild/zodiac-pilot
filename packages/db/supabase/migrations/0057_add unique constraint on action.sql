@@ -1,0 +1,1 @@
+ALTER TABLE "RoleAction" ADD CONSTRAINT "RoleAction_roleId_key_unique" UNIQUE("roleId","key");

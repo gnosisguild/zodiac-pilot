@@ -4,9 +4,10 @@ import { dbClient, getRoleAction, updateRoleAction } from '@zodiac/db'
 import { getString } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
-import { Form, Modal, PrimaryButton, TextInput } from '@zodiac/ui'
+import { Form, Modal, PrimaryButton } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/edit-action'
+import { ActionLabelInput } from './ActionLabelInput'
 import { Intent } from './intents'
 import { RoleActionTypeSelect } from './RoleActionTypeSelect'
 
@@ -93,11 +94,12 @@ const EditAction = ({
       }
     >
       <Form replace>
-        <TextInput
+        <ActionLabelInput
           required
           label="Action label"
           name="label"
           defaultValue={action.label}
+          keyValue={action.key}
         />
 
         <RoleActionTypeSelect />

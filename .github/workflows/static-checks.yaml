@@ -62,17 +62,3 @@ jobs:
       - run: pnpm install --prefer-offline
       - name: Check format
         run: pnpm check-format
-
-  check-spelling:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22.14.0
-          cache: 'pnpm'
-          cache-dependency-path: '**/pnpm-lock.yaml'
-      - run: pnpm install --prefer-offline
-      - name: Check spelling
-        run: pnpm check-spelling

@@ -5,10 +5,12 @@ import { InputLayout, type InputLayoutProps } from './InputLayout'
 
 type TextInputProps = Omit<
   ComponentPropsWithoutRef<'input'>,
-  'id' | 'type' | 'className'
+  'id' | 'type' | 'className' | 'value' | 'defaultValue'
 > &
   ComposableInputProps &
   InputLayoutProps & {
+    value?: string
+    defaultValue?: string
     textAlign?: TextAlign
   }
 

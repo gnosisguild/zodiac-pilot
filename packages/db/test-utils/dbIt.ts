@@ -20,7 +20,9 @@ export const dbIt = it.extend<{ db: DBClient }>({
     // eslint-disable-next-line no-empty-pattern
     async ({}, use) => {
       const { dbClient } =
-        await vitest.importActual<typeof import('../src')>('../src')
+        await vitest.importActual<typeof import('../src/dbClient')>(
+          '../src/dbClient',
+        )
 
       try {
         await dbClient().transaction(async (tx) => {
