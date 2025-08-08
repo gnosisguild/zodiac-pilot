@@ -6,11 +6,9 @@ import {
   setDefaultWallet,
   setRoleMembers,
 } from '@zodiac/db'
-import { AllowanceInterval } from '@zodiac/db/schema'
 import {
   accountFactory,
   dbIt,
-  roleActionAssetFactory,
   roleActionFactory,
   roleFactory,
   tenantFactory,
@@ -27,7 +25,6 @@ import {
   withPredictedAddress,
 } from 'ser-kit'
 import { beforeEach, describe, expect, vi } from 'vitest'
-import { getRefillPeriod } from './getRefillPeriod'
 
 vi.mock('ser-kit', async (importOriginal) => {
   const module = await importOriginal<typeof import('ser-kit')>()
@@ -262,13 +259,6 @@ describe('Deploy Role', () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
-      const wallet = await walletFactory.create(user)
-
-      await setDefaultWallet(dbClient(), user, {
-        walletId: wallet.id,
-        chainId: Chain.ETH,
-      })
-
       const account = await accountFactory.create(tenant, user, {
         chainId: Chain.ETH,
       })
@@ -301,10 +291,9 @@ describe('Deploy Role', () => {
               target: account.address,
               roles: [
                 {
-                  key: encodeRoleKey(action.label),
+                  key: encodeRoleKey(action.key),
                   members: [],
                   annotations: [],
-                  lastUpdate: 0,
                   targets: [],
                 },
               ],
@@ -317,7 +306,7 @@ describe('Deploy Role', () => {
       })
     })
 
-    dbIt('sets up allowances for the declared assets', async () => {
+    dbIt('adds the correct members to the roles mod', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
@@ -334,12 +323,95 @@ describe('Deploy Role', () => {
       const role = await roleFactory.create(tenant, user)
       const action = await roleActionFactory.create(role, user)
 
+      await setRoleMembers(dbClient(), role, [user.id])
       await setActiveAccounts(dbClient(), role, [account.id])
 
-      const asset = await roleActionAssetFactory.create(action, {
-        allowance: 1000n,
-        interval: AllowanceInterval.Daily,
+      await render(
+        href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+          workspaceId: tenant.defaultWorkspaceId,
+          draftId: role.id,
+        }),
+        { tenant, user },
+      )
+
+      const userSafe = withPredictedAddress<
+        Extract<Account, { type: AccountType.SAFE }>
+      >(
+        {
+          type: AccountType.SAFE,
+          chain: Chain.ETH,
+          modules: [],
+          owners: [wallet.address],
+          threshold: 1,
+        },
+        user.nonce,
+      )
+
+      expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
+        // TODO: remove this
+        current: [],
+        desired: expect.arrayContaining([
+          withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
+            {
+              type: AccountType.ROLES,
+              chain: Chain.ETH,
+              modules: [],
+              allowances: [],
+              multisend: [],
+              avatar: account.address,
+              owner: account.address,
+              target: account.address,
+              roles: [
+                {
+                  key: encodeRoleKey(action.key),
+                  members: [userSafe.address],
+                  annotations: [],
+                  targets: [],
+                },
+              ],
+              version: 2,
+              nonce: role.nonce,
+            },
+            role.nonce,
+          ),
+        ]),
       })
+    })
+
+    dbIt('keeps members when member safes already exist', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const wallet = await walletFactory.create(user)
+
+      await setDefaultWallet(dbClient(), user, {
+        walletId: wallet.id,
+        chainId: Chain.ETH,
+      })
+
+      const account = await accountFactory.create(tenant, user, {
+        chainId: Chain.ETH,
+      })
+      const role = await roleFactory.create(tenant, user)
+      const action = await roleActionFactory.create(role, user)
+
+      await setRoleMembers(dbClient(), role, [user.id])
+      await setActiveAccounts(dbClient(), role, [account.id])
+
+      const userSafe = withPredictedAddress<
+        Extract<Account, { type: AccountType.SAFE }>
+      >(
+        {
+          type: AccountType.SAFE,
+          chain: Chain.ETH,
+          modules: [],
+          owners: [wallet.address],
+          threshold: 1,
+        },
+        user.nonce,
+      )
+
+      mockQueryAccounts.mockResolvedValue([userSafe])
 
       await render(
         href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
@@ -358,26 +430,16 @@ describe('Deploy Role', () => {
               type: AccountType.ROLES,
               chain: Chain.ETH,
               modules: [],
-              allowances: [
-                {
-                  refill: 1000n,
-                  balance: 1000n,
-                  key: asset.id,
-                  maxRefill: 1000n,
-                  period: getRefillPeriod(AllowanceInterval.Daily),
-                  timestamp: 0n,
-                },
-              ],
+              allowances: [],
               multisend: [],
               avatar: account.address,
               owner: account.address,
               target: account.address,
               roles: [
                 {
-                  key: encodeRoleKey(action.label),
-                  members: [],
+                  key: encodeRoleKey(action.key),
+                  members: [userSafe.address],
                   annotations: [],
-                  lastUpdate: 0,
                   targets: [],
                 },
               ],
