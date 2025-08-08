@@ -20,11 +20,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableRowActions,
 } from '@zodiac/ui'
 import { Address } from '@zodiac/web3'
-import { Pencil } from 'lucide-react'
-import { href } from 'react-router'
+import { CloudUpload, Pencil } from 'lucide-react'
+import { href, Outlet } from 'react-router'
 import type { Route } from './+types/drafts'
+import { Intent } from './intents'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -61,85 +63,108 @@ const DraftRoles = ({
   }
 
   return (
-    <Table>
-      <TableHead>
-        <TableRow withActions>
-          <TableHeader>Label</TableHeader>
-          <TableHeader>Created</TableHeader>
-          <TableHeader>Created by</TableHeader>
-          <TableHeader>Accounts</TableHeader>
-          <TableHeader>Members</TableHeader>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {draftRoles.map((draft) => (
-          <TableRow key={draft.id}>
-            <TableCell>{draft.label}</TableCell>
-            <TableCell>
-              <DateValue>{draft.createdAt}</DateValue>
-            </TableCell>
-            <TableCell>{draft.createBy.fullName}</TableCell>
-            <TableCell>
-              {activatedAccounts[draft.id] == null ? (
-                <Empty />
-              ) : (
-                <span className="inline-flex cursor-pointer underline">
-                  <Popover
-                    popover={
-                      <ol className="m-1 flex flex-col gap-2">
-                        {activatedAccounts[draft.id].map((account) => (
-                          <li key={account.id}>
-                            <Address shorten size="small" label={account.label}>
-                              {account.address}
-                            </Address>
-                          </li>
-                        ))}
-                      </ol>
-                    }
-                  >
-                    {activatedAccounts[draft.id].length} accounts
-                  </Popover>
-                </span>
-              )}
-            </TableCell>
-            <TableCell>
-              {members[draft.id] == null ? (
-                <Empty />
-              ) : (
-                <span className="inline-flex cursor-pointer underline">
-                  <Popover
-                    popover={
-                      <ol className="m-1 flex flex-col gap-2">
-                        {members[draft.id].map((member) => (
-                          <li key={member.id} className="text-xs">
-                            {member.fullName}
-                          </li>
-                        ))}
-                      </ol>
-                    }
-                  >
-                    {members[draft.id].length} members
-                  </Popover>
-                </span>
-              )}
-            </TableCell>
-            <TableCell>
-              <GhostLinkButton
-                iconOnly
-                icon={Pencil}
-                size="tiny"
-                to={href('/workspace/:workspaceId/roles/:roleId', {
-                  workspaceId,
-                  roleId: draft.id,
-                })}
-              >
-                Edit
-              </GhostLinkButton>
-            </TableCell>
+    <>
+      <Table>
+        <TableHead>
+          <TableRow withActions>
+            <TableHeader>Label</TableHeader>
+            <TableHeader>Created</TableHeader>
+            <TableHeader>Created by</TableHeader>
+            <TableHeader>Accounts</TableHeader>
+            <TableHeader>Members</TableHeader>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHead>
+        <TableBody>
+          {draftRoles.map((draft) => (
+            <TableRow key={draft.id}>
+              <TableCell>{draft.label}</TableCell>
+              <TableCell>
+                <DateValue>{draft.createdAt}</DateValue>
+              </TableCell>
+              <TableCell>{draft.createBy.fullName}</TableCell>
+              <TableCell>
+                {activatedAccounts[draft.id] == null ? (
+                  <Empty />
+                ) : (
+                  <span className="inline-flex cursor-pointer underline">
+                    <Popover
+                      popover={
+                        <ol className="m-1 flex flex-col gap-2">
+                          {activatedAccounts[draft.id].map((account) => (
+                            <li key={account.id}>
+                              <Address
+                                shorten
+                                size="small"
+                                label={account.label}
+                              >
+                                {account.address}
+                              </Address>
+                            </li>
+                          ))}
+                        </ol>
+                      }
+                    >
+                      {activatedAccounts[draft.id].length} accounts
+                    </Popover>
+                  </span>
+                )}
+              </TableCell>
+              <TableCell>
+                {members[draft.id] == null ? (
+                  <Empty />
+                ) : (
+                  <span className="inline-flex cursor-pointer underline">
+                    <Popover
+                      popover={
+                        <ol className="m-1 flex flex-col gap-2">
+                          {members[draft.id].map((member) => (
+                            <li key={member.id} className="text-xs">
+                              {member.fullName}
+                            </li>
+                          ))}
+                        </ol>
+                      }
+                    >
+                      {members[draft.id].length} members
+                    </Popover>
+                  </span>
+                )}
+              </TableCell>
+              <TableCell>
+                <TableRowActions>
+                  <GhostLinkButton
+                    iconOnly
+                    icon={Pencil}
+                    size="tiny"
+                    to={href('/workspace/:workspaceId/roles/:roleId', {
+                      workspaceId,
+                      roleId: draft.id,
+                    })}
+                  >
+                    Edit
+                  </GhostLinkButton>
+
+                  <GhostLinkButton
+                    iconOnly
+                    size="tiny"
+                    icon={CloudUpload}
+                    intent={Intent.Deploy}
+                    to={href(
+                      '/workspace/:workspaceId/roles/drafts/:draftId/deploy',
+                      { workspaceId, draftId: draft.id },
+                    )}
+                  >
+                    Deploy
+                  </GhostLinkButton>
+                </TableRowActions>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      <Outlet />
+    </>
   )
 }
 
