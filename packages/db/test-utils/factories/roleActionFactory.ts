@@ -18,6 +18,7 @@ export const roleActionFactory = createFactory<
   build(role, createdBy, data) {
     return {
       label: faker.word.noun(),
+      key: faker.string.alpha(32),
       type: RoleActionType.Swapper,
 
       createdById: createdBy.id,

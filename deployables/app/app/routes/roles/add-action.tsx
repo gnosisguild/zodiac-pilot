@@ -1,6 +1,11 @@
 import { authorizedAction } from '@/auth-server'
 import { invariantResponse } from '@epic-web/invariant'
-import { createRoleAction, dbClient, getRole } from '@zodiac/db'
+import {
+  createRoleAction,
+  dbClient,
+  getRole,
+  getRoleActionKey,
+} from '@zodiac/db'
 import { RoleActionType } from '@zodiac/db/schema'
 import { getString } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
@@ -26,8 +31,11 @@ export const action = (args: Route.ActionArgs) =>
       const data = await request.formData()
       const role = await getRole(dbClient(), roleId)
 
+      const label = getString(data, 'label')
+
       await createRoleAction(dbClient(), role, user, {
-        label: getString(data, 'label'),
+        label,
+        key: getRoleActionKey(label),
         type: RoleActionType.Swapper,
       })
 

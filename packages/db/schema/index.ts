@@ -673,6 +673,7 @@ export const RoleActionTable = pgTable(
     ...updatedTimestamp,
   },
   (table) => [
+    unique().on(table.roleId, table.key),
     index().on(table.createdById),
     index().on(table.roleId),
     index().on(table.tenantId),
