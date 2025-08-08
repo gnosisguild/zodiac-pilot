@@ -31,6 +31,7 @@ import {
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
 import { beforeEach, describe, expect, vi } from 'vitest'
+import { Intent } from './intents'
 
 vi.mock('@/token-list', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/token-list')>()
@@ -333,6 +334,45 @@ describe('Edit role', () => {
         await screen.findByRole('region', { name: 'Test action updated' }),
       ).toBeInTheDocument()
     })
+
+    dbIt(
+      'informs users that actions with the same name are not possible',
+      async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+
+        const role = await roleFactory.create(tenant, user)
+
+        await roleActionFactory.create(role, user, { label: 'Test action' })
+
+        await render(
+          href('/workspace/:workspaceId/roles/:roleId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            roleId: role.id,
+          }),
+          { tenant, user },
+        )
+
+        await userEvent.click(
+          await screen.findByRole('link', { name: 'Add new action' }),
+        )
+        await userEvent.type(
+          await screen.findByRole('textbox', { name: 'Action label' }),
+          'Test action',
+        )
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Add' }),
+        )
+
+        await waitForPendingActions(Intent.AddAction)
+
+        expect(
+          await screen.findByRole('alert', { name: 'Could not add action' }),
+        ).toHaveAccessibleDescription(
+          'An action with this name already exists. Please choose another label.',
+        )
+      },
+    )
 
     describe('Assets', () => {
       beforeEach(() => {

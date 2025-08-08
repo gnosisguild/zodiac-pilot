@@ -16,9 +16,7 @@ export const roleActionFactory = createFactory<
   RoleAction,
   [role: Role, createdBy: User]
 >({
-  build(role, createdBy, data) {
-    const label = faker.word.noun()
-
+  build(role, createdBy, { label = faker.word.noun(), ...data } = {}) {
     return {
       label,
       key: getRoleActionKey(label),
