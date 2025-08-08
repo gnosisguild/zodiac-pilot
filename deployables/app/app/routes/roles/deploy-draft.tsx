@@ -5,6 +5,7 @@ import {
   getActivatedAccounts,
   getDefaultWallets,
   getRole,
+  getRoleActionAssets,
   getRoleActions,
   getRoleMembers,
 } from '@zodiac/db'
@@ -112,27 +113,35 @@ const getRolesMods = async (roleId: UUID, nonce: bigint): Promise<Role[]> => {
   const activeAccounts = await getActivatedAccounts(dbClient(), { roleId })
   const actions = await getRoleActions(dbClient(), roleId)
 
-  return activeAccounts.map((account) =>
-    withPredictedAddress<Role>(
-      {
-        type: AccountType.ROLES,
-        allowances: [],
-        avatar: account.address,
-        chain: account.chainId,
-        modules: [],
-        multisend: [],
-        owner: account.address,
-        roles: actions.map((action) => ({
-          key: encodeRoleKey(action.label),
-          members: [],
-          annotations: [],
-          targets: [],
-          lastUpdate: 0,
-        })),
-        target: account.address,
-        version: 2,
-      },
-      nonce,
+  return Promise.all(
+    activeAccounts.map(async (account) =>
+      withPredictedAddress<Role>(
+        {
+          type: AccountType.ROLES,
+          allowances: await Promise.all(
+            actions.map(async (action) => {
+              const assets = await getRoleActionAssets(dbClient(), action.id)
+
+              return assets
+            }),
+          ),
+          avatar: account.address,
+          chain: account.chainId,
+          modules: [],
+          multisend: [],
+          owner: account.address,
+          roles: actions.map((action) => ({
+            key: encodeRoleKey(action.label),
+            members: [],
+            annotations: [],
+            targets: [],
+            lastUpdate: 0,
+          })),
+          target: account.address,
+          version: 2,
+        },
+        nonce,
+      ),
     ),
   )
 }
