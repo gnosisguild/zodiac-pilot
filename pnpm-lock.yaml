@@ -116,8 +116,8 @@ importers:
         specifier: 10.2.0
         version: 10.2.0(@react-router/node@7.8.0(react-router@7.8.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(typescript@5.9.2))(react-router@7.8.0(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)
       '@urql/core':
-        specifier: 5.2.0
-        version: 5.2.0(graphql@16.11.0)
+        specifier: 6.0.0
+        version: 6.0.0(graphql@16.11.0)
       '@vercel/analytics':
         specifier: 1.5.0
         version: 1.5.0(react@19.1.1)
@@ -4919,8 +4919,8 @@ packages:
     resolution: {integrity: sha512-ldgiJ+VAhQCfIjeOgu8Kj5nSxds0ktPOSO9p4+0VDH2R2pLvQraaM5Oen2d7NxzMCm+Sn/vJT+mv2H5u6b/3fA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@urql/core@5.2.0':
-    resolution: {integrity: sha512-/n0ieD0mvvDnVAXEQgX/7qJiVcvYvNkOHeBvkwtylfjydar123caCXcl58PXFY11oU1oquJocVXHxLAbtv4x1A==}
+  '@urql/core@6.0.0':
+    resolution: {integrity: sha512-LdK7d7B14s/LAljPptoZ9DTZ0lFJXCTy8jSxVr1L98JZYELHEesb5nZVsnqy0jrcrF1KW7juKWZzT5VfZra8XA==}
 
   '@vercel/analytics@1.5.0':
     resolution: {integrity: sha512-MYsBzfPki4gthY5HnYN7jgInhAZ7Ac1cYDoRWFomwGHWEX7odTEzbtg9kf/QSo7XEsEAqlQugA6gJ2WS2DEa3g==}
@@ -15358,7 +15358,7 @@ snapshots:
       '@typescript-eslint/types': 8.39.0
       eslint-visitor-keys: 4.2.1
 
-  '@urql/core@5.2.0(graphql@16.11.0)':
+  '@urql/core@6.0.0(graphql@16.11.0)':
     dependencies:
       '@0no-co/graphql.web': 1.1.2(graphql@16.11.0)
       wonka: 6.3.5
