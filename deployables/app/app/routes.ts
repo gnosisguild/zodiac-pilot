@@ -163,13 +163,11 @@ export default [
         route('roles', 'routes/roles/list-layout.tsx', [
           index('routes/roles/managed.tsx'),
 
-          route('managed', 'routes/roles/managed.tsx', [
-            ...prefix(':roleId', [
-              route('deploy', 'routes/roles/deploy-draft.tsx'),
-            ]),
-          ]),
-
           route('on-chain', 'routes/roles/on-chain.tsx'),
+        ]),
+
+        ...prefix('roles/:roleId', [
+          route('deploy', 'routes/roles/deploy-draft.tsx'),
         ]),
 
         ...prefix('roles', [

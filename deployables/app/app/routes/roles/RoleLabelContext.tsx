@@ -26,7 +26,7 @@ export const LabeledRoleKey = ({ children }: { children: string }) => {
       <div className="whitespace-nowrap font-semibold">{label}</div>
       <code
         aria-hidden
-        className="inline-flex max-w-full flex-1 overflow-hidden text-ellipsis text-nowrap font-mono opacity-50"
+        className="inline-flex max-w-full flex-1 overflow-hidden text-ellipsis text-nowrap font-mono text-xs opacity-50"
       >
         {key}
       </code>

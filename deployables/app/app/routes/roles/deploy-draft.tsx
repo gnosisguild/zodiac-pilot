@@ -1,4 +1,5 @@
 import { authorizedLoader } from '@/auth-server'
+import { Page } from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
@@ -11,11 +12,11 @@ import {
 import { type Role as DbRole } from '@zodiac/db/schema'
 import { encodeRoleKey } from '@zodiac/modules'
 import { isUUID, jsonStringify } from '@zodiac/schema'
-import { Modal } from '@zodiac/ui'
+import { Info } from '@zodiac/ui'
 import { UUID } from 'crypto'
 import { LucideIcon, Plus, UserRoundPlus } from 'lucide-react'
-import { PropsWithChildren, ReactNode, Suspense } from 'react'
-import { Await, href, useNavigate } from 'react-router'
+import { PropsWithChildren, Suspense } from 'react'
+import { Await } from 'react-router'
 import {
   Account,
   AccountType,
@@ -212,53 +213,47 @@ const getRolesMods = async (
 
 const DeployDraft = ({
   loaderData: { plan, labels, roleLabels },
-  params: { workspaceId },
 }: Route.ComponentProps) => {
-  const navigate = useNavigate()
-
   return (
-    <Modal
-      open
-      title="Deploy draft"
-      description="The following changes need to be applies to deploy this role. Please execute one transaction after the other."
-      onClose={() =>
-        navigate(
-          href('/workspace/:workspaceId/roles/drafts', { workspaceId }),
-          { replace: true },
-        )
-      }
-    >
-      <ProvideRoleLabels labels={roleLabels}>
-        <ProvideAddressLabels labels={labels}>
-          <Suspense>
-            <Await resolve={plan}>
-              {(plan) => {
-                console.log({ plan })
+    <Page>
+      <Page.Header>Deploy draft</Page.Header>
 
-                return (
-                  <div className="flex flex-col gap-4 divide-y divide-zinc-700">
-                    {plan.map(({ account, steps }, planIndex) =>
-                      steps.map((step, index) => (
-                        <div
-                          key={`${account.prefixedAddress}=${planIndex}-${index}`}
-                          className="pb-4"
-                        >
-                          <Call key={index} {...step.call} />
-                        </div>
-                      )),
-                    )}
-                  </div>
-                )
-              }}
-            </Await>
-          </Suspense>
-        </ProvideAddressLabels>
-      </ProvideRoleLabels>
+      <Page.Main>
+        <div className="mb-8">
+          <Info>
+            The following changes need to be applies to deploy this role. Please
+            execute one transaction after the other.
+          </Info>
+        </div>
 
-      <Modal.Actions>
-        <Modal.CloseAction>Close</Modal.CloseAction>
-      </Modal.Actions>
-    </Modal>
+        <ProvideRoleLabels labels={roleLabels}>
+          <ProvideAddressLabels labels={labels}>
+            <Suspense>
+              <Await resolve={plan}>
+                {(plan) => {
+                  console.log({ plan })
+
+                  return (
+                    <div className="flex flex-col gap-4 divide-y divide-zinc-700">
+                      {plan.map(({ account, steps }, planIndex) =>
+                        steps.map((step, index) => (
+                          <div
+                            key={`${account.prefixedAddress}=${planIndex}-${index}`}
+                            className="pb-4"
+                          >
+                            <Call key={index} {...step.call} />
+                          </div>
+                        )),
+                      )}
+                    </div>
+                  )
+                }}
+              </Await>
+            </Suspense>
+          </ProvideAddressLabels>
+        </ProvideRoleLabels>
+      </Page.Main>
+    </Page>
   )
 }
 
@@ -287,21 +282,17 @@ const AssignRolesCall = (
   props: Extract<AccountBuilderCall, { call: 'assignRoles' }>,
 ) => {
   return (
-    <FeedEntry
-      icon={UserRoundPlus}
-      title={
-        <div className="flex gap-2">
-          Add{' '}
-          <LabeledAddress size="tiny" shorten>
-            {props.member}
-          </LabeledAddress>{' '}
-          to{' '}
-          <span className="font-semibold">
-            <LabeledRoleKey>{props.roleKey}</LabeledRoleKey>
-          </span>
-        </div>
-      }
-    />
+    <FeedEntry icon={UserRoundPlus} action="Add role member">
+      <LabeledItem label="Member">
+        <LabeledAddress size="small" shorten>
+          {props.member}
+        </LabeledAddress>
+      </LabeledItem>
+
+      <LabeledItem label="Role">
+        <LabeledRoleKey>{props.roleKey}</LabeledRoleKey>
+      </LabeledItem>
+    </FeedEntry>
   )
 }
 
@@ -311,59 +302,41 @@ const CreateNodeCall = (
   switch (props.accountType) {
     case AccountType.SAFE: {
       return (
-        <FeedEntry
-          icon={Plus}
-          title={
-            <div className="flex items-center gap-2">
-              <span>
-                Create <span className="font-semibold">Safe</span>
-              </span>
+        <FeedEntry icon={Plus} action="Create Safe">
+          <LabeledItem label="Safe">
+            <LabeledAddress size="small" shorten>
+              {props.deploymentAddress}
+            </LabeledAddress>
+          </LabeledItem>
 
-              <LabeledAddress size="tiny" shorten>
-                {props.deploymentAddress}
-              </LabeledAddress>
-            </div>
-          }
-        >
-          <div className="flex flex-col gap-2">
-            <span>Owners</span>
-
+          <LabeledItem label="Owners">
             <ul>
               {props.args.owners.map((owner) => (
                 <li key={owner}>
-                  <LabeledAddress size="tiny" shorten>
+                  <LabeledAddress size="small" shorten>
                     {owner}
                   </LabeledAddress>
                 </li>
               ))}
             </ul>
-          </div>
+          </LabeledItem>
         </FeedEntry>
       )
     }
     case AccountType.ROLES: {
       return (
-        <FeedEntry
-          icon={Plus}
-          title={
-            <div className="flex items-center gap-2">
-              <span>
-                Create <span className="font-semibold">Role</span>
-              </span>
+        <FeedEntry icon={Plus} action="Create role">
+          <LabeledItem label="Role">
+            <LabeledAddress shorten size="small">
+              {props.deploymentAddress}
+            </LabeledAddress>
+          </LabeledItem>
 
-              <LabeledAddress shorten size="tiny">
-                {props.deploymentAddress}
-              </LabeledAddress>
-            </div>
-          }
-        >
-          <div className="flex flex-col gap-2">
-            <span>Target Safe</span>
-
-            <LabeledAddress shorten size="tiny">
+          <LabeledItem label="Target Safe">
+            <LabeledAddress shorten size="small">
               {props.args.target}
             </LabeledAddress>
-          </div>
+          </LabeledItem>
         </FeedEntry>
       )
     }
@@ -374,23 +347,33 @@ const CreateNodeCall = (
 
 type FeedEntryProps = PropsWithChildren<{
   icon: LucideIcon
-  title: ReactNode
+  action: string
 }>
 
-const FeedEntry = ({ title, icon: Icon, children }: FeedEntryProps) => (
-  <div className="grid grid-cols-10 items-center gap-4 text-xs">
-    <div className="flex items-start justify-center">
+const FeedEntry = ({ action, icon: Icon, children }: FeedEntryProps) => (
+  <div className="grid grid-cols-10 items-center gap-4 text-sm">
+    <div className="col-span-2 flex items-start justify-start gap-2">
       <div className="rounded-full border border-zinc-700 bg-zinc-800 p-1">
         <Icon className="size-3" />
       </div>
+
+      {action}
     </div>
 
-    <div className="col-span-9">{title}</div>
-
     {children && (
-      <div className="col-span-9 col-start-2 flex flex-col gap-4">
+      <div className="col-span-8 col-start-3 grid grid-cols-4 gap-4">
         {children}
       </div>
     )}
+  </div>
+)
+
+const LabeledItem = ({
+  label,
+  children,
+}: PropsWithChildren<{ label: string }>) => (
+  <div className="flex flex-col gap-4">
+    <div className="text-xs font-semibold opacity-75">{label}</div>
+    <div>{children}</div>
   </div>
 )
