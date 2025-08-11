@@ -9,7 +9,7 @@ import {
   getRoleMembers,
 } from '@zodiac/db'
 import { type Role as DbRole } from '@zodiac/db/schema'
-import { decodeRoleKey, encodeRoleKey } from '@zodiac/modules'
+import { encodeRoleKey } from '@zodiac/modules'
 import { isUUID, jsonStringify } from '@zodiac/schema'
 import { Modal } from '@zodiac/ui'
 import { UUID } from 'crypto'
@@ -25,15 +25,21 @@ import {
   withPredictedAddress,
   type AccountBuilderCall,
 } from 'ser-kit'
+import { Role } from 'zodiac-roles-sdk'
 import { Route } from './+types/deploy-draft'
 import {
   LabeledAddress,
   Labels,
   ProvideAddressLabels,
 } from './AddressLabelContext'
+import {
+  LabeledRoleKey,
+  ProvideRoleLabels,
+  RoleLabels,
+} from './RoleLabelContext'
 
 type Safe = Extract<Account, { type: AccountType.SAFE }>
-type Role = Extract<Account, { type: AccountType.ROLES }>
+type Roles = Extract<Account, { type: AccountType.ROLES }>
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -56,10 +62,11 @@ export const loader = (args: Route.LoaderArgs) =>
         allSafes,
         labels: memberLabels,
       } = await getMemberSafes(draft.id, activeChains)
-      const { accounts: rolesMods, labels: roleLabels } = await getRolesMods(
-        draft,
-        allSafes,
-      )
+      const {
+        accounts: rolesMods,
+        labels: rolesLabels,
+        roleLabels,
+      } = await getRolesMods(draft, allSafes)
 
       const desired = [...newSafes, ...rolesMods]
 
@@ -72,9 +79,10 @@ export const loader = (args: Route.LoaderArgs) =>
           desired,
         }),
         labels: {
-          ...roleLabels,
+          ...rolesLabels,
           ...memberLabels,
         },
+        roleLabels,
       }
     },
     {
@@ -138,15 +146,41 @@ const getMemberSafes = async (
 const getRolesMods = async (
   draft: DbRole,
   members: Account[],
-): Promise<{ accounts: Role[]; labels: Labels }> => {
+): Promise<{ accounts: Roles[]; labels: Labels; roleLabels: RoleLabels }> => {
   const activeAccounts = await getActivatedAccounts(dbClient(), {
     roleId: draft.id,
   })
   const actions = await getRoleActions(dbClient(), draft.id)
 
-  return activeAccounts.reduce<{ accounts: Role[]; labels: Labels }>(
+  return activeAccounts.reduce<{
+    accounts: Roles[]
+    labels: Labels
+    roleLabels: RoleLabels
+  }>(
     (result, activeAccount) => {
-      const account = withPredictedAddress<Role>(
+      const { roles, labels } = actions.reduce<{
+        roles: Omit<Role, 'lastUpdate'>[]
+        labels: RoleLabels
+      }>(
+        (result, action) => {
+          const key = encodeRoleKey(action.key)
+
+          const role = {
+            key,
+            members: members.map((member) => member.address),
+            annotations: [],
+            targets: [],
+          }
+
+          return {
+            roles: [...result.roles, role],
+            labels: { ...result.labels, [key]: action.label },
+          }
+        },
+        { roles: [], labels: {} },
+      )
+
+      const account = withPredictedAddress<Roles>(
         {
           type: AccountType.ROLES,
           allowances: [],
@@ -155,12 +189,7 @@ const getRolesMods = async (
           modules: [],
           multisend: [],
           owner: activeAccount.address,
-          roles: actions.map((action) => ({
-            key: encodeRoleKey(action.key),
-            members: members.map((member) => member.address),
-            annotations: [],
-            targets: [],
-          })),
+          roles,
           target: activeAccount.address,
           version: 2,
         },
@@ -174,14 +203,15 @@ const getRolesMods = async (
           [account.address]: draft.label,
           [activeAccount.address]: activeAccount.label,
         },
+        roleLabels: { ...result.roleLabels, ...labels },
       }
     },
-    { accounts: [], labels: {} },
+    { accounts: [], labels: {}, roleLabels: {} },
   )
 }
 
 const DeployDraft = ({
-  loaderData: { plan, labels },
+  loaderData: { plan, labels, roleLabels },
   params: { workspaceId },
 }: Route.ComponentProps) => {
   const navigate = useNavigate()
@@ -198,30 +228,32 @@ const DeployDraft = ({
         )
       }
     >
-      <ProvideAddressLabels labels={labels}>
-        <Suspense>
-          <Await resolve={plan}>
-            {(plan) => {
-              console.log({ plan })
+      <ProvideRoleLabels labels={roleLabels}>
+        <ProvideAddressLabels labels={labels}>
+          <Suspense>
+            <Await resolve={plan}>
+              {(plan) => {
+                console.log({ plan })
 
-              return (
-                <div className="flex flex-col gap-4 divide-y divide-zinc-700">
-                  {plan.map(({ account, steps }, planIndex) =>
-                    steps.map((step, index) => (
-                      <div
-                        key={`${account.prefixedAddress}=${planIndex}-${index}`}
-                        className="pb-4"
-                      >
-                        <Call key={index} {...step.call} />
-                      </div>
-                    )),
-                  )}
-                </div>
-              )
-            }}
-          </Await>
-        </Suspense>
-      </ProvideAddressLabels>
+                return (
+                  <div className="flex flex-col gap-4 divide-y divide-zinc-700">
+                    {plan.map(({ account, steps }, planIndex) =>
+                      steps.map((step, index) => (
+                        <div
+                          key={`${account.prefixedAddress}=${planIndex}-${index}`}
+                          className="pb-4"
+                        >
+                          <Call key={index} {...step.call} />
+                        </div>
+                      )),
+                    )}
+                  </div>
+                )
+              }}
+            </Await>
+          </Suspense>
+        </ProvideAddressLabels>
+      </ProvideRoleLabels>
 
       <Modal.Actions>
         <Modal.CloseAction>Close</Modal.CloseAction>
@@ -264,7 +296,9 @@ const AssignRolesCall = (
             {props.member}
           </LabeledAddress>{' '}
           to{' '}
-          <span className="font-semibold">{decodeRoleKey(props.roleKey)}</span>
+          <span className="font-semibold">
+            <LabeledRoleKey>{props.roleKey}</LabeledRoleKey>
+          </span>
         </div>
       }
     />
