@@ -27,7 +27,7 @@ import {
   withPredictedAddress,
   type AccountBuilderCall,
 } from 'ser-kit'
-import { Allowance, Role } from 'zodiac-roles-sdk'
+import { Allowance, processPermissions, Role } from 'zodiac-roles-sdk'
 import { Route } from './+types/deploy-draft'
 import {
   LabeledAddress,
@@ -39,6 +39,7 @@ import {
   ProvideRoleLabels,
   RoleLabels,
 } from './RoleLabelContext'
+import { allowCowOrderSigning } from './allowCowOrderSigning'
 import { getRefillPeriod } from './getRefillPeriod'
 
 type Safe = Extract<Account, { type: AccountType.SAFE }>
@@ -169,11 +170,26 @@ const getRolesMods = async (
         (result, action) => {
           const key = encodeRoleKey(action.key)
 
+          const permissions = allowCowOrderSigning({
+            sell: assets
+              .filter(
+                (asset) => asset.allowSell && asset.roleActionId === action.id,
+              )
+              .map((asset) => asset.address),
+            buy: assets
+              .filter(
+                (asset) => asset.allowBuy && asset.roleActionId === action.id,
+              )
+              .map((asset) => asset.address),
+          })
+
+          const { annotations, targets } = processPermissions(permissions)
+
           const role = {
             key,
             members: members.map((member) => member.address),
-            annotations: [],
-            targets: [],
+            annotations,
+            targets,
           }
 
           return {
@@ -195,12 +211,12 @@ const getRolesMods = async (
             return [
               ...result,
               {
-                balance: 0n,
+                balance: asset.allowance,
                 key: encodeRoleKey(asset.allowanceKey),
                 maxRefill: asset.allowance,
                 period: getRefillPeriod(asset.interval),
                 refill: asset.allowance,
-                timestamp: 0n,
+                timestamp: BigInt(new Date().getTime()),
               },
             ]
           }, []),
