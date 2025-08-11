@@ -42,7 +42,7 @@ export const roleActionAssetFactory = createFactory<
       updatedAt: null,
       allowance: null,
       interval: null,
-      allowanceKey: createRandomString(32),
+      allowanceKey: createRandomString(31),
 
       ...data,
     }

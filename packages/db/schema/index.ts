@@ -718,7 +718,7 @@ export const ActionAssetTable = pgTable(
     interval: AllowanceIntervalEnum(),
     allowanceKey: varchar({ length: 32 })
       .notNull()
-      .$defaultFn(() => createRandomString(32)),
+      .$defaultFn(() => createRandomString(31)),
 
     allowBuy: boolean().notNull(),
     allowSell: boolean().notNull(),
