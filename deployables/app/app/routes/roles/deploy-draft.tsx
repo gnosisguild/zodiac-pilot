@@ -51,10 +51,11 @@ export const loader = (args: Route.LoaderArgs) =>
         new Set(activatedAccounts.map((account) => account.chainId)),
       )
 
-      const { newSafes, allSafes } = await getMemberSafes(
-        draft.id,
-        activeChains,
-      )
+      const {
+        newSafes,
+        allSafes,
+        labels: memberLabels,
+      } = await getMemberSafes(draft.id, activeChains)
       const { accounts: rolesMods, labels: roleLabels } = await getRolesMods(
         draft,
         allSafes,
@@ -72,6 +73,7 @@ export const loader = (args: Route.LoaderArgs) =>
         }),
         labels: {
           ...roleLabels,
+          ...memberLabels,
         },
       }
     },
@@ -90,11 +92,13 @@ export const loader = (args: Route.LoaderArgs) =>
 const getMemberSafes = async (
   roleId: UUID,
   activeChains: ChainId[],
-): Promise<{ newSafes: Account[]; allSafes: Account[] }> => {
+): Promise<{ newSafes: Account[]; allSafes: Account[]; labels: Labels }> => {
   const members = await getRoleMembers(dbClient(), { roleId })
 
   const newSafes: Account[] = []
   const allSafes: Account[] = []
+
+  const labels: Labels = {}
 
   for (const member of members) {
     const defaultWallets = await getDefaultWallets(dbClient(), member.id)
@@ -117,6 +121,9 @@ const getMemberSafes = async (
 
       const [existingSafe] = await queryAccounts([safe.prefixedAddress])
 
+      labels[safe.address] = member.fullName
+      labels[defaultWallets[chainId].address] = defaultWallets[chainId].label
+
       if (existingSafe == null) {
         newSafes.push(safe)
       }
@@ -125,7 +132,7 @@ const getMemberSafes = async (
     }
   }
 
-  return { newSafes, allSafes }
+  return { newSafes, allSafes, labels }
 }
 
 const getRolesMods = async (
@@ -273,19 +280,17 @@ const CreateNodeCall = (
         <FeedEntry
           icon={Plus}
           title={
-            <>
-              Create <span className="font-semibold">Safe</span>
-            </>
+            <div className="flex items-center gap-2">
+              <span>
+                Create <span className="font-semibold">Safe</span>
+              </span>
+
+              <LabeledAddress size="tiny" shorten>
+                {props.deploymentAddress}
+              </LabeledAddress>
+            </div>
           }
         >
-          <div className="flex flex-col gap-2">
-            <span>Address</span>
-
-            <LabeledAddress size="tiny" shorten>
-              {props.deploymentAddress}
-            </LabeledAddress>
-          </div>
-
           <div className="flex flex-col gap-2">
             <span>Owners</span>
 
