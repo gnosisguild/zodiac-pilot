@@ -475,6 +475,8 @@ describe('Deploy Role', () => {
           interval: AllowanceInterval.Monthly,
         })
 
+        await setActiveAccounts(dbClient(), role, [account.id])
+
         await render(
           href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
             workspaceId: tenant.defaultWorkspaceId,
@@ -506,7 +508,14 @@ describe('Deploy Role', () => {
                 avatar: account.address,
                 owner: account.address,
                 target: account.address,
-                roles: [],
+                roles: [
+                  {
+                    key: encodeRoleKey(action.key),
+                    annotations: [],
+                    members: [],
+                    targets: [],
+                  },
+                ],
                 version: 2,
                 nonce: role.nonce,
               },

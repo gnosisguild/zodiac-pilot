@@ -13,9 +13,9 @@ import {
 import { type Role as DbRole } from '@zodiac/db/schema'
 import { encodeRoleKey } from '@zodiac/modules'
 import { isUUID } from '@zodiac/schema'
-import { Info } from '@zodiac/ui'
+import { Info, NumberValue } from '@zodiac/ui'
 import { UUID } from 'crypto'
-import { LucideIcon, Plus, UserRoundPlus } from 'lucide-react'
+import { HandCoins, LucideIcon, Plus, UserRoundPlus } from 'lucide-react'
 import { PropsWithChildren, Suspense } from 'react'
 import { Await } from 'react-router'
 import {
@@ -27,7 +27,7 @@ import {
   withPredictedAddress,
   type AccountBuilderCall,
 } from 'ser-kit'
-import { Role } from 'zodiac-roles-sdk'
+import { Allowance, Role } from 'zodiac-roles-sdk'
 import { Route } from './+types/deploy-draft'
 import {
   LabeledAddress,
@@ -39,6 +39,7 @@ import {
   ProvideRoleLabels,
   RoleLabels,
 } from './RoleLabelContext'
+import { getRefillPeriod } from './getRefillPeriod'
 
 type Safe = Extract<Account, { type: AccountType.SAFE }>
 type Roles = Extract<Account, { type: AccountType.ROLES }>
@@ -151,7 +152,7 @@ const getRolesMods = async (
     roleId: draft.id,
   })
   const actions = await getRoleActions(dbClient(), draft.id)
-  const assetsByAction = await getRoleActionAssets(dbClient(), {
+  const assets = await getRoleActionAssets(dbClient(), {
     roleId: draft.id,
   })
 
@@ -186,7 +187,23 @@ const getRolesMods = async (
       const account = withPredictedAddress<Roles>(
         {
           type: AccountType.ROLES,
-          allowances: [],
+          allowances: assets.reduce<Allowance[]>((result, asset) => {
+            if (asset.allowance == null || asset.interval == null) {
+              return result
+            }
+
+            return [
+              ...result,
+              {
+                balance: 0n,
+                key: encodeRoleKey(asset.allowanceKey),
+                maxRefill: asset.allowance,
+                period: getRefillPeriod(asset.interval),
+                refill: asset.allowance,
+                timestamp: 0n,
+              },
+            ]
+          }, []),
           avatar: activeAccount.address,
           chain: activeAccount.chainId,
           modules: [],
@@ -232,24 +249,20 @@ const DeployDraft = ({
           <ProvideAddressLabels labels={labels}>
             <Suspense>
               <Await resolve={plan}>
-                {(plan) => {
-                  console.log({ plan })
-
-                  return (
-                    <div className="flex flex-col gap-4 divide-y divide-zinc-700">
-                      {plan.map(({ account, steps }, planIndex) =>
-                        steps.map((step, index) => (
-                          <div
-                            key={`${account.prefixedAddress}=${planIndex}-${index}`}
-                            className="pb-4"
-                          >
-                            <Call key={index} {...step.call} />
-                          </div>
-                        )),
-                      )}
-                    </div>
-                  )
-                }}
+                {(plan) => (
+                  <div className="flex flex-col gap-4 divide-y divide-zinc-700">
+                    {plan.map(({ account, steps }, planIndex) =>
+                      steps.map((step, index) => (
+                        <div
+                          key={`${account.prefixedAddress}=${planIndex}-${index}`}
+                          className="pb-4"
+                        >
+                          <Call key={index} {...step.call} />
+                        </div>
+                      )),
+                    )}
+                  </div>
+                )}
               </Await>
             </Suspense>
           </ProvideAddressLabels>
@@ -271,6 +284,9 @@ const Call = (props: CallProps) => {
     case 'assignRoles': {
       return <AssignRolesCall {...props} />
     }
+    case 'setAllowance': {
+      return <SetAllowanceCall {...props} />
+    }
 
     default: {
       return (
@@ -279,6 +295,16 @@ const Call = (props: CallProps) => {
     }
   }
 }
+
+const SetAllowanceCall = (
+  props: Extract<AccountBuilderCall, { call: 'setAllowance' }>,
+) => (
+  <FeedEntry icon={HandCoins} action="Set allowance">
+    <LabeledItem label="Allowance">
+      <NumberValue>{props.refill}</NumberValue>
+    </LabeledItem>
+  </FeedEntry>
+)
 
 const AssignRolesCall = (
   props: Extract<AccountBuilderCall, { call: 'assignRoles' }>,

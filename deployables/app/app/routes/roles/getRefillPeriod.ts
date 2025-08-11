@@ -1,4 +1,4 @@
-import { AllowanceInterval } from '@zodiac/db/schema'
+import { AllowanceInterval } from '@zodiac/schema'
 
 export const getRefillPeriod = (interval: AllowanceInterval): bigint => {
   switch (interval) {
