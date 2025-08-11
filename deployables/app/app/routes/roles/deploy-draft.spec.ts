@@ -255,200 +255,204 @@ describe('Deploy Role', () => {
       })
     })
 
-    dbIt('adds roles for the respective actions', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
+    describe('Actions', () => {
+      dbIt('adds roles for the respective actions', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      const account = await accountFactory.create(tenant, user, {
-        chainId: Chain.ETH,
-      })
-      const role = await roleFactory.create(tenant, user)
-      const action = await roleActionFactory.create(role, user)
+        const account = await accountFactory.create(tenant, user, {
+          chainId: Chain.ETH,
+        })
+        const role = await roleFactory.create(tenant, user)
+        const action = await roleActionFactory.create(role, user)
 
-      await setActiveAccounts(dbClient(), role, [account.id])
+        await setActiveAccounts(dbClient(), role, [account.id])
 
-      await render(
-        href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
-          workspaceId: tenant.defaultWorkspaceId,
-          draftId: role.id,
-        }),
-        { tenant, user },
-      )
+        await render(
+          href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+            workspaceId: tenant.defaultWorkspaceId,
+            draftId: role.id,
+          }),
+          { tenant, user },
+        )
 
-      expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-        // TODO: remove this
-        current: [],
-        desired: expect.arrayContaining([
-          withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
-            {
-              type: AccountType.ROLES,
-              chain: Chain.ETH,
-              modules: [],
-              allowances: [],
-              multisend: [],
-              avatar: account.address,
-              owner: account.address,
-              target: account.address,
-              roles: [
-                {
-                  key: encodeRoleKey(action.key),
-                  members: [],
-                  annotations: [],
-                  targets: [],
-                },
-              ],
-              version: 2,
-              nonce: role.nonce,
-            },
-            role.nonce,
-          ),
-        ]),
-      })
-    })
-
-    dbIt('adds the correct members to the roles mod', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
-
-      const wallet = await walletFactory.create(user)
-
-      await setDefaultWallet(dbClient(), user, {
-        walletId: wallet.id,
-        chainId: Chain.ETH,
-      })
-
-      const account = await accountFactory.create(tenant, user, {
-        chainId: Chain.ETH,
-      })
-      const role = await roleFactory.create(tenant, user)
-      const action = await roleActionFactory.create(role, user)
-
-      await setRoleMembers(dbClient(), role, [user.id])
-      await setActiveAccounts(dbClient(), role, [account.id])
-
-      await render(
-        href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
-          workspaceId: tenant.defaultWorkspaceId,
-          draftId: role.id,
-        }),
-        { tenant, user },
-      )
-
-      const userSafe = withPredictedAddress<
-        Extract<Account, { type: AccountType.SAFE }>
-      >(
-        {
-          type: AccountType.SAFE,
-          chain: Chain.ETH,
-          modules: [],
-          owners: [wallet.address],
-          threshold: 1,
-        },
-        user.nonce,
-      )
-
-      expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-        // TODO: remove this
-        current: [],
-        desired: expect.arrayContaining([
-          withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
-            {
-              type: AccountType.ROLES,
-              chain: Chain.ETH,
-              modules: [],
-              allowances: [],
-              multisend: [],
-              avatar: account.address,
-              owner: account.address,
-              target: account.address,
-              roles: [
-                {
-                  key: encodeRoleKey(action.key),
-                  members: [userSafe.address],
-                  annotations: [],
-                  targets: [],
-                },
-              ],
-              version: 2,
-              nonce: role.nonce,
-            },
-            role.nonce,
-          ),
-        ]),
+        expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
+          // TODO: remove this
+          current: [],
+          desired: expect.arrayContaining([
+            withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
+              {
+                type: AccountType.ROLES,
+                chain: Chain.ETH,
+                modules: [],
+                allowances: [],
+                multisend: [],
+                avatar: account.address,
+                owner: account.address,
+                target: account.address,
+                roles: [
+                  {
+                    key: encodeRoleKey(action.key),
+                    members: [],
+                    annotations: [],
+                    targets: [],
+                  },
+                ],
+                version: 2,
+                nonce: role.nonce,
+              },
+              role.nonce,
+            ),
+          ]),
+        })
       })
     })
 
-    dbIt('keeps members when member safes already exist', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
+    describe('Members', () => {
+      dbIt('adds the correct members to the roles mod', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      const wallet = await walletFactory.create(user)
+        const wallet = await walletFactory.create(user)
 
-      await setDefaultWallet(dbClient(), user, {
-        walletId: wallet.id,
-        chainId: Chain.ETH,
+        await setDefaultWallet(dbClient(), user, {
+          walletId: wallet.id,
+          chainId: Chain.ETH,
+        })
+
+        const account = await accountFactory.create(tenant, user, {
+          chainId: Chain.ETH,
+        })
+        const role = await roleFactory.create(tenant, user)
+        const action = await roleActionFactory.create(role, user)
+
+        await setRoleMembers(dbClient(), role, [user.id])
+        await setActiveAccounts(dbClient(), role, [account.id])
+
+        await render(
+          href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+            workspaceId: tenant.defaultWorkspaceId,
+            draftId: role.id,
+          }),
+          { tenant, user },
+        )
+
+        const userSafe = withPredictedAddress<
+          Extract<Account, { type: AccountType.SAFE }>
+        >(
+          {
+            type: AccountType.SAFE,
+            chain: Chain.ETH,
+            modules: [],
+            owners: [wallet.address],
+            threshold: 1,
+          },
+          user.nonce,
+        )
+
+        expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
+          // TODO: remove this
+          current: [],
+          desired: expect.arrayContaining([
+            withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
+              {
+                type: AccountType.ROLES,
+                chain: Chain.ETH,
+                modules: [],
+                allowances: [],
+                multisend: [],
+                avatar: account.address,
+                owner: account.address,
+                target: account.address,
+                roles: [
+                  {
+                    key: encodeRoleKey(action.key),
+                    members: [userSafe.address],
+                    annotations: [],
+                    targets: [],
+                  },
+                ],
+                version: 2,
+                nonce: role.nonce,
+              },
+              role.nonce,
+            ),
+          ]),
+        })
       })
 
-      const account = await accountFactory.create(tenant, user, {
-        chainId: Chain.ETH,
-      })
-      const role = await roleFactory.create(tenant, user)
-      const action = await roleActionFactory.create(role, user)
+      dbIt('keeps members when member safes already exist', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      await setRoleMembers(dbClient(), role, [user.id])
-      await setActiveAccounts(dbClient(), role, [account.id])
+        const wallet = await walletFactory.create(user)
 
-      const userSafe = withPredictedAddress<
-        Extract<Account, { type: AccountType.SAFE }>
-      >(
-        {
-          type: AccountType.SAFE,
-          chain: Chain.ETH,
-          modules: [],
-          owners: [wallet.address],
-          threshold: 1,
-        },
-        user.nonce,
-      )
+        await setDefaultWallet(dbClient(), user, {
+          walletId: wallet.id,
+          chainId: Chain.ETH,
+        })
 
-      mockQueryAccounts.mockResolvedValue([userSafe])
+        const account = await accountFactory.create(tenant, user, {
+          chainId: Chain.ETH,
+        })
+        const role = await roleFactory.create(tenant, user)
+        const action = await roleActionFactory.create(role, user)
 
-      await render(
-        href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
-          workspaceId: tenant.defaultWorkspaceId,
-          draftId: role.id,
-        }),
-        { tenant, user },
-      )
+        await setRoleMembers(dbClient(), role, [user.id])
+        await setActiveAccounts(dbClient(), role, [account.id])
 
-      expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-        // TODO: remove this
-        current: [],
-        desired: expect.arrayContaining([
-          withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
-            {
-              type: AccountType.ROLES,
-              chain: Chain.ETH,
-              modules: [],
-              allowances: [],
-              multisend: [],
-              avatar: account.address,
-              owner: account.address,
-              target: account.address,
-              roles: [
-                {
-                  key: encodeRoleKey(action.key),
-                  members: [userSafe.address],
-                  annotations: [],
-                  targets: [],
-                },
-              ],
-              version: 2,
-              nonce: role.nonce,
-            },
-            role.nonce,
-          ),
-        ]),
+        const userSafe = withPredictedAddress<
+          Extract<Account, { type: AccountType.SAFE }>
+        >(
+          {
+            type: AccountType.SAFE,
+            chain: Chain.ETH,
+            modules: [],
+            owners: [wallet.address],
+            threshold: 1,
+          },
+          user.nonce,
+        )
+
+        mockQueryAccounts.mockResolvedValue([userSafe])
+
+        await render(
+          href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+            workspaceId: tenant.defaultWorkspaceId,
+            draftId: role.id,
+          }),
+          { tenant, user },
+        )
+
+        expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
+          // TODO: remove this
+          current: [],
+          desired: expect.arrayContaining([
+            withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
+              {
+                type: AccountType.ROLES,
+                chain: Chain.ETH,
+                modules: [],
+                allowances: [],
+                multisend: [],
+                avatar: account.address,
+                owner: account.address,
+                target: account.address,
+                roles: [
+                  {
+                    key: encodeRoleKey(action.key),
+                    members: [userSafe.address],
+                    annotations: [],
+                    targets: [],
+                  },
+                ],
+                version: 2,
+                nonce: role.nonce,
+              },
+              role.nonce,
+            ),
+          ]),
+        })
       })
     })
   })
