@@ -6,12 +6,13 @@ import {
   getActivatedAccounts,
   getDefaultWallets,
   getRole,
+  getRoleActionAssets,
   getRoleActions,
   getRoleMembers,
 } from '@zodiac/db'
 import { type Role as DbRole } from '@zodiac/db/schema'
 import { encodeRoleKey } from '@zodiac/modules'
-import { isUUID, jsonStringify } from '@zodiac/schema'
+import { isUUID } from '@zodiac/schema'
 import { Info } from '@zodiac/ui'
 import { UUID } from 'crypto'
 import { LucideIcon, Plus, UserRoundPlus } from 'lucide-react'
@@ -70,8 +71,6 @@ export const loader = (args: Route.LoaderArgs) =>
       } = await getRolesMods(draft, allSafes)
 
       const desired = [...newSafes, ...rolesMods]
-
-      console.log(jsonStringify(desired, 2))
 
       return {
         plan: planApplyAccounts({
@@ -152,6 +151,9 @@ const getRolesMods = async (
     roleId: draft.id,
   })
   const actions = await getRoleActions(dbClient(), draft.id)
+  const assetsByAction = await getRoleActionAssets(dbClient(), {
+    roleId: draft.id,
+  })
 
   return activeAccounts.reduce<{
     accounts: Roles[]
