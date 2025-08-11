@@ -498,10 +498,10 @@ describe('Deploy Role', () => {
                   {
                     key: encodeRoleKey(asset.allowanceKey),
                     period: getRefillPeriod(AllowanceInterval.Monthly),
-                    balance: 0n,
+                    balance: 1000n,
                     maxRefill: 1000n,
                     refill: 1000n,
-                    timestamp: 0n,
+                    timestamp: BigInt(new Date().getTime()),
                   },
                 ],
                 multisend: [],
