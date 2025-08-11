@@ -12,7 +12,6 @@ import { type Role as DbRole } from '@zodiac/db/schema'
 import { decodeRoleKey, encodeRoleKey } from '@zodiac/modules'
 import { isUUID, jsonStringify } from '@zodiac/schema'
 import { Modal } from '@zodiac/ui'
-import { Address } from '@zodiac/web3'
 import { UUID } from 'crypto'
 import { LucideIcon, Plus, UserRoundPlus } from 'lucide-react'
 import { PropsWithChildren, ReactNode, Suspense } from 'react'
@@ -27,6 +26,11 @@ import {
   type AccountBuilderCall,
 } from 'ser-kit'
 import { Route } from './+types/deploy-draft'
+import {
+  LabeledAddress,
+  Labels,
+  ProvideAddressLabels,
+} from './AddressLabelContext'
 
 type Safe = Extract<Account, { type: AccountType.SAFE }>
 type Role = Extract<Account, { type: AccountType.ROLES }>
@@ -51,7 +55,10 @@ export const loader = (args: Route.LoaderArgs) =>
         draft.id,
         activeChains,
       )
-      const rolesMods = await getRolesMods(draft, allSafes)
+      const { accounts: rolesMods, labels: roleLabels } = await getRolesMods(
+        draft,
+        allSafes,
+      )
 
       const desired = [...newSafes, ...rolesMods]
 
@@ -63,8 +70,9 @@ export const loader = (args: Route.LoaderArgs) =>
           current: [],
           desired,
         }),
-        draft,
-        accounts: activatedAccounts,
+        labels: {
+          ...roleLabels,
+        },
       }
     },
     {
@@ -123,40 +131,50 @@ const getMemberSafes = async (
 const getRolesMods = async (
   draft: DbRole,
   members: Account[],
-): Promise<Role[]> => {
+): Promise<{ accounts: Role[]; labels: Labels }> => {
   const activeAccounts = await getActivatedAccounts(dbClient(), {
     roleId: draft.id,
   })
   const actions = await getRoleActions(dbClient(), draft.id)
 
-  return Promise.all(
-    activeAccounts.map(async (account) =>
-      withPredictedAddress<Role>(
+  return activeAccounts.reduce<{ accounts: Role[]; labels: Labels }>(
+    (result, activeAccount) => {
+      const account = withPredictedAddress<Role>(
         {
           type: AccountType.ROLES,
           allowances: [],
-          avatar: account.address,
-          chain: account.chainId,
+          avatar: activeAccount.address,
+          chain: activeAccount.chainId,
           modules: [],
           multisend: [],
-          owner: account.address,
+          owner: activeAccount.address,
           roles: actions.map((action) => ({
             key: encodeRoleKey(action.key),
             members: members.map((member) => member.address),
             annotations: [],
             targets: [],
           })),
-          target: account.address,
+          target: activeAccount.address,
           version: 2,
         },
         draft.nonce,
-      ),
-    ),
+      )
+
+      return {
+        accounts: [...result.accounts, account],
+        labels: {
+          ...result.labels,
+          [account.address]: draft.label,
+          [activeAccount.address]: activeAccount.label,
+        },
+      }
+    },
+    { accounts: [], labels: {} },
   )
 }
 
 const DeployDraft = ({
-  loaderData: { plan },
+  loaderData: { plan, labels },
   params: { workspaceId },
 }: Route.ComponentProps) => {
   const navigate = useNavigate()
@@ -173,28 +191,30 @@ const DeployDraft = ({
         )
       }
     >
-      <Suspense>
-        <Await resolve={plan}>
-          {(plan) => {
-            console.log({ plan })
+      <ProvideAddressLabels labels={labels}>
+        <Suspense>
+          <Await resolve={plan}>
+            {(plan) => {
+              console.log({ plan })
 
-            return (
-              <div className="flex flex-col gap-4 divide-y divide-zinc-700">
-                {plan.map(({ account, steps }, planIndex) =>
-                  steps.map((step, index) => (
-                    <div
-                      key={`${account.prefixedAddress}=${planIndex}-${index}`}
-                      className="pb-4"
-                    >
-                      <Call key={index} {...step.call} />
-                    </div>
-                  )),
-                )}
-              </div>
-            )
-          }}
-        </Await>
-      </Suspense>
+              return (
+                <div className="flex flex-col gap-4 divide-y divide-zinc-700">
+                  {plan.map(({ account, steps }, planIndex) =>
+                    steps.map((step, index) => (
+                      <div
+                        key={`${account.prefixedAddress}=${planIndex}-${index}`}
+                        className="pb-4"
+                      >
+                        <Call key={index} {...step.call} />
+                      </div>
+                    )),
+                  )}
+                </div>
+              )
+            }}
+          </Await>
+        </Suspense>
+      </ProvideAddressLabels>
 
       <Modal.Actions>
         <Modal.CloseAction>Close</Modal.CloseAction>
@@ -233,9 +253,9 @@ const AssignRolesCall = (
       title={
         <div className="flex gap-2">
           Add{' '}
-          <Address size="tiny" shorten>
+          <LabeledAddress size="tiny" shorten>
             {props.member}
-          </Address>{' '}
+          </LabeledAddress>{' '}
           to{' '}
           <span className="font-semibold">{decodeRoleKey(props.roleKey)}</span>
         </div>
@@ -261,9 +281,9 @@ const CreateNodeCall = (
           <div className="flex flex-col gap-2">
             <span>Address</span>
 
-            <Address size="tiny" shorten>
+            <LabeledAddress size="tiny" shorten>
               {props.deploymentAddress}
-            </Address>
+            </LabeledAddress>
           </div>
 
           <div className="flex flex-col gap-2">
@@ -272,9 +292,9 @@ const CreateNodeCall = (
             <ul>
               {props.args.owners.map((owner) => (
                 <li key={owner}>
-                  <Address size="tiny" shorten>
+                  <LabeledAddress size="tiny" shorten>
                     {owner}
-                  </Address>
+                  </LabeledAddress>
                 </li>
               ))}
             </ul>
@@ -287,25 +307,23 @@ const CreateNodeCall = (
         <FeedEntry
           icon={Plus}
           title={
-            <>
-              Create <span className="font-semibold">Role</span>
-            </>
+            <div className="flex items-center gap-2">
+              <span>
+                Create <span className="font-semibold">Role</span>
+              </span>
+
+              <LabeledAddress shorten size="tiny">
+                {props.deploymentAddress}
+              </LabeledAddress>
+            </div>
           }
         >
           <div className="flex flex-col gap-2">
-            <span>Address</span>
+            <span>Target Safe</span>
 
-            <Address shorten size="tiny">
-              {props.deploymentAddress}
-            </Address>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <span>Account</span>
-
-            <Address shorten size="tiny">
+            <LabeledAddress shorten size="tiny">
               {props.args.target}
-            </Address>
+            </LabeledAddress>
           </div>
         </FeedEntry>
       )
