@@ -1,0 +1,1 @@
+export { AllowanceInterval } from './allowances'

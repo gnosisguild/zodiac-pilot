@@ -1,13 +1,14 @@
 import type { ChainId } from '@zodiac/chains'
 import {
   addressSchema,
+  AllowanceInterval,
   chainIdSchema,
   waypointsSchema,
   type HexAddress,
   type MetaTransactionRequest,
   type Waypoints,
 } from '@zodiac/schema'
-import type { UUID } from 'crypto'
+import { type UUID } from 'crypto'
 import randomBigInt from 'crypto-random-bigint'
 import { relations } from 'drizzle-orm'
 import {
@@ -28,7 +29,10 @@ import {
 } from 'drizzle-orm/pg-core'
 import { createSelectSchema } from 'drizzle-zod'
 import { z } from 'zod'
+import { createRandomString } from './createRandomString'
 import { enumToPgEnum } from './enumToPgEnum'
+
+export { createRandomString } from './createRandomString'
 
 const createdTimestamp = {
   createdAt: timestamp({ withTimezone: true }).notNull().defaultNow(),
@@ -692,14 +696,6 @@ const RoleActionRelations = relations(RoleActionTable, ({ one, many }) => ({
   assets: many(ActionAssetTable),
 }))
 
-export enum AllowanceInterval {
-  Daily = 'daily',
-  Weekly = 'weekly',
-  Monthly = 'monthly',
-  Quarterly = 'quarterly',
-  Yearly = 'yearly',
-}
-
 export const AllowanceIntervalEnum = pgEnum(
   'AllowanceInterval',
   enumToPgEnum(AllowanceInterval),
@@ -720,6 +716,9 @@ export const ActionAssetTable = pgTable(
 
     allowance: bigint({ mode: 'bigint' }),
     interval: AllowanceIntervalEnum(),
+    allowanceKey: varchar({ length: 32 })
+      .notNull()
+      .$defaultFn(() => createRandomString(32)),
 
     allowBuy: boolean().notNull(),
     allowSell: boolean().notNull(),

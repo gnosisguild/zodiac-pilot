@@ -1,4 +1,4 @@
-import { AllowanceInterval } from '@zodiac/db/schema'
+import { AllowanceInterval } from '@zodiac/schema'
 import { Select } from '@zodiac/ui'
 import { ComponentProps } from 'react'
 
