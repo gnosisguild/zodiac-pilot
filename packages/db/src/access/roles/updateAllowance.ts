@@ -1,4 +1,5 @@
-import { ActionAssetTable, AllowanceInterval } from '@zodiac/db/schema'
+import { ActionAssetTable } from '@zodiac/db/schema'
+import { AllowanceInterval } from '@zodiac/schema'
 import { UUID } from 'crypto'
 import { eq } from 'drizzle-orm'
 import { DBClient } from '../../dbClient'

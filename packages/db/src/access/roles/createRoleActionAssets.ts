@@ -1,10 +1,6 @@
 import { getChainId } from '@zodiac/chains'
-import {
-  ActionAssetTable,
-  AllowanceInterval,
-  RoleAction,
-} from '@zodiac/db/schema'
-import { PrefixedAddress } from '@zodiac/schema'
+import { ActionAssetTable, RoleAction } from '@zodiac/db/schema'
+import { AllowanceInterval, PrefixedAddress } from '@zodiac/schema'
 import { unprefixAddress } from 'ser-kit'
 import { DBClient } from '../../dbClient'
 
