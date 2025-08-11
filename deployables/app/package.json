@@ -76,7 +76,7 @@
     "@zodiac/test-utils": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "autoprefixer": "10.4.21",
-    "eslint": "9.32.0",
+    "eslint": "9.33.0",
     "globals": "16.3.0",
     "jsdom": "26.1.0",
     "jsdom-testing-mocks": "1.15.2",
