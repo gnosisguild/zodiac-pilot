@@ -31,6 +31,7 @@ export const createRoleActionAssets = (
   return db.insert(ActionAssetTable).values(
     assets.map(({ address, symbol }) => ({
       roleActionId: action.id,
+      roleId: action.roleId,
       tenantId: action.tenantId,
       workspaceId: action.workspaceId,
 

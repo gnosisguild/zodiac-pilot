@@ -21,6 +21,7 @@ export const roleActionAssetFactory = createFactory<
       symbol: 'WETH',
       address: randomAddress(),
       roleActionId: action.id,
+      roleId: action.roleId,
       tenantId: action.tenantId,
       workspaceId: action.workspaceId,
       allowBuy: true,

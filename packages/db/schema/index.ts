@@ -723,6 +723,7 @@ export const ActionAssetTable = pgTable(
     allowBuy: boolean().notNull(),
     allowSell: boolean().notNull(),
 
+    ...roleReference,
     ...chainReference,
     ...createdTimestamp,
     ...updatedTimestamp,
@@ -731,8 +732,9 @@ export const ActionAssetTable = pgTable(
   },
   (table) => [
     index().on(table.roleActionId),
-    index().on(table.tenantId),
+    index().on(table.roleId),
     index().on(table.workspaceId),
+    index().on(table.tenantId),
   ],
 )
 

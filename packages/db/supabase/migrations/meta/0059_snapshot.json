@@ -1,6 +1,6 @@
 {
-  "id": "d0af2128-80e3-47c5-baac-bd39e161d6be",
-  "prevId": "d7c0c91b-4947-4689-a5be-41c7ab438157",
+  "id": "0c0a9129-26ed-49d4-8e72-9bad2aa64d9a",
+  "prevId": "d0af2128-80e3-47c5-baac-bd39e161d6be",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -266,6 +266,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "roleId": {
+          "name": "roleId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
         "chainId": {
           "name": "chainId",
           "type": "integer",
@@ -314,11 +320,11 @@
           "method": "btree",
           "with": {}
         },
-        "ActionAsset_tenantId_index": {
-          "name": "ActionAsset_tenantId_index",
+        "ActionAsset_roleId_index": {
+          "name": "ActionAsset_roleId_index",
           "columns": [
             {
-              "expression": "tenantId",
+              "expression": "roleId",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -343,6 +349,21 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "ActionAsset_tenantId_index": {
+          "name": "ActionAsset_tenantId_index",
+          "columns": [
+            {
+              "expression": "tenantId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -352,6 +373,19 @@
           "tableTo": "RoleAction",
           "columnsFrom": [
             "roleActionId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "ActionAsset_roleId_Role_id_fk": {
+          "name": "ActionAsset_roleId_Role_id_fk",
+          "tableFrom": "ActionAsset",
+          "tableTo": "Role",
+          "columnsFrom": [
+            "roleId"
           ],
           "columnsTo": [
             "id"

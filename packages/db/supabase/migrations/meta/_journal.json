@@ -414,6 +414,13 @@
       "when": 1754908936132,
       "tag": "0058_add allowance key",
       "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "7",
+      "when": 1754913995299,
+      "tag": "0059_add role id to assets",
+      "breakpoints": true
     }
   ]
 }
