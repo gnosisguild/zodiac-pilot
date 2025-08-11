@@ -407,6 +407,13 @@
       "when": 1754652745264,
       "tag": "0057_add unique constraint on action",
       "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "7",
+      "when": 1754908936132,
+      "tag": "0058_add allowance key",
+      "breakpoints": true
     }
   ]
 }

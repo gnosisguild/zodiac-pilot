@@ -1,6 +1,7 @@
 import { Chain } from '@zodiac/chains'
 import {
   ActionAssetTable,
+  createRandomString,
   RoleAction,
   RoleActionAsset,
   RoleActionAssetCreateInput,
@@ -40,6 +41,7 @@ export const roleActionAssetFactory = createFactory<
       updatedAt: null,
       allowance: null,
       interval: null,
+      allowanceKey: createRandomString(32),
 
       ...data,
     }

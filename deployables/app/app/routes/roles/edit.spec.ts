@@ -14,7 +14,7 @@ import {
   setActiveAccounts,
   setRoleMembers,
 } from '@zodiac/db'
-import { AllowanceInterval, RoleActionType } from '@zodiac/db/schema'
+import { RoleActionType } from '@zodiac/db/schema'
 import {
   accountFactory,
   dbIt,
@@ -24,6 +24,7 @@ import {
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
+import { AllowanceInterval } from '@zodiac/schema'
 import {
   randomPrefixedAddress,
   selectOption,

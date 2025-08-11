@@ -10,14 +10,13 @@ import {
   getActivatedAccounts,
   getRoleAction,
 } from '@zodiac/db'
-import { AllowanceInterval } from '@zodiac/db/schema'
 import {
   getEnumValue,
   getOptionalInt,
   getPrefixedAddressList,
 } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
-import { isUUID } from '@zodiac/schema'
+import { AllowanceInterval, isUUID } from '@zodiac/schema'
 import {
   Form,
   Modal,

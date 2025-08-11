@@ -7,10 +7,9 @@ import {
   updateAllowance,
   updatePermissions,
 } from '@zodiac/db'
-import { AllowanceInterval } from '@zodiac/db/schema'
 import { getEnumValue, getNumber, getOptionalInt } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
-import { isUUID } from '@zodiac/schema'
+import { AllowanceInterval, isUUID } from '@zodiac/schema'
 import { Form, Modal, NumberInput, PrimaryButton } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/edit-asset'

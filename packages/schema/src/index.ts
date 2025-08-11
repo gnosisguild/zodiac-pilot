@@ -13,6 +13,7 @@ export {
   toMetaTransactionRequest,
 } from './metaTransactionRequestSchema'
 export type { MetaTransactionRequest } from './metaTransactionRequestSchema'
+export * from './roles'
 export {
   addressSchema,
   chainIdSchema,
