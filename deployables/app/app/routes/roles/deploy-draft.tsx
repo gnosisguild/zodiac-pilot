@@ -167,7 +167,10 @@ const DeployDraft = ({
       title="Deploy draft"
       description="The following changes need to be applies to deploy this role. Please execute one transaction after the other."
       onClose={() =>
-        navigate(href('/workspace/:workspaceId/roles/drafts', { workspaceId }))
+        navigate(
+          href('/workspace/:workspaceId/roles/drafts', { workspaceId }),
+          { replace: true },
+        )
       }
     >
       <Suspense>
@@ -177,9 +180,12 @@ const DeployDraft = ({
 
             return (
               <div className="flex flex-col gap-4 divide-y divide-zinc-700">
-                {plan.map(({ account, steps }) =>
+                {plan.map(({ account, steps }, planIndex) =>
                   steps.map((step, index) => (
-                    <div key={account.prefixedAddress} className="pb-4">
+                    <div
+                      key={`${account.prefixedAddress}=${planIndex}-${index}`}
+                      className="pb-4"
+                    >
                       <Call key={index} {...step.call} />
                     </div>
                   )),

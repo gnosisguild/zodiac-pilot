@@ -1,23 +1,18 @@
-import { authorizedAction, authorizedLoader } from '@/auth-server'
+import { authorizedLoader } from '@/auth-server'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
   getActivatedAccounts,
-  getRole,
   getRoleMembers,
   getRoles,
   getWorkspace,
 } from '@zodiac/db'
-import { getUUID } from '@zodiac/form-data'
-import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import {
   DateValue,
   Empty,
-  GhostButton,
   GhostLinkButton,
   Info,
-  InlineForm,
   Popover,
   Table,
   TableBody,
@@ -27,16 +22,8 @@ import {
   TableRow,
 } from '@zodiac/ui'
 import { Address } from '@zodiac/web3'
-import { UUID } from 'crypto'
 import { CloudUpload, Pencil } from 'lucide-react'
 import { href } from 'react-router'
-import {
-  Account,
-  AccountType,
-  planApplyAccounts,
-  prefixAddress,
-  queryAccounts,
-} from 'ser-kit'
 import type { Route } from './+types/managed'
 import { Intent } from './intents'
 
@@ -53,58 +40,6 @@ export const loader = (args: Route.LoaderArgs) =>
         }),
         members: await getRoleMembers(dbClient(), { workspaceId }),
       }
-    },
-    {
-      ensureSignedIn: true,
-      async hasAccess({ params: { workspaceId }, tenant }) {
-        invariantResponse(isUUID(workspaceId), '"workspaceId" is no UUID')
-
-        const workspace = await getWorkspace(dbClient(), workspaceId)
-
-        return workspace.tenantId === tenant.id
-      },
-    },
-  )
-
-export const action = (args: Route.ActionArgs) =>
-  authorizedAction(
-    args,
-    async ({ request }) => {
-      const data = await request.formData()
-      const draft = await getRole(dbClient(), getUUID(data, 'draftId'))
-
-      const activatedAccounts = await getActivatedAccounts(dbClient(), {
-        roleId: draft.id,
-      })
-
-      const currentActivatedAccounts = await queryAccounts(
-        activatedAccounts.map((account) =>
-          prefixAddress(account.chainId, account.address),
-        ),
-      )
-
-      planApplyAccounts({
-        desired: [
-          ...currentActivatedAccounts.map((account) => {
-            invariantResponse(
-              account.type === AccountType.SAFE,
-              'Account is not a safe',
-            )
-
-            return {
-              type: AccountType.ROLES,
-              avatar: account.address,
-              chain: account.chain,
-              allowances: [],
-              modules: [],
-              roles: [],
-              version: 2,
-            } satisfies Account
-          }),
-        ],
-      })
-
-      return null
     },
     {
       ensureSignedIn: true,
@@ -202,7 +137,18 @@ const ManagedRoles = ({
                 Edit
               </GhostLinkButton>
 
-              <DeployRole roleId={role.id} />
+              <GhostLinkButton
+                replace
+                size="tiny"
+                icon={CloudUpload}
+                intent={Intent.Deploy}
+                to={href(
+                  '/workspace/:workspaceId/roles/managed/:roleId/deploy',
+                  { workspaceId, roleId: role.id },
+                )}
+              >
+                Deploy
+              </GhostLinkButton>
             </TableCell>
           </TableRow>
         ))}
@@ -212,23 +158,3 @@ const ManagedRoles = ({
 }
 
 export default ManagedRoles
-
-const DeployRole = ({ roleId }: { roleId: UUID }) => {
-  return (
-    <InlineForm context={{ roleId }}>
-      <GhostButton
-        submit
-        iconOnly
-        size="tiny"
-        icon={CloudUpload}
-        intent={Intent.Deploy}
-        busy={useIsPending(
-          Intent.Deploy,
-          (data) => data.get('roleId') === roleId,
-        )}
-      >
-        Deploy
-      </GhostButton>
-    </InlineForm>
-  )
-}
