@@ -27,7 +27,7 @@
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/form-data": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
-    "eslint": "9.32.0",
+    "eslint": "9.33.0",
     "react": "19.1.1",
     "react-dom": "19.1.1",
     "vitest": "3.2.4"
