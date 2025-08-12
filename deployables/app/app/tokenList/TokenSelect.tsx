@@ -21,21 +21,17 @@ export const TokenSelect = ({ tokens, ...props }: TokenSelectProps) => (
       value: token.address,
     }))}
   >
-    {({ data: { value, label } }) => {
-      const token = tokens[value]
+    {({ data: { value, label } }) => (
+      <div className="flex items-center justify-between gap-2">
+        <span className="flex items-center gap-1">
+          <Token contractAddress={value} />
+          {label}
+        </span>
 
-      return (
-        <div className="flex items-center justify-between gap-2">
-          <span className="flex items-center gap-1">
-            <Token logoUrl={token.logoURI} />
-            {label}
-          </span>
-
-          <span aria-hidden className="text-zinc-500 dark:text-zinc-300">
-            <Chain chainId={getChainId(value)} />
-          </span>
-        </div>
-      )
-    }}
+        <span aria-hidden className="text-zinc-500 dark:text-zinc-300">
+          <Chain chainId={getChainId(value)} />
+        </span>
+      </div>
+    )}
   </MultiSelect>
 )

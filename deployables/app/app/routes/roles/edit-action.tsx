@@ -35,14 +35,17 @@ export const loader = (args: Route.LoaderArgs) =>
 
       const assets = await getRoleActionAssets(dbClient(), { actionId })
 
+      const assetsToSell = assets
+        .filter((asset) => asset.allowSell)
+        .map((asset) => prefixAddress(asset.chainId, asset.address))
+      const assetsToBuy = assets
+        .filter((asset) => asset.allowBuy)
+        .map((asset) => prefixAddress(asset.chainId, asset.address))
+
       return {
         action,
-        assetsToSell: assets
-          .filter((asset) => asset.allowSell)
-          .map((asset) => prefixAddress(asset.chainId, asset.address)),
-        assetsToBuy: assets
-          .filter((asset) => asset.allowBuy)
-          .map((asset) => prefixAddress(asset.chainId, asset.address)),
+        assetsToSell,
+        assetsToBuy,
         tokens: await getTokens(activeAccounts.map(({ chainId }) => chainId)),
       }
     },
