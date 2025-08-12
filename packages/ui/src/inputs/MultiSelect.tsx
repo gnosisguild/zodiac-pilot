@@ -41,7 +41,7 @@ export const MultiSelect = <Value extends string | number>({
   description,
   required = false,
   ...props
-}: SelectProps<BaseOption<Value>, false, true>) => {
+}: SelectProps<Value, BaseOption<Value>, false, true>) => {
   const Option = useOptionRenderer<BaseOption<Value>, true>(children)
   const SingleValue = useSingleValueRenderer<BaseOption<Value>, true>(children)
 

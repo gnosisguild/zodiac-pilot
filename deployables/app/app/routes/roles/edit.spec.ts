@@ -28,6 +28,7 @@ import {
   waitForPendingActions,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
+import { unprefixAddress } from 'ser-kit'
 import { beforeEach, describe, expect, vi } from 'vitest'
 import { Intent } from './intents'
 
@@ -340,26 +341,26 @@ describe('Edit role', () => {
     )
 
     describe('Swapper action', () => {
+      const wethAddress = randomPrefixedAddress()
+      const aaveAddress = randomPrefixedAddress()
+
+      const weth = {
+        chainId: Chain.ETH,
+        logoURI: '',
+        name: 'Wrapped Ether',
+        symbol: 'WETH',
+        address: wethAddress,
+      }
+
+      const aave = {
+        chainId: Chain.ETH,
+        logoURI: '',
+        name: 'AAVE',
+        symbol: 'AAVE',
+        address: aaveAddress,
+      }
+
       beforeEach(() => {
-        const wethAddress = randomPrefixedAddress()
-        const aaveAddress = randomPrefixedAddress()
-
-        const weth = {
-          chainId: Chain.ETH,
-          logoURI: '',
-          name: 'Wrapped Ether',
-          symbol: 'WETH',
-          address: wethAddress,
-        }
-
-        const aave = {
-          chainId: Chain.ETH,
-          logoURI: '',
-          name: 'AAVE',
-          symbol: 'AAVE',
-          address: aaveAddress,
-        }
-
         mockGetTokens.mockResolvedValue({
           [wethAddress]: weth,
           [aaveAddress]: aave,
@@ -369,7 +370,11 @@ describe('Edit role', () => {
             return [weth]
           }
 
-          return [aave]
+          if (address === aaveAddress) {
+            return [aave]
+          }
+
+          return []
         })
       })
 
@@ -433,6 +438,119 @@ describe('Edit role', () => {
           )
         },
       )
+
+      dbIt(
+        'is possible to change the assets that are allowed to be swapped',
+        async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
+
+          const role = await roleFactory.create(tenant, user)
+
+          const account = await accountFactory.create(tenant, user, {
+            chainId: Chain.ETH,
+          })
+
+          await roleActionFactory.create(role, user)
+
+          await setActiveAccounts(dbClient(), role, [account.id])
+
+          await render(
+            href('/workspace/:workspaceId/roles/:roleId', {
+              workspaceId: tenant.defaultWorkspaceId,
+              roleId: role.id,
+            }),
+            { tenant, user },
+          )
+
+          await userEvent.click(
+            await screen.findByRole('link', { name: 'Edit action' }),
+          )
+
+          await selectOption('Swap from', 'WETH')
+          await selectOption('Swap for', 'AAVE')
+
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Update' }),
+          )
+
+          await waitForPendingActions()
+
+          const [action] = await getRoleActions(dbClient(), role.id)
+          const assets = await getRoleActionAssets(dbClient(), {
+            actionId: action.id,
+          })
+
+          expect(assets).toEqual(
+            expect.arrayContaining([
+              expect.objectContaining({
+                symbol: 'WETH',
+                allowBuy: false,
+                allowSell: true,
+              }),
+              expect.objectContaining({
+                symbol: 'AAVE',
+                allowBuy: true,
+                allowSell: false,
+              }),
+            ]),
+          )
+        },
+      )
+
+      dbIt('it does not remove existing assets on edit', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+
+        const role = await roleFactory.create(tenant, user)
+
+        const account = await accountFactory.create(tenant, user, {
+          chainId: Chain.ETH,
+        })
+
+        const action = await roleActionFactory.create(role, user)
+
+        await roleActionAssetFactory.create(action, {
+          symbol: 'WETH',
+          address: unprefixAddress(wethAddress),
+          allowSell: true,
+          allowBuy: false,
+        })
+
+        await setActiveAccounts(dbClient(), role, [account.id])
+
+        await render(
+          href('/workspace/:workspaceId/roles/:roleId', {
+            workspaceId: tenant.defaultWorkspaceId,
+            roleId: role.id,
+          }),
+          { tenant, user },
+        )
+
+        await userEvent.click(
+          await screen.findByRole('link', { name: 'Edit action' }),
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Update' }),
+        )
+
+        await waitForPendingActions()
+
+        const assets = await getRoleActionAssets(dbClient(), {
+          actionId: action.id,
+        })
+
+        expect(assets).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              symbol: 'WETH',
+              allowBuy: false,
+              allowSell: true,
+            }),
+          ]),
+        )
+      })
     })
 
     describe('Assets', () => {

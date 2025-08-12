@@ -87,7 +87,8 @@ type SelectBaseProps<
 }
 
 export type SelectProps<
-  Option extends BaseOption,
+  Value extends string | number,
+  Option extends BaseOption<Value>,
   Creatable extends boolean,
   isMulti extends boolean = false,
 > = Creatable extends true
@@ -96,7 +97,8 @@ export type SelectProps<
   : Props<Option, isMulti> & SelectBaseProps<Option, isMulti, Creatable>
 
 export function Select<
-  Option extends BaseOption = BaseOption,
+  Value extends string | number = string | number,
+  Option extends BaseOption<Value> = BaseOption<Value>,
   Creatable extends boolean = false,
 >({
   label,
@@ -110,7 +112,7 @@ export function Select<
   children,
   required = false,
   ...props
-}: SelectProps<Option, Creatable, false>) {
+}: SelectProps<Value, Option, Creatable, false>) {
   const Component = allowCreate ? Creatable : BaseSelect
   const Layout = inline ? InlineLayout : InputLayout
 
