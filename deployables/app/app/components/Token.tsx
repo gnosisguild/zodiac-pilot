@@ -21,7 +21,7 @@ export const Token = ({ children, ...props }: TokenProps) => {
 
   return (
     <div className="flex items-center gap-2 overflow-hidden">
-      <div className="relative flex size-4 items-center justify-center">
+      <div className="pointer-events-none relative flex size-4 items-center justify-center">
         {'contractAddress' in props && (
           <img
             src={getIconUrl(props.contractAddress)}
