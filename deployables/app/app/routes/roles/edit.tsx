@@ -289,116 +289,108 @@ const EditRole = ({
                   </div>
                 }
               >
-                <FormLayout>
-                  {action.assets.length === 0 && (
-                    <Info title="No assets">
-                      Add assets to define custom allowances
-                    </Info>
-                  )}
+                {action.assets.length === 0 && (
+                  <Info>
+                    No assets have been configured for this swap
+                    <Info.Actions>
+                      <SecondaryLinkButton
+                        size="small"
+                        to={href(
+                          '/workspace/:workspaceId/roles/:roleId/action/:actionId',
+                          { workspaceId, roleId, actionId: action.id },
+                        )}
+                      >
+                        Configure swap
+                      </SecondaryLinkButton>
+                    </Info.Actions>
+                  </Info>
+                )}
 
-                  {action.assets.length > 0 && (
-                    <Table>
-                      <TableHead>
-                        <TableRow withActions>
-                          <TableHeader>Asset</TableHeader>
-                          <TableHeader>Chain</TableHeader>
-                          <TableHeader>Buy</TableHeader>
-                          <TableHeader>Sell</TableHeader>
-                          <TableHeader>Allowance</TableHeader>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {action.assets.map((asset) => (
-                          <TableRow key={asset.id}>
-                            <TableCell>
-                              <div className="flex items-center gap-1">
-                                <img
-                                  src={href(
-                                    '/system/token-icon/:prefixedAddress',
-                                    {
-                                      prefixedAddress: prefixAddress(
-                                        asset.chainId,
-                                        asset.address,
-                                      ),
-                                    },
-                                  )}
-                                  alt=""
-                                  className="size-4 rounded-full"
-                                />
-                                {asset.symbol}
+                {action.assets.length > 0 && (
+                  <Table>
+                    <TableHead>
+                      <TableRow withActions>
+                        <TableHeader>Asset</TableHeader>
+                        <TableHeader>Chain</TableHeader>
+                        <TableHeader>Buy</TableHeader>
+                        <TableHeader>Sell</TableHeader>
+                        <TableHeader>Allowance</TableHeader>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {action.assets.map((asset) => (
+                        <TableRow key={asset.id}>
+                          <TableCell>
+                            <div className="flex items-center gap-1">
+                              <img
+                                src={href(
+                                  '/system/token-icon/:prefixedAddress',
+                                  {
+                                    prefixedAddress: prefixAddress(
+                                      asset.chainId,
+                                      asset.address,
+                                    ),
+                                  },
+                                )}
+                                alt=""
+                                className="size-4 rounded-full"
+                              />
+                              {asset.symbol}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Chain chainId={asset.chainId} />
+                          </TableCell>
+                          <TableCell>
+                            {asset.allowBuy ? (
+                              <Check className="size-4 text-green-600 dark:text-green-400" />
+                            ) : (
+                              <X className="size-4 text-red-600 dark:text-red-400" />
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {asset.allowSell ? (
+                              <Check className="size-4 text-green-600 dark:text-green-400" />
+                            ) : (
+                              <X className="size-4 text-red-600 dark:text-red-400" />
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {asset.allowance == null ? (
+                              <Empty />
+                            ) : (
+                              <div className="flex items-center gap-2">
+                                <NumberValue>{asset.allowance}</NumberValue>
+                                <Tag color="gray">{asset.interval}</Tag>
                               </div>
-                            </TableCell>
-                            <TableCell>
-                              <Chain chainId={asset.chainId} />
-                            </TableCell>
-                            <TableCell>
-                              {asset.allowBuy ? (
-                                <Check className="size-4 text-green-600 dark:text-green-400" />
-                              ) : (
-                                <X className="size-4 text-red-600 dark:text-red-400" />
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              {asset.allowSell ? (
-                                <Check className="size-4 text-green-600 dark:text-green-400" />
-                              ) : (
-                                <X className="size-4 text-red-600 dark:text-red-400" />
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              {asset.allowance == null ? (
-                                <Empty />
-                              ) : (
-                                <div className="flex items-center gap-2">
-                                  <NumberValue>{asset.allowance}</NumberValue>
-                                  <Tag color="gray">{asset.interval}</Tag>
-                                </div>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              <TableRowActions>
-                                <GhostLinkButton
-                                  iconOnly
-                                  replace
-                                  icon={Pencil}
-                                  size="tiny"
-                                  to={href(
-                                    '/workspace/:workspaceId/roles/:roleId/action/:actionId/asset/:assetId',
-                                    {
-                                      workspaceId,
-                                      roleId,
-                                      actionId: asset.roleActionId,
-                                      assetId: asset.id,
-                                    },
-                                  )}
-                                >
-                                  Edit asset
-                                </GhostLinkButton>
-                              </TableRowActions>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  )}
-
-                  <FormLayout.Actions>
-                    <GhostLinkButton
-                      replace
-                      size="small"
-                      to={href(
-                        '/workspace/:workspaceId/roles/:roleId/action/:actionId/add-asset',
-                        {
-                          workspaceId,
-                          roleId: action.roleId,
-                          actionId: action.id,
-                        },
-                      )}
-                    >
-                      Add assets
-                    </GhostLinkButton>
-                  </FormLayout.Actions>
-                </FormLayout>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <TableRowActions>
+                              <GhostLinkButton
+                                iconOnly
+                                replace
+                                icon={Pencil}
+                                size="tiny"
+                                to={href(
+                                  '/workspace/:workspaceId/roles/:roleId/action/:actionId/asset/:assetId',
+                                  {
+                                    workspaceId,
+                                    roleId,
+                                    actionId: asset.roleActionId,
+                                    assetId: asset.id,
+                                  },
+                                )}
+                              >
+                                Edit asset
+                              </GhostLinkButton>
+                            </TableRowActions>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                )}
               </Card>
             ))}
 

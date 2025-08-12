@@ -4,14 +4,14 @@ import { AllowanceInterval, PrefixedAddress } from '@zodiac/schema'
 import { unprefixAddress } from 'ser-kit'
 import { DBClient } from '../../dbClient'
 
-type CreateRoleActionAssetsOptions = {
+type AssetCreateInput = {
   symbol: string
   address: PrefixedAddress
 }
 
-type GeneraleCreateAssetOptions = {
-  allowSell: boolean
-  allowBuy: boolean
+type CreateAssetOptions = {
+  sell: AssetCreateInput[]
+  buy: AssetCreateInput[]
   allowance?: {
     allowance: bigint
     interval: AllowanceInterval
@@ -21,28 +21,27 @@ type GeneraleCreateAssetOptions = {
 export const createRoleActionAssets = (
   db: DBClient,
   action: RoleAction,
-  { allowance, allowBuy, allowSell }: GeneraleCreateAssetOptions,
-  assets: CreateRoleActionAssetsOptions[],
+  { sell, buy, allowance }: CreateAssetOptions,
 ) => {
-  if (assets.length === 0) {
+  if (sell.length === 0 && buy.length === 0) {
     return []
   }
 
   return db.insert(ActionAssetTable).values(
-    assets.map(({ address, symbol }) => ({
+    [...sell, ...buy].map((asset) => ({
       roleActionId: action.id,
       roleId: action.roleId,
       tenantId: action.tenantId,
       workspaceId: action.workspaceId,
 
-      allowSell,
-      allowBuy,
+      allowSell: sell.includes(asset),
+      allowBuy: buy.includes(asset),
 
       ...allowance,
 
-      symbol,
-      chainId: getChainId(address),
-      address: unprefixAddress(address),
+      symbol: asset.symbol,
+      chainId: getChainId(asset.address),
+      address: unprefixAddress(asset.address),
     })),
   )
 }

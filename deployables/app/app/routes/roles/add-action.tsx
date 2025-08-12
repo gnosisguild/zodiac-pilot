@@ -88,36 +88,10 @@ export const action = (args: Route.ActionArgs) =>
           getVerifiedTokens(buyTokens),
         ])
 
-        const onlySell = verifiedTokensToSell.filter(
-          (token) => !buyTokens.includes(token.address),
-        )
-        const onlyBuy = verifiedTokensToBuy.filter(
-          (token) => !sellTokens.includes(token.address),
-        )
-        const sellAndBuy = verifiedTokensToSell.filter((token) =>
-          buyTokens.includes(token.address),
-        )
-
-        await Promise.all([
-          createRoleActionAssets(
-            tx,
-            action,
-            { allowSell: true, allowBuy: false },
-            onlySell,
-          ),
-          createRoleActionAssets(
-            tx,
-            action,
-            { allowSell: false, allowBuy: true },
-            onlyBuy,
-          ),
-          createRoleActionAssets(
-            tx,
-            action,
-            { allowSell: true, allowBuy: true },
-            sellAndBuy,
-          ),
-        ])
+        await createRoleActionAssets(tx, action, {
+          sell: verifiedTokensToSell,
+          buy: verifiedTokensToBuy,
+        })
       })
 
       return redirect(
