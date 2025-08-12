@@ -26,7 +26,7 @@
     "@react-router/node": "7.8.0",
     "@sentry/browser": "10.3.0",
     "@sentry/react-router": "10.3.0",
-    "@urql/core": "5.2.0",
+    "@urql/core": "6.0.1",
     "@vercel/analytics": "1.5.0",
     "@vercel/speed-insights": "1.2.0",
     "@workos-inc/authkit-react-router": "0.8.1",
