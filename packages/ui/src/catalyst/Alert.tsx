@@ -40,7 +40,7 @@ export function Alert({
               className,
               sizes[size],
               'row-start-2 w-full rounded-2xl bg-white p-8 shadow-lg ring-1 ring-zinc-950/10 sm:rounded-2xl sm:p-6 dark:bg-zinc-900 dark:ring-white/10 forced-colors:outline',
-              'data-closed:opacity-0 md:data-closed:translate-y-0 data-closed:translate-y-full data-enter:ease-out data-closed:data-enter:scale-95 data-leave:ease-in w-full transition duration-100 will-change-transform md:w-1/3',
+              'data-closed:opacity-0 md:data-closed:translate-y-0 data-closed:translate-y-full data-enter:ease-out data-closed:data-enter:scale-95 data-leave:ease-in w-full transition duration-100 will-change-transform',
             )}
           >
             {children}

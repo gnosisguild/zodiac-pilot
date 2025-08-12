@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { Trash2 } from 'lucide-react'
+import { X } from 'lucide-react'
 import Select, {
   ClassNamesConfig,
   components,
@@ -125,7 +125,7 @@ function SelectContainer<Option extends BaseOption>({
                     value,
                   )
                 }
-                icon={Trash2}
+                icon={X}
               >
                 Remove
               </GhostButton>

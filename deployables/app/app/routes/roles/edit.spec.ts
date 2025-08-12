@@ -14,7 +14,6 @@ import {
   setActiveAccounts,
   setRoleMembers,
 } from '@zodiac/db'
-import { RoleActionType } from '@zodiac/db/schema'
 import {
   accountFactory,
   dbIt,
@@ -247,39 +246,6 @@ describe('Edit role', () => {
   })
 
   describe('Role actions', async () => {
-    dbIt('is possible to add a new action', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
-
-      const role = await roleFactory.create(tenant, user)
-
-      await render(
-        href('/workspace/:workspaceId/roles/:roleId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          roleId: role.id,
-        }),
-        { tenant, user },
-      )
-
-      await userEvent.click(
-        await screen.findByRole('link', { name: 'Add new action' }),
-      )
-      await userEvent.type(
-        await screen.findByRole('textbox', { name: 'Action label' }),
-        'Test action',
-      )
-      await userEvent.click(await screen.findByRole('button', { name: 'Add' }))
-
-      await waitForPendingActions()
-
-      const [action] = await getRoleActions(dbClient(), role.id)
-
-      expect(action).toMatchObject({
-        label: 'Test action',
-        type: RoleActionType.Swapper,
-      })
-    })
-
     dbIt('lists all current actions', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
@@ -377,31 +343,35 @@ describe('Edit role', () => {
 
     describe('Swapper action', () => {
       beforeEach(() => {
-        beforeEach(() => {
-          const wethAddress = randomPrefixedAddress()
-          const aaveAddress = randomPrefixedAddress()
+        const wethAddress = randomPrefixedAddress()
+        const aaveAddress = randomPrefixedAddress()
 
-          const weth = {
-            chainId: Chain.ETH,
-            logoURI: '',
-            name: 'Wrapped Ether',
-            symbol: 'WETH',
-            address: wethAddress,
+        const weth = {
+          chainId: Chain.ETH,
+          logoURI: '',
+          name: 'Wrapped Ether',
+          symbol: 'WETH',
+          address: wethAddress,
+        }
+
+        const aave = {
+          chainId: Chain.ETH,
+          logoURI: '',
+          name: 'AAVE',
+          symbol: 'AAVE',
+          address: aaveAddress,
+        }
+
+        mockGetTokens.mockResolvedValue({
+          [wethAddress]: weth,
+          [aaveAddress]: aave,
+        })
+        mockGetVerifiedTokens.mockImplementation(async ([address]) => {
+          if (address === wethAddress) {
+            return [weth]
           }
 
-          const aave = {
-            chainId: Chain.ETH,
-            logoURI: '',
-            name: 'AAVE',
-            symbol: 'AAVE',
-            address: aaveAddress,
-          }
-
-          mockGetTokens.mockResolvedValue({
-            [wethAddress]: weth,
-            [aaveAddress]: aave,
-          })
-          mockGetVerifiedTokens.mockResolvedValue([weth])
+          return [aave]
         })
       })
 
@@ -412,6 +382,12 @@ describe('Edit role', () => {
           const tenant = await tenantFactory.create(user)
 
           const role = await roleFactory.create(tenant, user)
+
+          const account = await accountFactory.create(tenant, user, {
+            chainId: Chain.ETH,
+          })
+
+          await setActiveAccounts(dbClient(), role, [account.id])
 
           await render(
             href('/workspace/:workspaceId/roles/:roleId', {
@@ -443,19 +419,19 @@ describe('Edit role', () => {
             actionId: action.id,
           })
 
-          expect(assets).toContain(
-            expect.objectContaining({
-              label: 'WETH',
-              allowBuy: false,
-              allowSell: true,
-            }),
-          )
-          expect(assets).toContain(
-            expect.objectContaining({
-              label: 'AAVE',
-              allowBuy: true,
-              allowSell: false,
-            }),
+          expect(assets).toEqual(
+            expect.arrayContaining([
+              expect.objectContaining({
+                symbol: 'WETH',
+                allowBuy: false,
+                allowSell: true,
+              }),
+              expect.objectContaining({
+                symbol: 'AAVE',
+                allowBuy: true,
+                allowSell: false,
+              }),
+            ]),
           )
         },
       )

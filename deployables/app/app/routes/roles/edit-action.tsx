@@ -104,8 +104,6 @@ const EditAction = ({
 
         <RoleActionTypeSelect />
 
-        <div className="grid grid-cols-2 gap-4"></div>
-
         <Modal.Actions>
           <PrimaryButton
             submit
