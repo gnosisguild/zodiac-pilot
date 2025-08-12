@@ -7,7 +7,7 @@ export const RoleActionTypeSelect = () => {
       isDisabled
       label="Type"
       options={[{ label: 'Swapper', value: RoleActionType.Swapper }]}
-      defaultValue={[{ label: 'Swapper', value: RoleActionType.Swapper }]}
+      defaultValue={RoleActionType.Swapper}
     />
   )
 }

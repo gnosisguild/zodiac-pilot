@@ -1,12 +1,14 @@
 import { ChainId } from '@zodiac/chains'
 import { PrefixedAddress } from '@zodiac/schema'
-import { getAllAssets } from './getAllAssets'
+import { getAllTokens } from './getAllTokens'
 import { Token } from './schema'
 
-export const getAssets = async (chainIds: ChainId[]) => {
-  const assets = await getAllAssets()
+export type Tokens = Record<PrefixedAddress, Token>
 
-  return assets.reduce<Record<PrefixedAddress, Token>>((result, token) => {
+export const getTokens = async (chainIds: ChainId[]) => {
+  const assets = await getAllTokens()
+
+  return assets.reduce<Tokens>((result, token) => {
     if (!chainIds.includes(token.chainId)) {
       return result
     }

@@ -1,5 +1,5 @@
 import { render } from '@/test-utils'
-import { getAssets, getVerifiedAssets } from '@/token-list'
+import { getTokens, getVerifiedTokens } from '@/token-list'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain } from '@zodiac/chains'
@@ -7,14 +7,12 @@ import {
   dbClient,
   getActivatedAccounts,
   getRole,
-  getRoleActionAsset,
   getRoleActionAssets,
   getRoleActions,
   getRoleMembers,
   setActiveAccounts,
   setRoleMembers,
 } from '@zodiac/db'
-import { RoleActionType } from '@zodiac/db/schema'
 import {
   accountFactory,
   dbIt,
@@ -24,29 +22,33 @@ import {
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
-import { AllowanceInterval } from '@zodiac/schema'
 import {
   randomPrefixedAddress,
   selectOption,
   waitForPendingActions,
 } from '@zodiac/test-utils'
 import { href } from 'react-router'
+import { unprefixAddress } from 'ser-kit'
 import { beforeEach, describe, expect, vi } from 'vitest'
 import { Intent } from './intents'
 
 vi.mock('@/token-list', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/token-list')>()
 
-  return { ...module, getAssets: vi.fn(), getVerifiedAssets: vi.fn() }
+  return {
+    ...module,
+    getTokens: vi.fn(),
+    getVerifiedTokens: vi.fn(),
+  }
 })
 
-const mockGetAssets = vi.mocked(getAssets)
-const mockGetVerifiedAssets = vi.mocked(getVerifiedAssets)
+const mockGetTokens = vi.mocked(getTokens)
+const mockGetVerifiedTokens = vi.mocked(getVerifiedTokens)
 
 describe('Edit role', () => {
   beforeEach(() => {
-    mockGetAssets.mockResolvedValue({})
-    mockGetVerifiedAssets.mockResolvedValue([])
+    mockGetTokens.mockResolvedValue({})
+    mockGetVerifiedTokens.mockResolvedValue([])
   })
 
   describe('General', () => {
@@ -247,39 +249,6 @@ describe('Edit role', () => {
   })
 
   describe('Role actions', async () => {
-    dbIt('is possible to add a new action', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
-
-      const role = await roleFactory.create(tenant, user)
-
-      await render(
-        href('/workspace/:workspaceId/roles/:roleId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          roleId: role.id,
-        }),
-        { tenant, user },
-      )
-
-      await userEvent.click(
-        await screen.findByRole('link', { name: 'Add new action' }),
-      )
-      await userEvent.type(
-        await screen.findByRole('textbox', { name: 'Action label' }),
-        'Test action',
-      )
-      await userEvent.click(await screen.findByRole('button', { name: 'Add' }))
-
-      await waitForPendingActions()
-
-      const [action] = await getRoleActions(dbClient(), role.id)
-
-      expect(action).toMatchObject({
-        label: 'Test action',
-        type: RoleActionType.Swapper,
-      })
-    })
-
     dbIt('lists all current actions', async () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
@@ -375,31 +344,182 @@ describe('Edit role', () => {
       },
     )
 
-    describe('Assets', () => {
-      beforeEach(() => {
-        const address = randomPrefixedAddress()
-        const weth = {
-          chainId: Chain.ETH,
-          logoURI: '',
-          name: 'Wrapped Ether',
-          symbol: 'WETH',
-          address,
-        }
+    describe('Swapper action', () => {
+      const wethAddress = randomPrefixedAddress()
+      const aaveAddress = randomPrefixedAddress()
 
-        mockGetAssets.mockResolvedValue({ [address]: weth })
-        mockGetVerifiedAssets.mockResolvedValue([weth])
+      const weth = {
+        chainId: Chain.ETH,
+        logoURI: '',
+        name: 'Wrapped Ether',
+        symbol: 'WETH',
+        address: wethAddress,
+      }
+
+      const aave = {
+        chainId: Chain.ETH,
+        logoURI: '',
+        name: 'AAVE',
+        symbol: 'AAVE',
+        address: aaveAddress,
+      }
+
+      beforeEach(() => {
+        mockGetTokens.mockResolvedValue({
+          [wethAddress]: weth,
+          [aaveAddress]: aave,
+        })
+        mockGetVerifiedTokens.mockImplementation(async ([address]) => {
+          if (address === wethAddress) {
+            return [weth]
+          }
+
+          if (address === aaveAddress) {
+            return [aave]
+          }
+
+          return []
+        })
       })
 
-      dbIt('is possible to add an asset', async () => {
+      dbIt(
+        'is possible to define the assets that are allowed to be swapped',
+        async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
+
+          const role = await roleFactory.create(tenant, user)
+
+          const account = await accountFactory.create(tenant, user, {
+            chainId: Chain.ETH,
+          })
+
+          await setActiveAccounts(dbClient(), role, [account.id])
+
+          await render(
+            href('/workspace/:workspaceId/roles/:roleId', {
+              workspaceId: tenant.defaultWorkspaceId,
+              roleId: role.id,
+            }),
+            { tenant, user },
+          )
+
+          await userEvent.click(
+            await screen.findByRole('link', { name: 'Add new action' }),
+          )
+          await userEvent.type(
+            await screen.findByRole('textbox', { name: 'Action label' }),
+            'Test action',
+          )
+
+          await selectOption('Swap from', 'WETH')
+          await selectOption('Swap for', 'AAVE')
+
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Add' }),
+          )
+
+          await waitForPendingActions()
+
+          const [action] = await getRoleActions(dbClient(), role.id)
+          const assets = await getRoleActionAssets(dbClient(), {
+            actionId: action.id,
+          })
+
+          expect(assets).toEqual(
+            expect.arrayContaining([
+              expect.objectContaining({
+                symbol: 'WETH',
+                allowBuy: false,
+                allowSell: true,
+              }),
+              expect.objectContaining({
+                symbol: 'AAVE',
+                allowBuy: true,
+                allowSell: false,
+              }),
+            ]),
+          )
+        },
+      )
+
+      dbIt(
+        'is possible to change the assets that are allowed to be swapped',
+        async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
+
+          const role = await roleFactory.create(tenant, user)
+
+          const account = await accountFactory.create(tenant, user, {
+            chainId: Chain.ETH,
+          })
+
+          await roleActionFactory.create(role, user)
+
+          await setActiveAccounts(dbClient(), role, [account.id])
+
+          await render(
+            href('/workspace/:workspaceId/roles/:roleId', {
+              workspaceId: tenant.defaultWorkspaceId,
+              roleId: role.id,
+            }),
+            { tenant, user },
+          )
+
+          await userEvent.click(
+            await screen.findByRole('link', { name: 'Edit action' }),
+          )
+
+          await selectOption('Swap from', 'WETH')
+          await selectOption('Swap for', 'AAVE')
+
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Update' }),
+          )
+
+          await waitForPendingActions()
+
+          const [action] = await getRoleActions(dbClient(), role.id)
+          const assets = await getRoleActionAssets(dbClient(), {
+            actionId: action.id,
+          })
+
+          expect(assets).toEqual(
+            expect.arrayContaining([
+              expect.objectContaining({
+                symbol: 'WETH',
+                allowBuy: false,
+                allowSell: true,
+              }),
+              expect.objectContaining({
+                symbol: 'AAVE',
+                allowBuy: true,
+                allowSell: false,
+              }),
+            ]),
+          )
+        },
+      )
+
+      dbIt('it does not remove existing assets on edit', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
+
+        const role = await roleFactory.create(tenant, user)
 
         const account = await accountFactory.create(tenant, user, {
           chainId: Chain.ETH,
         })
 
-        const role = await roleFactory.create(tenant, user)
         const action = await roleActionFactory.create(role, user)
+
+        await roleActionAssetFactory.create(action, {
+          symbol: 'WETH',
+          address: unprefixAddress(wethAddress),
+          allowSell: true,
+          allowBuy: false,
+        })
 
         await setActiveAccounts(dbClient(), role, [account.id])
 
@@ -412,286 +532,27 @@ describe('Edit role', () => {
         )
 
         await userEvent.click(
-          await screen.findByRole('link', { name: 'Add assets' }),
+          await screen.findByRole('link', { name: 'Edit action' }),
         )
 
-        await selectOption('Assets', 'WETH')
-
         await userEvent.click(
-          await screen.findByRole('button', { name: 'Add' }),
+          await screen.findByRole('button', { name: 'Update' }),
         )
 
         await waitForPendingActions()
 
-        const [asset] = await getRoleActionAssets(dbClient(), action.id)
-
-        expect(asset).toMatchObject({ roleActionId: action.id, symbol: 'WETH' })
-      })
-
-      dbIt('lists current assets', async () => {
-        const user = await userFactory.create()
-        const tenant = await tenantFactory.create(user)
-
-        const role = await roleFactory.create(tenant, user)
-        const action = await roleActionFactory.create(role, user)
-
-        await roleActionAssetFactory.create(action, { symbol: 'WETH' })
-
-        await render(
-          href('/workspace/:workspaceId/roles/:roleId', {
-            workspaceId: tenant.defaultWorkspaceId,
-            roleId: role.id,
-          }),
-          { tenant, user },
-        )
-
-        expect(
-          await screen.findByRole('cell', { name: 'WETH' }),
-        ).toBeInTheDocument()
-      })
-
-      describe('Allowance', () => {
-        dbIt('is possible to add an allowance to an asset', async () => {
-          const user = await userFactory.create()
-          const tenant = await tenantFactory.create(user)
-
-          const role = await roleFactory.create(tenant, user)
-          const action = await roleActionFactory.create(role, user)
-
-          const asset = await roleActionAssetFactory.create(action, {
-            symbol: 'WETH',
-          })
-
-          await render(
-            href('/workspace/:workspaceId/roles/:roleId', {
-              workspaceId: tenant.defaultWorkspaceId,
-              roleId: role.id,
-            }),
-            { tenant, user },
-          )
-
-          await userEvent.click(
-            await screen.findByRole('link', { name: 'Edit asset' }),
-          )
-
-          await userEvent.type(
-            await screen.findByRole('spinbutton', { name: 'Allowance' }),
-            '1000',
-          )
-
-          await userEvent.click(
-            await screen.findByRole('button', { name: 'Update' }),
-          )
-
-          await waitForPendingActions()
-
-          await expect(
-            getRoleActionAsset(dbClient(), asset.id),
-          ).resolves.toMatchObject({
-            allowance: 1000n,
-            interval: AllowanceInterval.Monthly,
-          })
+        const assets = await getRoleActionAssets(dbClient(), {
+          actionId: action.id,
         })
 
-        dbIt('is possible to define the interval of an allowance', async () => {
-          const user = await userFactory.create()
-          const tenant = await tenantFactory.create(user)
-
-          const role = await roleFactory.create(tenant, user)
-          const action = await roleActionFactory.create(role, user)
-
-          const asset = await roleActionAssetFactory.create(action, {
-            symbol: 'WETH',
-          })
-
-          await render(
-            href('/workspace/:workspaceId/roles/:roleId', {
-              workspaceId: tenant.defaultWorkspaceId,
-              roleId: role.id,
+        expect(assets).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              symbol: 'WETH',
+              allowBuy: false,
+              allowSell: true,
             }),
-            { tenant, user },
-          )
-
-          await userEvent.click(
-            await screen.findByRole('link', { name: 'Edit asset' }),
-          )
-
-          await userEvent.type(
-            await screen.findByRole('spinbutton', { name: 'Allowance' }),
-            '1000',
-          )
-
-          await selectOption('Interval', 'Daily')
-
-          await userEvent.click(
-            await screen.findByRole('button', { name: 'Update' }),
-          )
-
-          await waitForPendingActions()
-
-          await expect(
-            getRoleActionAsset(dbClient(), asset.id),
-          ).resolves.toMatchObject({
-            allowance: 1000n,
-            interval: AllowanceInterval.Daily,
-          })
-        })
-
-        dbIt('is possible to create allowances on asset creation', async () => {
-          const user = await userFactory.create()
-          const tenant = await tenantFactory.create(user)
-
-          const role = await roleFactory.create(tenant, user)
-
-          const action = await roleActionFactory.create(role, user)
-
-          await render(
-            href('/workspace/:workspaceId/roles/:roleId', {
-              workspaceId: tenant.defaultWorkspaceId,
-              roleId: role.id,
-            }),
-            { tenant, user },
-          )
-
-          await userEvent.click(
-            await screen.findByRole('link', { name: 'Add assets' }),
-          )
-
-          await selectOption('Assets', 'WETH')
-
-          await userEvent.type(
-            await screen.findByRole('spinbutton', { name: 'Allowance' }),
-            '1000',
-          )
-
-          await selectOption('Interval', 'Daily')
-
-          await userEvent.click(
-            await screen.findByRole('button', { name: 'Add' }),
-          )
-
-          await waitForPendingActions()
-
-          const [asset] = await getRoleActionAssets(dbClient(), action.id)
-
-          expect(asset).toMatchObject({
-            allowance: 1000n,
-            interval: AllowanceInterval.Daily,
-          })
-        })
-      })
-
-      describe('Sell & Buy', () => {
-        dbIt(
-          'is possible to specify an asset that is only allowed to be sold',
-          async () => {
-            const user = await userFactory.create()
-            const tenant = await tenantFactory.create(user)
-
-            const role = await roleFactory.create(tenant, user)
-
-            const action = await roleActionFactory.create(role, user)
-
-            await render(
-              href('/workspace/:workspaceId/roles/:roleId', {
-                workspaceId: tenant.defaultWorkspaceId,
-                roleId: role.id,
-              }),
-              { tenant, user },
-            )
-
-            await userEvent.click(
-              await screen.findByRole('link', { name: 'Add assets' }),
-            )
-
-            await selectOption('Assets', 'WETH')
-
-            await selectOption('Permission', 'Sell')
-
-            await userEvent.click(
-              await screen.findByRole('button', { name: 'Add' }),
-            )
-
-            await waitForPendingActions()
-
-            const [asset] = await getRoleActionAssets(dbClient(), action.id)
-
-            expect(asset).toMatchObject({ allowSell: true, allowBuy: false })
-          },
-        )
-        dbIt(
-          'is possible to specify an asset that is only allowed to be bought',
-          async () => {
-            const user = await userFactory.create()
-            const tenant = await tenantFactory.create(user)
-
-            const role = await roleFactory.create(tenant, user)
-
-            const action = await roleActionFactory.create(role, user)
-
-            await render(
-              href('/workspace/:workspaceId/roles/:roleId', {
-                workspaceId: tenant.defaultWorkspaceId,
-                roleId: role.id,
-              }),
-              { tenant, user },
-            )
-
-            await userEvent.click(
-              await screen.findByRole('link', { name: 'Add assets' }),
-            )
-
-            await selectOption('Assets', 'WETH')
-
-            await selectOption('Permission', 'Buy')
-
-            await userEvent.click(
-              await screen.findByRole('button', { name: 'Add' }),
-            )
-
-            await waitForPendingActions()
-
-            const [asset] = await getRoleActionAssets(dbClient(), action.id)
-
-            expect(asset).toMatchObject({ allowSell: false, allowBuy: true })
-          },
-        )
-        dbIt(
-          'is possible to specify an asset that can be bought and sold',
-          async () => {
-            const user = await userFactory.create()
-            const tenant = await tenantFactory.create(user)
-
-            const role = await roleFactory.create(tenant, user)
-
-            const action = await roleActionFactory.create(role, user)
-
-            await render(
-              href('/workspace/:workspaceId/roles/:roleId', {
-                workspaceId: tenant.defaultWorkspaceId,
-                roleId: role.id,
-              }),
-              { tenant, user },
-            )
-
-            await userEvent.click(
-              await screen.findByRole('link', { name: 'Add assets' }),
-            )
-
-            await selectOption('Assets', 'WETH')
-
-            await selectOption('Permission', 'Sell & Buy')
-
-            await userEvent.click(
-              await screen.findByRole('button', { name: 'Add' }),
-            )
-
-            await waitForPendingActions()
-
-            const [asset] = await getRoleActionAssets(dbClient(), action.id)
-
-            expect(asset).toMatchObject({ allowSell: true, allowBuy: true })
-          },
+          ]),
         )
       })
     })

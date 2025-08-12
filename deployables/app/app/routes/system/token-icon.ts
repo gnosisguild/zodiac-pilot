@@ -1,13 +1,13 @@
-import { getVerifiedAssets } from '@/token-list'
+import { getVerifiedTokens } from '@/token-list'
 import { verifyPrefixedAddress } from '@zodiac/schema'
 import { Route } from './+types/token-icon'
 
 export const loader = async ({
   params: { prefixedAddress },
 }: Route.LoaderArgs) => {
-  const [asset] = await getVerifiedAssets([
+  const [token] = await getVerifiedTokens([
     verifyPrefixedAddress(prefixedAddress),
   ])
 
-  return await fetch(asset.logoURI)
+  return await fetch(token.logoURI)
 }

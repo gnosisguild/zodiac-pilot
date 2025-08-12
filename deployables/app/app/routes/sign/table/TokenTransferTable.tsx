@@ -60,60 +60,56 @@ export const TokenTransferTable = ({
           </TableRow>
         )}
 
-        {aggregated.map(
-          ({ symbol, from, to, logoUrl, amount, contractId }, index) => {
-            const fromAvatar = from.toLowerCase() === avatar
-            const toAvatar = to.toLowerCase() === avatar
-            const isMint = from === ZeroAddress
-            const isBurn = to === ZeroAddress
+        {aggregated.map(({ symbol, from, to, logoUrl, amount }, index) => {
+          const fromAvatar = from.toLowerCase() === avatar
+          const toAvatar = to.toLowerCase() === avatar
+          const isMint = from === ZeroAddress
+          const isBurn = to === ZeroAddress
 
-            return (
-              <TableRow key={index}>
-                <TableCell>
-                  <Token contract={contractId} logo={logoUrl}>
-                    {symbol}
-                  </Token>
-                </TableCell>
+          return (
+            <TableRow key={index}>
+              <TableCell>
+                <Token logoUrl={logoUrl}>{symbol}</Token>
+              </TableCell>
 
-                <TableCell>
-                  <div className="flex flex-col items-center gap-1 sm:flex-row sm:items-center sm:gap-2">
-                    {!fromAvatar && (
-                      <span className="whitespace-nowrap">
-                        {isMint ? (
-                          <span title={`${ZeroAddress} (mint)`}>🌱</span>
-                        ) : (
-                          <Address shorten size="small">
-                            {from}
-                          </Address>
-                        )}
-                      </span>
-                    )}
+              <TableCell>
+                <div className="flex flex-col items-center gap-1 sm:flex-row sm:items-center sm:gap-2">
+                  {!fromAvatar && (
+                    <span className="whitespace-nowrap">
+                      {isMint ? (
+                        <span title={`${ZeroAddress} (mint)`}>🌱</span>
+                      ) : (
+                        <Address shorten size="small">
+                          {from}
+                        </Address>
+                      )}
+                    </span>
+                  )}
 
-                    {!fromAvatar && !toAvatar && (
-                      <span className="hidden sm:block">→</span>
-                    )}
+                  {!fromAvatar && !toAvatar && (
+                    <span className="hidden sm:block">→</span>
+                  )}
 
-                    {!toAvatar && (
-                      <span className="whitespace-nowrap">
-                        {isBurn ? (
-                          <span title={`${ZeroAddress} (burn)`}>🔥</span>
-                        ) : (
-                          <Address shorten size="small">
-                            {to}
-                          </Address>
-                        )}
-                      </span>
-                    )}
-                  </div>
-                </TableCell>
+                  {!toAvatar && (
+                    <span className="whitespace-nowrap">
+                      {isBurn ? (
+                        <span title={`${ZeroAddress} (burn)`}>🔥</span>
+                      ) : (
+                        <Address shorten size="small">
+                          {to}
+                        </Address>
+                      )}
+                    </span>
+                  )}
+                </div>
+              </TableCell>
 
-                <TableCell align="right" className="tabular-nums">
-                  <NumberValue precision={4}>{amount}</NumberValue>
-                </TableCell>
-              </TableRow>
-            )
-          },
-        )}
+              <TableCell align="right" className="tabular-nums">
+                <NumberValue precision={4}>{amount}</NumberValue>
+              </TableCell>
+            </TableRow>
+          )
+        })}
       </TableBody>
     </Table>
   )

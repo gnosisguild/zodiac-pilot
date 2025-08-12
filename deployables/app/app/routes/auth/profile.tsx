@@ -213,10 +213,7 @@ const Profile = ({
                               defaultValue={
                                 defaultWallets[chainId] == null
                                   ? undefined
-                                  : {
-                                      value: defaultWallets[chainId].id,
-                                      label: defaultWallets[chainId].label,
-                                    }
+                                  : defaultWallets[chainId].id
                               }
                               placeholder={`Default wallet for ${chainName(chainId)}`}
                               label={`Default wallet for ${chainName(chainId)}`}

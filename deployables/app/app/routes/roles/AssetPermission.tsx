@@ -12,10 +12,7 @@ export const AssetPermission = (
   props: Omit<ComponentProps<typeof Select>, 'options'>,
 ) => (
   <Select
-    defaultValue={{
-      label: 'Sell & Buy',
-      value: SellBuyPermission.SellAndBuy,
-    }}
+    defaultValue={SellBuyPermission.SellAndBuy}
     {...props}
     options={[
       { label: 'Sell', value: SellBuyPermission.Sell },
@@ -27,12 +24,12 @@ export const AssetPermission = (
 
 export const getPermission = (asset: RoleActionAsset) => {
   if (asset.allowBuy && asset.allowSell) {
-    return { label: 'Sell & Buy', value: SellBuyPermission.SellAndBuy }
+    return SellBuyPermission.SellAndBuy
   }
 
   if (asset.allowBuy) {
-    return { label: 'Buy', value: SellBuyPermission.Buy }
+    return SellBuyPermission.Buy
   }
 
-  return { label: 'Sell', value: SellBuyPermission.Sell }
+  return SellBuyPermission.Sell
 }

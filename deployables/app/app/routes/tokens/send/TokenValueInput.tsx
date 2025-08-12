@@ -106,9 +106,7 @@ export const TokenValueInput = ({
                 state === 'loading' ? 'Loading tokens...' : 'Select token'
               }
               value={
-                selectedToken == null
-                  ? undefined
-                  : { value: selectedToken.contractId }
+                selectedToken == null ? undefined : selectedToken.contractId
               }
               onChange={(value) => {
                 if (value == null) {
@@ -130,7 +128,7 @@ export const TokenValueInput = ({
 
                 return (
                   <div className="text-xs">
-                    <Token logo={logoUrl}>{name}</Token>
+                    <Token logoUrl={logoUrl}>{name}</Token>
                   </div>
                 )
               }}

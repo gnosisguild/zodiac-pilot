@@ -1,16 +1,11 @@
 import {
+  PrefixedAddress,
   validateAddress,
   type HexAddress,
-  type PrefixedAddress,
 } from '@zodiac/schema'
-import { Select, type SelectProps } from '@zodiac/ui'
+import { BaseSelectOption, Select, type SelectProps } from '@zodiac/ui'
 import { unprefixAddress } from 'ser-kit'
 import { Address } from './Address'
-
-type Option = {
-  label: string
-  value: HexAddress
-}
 
 type LabeledAddress = {
   label: string | null
@@ -20,7 +15,7 @@ type LabeledAddress = {
 type Options = (HexAddress | LabeledAddress)[]
 
 export type AddressSelectProps<Creatable extends boolean> = Omit<
-  SelectProps<Option, Creatable>,
+  SelectProps<HexAddress, BaseSelectOption<HexAddress>, Creatable>,
   'options' | 'value' | 'defaultValue'
 > & {
   value?: HexAddress | PrefixedAddress
@@ -55,14 +50,8 @@ export function AddressSelect<Creatable extends boolean>({
         }
       })}
       isValidNewOption={(value) => validateAddress(value) != null}
-      value={
-        processedValue == null ? undefined : getValue(options, processedValue)
-      }
-      defaultValue={
-        processedDefaultValue == null
-          ? undefined
-          : getValue(options, processedDefaultValue)
-      }
+      value={processedValue}
+      defaultValue={processedDefaultValue}
     >
       {(props) => (
         <div className="flex w-full items-center justify-between gap-4">
@@ -89,31 +78,30 @@ export function AddressSelect<Creatable extends boolean>({
 }
 
 const getValue = (options: Options, value: HexAddress) => {
-  const existingValue = options.reduce<Option | undefined>(
-    (finalValue, option) => {
-      if (finalValue != null) {
-        return finalValue
-      }
+  const existingValue = options.reduce<
+    BaseSelectOption<HexAddress> | undefined
+  >((finalValue, option) => {
+    if (finalValue != null) {
+      return finalValue
+    }
 
-      if (typeof option === 'string') {
-        if (option === value) {
-          return { label: value, value }
-        }
-
-        return finalValue
-      }
-
-      if (option.address === value) {
-        return {
-          label: option.label || 'Unnamed account',
-          value: option.address,
-        }
+    if (typeof option === 'string') {
+      if (option === value) {
+        return { label: value, value }
       }
 
       return finalValue
-    },
-    undefined,
-  )
+    }
+
+    if (option.address === value) {
+      return {
+        label: option.label || 'Unnamed account',
+        value: option.address,
+      }
+    }
+
+    return finalValue
+  }, undefined)
 
   if (existingValue != null) {
     return existingValue

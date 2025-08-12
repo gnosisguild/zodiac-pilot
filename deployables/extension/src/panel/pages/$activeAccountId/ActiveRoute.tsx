@@ -50,8 +50,6 @@ export const action = async ({
 
   const intent = getString(data, 'intent')
 
-  console.log('HEY')
-
   switch (intent) {
     case Intent.CreateProposal: {
       const transaction = parseTransactionData(getString(data, 'transaction'))

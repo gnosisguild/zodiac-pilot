@@ -23,11 +23,7 @@ export const RouteSelect = ({ routes, value, onChange }: RouteSelectProps) => {
           value: route.id,
           label: route.label,
         }))}
-        value={
-          selectedRoute == null
-            ? undefined
-            : { value: selectedRoute.id, label: selectedRoute.label }
-        }
+        value={selectedRoute == null ? undefined : selectedRoute.id}
         onChange={(route) => {
           if (route == null) {
             return

@@ -1,4 +1,9 @@
-import { createContext, useContext, type PropsWithChildren } from 'react'
+import {
+  ComponentProps,
+  createContext,
+  useContext,
+  type PropsWithChildren,
+} from 'react'
 import { GhostButton } from './buttons'
 import {
   Alert,
@@ -24,23 +29,25 @@ const useOnClose = () => {
   return onClose
 }
 
-type ModalProps = PropsWithChildren<{
-  title?: string
-  description?: string
-  open: boolean
+type ModalProps = Pick<ComponentProps<typeof Alert>, 'size'> &
+  PropsWithChildren<{
+    title?: string
+    description?: string
+    open: boolean
 
-  onClose?: () => void
-}>
+    onClose?: () => void
+  }>
 
 export const Modal = ({
   open,
   title,
   description,
   children,
+  size,
   onClose = () => null,
 }: ModalProps) => {
   return (
-    <Alert open={open} onClose={onClose}>
+    <Alert open={open} onClose={onClose} size={size}>
       <ModalContext value={{ onClose }}>
         {title && <AlertTitle>{title}</AlertTitle>}
 

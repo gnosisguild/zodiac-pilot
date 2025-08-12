@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { Trash2 } from 'lucide-react'
+import { X } from 'lucide-react'
 import Select, {
   ClassNamesConfig,
   components,
@@ -32,7 +32,7 @@ function selectStyles<Option extends BaseOption>(): ClassNamesConfig<
   }
 }
 
-export const MultiSelect = <Option extends BaseOption = BaseOption>({
+export const MultiSelect = <Value extends string | number>({
   label,
   isDisabled,
   clearLabel,
@@ -40,10 +40,13 @@ export const MultiSelect = <Option extends BaseOption = BaseOption>({
   children,
   description,
   required = false,
+  options = [],
+  value,
+  defaultValue,
   ...props
-}: SelectProps<Option, false, true>) => {
-  const Option = useOptionRenderer<Option, true>(children)
-  const SingleValue = useSingleValueRenderer<Option, true>(children)
+}: SelectProps<Value, BaseOption<Value>, false, true>) => {
+  const Option = useOptionRenderer<BaseOption<Value>, true>(children)
+  const SingleValue = useSingleValueRenderer<BaseOption<Value>, true>(children)
 
   return (
     <Input
@@ -54,7 +57,7 @@ export const MultiSelect = <Option extends BaseOption = BaseOption>({
       required={required}
     >
       {({ inputId }) => (
-        <Select<Option, true>
+        <Select<BaseOption<Value>, true>
           {...props}
           unstyled
           isMulti
@@ -63,7 +66,34 @@ export const MultiSelect = <Option extends BaseOption = BaseOption>({
           inputId={inputId}
           isDisabled={isDisabled}
           controlShouldRenderValue={false}
-          classNames={selectStyles<Option>()}
+          options={options}
+          value={
+            value == null
+              ? undefined
+              : options.filter<BaseOption<Value>>(
+                  (option): option is BaseOption<Value> => {
+                    if ('value' in option) {
+                      return value.includes(option.value)
+                    }
+
+                    return false
+                  },
+                )
+          }
+          defaultValue={
+            defaultValue == null
+              ? undefined
+              : options.filter<BaseOption<Value>>(
+                  (option): option is BaseOption<Value> => {
+                    if ('value' in option) {
+                      return defaultValue.includes(option.value)
+                    }
+
+                    return false
+                  },
+                )
+          }
+          classNames={selectStyles<BaseOption<Value>>()}
           components={{
             ClearIndicator,
             DropdownIndicator,
@@ -125,7 +155,7 @@ function SelectContainer<Option extends BaseOption>({
                     value,
                   )
                 }
-                icon={Trash2}
+                icon={X}
               >
                 Remove
               </GhostButton>

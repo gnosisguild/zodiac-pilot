@@ -1,5 +1,7 @@
 import { useTokenBalances } from '@/balances-client'
 import { Token } from '@/components'
+import { ZERO_ADDRESS } from '@zodiac/chains'
+import { isHexAddress } from '@zodiac/schema'
 import {
   Empty,
   Error as ErrorAlert,
@@ -15,14 +17,18 @@ import {
   TokenValue,
   UsdValue,
 } from '@zodiac/ui'
+import { useChainId } from '@zodiac/web3'
 import { ArrowUpFromLine } from 'lucide-react'
 import { href } from 'react-router'
+import { prefixAddress } from 'ser-kit'
 import type { Route } from './+types/balances'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Pilot | Balances' }]
 
 const Balances = ({ params: { workspaceId } }: Route.ComponentProps) => {
   const [{ data, isForked }, state] = useTokenBalances()
+  const chainId = useChainId()
+
   if (data.length === 0 && state !== 'loading') {
     return (
       <Info title="Nothing to show">
@@ -53,19 +59,16 @@ const Balances = ({ params: { workspaceId } }: Route.ComponentProps) => {
         </TableHead>
         <TableBody>
           {data.map(
-            ({
-              contractId,
-              chain,
-              name,
-              logoUrl,
-              usdValue,
-              amount,
-              symbol,
-              diff,
-            }) => (
+            ({ contractId, chain, name, usdValue, amount, symbol, diff }) => (
               <TableRow key={contractId} className="group">
                 <TableCell>
-                  <Token contract={contractId} logo={logoUrl}>
+                  <Token
+                    contractAddress={
+                      isHexAddress(contractId)
+                        ? prefixAddress(chainId, contractId)
+                        : prefixAddress(chainId, ZERO_ADDRESS)
+                    }
+                  >
                     {name}
                   </Token>
                 </TableCell>

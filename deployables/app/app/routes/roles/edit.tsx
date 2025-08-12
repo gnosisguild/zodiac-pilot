@@ -1,6 +1,5 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
-import { Page } from '@/components'
-import { Chain } from '@/routes-ui'
+import { Page, Token } from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
 import { chainName } from '@zodiac/chains'
 import {
@@ -22,28 +21,19 @@ import { isUUID } from '@zodiac/schema'
 import {
   Card,
   DateValue,
-  Empty,
   Form,
   FormLayout,
   GhostLinkButton,
   Info,
   MultiSelect,
-  NumberValue,
   Popover,
   PrimaryButton,
   SecondaryLinkButton,
   successToast,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableRowActions,
   Tag,
   TextInput,
 } from '@zodiac/ui'
-import { ArrowRightLeft, Check, Pencil, X } from 'lucide-react'
+import { ArrowRight, ArrowRightLeft, Pencil } from 'lucide-react'
 import { UUID } from 'node:crypto'
 import { href, Outlet } from 'react-router'
 import { prefixAddress } from 'ser-kit'
@@ -193,10 +183,7 @@ const EditRole = ({
                 label: user.fullName,
                 value: user.id,
               }))}
-              defaultValue={members.map((member) => ({
-                label: member.fullName,
-                value: member.id,
-              }))}
+              defaultValue={members.map((member) => member.id)}
             >
               {({ data: { label, value } }) => (
                 <div className="flex flex-col gap-1">
@@ -289,116 +276,64 @@ const EditRole = ({
                   </div>
                 }
               >
-                <FormLayout>
-                  {action.assets.length === 0 && (
-                    <Info title="No assets">
-                      Add assets to define custom allowances
-                    </Info>
-                  )}
+                {action.assets.length === 0 && (
+                  <Info>
+                    No assets have been configured for this swap
+                    <Info.Actions>
+                      <SecondaryLinkButton
+                        size="small"
+                        to={href(
+                          '/workspace/:workspaceId/roles/:roleId/action/:actionId',
+                          { workspaceId, roleId, actionId: action.id },
+                        )}
+                      >
+                        Configure swap
+                      </SecondaryLinkButton>
+                    </Info.Actions>
+                  </Info>
+                )}
 
-                  {action.assets.length > 0 && (
-                    <Table>
-                      <TableHead>
-                        <TableRow withActions>
-                          <TableHeader>Asset</TableHeader>
-                          <TableHeader>Chain</TableHeader>
-                          <TableHeader>Buy</TableHeader>
-                          <TableHeader>Sell</TableHeader>
-                          <TableHeader>Allowance</TableHeader>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {action.assets.map((asset) => (
-                          <TableRow key={asset.id}>
-                            <TableCell>
-                              <div className="flex items-center gap-1">
-                                <img
-                                  src={href(
-                                    '/system/token-icon/:prefixedAddress',
-                                    {
-                                      prefixedAddress: prefixAddress(
-                                        asset.chainId,
-                                        asset.address,
-                                      ),
-                                    },
-                                  )}
-                                  alt=""
-                                  className="size-4 rounded-full"
-                                />
-                                {asset.symbol}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              <Chain chainId={asset.chainId} />
-                            </TableCell>
-                            <TableCell>
-                              {asset.allowBuy ? (
-                                <Check className="size-4 text-green-600 dark:text-green-400" />
-                              ) : (
-                                <X className="size-4 text-red-600 dark:text-red-400" />
+                {action.assets.length > 0 && (
+                  <div className="grid grid-cols-9 items-center gap-4">
+                    <div className="col-span-4 flex flex-col divide-y divide-zinc-300 rounded bg-zinc-100 dark:divide-zinc-700 dark:bg-zinc-800">
+                      {action.assets
+                        .filter((asset) => asset.allowSell)
+                        .map((asset) => (
+                          <div key={asset.id} className="px-4 py-2">
+                            <Token
+                              contractAddress={prefixAddress(
+                                asset.chainId,
+                                asset.address,
                               )}
-                            </TableCell>
-                            <TableCell>
-                              {asset.allowSell ? (
-                                <Check className="size-4 text-green-600 dark:text-green-400" />
-                              ) : (
-                                <X className="size-4 text-red-600 dark:text-red-400" />
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              {asset.allowance == null ? (
-                                <Empty />
-                              ) : (
-                                <div className="flex items-center gap-2">
-                                  <NumberValue>{asset.allowance}</NumberValue>
-                                  <Tag color="gray">{asset.interval}</Tag>
-                                </div>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              <TableRowActions>
-                                <GhostLinkButton
-                                  iconOnly
-                                  replace
-                                  icon={Pencil}
-                                  size="tiny"
-                                  to={href(
-                                    '/workspace/:workspaceId/roles/:roleId/action/:actionId/asset/:assetId',
-                                    {
-                                      workspaceId,
-                                      roleId,
-                                      actionId: asset.roleActionId,
-                                      assetId: asset.id,
-                                    },
-                                  )}
-                                >
-                                  Edit asset
-                                </GhostLinkButton>
-                              </TableRowActions>
-                            </TableCell>
-                          </TableRow>
+                            >
+                              {asset.symbol}
+                            </Token>
+                          </div>
                         ))}
-                      </TableBody>
-                    </Table>
-                  )}
+                    </div>
 
-                  <FormLayout.Actions>
-                    <GhostLinkButton
-                      replace
-                      size="small"
-                      to={href(
-                        '/workspace/:workspaceId/roles/:roleId/action/:actionId/add-asset',
-                        {
-                          workspaceId,
-                          roleId: action.roleId,
-                          actionId: action.id,
-                        },
-                      )}
-                    >
-                      Add assets
-                    </GhostLinkButton>
-                  </FormLayout.Actions>
-                </FormLayout>
+                    <div className="flex justify-center">
+                      <ArrowRight className="size-4" />
+                    </div>
+
+                    <div className="col-span-4 flex flex-col divide-y divide-zinc-300 rounded bg-zinc-100 dark:divide-zinc-700 dark:bg-zinc-800">
+                      {action.assets
+                        .filter((asset) => asset.allowBuy)
+                        .map((asset) => (
+                          <div key={asset.id} className="px-4 py-2">
+                            <Token
+                              contractAddress={prefixAddress(
+                                asset.chainId,
+                                asset.address,
+                              )}
+                            >
+                              {asset.symbol}
+                            </Token>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
               </Card>
             ))}
 

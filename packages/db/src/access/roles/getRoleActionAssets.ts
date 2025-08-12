@@ -1,9 +1,27 @@
 import { UUID } from 'crypto'
 import { DBClient } from '../../dbClient'
 
-export const getRoleActionAssets = (db: DBClient, actionId: UUID) =>
-  db.query.roleActionAsset.findMany({
+type GetByRoleOptions = {
+  roleId: UUID
+}
+
+type GetByActionOptions = {
+  actionId: UUID
+}
+
+type GetRoleActionAssetsOptions = GetByRoleOptions | GetByActionOptions
+
+export function getRoleActionAssets(
+  db: DBClient,
+  options: GetRoleActionAssetsOptions,
+) {
+  return db.query.roleActionAsset.findMany({
     where(fields, { eq }) {
-      return eq(fields.roleActionId, actionId)
+      if ('actionId' in options) {
+        return eq(fields.roleActionId, options.actionId)
+      }
+
+      return eq(fields.roleId, options.roleId)
     },
   })
+}
