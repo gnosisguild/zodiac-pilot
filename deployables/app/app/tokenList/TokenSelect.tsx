@@ -31,7 +31,7 @@ export const TokenSelect = ({ tokens, ...props }: TokenSelectProps) => (
             {label}
           </span>
 
-          <span aria-hidden className="text-zinc-300">
+          <span aria-hidden className="text-zinc-500 dark:text-zinc-300">
             <Chain chainId={getChainId(value)} />
           </span>
         </div>
