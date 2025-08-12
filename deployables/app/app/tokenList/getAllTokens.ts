@@ -2,7 +2,7 @@ import { isEnabledChain, verifyChainId } from '@zodiac/chains'
 import { prefixAddress } from 'ser-kit'
 import { assetSchema } from './schema'
 
-export const getAllAssets = async () => {
+export const getAllTokens = async () => {
   const response = await fetch('https://ipfs.io/ipns/tokens.uniswap.org')
   const json = await response.json()
 

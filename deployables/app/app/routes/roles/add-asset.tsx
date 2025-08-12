@@ -1,9 +1,6 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
-import { Token } from '@/components'
-import { Chain } from '@/routes-ui'
-import { getAssets, getVerifiedAssets } from '@/token-list'
+import { getTokens, getVerifiedTokens, TokenSelect } from '@/token-list'
 import { invariantResponse } from '@epic-web/invariant'
-import { getChainId } from '@zodiac/chains'
 import {
   createRoleActionAssets,
   dbClient,
@@ -17,13 +14,7 @@ import {
 } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { AllowanceInterval, isUUID } from '@zodiac/schema'
-import {
-  Form,
-  Modal,
-  MultiSelect,
-  NumberInput,
-  PrimaryButton,
-} from '@zodiac/ui'
+import { Form, Modal, NumberInput, PrimaryButton } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/add-asset'
 import { AllowanceIntervalSelect } from './AllowanceIntervalSelect'
@@ -41,7 +32,7 @@ export const loader = (args: Route.LoaderArgs) =>
       })
 
       return {
-        assets: await getAssets(
+        tokens: await getTokens(
           activatedAccounts.map(({ chainId }) => chainId),
         ),
       }
@@ -71,7 +62,7 @@ export const action = (args: Route.ActionArgs) =>
       const data = await request.formData()
 
       const assets = getPrefixedAddressList(data, 'assets')
-      const verifiedAssets = await getVerifiedAssets(assets)
+      const verifiedAssets = await getVerifiedTokens(assets)
 
       const action = await getRoleAction(dbClient(), actionId)
 
@@ -120,7 +111,7 @@ export const action = (args: Route.ActionArgs) =>
   )
 
 const AddAsset = ({
-  loaderData: { assets },
+  loaderData: { tokens },
   params: { workspaceId, roleId },
 }: Route.ComponentProps) => {
   const navigate = useNavigate()
@@ -141,33 +132,13 @@ const AddAsset = ({
       }
     >
       <Form replace>
-        <MultiSelect
+        <TokenSelect
           required
           name="assets"
           label="Assets"
           placeholder="Select one or more assets"
-          options={Object.values(assets).map((asset) => ({
-            label: asset.symbol,
-            value: asset.address,
-          }))}
-        >
-          {({ data: { value, label } }) => {
-            const token = assets[value]
-
-            return (
-              <div className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-1">
-                  <Token logo={token.logoURI} />
-                  {label}
-                </span>
-
-                <span aria-hidden>
-                  <Chain chainId={getChainId(value)} />
-                </span>
-              </div>
-            )
-          }}
-        </MultiSelect>
+          tokens={tokens}
+        />
 
         <AssetPermission required label="Permission" name="permission" />
 

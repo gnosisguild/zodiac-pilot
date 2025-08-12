@@ -1,5 +1,5 @@
 import { render } from '@/test-utils'
-import { getAssets, getVerifiedAssets } from '@/token-list'
+import { getTokens, getVerifiedTokens } from '@/token-list'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain } from '@zodiac/chains'
@@ -37,16 +37,16 @@ import { Intent } from './intents'
 vi.mock('@/token-list', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/token-list')>()
 
-  return { ...module, getAssets: vi.fn(), getVerifiedAssets: vi.fn() }
+  return { ...module, getTokens: vi.fn(), getVerifiedTokens: vi.fn() }
 })
 
-const mockGetAssets = vi.mocked(getAssets)
-const mockGetVerifiedAssets = vi.mocked(getVerifiedAssets)
+const mockGetTokens = vi.mocked(getTokens)
+const mockGetVerifiedTokens = vi.mocked(getVerifiedTokens)
 
 describe('Edit role', () => {
   beforeEach(() => {
-    mockGetAssets.mockResolvedValue({})
-    mockGetVerifiedAssets.mockResolvedValue([])
+    mockGetTokens.mockResolvedValue({})
+    mockGetVerifiedTokens.mockResolvedValue([])
   })
 
   describe('General', () => {
@@ -375,6 +375,92 @@ describe('Edit role', () => {
       },
     )
 
+    describe('Swapper action', () => {
+      beforeEach(() => {
+        beforeEach(() => {
+          const wethAddress = randomPrefixedAddress()
+          const aaveAddress = randomPrefixedAddress()
+
+          const weth = {
+            chainId: Chain.ETH,
+            logoURI: '',
+            name: 'Wrapped Ether',
+            symbol: 'WETH',
+            address: wethAddress,
+          }
+
+          const aave = {
+            chainId: Chain.ETH,
+            logoURI: '',
+            name: 'AAVE',
+            symbol: 'AAVE',
+            address: aaveAddress,
+          }
+
+          mockGetTokens.mockResolvedValue({
+            [wethAddress]: weth,
+            [aaveAddress]: aave,
+          })
+          mockGetVerifiedTokens.mockResolvedValue([weth])
+        })
+      })
+
+      dbIt(
+        'is possible to define the assets that are allowed to be swapped',
+        async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
+
+          const role = await roleFactory.create(tenant, user)
+
+          await render(
+            href('/workspace/:workspaceId/roles/:roleId', {
+              workspaceId: tenant.defaultWorkspaceId,
+              roleId: role.id,
+            }),
+            { tenant, user },
+          )
+
+          await userEvent.click(
+            await screen.findByRole('link', { name: 'Add new action' }),
+          )
+          await userEvent.type(
+            await screen.findByRole('textbox', { name: 'Action label' }),
+            'Test action',
+          )
+
+          await selectOption('Swap from', 'WETH')
+          await selectOption('Swap for', 'AAVE')
+
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Add' }),
+          )
+
+          await waitForPendingActions()
+
+          const [action] = await getRoleActions(dbClient(), role.id)
+          const assets = await getRoleActionAssets(dbClient(), {
+            actionId: action.id,
+          })
+
+          expect(assets).toContain(
+            expect.objectContaining({
+              label: 'WETH',
+              allowBuy: false,
+              allowSell: true,
+            }),
+          )
+          expect(assets).toContain(
+            expect.objectContaining({
+              label: 'AAVE',
+              allowBuy: true,
+              allowSell: false,
+            }),
+          )
+        },
+      )
+    })
+
     describe('Assets', () => {
       beforeEach(() => {
         const address = randomPrefixedAddress()
@@ -386,8 +472,8 @@ describe('Edit role', () => {
           address,
         }
 
-        mockGetAssets.mockResolvedValue({ [address]: weth })
-        mockGetVerifiedAssets.mockResolvedValue([weth])
+        mockGetTokens.mockResolvedValue({ [address]: weth })
+        mockGetVerifiedTokens.mockResolvedValue([weth])
       })
 
       dbIt('is possible to add an asset', async () => {
@@ -423,7 +509,9 @@ describe('Edit role', () => {
 
         await waitForPendingActions()
 
-        const [asset] = await getRoleActionAssets(dbClient(), action.id)
+        const [asset] = await getRoleActionAssets(dbClient(), {
+          actionId: action.id,
+        })
 
         expect(asset).toMatchObject({ roleActionId: action.id, symbol: 'WETH' })
       })
@@ -572,7 +660,9 @@ describe('Edit role', () => {
 
           await waitForPendingActions()
 
-          const [asset] = await getRoleActionAssets(dbClient(), action.id)
+          const [asset] = await getRoleActionAssets(dbClient(), {
+            actionId: action.id,
+          })
 
           expect(asset).toMatchObject({
             allowance: 1000n,
@@ -614,7 +704,9 @@ describe('Edit role', () => {
 
             await waitForPendingActions()
 
-            const [asset] = await getRoleActionAssets(dbClient(), action.id)
+            const [asset] = await getRoleActionAssets(dbClient(), {
+              actionId: action.id,
+            })
 
             expect(asset).toMatchObject({ allowSell: true, allowBuy: false })
           },
@@ -651,7 +743,9 @@ describe('Edit role', () => {
 
             await waitForPendingActions()
 
-            const [asset] = await getRoleActionAssets(dbClient(), action.id)
+            const [asset] = await getRoleActionAssets(dbClient(), {
+              actionId: action.id,
+            })
 
             expect(asset).toMatchObject({ allowSell: false, allowBuy: true })
           },
@@ -688,7 +782,9 @@ describe('Edit role', () => {
 
             await waitForPendingActions()
 
-            const [asset] = await getRoleActionAssets(dbClient(), action.id)
+            const [asset] = await getRoleActionAssets(dbClient(), {
+              actionId: action.id,
+            })
 
             expect(asset).toMatchObject({ allowSell: true, allowBuy: true })
           },

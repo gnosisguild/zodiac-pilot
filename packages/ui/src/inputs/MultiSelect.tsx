@@ -32,7 +32,7 @@ function selectStyles<Option extends BaseOption>(): ClassNamesConfig<
   }
 }
 
-export const MultiSelect = <Option extends BaseOption = BaseOption>({
+export const MultiSelect = <Value extends string | number>({
   label,
   isDisabled,
   clearLabel,
@@ -41,9 +41,9 @@ export const MultiSelect = <Option extends BaseOption = BaseOption>({
   description,
   required = false,
   ...props
-}: SelectProps<Option, false, true>) => {
-  const Option = useOptionRenderer<Option, true>(children)
-  const SingleValue = useSingleValueRenderer<Option, true>(children)
+}: SelectProps<BaseOption<Value>, false, true>) => {
+  const Option = useOptionRenderer<BaseOption<Value>, true>(children)
+  const SingleValue = useSingleValueRenderer<BaseOption<Value>, true>(children)
 
   return (
     <Input
@@ -54,7 +54,7 @@ export const MultiSelect = <Option extends BaseOption = BaseOption>({
       required={required}
     >
       {({ inputId }) => (
-        <Select<Option, true>
+        <Select<BaseOption<Value>, true>
           {...props}
           unstyled
           isMulti
@@ -63,7 +63,7 @@ export const MultiSelect = <Option extends BaseOption = BaseOption>({
           inputId={inputId}
           isDisabled={isDisabled}
           controlShouldRenderValue={false}
-          classNames={selectStyles<Option>()}
+          classNames={selectStyles<BaseOption<Value>>()}
           components={{
             ClearIndicator,
             DropdownIndicator,
