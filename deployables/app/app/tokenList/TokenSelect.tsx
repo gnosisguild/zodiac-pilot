@@ -1,9 +1,9 @@
 import { Token } from '@/components'
-import { Chain } from '@/routes-ui'
-import { getChainId } from '@zodiac/chains'
+import { chainName, getChainId } from '@zodiac/chains'
 import { PrefixedAddress } from '@zodiac/schema'
 import { MultiSelect } from '@zodiac/ui'
 import { ComponentProps } from 'react'
+import { href } from 'react-router'
 import { Tokens } from './getTokens'
 
 type TokenSelectProps = Omit<
@@ -23,13 +23,16 @@ export const TokenSelect = ({ tokens, ...props }: TokenSelectProps) => (
   >
     {({ data: { value, label } }) => (
       <div className="flex items-center justify-between gap-2">
-        <span className="flex items-center gap-1">
-          <Token contractAddress={value} />
-          {label}
-        </span>
+        <Token contractAddress={value}>{label}</Token>
 
         <span aria-hidden className="text-zinc-500 dark:text-zinc-300">
-          <Chain chainId={getChainId(value)} />
+          <Token
+            logoUrl={href('/system/chain-icon/:chainId', {
+              chainId: `${getChainId(value)}`,
+            })}
+          >
+            {chainName(getChainId(value))}
+          </Token>
         </span>
       </div>
     )}

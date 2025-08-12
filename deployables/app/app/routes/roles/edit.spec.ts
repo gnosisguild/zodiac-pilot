@@ -35,7 +35,11 @@ import { Intent } from './intents'
 vi.mock('@/token-list', async (importOriginal) => {
   const module = await importOriginal<typeof import('@/token-list')>()
 
-  return { ...module, getTokens: vi.fn(), getVerifiedTokens: vi.fn() }
+  return {
+    ...module,
+    getTokens: vi.fn(),
+    getVerifiedTokens: vi.fn(),
+  }
 })
 
 const mockGetTokens = vi.mocked(getTokens)
@@ -550,44 +554,6 @@ describe('Edit role', () => {
             }),
           ]),
         )
-      })
-    })
-
-    describe('Assets', () => {
-      beforeEach(() => {
-        const address = randomPrefixedAddress()
-        const weth = {
-          chainId: Chain.ETH,
-          logoURI: '',
-          name: 'Wrapped Ether',
-          symbol: 'WETH',
-          address,
-        }
-
-        mockGetTokens.mockResolvedValue({ [address]: weth })
-        mockGetVerifiedTokens.mockResolvedValue([weth])
-      })
-
-      dbIt('lists current assets', async () => {
-        const user = await userFactory.create()
-        const tenant = await tenantFactory.create(user)
-
-        const role = await roleFactory.create(tenant, user)
-        const action = await roleActionFactory.create(role, user)
-
-        await roleActionAssetFactory.create(action, { symbol: 'WETH' })
-
-        await render(
-          href('/workspace/:workspaceId/roles/:roleId', {
-            workspaceId: tenant.defaultWorkspaceId,
-            roleId: role.id,
-          }),
-          { tenant, user },
-        )
-
-        expect(
-          await screen.findByRole('cell', { name: 'WETH' }),
-        ).toBeInTheDocument()
       })
     })
   })

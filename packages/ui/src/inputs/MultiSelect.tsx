@@ -70,7 +70,7 @@ export const MultiSelect = <Value extends string | number>({
           value={
             value == null
               ? undefined
-              : options.find<BaseOption<Value>>(
+              : options.filter<BaseOption<Value>>(
                   (option): option is BaseOption<Value> => {
                     if ('value' in option) {
                       return value.includes(option.value)
@@ -83,7 +83,7 @@ export const MultiSelect = <Value extends string | number>({
           defaultValue={
             defaultValue == null
               ? undefined
-              : options.find<BaseOption<Value>>(
+              : options.filter<BaseOption<Value>>(
                   (option): option is BaseOption<Value> => {
                     if ('value' in option) {
                       return defaultValue.includes(option.value)
