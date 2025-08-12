@@ -6,6 +6,7 @@ export const graphqlClient = () => {
   const client = new Client({
     url: 'https://gnosisguild.squids.live/roles:production/api/graphql',
     exchanges: [fetchExchange],
+    preferGetMethod: false,
   })
 
   return {
