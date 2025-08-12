@@ -6,7 +6,7 @@ export const AllowanceIntervalSelect = (
   props: Omit<ComponentProps<typeof Select>, 'options' | 'isClearable'>,
 ) => (
   <Select
-    defaultValue={{ label: 'Monthly', value: AllowanceInterval.Monthly }}
+    defaultValue={AllowanceInterval.Monthly}
     {...props}
     isClearable={false}
     options={[

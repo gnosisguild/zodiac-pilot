@@ -22,10 +22,7 @@ export const AccountSelect = ({
         label: account.label,
         value: account.id,
       }))}
-      defaultValue={defaultValue.map((account) => ({
-        label: account.label,
-        value: account.id,
-      }))}
+      defaultValue={defaultValue.map((account) => account.id)}
     >
       {({ data: { value } }) => {
         const account = accounts.find((account) => account.id === value)

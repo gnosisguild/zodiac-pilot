@@ -193,10 +193,7 @@ const EditRole = ({
                 label: user.fullName,
                 value: user.id,
               }))}
-              defaultValue={members.map((member) => ({
-                label: member.fullName,
-                value: member.id,
-              }))}
+              defaultValue={members.map((member) => member.id)}
             >
               {({ data: { label, value } }) => (
                 <div className="flex flex-col gap-1">

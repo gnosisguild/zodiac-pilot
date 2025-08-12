@@ -150,8 +150,8 @@ const EditAsset = ({
             name="interval"
             defaultValue={
               asset.interval == null
-                ? { label: 'Monthly', value: AllowanceInterval.Monthly }
-                : { label: capitalize(asset.interval), value: asset.interval }
+                ? AllowanceInterval.Monthly
+                : asset.interval
             }
           />
         </div>
@@ -172,9 +172,3 @@ const EditAsset = ({
 }
 
 export default EditAsset
-
-const capitalize = (value: string) => {
-  const [firstLetter, ...rest] = value
-
-  return `${firstLetter.toUpperCase()}${rest.join('')}`
-}

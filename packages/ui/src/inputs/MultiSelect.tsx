@@ -40,6 +40,9 @@ export const MultiSelect = <Value extends string | number>({
   children,
   description,
   required = false,
+  options = [],
+  value,
+  defaultValue,
   ...props
 }: SelectProps<Value, BaseOption<Value>, false, true>) => {
   const Option = useOptionRenderer<BaseOption<Value>, true>(children)
@@ -63,6 +66,33 @@ export const MultiSelect = <Value extends string | number>({
           inputId={inputId}
           isDisabled={isDisabled}
           controlShouldRenderValue={false}
+          options={options}
+          value={
+            value == null
+              ? undefined
+              : options.find<BaseOption<Value>>(
+                  (option): option is BaseOption<Value> => {
+                    if ('value' in option) {
+                      return value.includes(option.value)
+                    }
+
+                    return false
+                  },
+                )
+          }
+          defaultValue={
+            defaultValue == null
+              ? undefined
+              : options.find<BaseOption<Value>>(
+                  (option): option is BaseOption<Value> => {
+                    if ('value' in option) {
+                      return defaultValue.includes(option.value)
+                    }
+
+                    return false
+                  },
+                )
+          }
           classNames={selectStyles<BaseOption<Value>>()}
           components={{
             ClearIndicator,

@@ -135,10 +135,7 @@ const RemoveWorkspace = ({
         <Select
           label="Move accounts to"
           name="targetWorkspaceId"
-          defaultValue={{
-            value: defaultWorkspace.id,
-            label: defaultWorkspace.label,
-          }}
+          defaultValue={defaultWorkspace.id}
           options={workspaces.map((workspace) => ({
             label: workspace.label,
             value: workspace.id,

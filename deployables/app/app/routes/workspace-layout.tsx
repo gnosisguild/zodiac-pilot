@@ -144,10 +144,7 @@ const PageLayout = ({
                       <Select
                         label="Workspace"
                         name="workspaceId"
-                        defaultValue={{
-                          value: workspace.id,
-                          label: workspace.label,
-                        }}
+                        defaultValue={workspace.id}
                         options={workspaces.map((workspace) => ({
                           value: workspace.id,
                           label: workspace.label,

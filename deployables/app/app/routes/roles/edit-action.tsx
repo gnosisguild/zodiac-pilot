@@ -15,6 +15,7 @@ import { useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import { Form, Modal, PrimaryButton } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
+import { prefixAddress } from 'ser-kit'
 import { Route } from './+types/edit-action'
 import { ActionLabelInput } from './ActionLabelInput'
 import { Intent } from './intents'
@@ -38,10 +39,10 @@ export const loader = (args: Route.LoaderArgs) =>
         action,
         assetsToSell: assets
           .filter((asset) => asset.allowSell)
-          .map((asset) => asset.address),
+          .map((asset) => prefixAddress(asset.chainId, asset.address)),
         assetsToBuy: assets
           .filter((asset) => asset.allowBuy)
-          .map((asset) => asset.address),
+          .map((asset) => prefixAddress(asset.chainId, asset.address)),
         tokens: await getTokens(activeAccounts.map(({ chainId }) => chainId)),
       }
     },

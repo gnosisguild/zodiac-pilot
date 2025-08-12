@@ -6,8 +6,8 @@ import { Chain as ChainComponent } from './Chain'
 
 type ChainSelectProps = {
   disabled?: boolean
-  value?: ChainId | null
-  defaultValue?: ChainId | null
+  value?: ChainId
+  defaultValue?: ChainId
   onChange?(chainId: ChainId): void
   name?: string
 }
@@ -39,15 +39,15 @@ export const ChainSelect = ({
       : [...visibleOptions, optionToShow]
 
   return (
-    <Select
+    <Select<ChainId, false>
       label="Chain"
       isDisabled={disabled}
       dropdownLabel="Select a different chain"
       isMulti={false}
       options={options.toSorted((a, b) => a.label.localeCompare(b.label))}
       name={name}
-      value={valueOption}
-      defaultValue={defaultValueOption}
+      value={value}
+      defaultValue={defaultValue}
       onChange={(option) => {
         invariant(option != null, 'Empty value selected as chain')
 

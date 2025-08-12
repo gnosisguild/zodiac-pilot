@@ -72,19 +72,35 @@ export function selectStyles<
 }
 
 type SelectBaseProps<
+  Value extends string | number,
   Option extends BaseOption,
   isMulti extends boolean,
   Creatable extends boolean,
-> = {
-  label: string
-  description?: string
-  hideLabel?: boolean
-  clearLabel?: string
-  dropdownLabel?: string
-  allowCreate?: Creatable
-  inline?: boolean
-  children?: OptionRenderProps<Option, isMulti>
-}
+> = isMulti extends true
+  ? {
+      label: string
+      value?: Value[]
+      defaultValue?: Value[]
+      description?: string
+      hideLabel?: boolean
+      clearLabel?: string
+      dropdownLabel?: string
+      allowCreate?: Creatable
+      inline?: boolean
+      children?: OptionRenderProps<Option, isMulti>
+    }
+  : {
+      label: string
+      value?: Value
+      defaultValue?: Value
+      description?: string
+      hideLabel?: boolean
+      clearLabel?: string
+      dropdownLabel?: string
+      allowCreate?: Creatable
+      inline?: boolean
+      children?: OptionRenderProps<Option, isMulti>
+    }
 
 export type SelectProps<
   Value extends string | number,
@@ -92,13 +108,16 @@ export type SelectProps<
   Creatable extends boolean,
   isMulti extends boolean = false,
 > = Creatable extends true
-  ? CreatableProps<Option, isMulti, GroupBase<Option>> &
-      SelectBaseProps<Option, isMulti, Creatable>
-  : Props<Option, isMulti> & SelectBaseProps<Option, isMulti, Creatable>
+  ? Omit<
+      CreatableProps<Option, isMulti, GroupBase<Option>>,
+      'defaultValue' | 'value'
+    > &
+      SelectBaseProps<Value, Option, isMulti, Creatable>
+  : Omit<Props<Option, isMulti>, 'defaultValue' | 'value'> &
+      SelectBaseProps<Value, Option, isMulti, Creatable>
 
 export function Select<
-  Value extends string | number = string | number,
-  Option extends BaseOption<Value> = BaseOption<Value>,
+  Value extends string | number,
   Creatable extends boolean = false,
 >({
   label,
@@ -111,13 +130,16 @@ export function Select<
   inline = false,
   children,
   required = false,
+  options = [],
+  value,
+  defaultValue,
   ...props
-}: SelectProps<Value, Option, Creatable, false>) {
+}: SelectProps<Value, BaseOption<Value>, Creatable, false>) {
   const Component = allowCreate ? Creatable : BaseSelect
   const Layout = inline ? InlineLayout : InputLayout
 
-  const Option = useOptionRenderer<Option, false>(children)
-  const SingleValue = useSingleValueRenderer<Option, false>(children)
+  const Option = useOptionRenderer<BaseOption<Value>, false>(children)
+  const SingleValue = useSingleValueRenderer<BaseOption<Value>, false>(children)
 
   return (
     <SelectContext value={{ inline }}>
@@ -131,12 +153,40 @@ export function Select<
       >
         {({ inputId }) => (
           <Layout disabled={isDisabled}>
-            <Component<Option, false>
+            <Component<BaseOption<Value>, false>
               {...props}
               unstyled
+              isMulti={false}
               isDisabled={isDisabled}
               required={required}
               inputId={inputId}
+              options={options}
+              value={
+                value == null
+                  ? undefined
+                  : options.find<BaseOption<Value>>(
+                      (option): option is BaseOption<Value> => {
+                        if ('value' in option) {
+                          return option.value === value
+                        }
+
+                        return false
+                      },
+                    )
+              }
+              defaultValue={
+                defaultValue == null
+                  ? undefined
+                  : options.find<BaseOption<Value>>(
+                      (option): option is BaseOption<Value> => {
+                        if ('value' in option) {
+                          return option.value === defaultValue
+                        }
+
+                        return false
+                      },
+                    )
+              }
               components={{
                 ClearIndicator,
                 DropdownIndicator,
@@ -144,7 +194,7 @@ export function Select<
                 Option,
                 SingleValue,
               }}
-              classNames={selectStyles<Option>({ inline })}
+              classNames={selectStyles<BaseOption<Value>>({ inline })}
             />
           </Layout>
         )}

@@ -69,26 +69,27 @@ export const action = (args: Route.ActionArgs) =>
       const allowanceAmount = getOptionalInt(data, 'allowance')
       const permission = getEnumValue(SellBuyPermission, data, 'permission')
 
-      await createRoleActionAssets(
-        dbClient(),
-        action,
-        {
-          allowBuy:
-            permission === SellBuyPermission.Buy ||
-            permission === SellBuyPermission.SellAndBuy,
-          allowSell:
-            permission === SellBuyPermission.Sell ||
-            permission === SellBuyPermission.SellAndBuy,
-          allowance:
-            allowanceAmount == null
-              ? undefined
-              : {
-                  allowance: BigInt(allowanceAmount),
-                  interval: getEnumValue(AllowanceInterval, data, 'interval'),
-                },
-        },
-        verifiedAssets,
-      )
+      await createRoleActionAssets(dbClient(), action, {
+        buy:
+          permission === SellBuyPermission.Buy ||
+          permission === SellBuyPermission.SellAndBuy
+            ? verifiedAssets
+            : [],
+
+        sell:
+          permission === SellBuyPermission.Sell ||
+          permission === SellBuyPermission.SellAndBuy
+            ? verifiedAssets
+            : [],
+
+        allowance:
+          allowanceAmount == null
+            ? undefined
+            : {
+                allowance: BigInt(allowanceAmount),
+                interval: getEnumValue(AllowanceInterval, data, 'interval'),
+              },
+      })
 
       return redirect(
         href('/workspace/:workspaceId/roles/:roleId', { workspaceId, roleId }),

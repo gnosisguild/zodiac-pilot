@@ -106,9 +106,7 @@ export const TokenValueInput = ({
                 state === 'loading' ? 'Loading tokens...' : 'Select token'
               }
               value={
-                selectedToken == null
-                  ? undefined
-                  : { value: selectedToken.contractId }
+                selectedToken == null ? undefined : selectedToken.contractId
               }
               onChange={(value) => {
                 if (value == null) {

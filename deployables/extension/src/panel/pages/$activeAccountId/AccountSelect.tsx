@@ -41,7 +41,7 @@ export const AccountSelect = ({ accounts, onSelect }: AccountSelectProps) => {
 
           activateAccount(option.value)
         }}
-        value={{ value: account.id }}
+        value={account.id}
         options={accounts.map((account) => ({ value: account.id }))}
       >
         {({ data: { value } }) => {
