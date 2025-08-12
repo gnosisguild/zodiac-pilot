@@ -25,7 +25,7 @@
     "connectkit": "1.9.1",
     "ethereum-blockies-base64": "1.0.2",
     "viem": "2.33.3",
-    "wagmi": "2.16.2"
+    "wagmi": "2.16.3"
   },
   "devDependencies": {
     "@types/node": "22.14.1",
