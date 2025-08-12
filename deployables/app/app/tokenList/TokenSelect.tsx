@@ -27,7 +27,7 @@ export const TokenSelect = ({ tokens, ...props }: TokenSelectProps) => (
       return (
         <div className="flex items-center justify-between gap-2">
           <span className="flex items-center gap-1">
-            <Token logo={token.logoURI} />
+            <Token logoUrl={token.logoURI} />
             {label}
           </span>
 

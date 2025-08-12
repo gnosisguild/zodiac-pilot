@@ -7,12 +7,10 @@ type ChainProps = {
   chainId: ChainId
 }
 
-export const Chain = ({ chainId }: ChainProps) => {
-  return (
-    <Token
-      logo={href('/system/chain-icon/:chainId', { chainId: `${chainId}` })}
-    >
-      {chainName(chainId)}
-    </Token>
-  )
-}
+export const Chain = ({ chainId }: ChainProps) => (
+  <Token
+    logoUrl={href('/system/chain-icon/:chainId', { chainId: `${chainId}` })}
+  >
+    {chainName(chainId)}
+  </Token>
+)

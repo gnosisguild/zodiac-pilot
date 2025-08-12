@@ -128,7 +128,7 @@ export const TokenValueInput = ({
 
                 return (
                   <div className="text-xs">
-                    <Token logo={logoUrl}>{name}</Token>
+                    <Token logoUrl={logoUrl}>{name}</Token>
                   </div>
                 )
               }}
