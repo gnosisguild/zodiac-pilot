@@ -1,5 +1,6 @@
 import { authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
+import { Chain } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import { getChainId } from '@zodiac/chains'
 import {
@@ -411,6 +412,10 @@ const CreateNodeCall = (props: Extract<CallProps, { call: 'createNode' }>) => {
     case AccountType.ROLES: {
       return (
         <FeedEntry icon={Plus} action="Create role">
+          <LabeledItem label="Chain">
+            <Chain chainId={props.chainId} />
+          </LabeledItem>
+
           <LabeledItem label="Role">
             <LabeledAddress shorten size="small">
               {props.deploymentAddress}
