@@ -31,9 +31,11 @@ const CreateSubscriptionPlan = () => {
     <Modal
       open
       title="Add new plan"
-      onClose={() => navigate(href('/system-admin/subscriptionPlans'))}
+      onClose={() =>
+        navigate(href('/system-admin/subscriptionPlans'), { replace: true })
+      }
     >
-      <Form>
+      <Form replace>
         <TextInput required label="Name" name="name" />
 
         <Modal.Actions>

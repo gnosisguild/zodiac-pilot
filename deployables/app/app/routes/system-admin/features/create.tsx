@@ -31,9 +31,11 @@ const CreateFeature = () => {
     <Modal
       open
       title="New feature"
-      onClose={() => navigate(href('/system-admin/features'))}
+      onClose={() =>
+        navigate(href('/system-admin/features'), { replace: true })
+      }
     >
-      <Form>
+      <Form replace>
         <TextInput label="Name" name="name" />
 
         <Modal.Actions>

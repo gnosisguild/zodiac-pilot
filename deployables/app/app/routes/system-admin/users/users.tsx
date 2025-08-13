@@ -90,6 +90,7 @@ const Users = ({
                     <TableCell>
                       <GhostLinkButton
                         iconOnly
+                        replace
                         icon={Trash2}
                         size="tiny"
                         style="critical"

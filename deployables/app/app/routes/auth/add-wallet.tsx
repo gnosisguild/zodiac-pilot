@@ -50,6 +50,7 @@ const AddWallet = ({
   return (
     <Modal
       open
+      size="2xl"
       onClose={() =>
         navigate(href('/workspace/:workspaceId/profile', { workspaceId }), {
           replace: true,

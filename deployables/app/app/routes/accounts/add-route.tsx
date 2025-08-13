@@ -144,8 +144,9 @@ const AddRoute = ({
 
   return (
     <Modal
-      title="Add route"
       open
+      size="2xl"
+      title="Add route"
       onClose={() =>
         navigate(
           href('/workspace/:workspaceId/accounts/:accountId', {

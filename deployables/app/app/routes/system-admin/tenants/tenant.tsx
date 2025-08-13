@@ -143,6 +143,7 @@ const Tenant = ({
 
             <div className="mt-4 flex justify-end">
               <SecondaryLinkButton
+                replace
                 to={href('/system-admin/tenant/:tenantId/add-plan', {
                   tenantId: tenant.id,
                 })}

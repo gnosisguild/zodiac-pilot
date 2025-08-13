@@ -84,6 +84,7 @@ const SubscriptionPlans = ({
       <Page.Header
         action={
           <SecondaryLinkButton
+            replace
             to={href('/system-admin/subscriptionPlans/create')}
           >
             Add new plan

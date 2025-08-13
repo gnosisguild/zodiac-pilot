@@ -52,13 +52,11 @@ const RemoveUser = ({ loaderData: { user } }: Route.ComponentProps) => {
   return (
     <Modal
       open
-      onClose={() => navigate(href('/system-admin/users'))}
+      onClose={() => navigate(href('/system-admin/users'), { replace: true })}
       title="Remove Work OS user"
+      description={`You are about to delete the user "${user.firstName} ${user.lastName}". If that is what you want type "DELETE USER" in the field below.`}
     >
-      You are about to delete the user "{user.firstName} {user.lastName}". If
-      that is what you want type <strong>DELETE USER</strong> in the field
-      below.
-      <Form>
+      <Form replace>
         <TextInput
           name="confirmation"
           label="Confirmation"
