@@ -35,7 +35,10 @@ const Features = ({ loaderData: { features } }: Route.ComponentProps) => {
     <Page>
       <Page.Header
         action={
-          <SecondaryLinkButton to={href('/system-admin/features/create')}>
+          <SecondaryLinkButton
+            replace
+            to={href('/system-admin/features/create')}
+          >
             Create new feature
           </SecondaryLinkButton>
         }
@@ -65,6 +68,7 @@ const Features = ({ loaderData: { features } }: Route.ComponentProps) => {
                 <TableCell>
                   <GhostLinkButton
                     iconOnly
+                    replace
                     icon={Trash2}
                     size="tiny"
                     style="critical"

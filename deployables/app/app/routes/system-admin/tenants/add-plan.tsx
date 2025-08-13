@@ -58,10 +58,12 @@ const AddPlan = ({
       open
       title="Add plan"
       onClose={() =>
-        navigate(href('/system-admin/tenant/:tenantId', { tenantId }))
+        navigate(href('/system-admin/tenant/:tenantId', { tenantId }), {
+          replace: true,
+        })
       }
     >
-      <Form>
+      <Form replace>
         <Select
           label="Plan"
           name="plan"

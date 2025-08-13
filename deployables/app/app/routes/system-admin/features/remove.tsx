@@ -48,12 +48,13 @@ const RemoveFeature = ({ loaderData: { feature } }: Route.ComponentProps) => {
     <Modal
       open
       title="Remove feature"
-      onClose={() => navigate(href('/system-admin/features'))}
+      description={`Are you sure that you want to remove the feature "${feature.name}"?`}
+      onClose={() =>
+        navigate(href('/system-admin/features'), { replace: true })
+      }
     >
-      Are you sure that you want to remove the feature{' '}
-      <strong>"{feature.name}"</strong>?
       <Modal.Actions>
-        <InlineForm>
+        <InlineForm replace>
           <PrimaryButton
             submit
             intent={Intent.Delete}
