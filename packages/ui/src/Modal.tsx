@@ -1,6 +1,7 @@
 import {
   ComponentProps,
   createContext,
+  ReactNode,
   useContext,
   type PropsWithChildren,
 } from 'react'
@@ -59,9 +60,21 @@ export const Modal = ({
   )
 }
 
-const Actions = ({ children }: PropsWithChildren) => (
-  <AlertActions>{children}</AlertActions>
-)
+const Actions = ({
+  children,
+  criticalAction,
+}: PropsWithChildren<{ criticalAction?: ReactNode }>) => {
+  if (criticalAction == null) {
+    return <AlertActions className="mt-6 sm:mt-4">{children}</AlertActions>
+  }
+
+  return (
+    <div className="mt-6 flex items-center justify-between sm:mt-4">
+      {criticalAction}
+      <AlertActions>{children}</AlertActions>
+    </div>
+  )
+}
 
 Modal.Actions = Actions
 

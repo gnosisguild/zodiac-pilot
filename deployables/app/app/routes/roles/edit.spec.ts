@@ -518,57 +518,111 @@ describe('Edit role', () => {
         )
       })
 
-      dbIt('is possible to define an allowance for an asset', async () => {
-        const user = await userFactory.create()
-        const tenant = await tenantFactory.create(user)
+      describe('Allowance', () => {
+        dbIt('is possible to define an allowance for an asset', async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
 
-        const role = await roleFactory.create(tenant, user)
+          const role = await roleFactory.create(tenant, user)
 
-        const account = await accountFactory.create(tenant, user, {
-          chainId: Chain.ETH,
+          const account = await accountFactory.create(tenant, user, {
+            chainId: Chain.ETH,
+          })
+
+          const action = await roleActionFactory.create(role, user)
+
+          const asset = await roleActionAssetFactory.create(action, {
+            symbol: 'WETH',
+            address: unprefixAddress(wethAddress),
+            allowSell: true,
+            allowBuy: false,
+          })
+
+          await setActiveAccounts(dbClient(), role, [account.id])
+
+          await render(
+            href('/workspace/:workspaceId/roles/:roleId', {
+              workspaceId: tenant.defaultWorkspaceId,
+              roleId: role.id,
+            }),
+            { tenant, user },
+          )
+
+          await userEvent.click(
+            await screen.findByRole('link', { name: 'Edit allowance' }),
+          )
+
+          await userEvent.type(
+            await screen.findByRole('spinbutton', { name: 'Allowance' }),
+            '1000',
+          )
+
+          await selectOption('Interval', 'Daily')
+
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Update' }),
+          )
+
+          await waitForPendingActions()
+
+          await expect(
+            getRoleActionAsset(dbClient(), asset.id),
+          ).resolves.toMatchObject({
+            allowance: 1000n,
+            interval: AllowanceInterval.Daily,
+          })
         })
 
-        const action = await roleActionFactory.create(role, user)
+        dbIt('is possible to remove an allowance', async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
 
-        const asset = await roleActionAssetFactory.create(action, {
-          symbol: 'WETH',
-          address: unprefixAddress(wethAddress),
-          allowSell: true,
-          allowBuy: false,
-        })
+          const role = await roleFactory.create(tenant, user)
 
-        await setActiveAccounts(dbClient(), role, [account.id])
+          const account = await accountFactory.create(tenant, user, {
+            chainId: Chain.ETH,
+          })
 
-        await render(
-          href('/workspace/:workspaceId/roles/:roleId', {
-            workspaceId: tenant.defaultWorkspaceId,
-            roleId: role.id,
-          }),
-          { tenant, user },
-        )
+          const action = await roleActionFactory.create(role, user)
+          const asset = await roleActionAssetFactory.create(action, {
+            symbol: 'WETH',
+            address: unprefixAddress(wethAddress),
+            allowance: 1000n,
+            interval: AllowanceInterval.Monthly,
+            allowSell: true,
+            allowBuy: false,
+          })
 
-        await userEvent.click(
-          await screen.findByRole('link', { name: 'Edit allowance' }),
-        )
+          await setActiveAccounts(dbClient(), role, [account.id])
 
-        await userEvent.type(
-          await screen.findByRole('spinbutton', { name: 'Allowance' }),
-          '1000',
-        )
+          await render(
+            href('/workspace/:workspaceId/roles/:roleId', {
+              workspaceId: tenant.defaultWorkspaceId,
+              roleId: role.id,
+            }),
+            { tenant, user },
+          )
 
-        await selectOption('Interval', 'Daily')
+          await userEvent.click(
+            await screen.findByRole('link', { name: 'Edit allowance' }),
+          )
 
-        await userEvent.click(
-          await screen.findByRole('button', { name: 'Update' }),
-        )
+          await userEvent.clear(
+            await screen.findByRole('spinbutton', { name: 'Allowance' }),
+          )
 
-        await waitForPendingActions()
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Update' }),
+          )
 
-        await expect(
-          getRoleActionAsset(dbClient(), asset.id),
-        ).resolves.toMatchObject({
-          allowance: 1000n,
-          interval: AllowanceInterval.Daily,
+          await waitForPendingActions()
+
+          await expect(
+            getRoleActionAsset(dbClient(), asset.id),
+          ).resolves.toMatchObject({
+            allowance: null,
+            interval: null,
+          })
         })
       })
     })

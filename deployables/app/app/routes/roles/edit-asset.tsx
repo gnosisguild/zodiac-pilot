@@ -5,6 +5,7 @@ import {
   dbClient,
   getRoleAction,
   getRoleActionAsset,
+  removeAllowance,
   updateAllowance,
   updatePermissions,
 } from '@zodiac/db'
@@ -71,7 +72,9 @@ export const action = (args: Route.ActionArgs) =>
       await dbClient().transaction(async (tx) => {
         const allowanceAmount = getOptionalInt(data, 'allowance')
 
-        if (allowanceAmount != null) {
+        if (allowanceAmount == null) {
+          await removeAllowance(tx, assetId)
+        } else {
           await updateAllowance(tx, assetId, {
             allowance: BigInt(getNumber(data, 'allowance')),
             interval: getEnumValue(AllowanceInterval, data, 'interval'),
@@ -185,6 +188,7 @@ const EditAsset = ({
           >
             Update
           </PrimaryButton>
+
           <Modal.CloseAction>Cancel</Modal.CloseAction>
         </Modal.Actions>
       </Form>
