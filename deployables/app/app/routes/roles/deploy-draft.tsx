@@ -1,6 +1,7 @@
 import { authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
+import { getChainId } from '@zodiac/chains'
 import {
   dbClient,
   getActivatedAccounts,
@@ -15,7 +16,13 @@ import { encodeRoleKey } from '@zodiac/modules'
 import { isUUID } from '@zodiac/schema'
 import { Info, NumberValue } from '@zodiac/ui'
 import { UUID } from 'crypto'
-import { HandCoins, LucideIcon, Plus, UserRoundPlus } from 'lucide-react'
+import {
+  Crosshair,
+  HandCoins,
+  LucideIcon,
+  Plus,
+  UserRoundPlus,
+} from 'lucide-react'
 import { PropsWithChildren, Suspense } from 'react'
 import { Await } from 'react-router'
 import {
@@ -66,6 +73,13 @@ export const loader = (args: Route.LoaderArgs) =>
         new Set(activatedAccounts.map((account) => account.chainId)),
       )
 
+      const assets = await getRoleActionAssets(dbClient(), { roleId: draft.id })
+
+      const assetLabels = assets.reduce<Labels>(
+        (result, asset) => ({ ...result, [asset.address]: asset.symbol }),
+        {},
+      )
+
       const {
         newSafes,
         allSafes,
@@ -88,6 +102,7 @@ export const loader = (args: Route.LoaderArgs) =>
         labels: {
           ...rolesLabels,
           ...memberLabels,
+          ...assetLabels,
         },
         roleLabels,
       }
@@ -280,7 +295,11 @@ const DeployDraft = ({
                           key={`${account.prefixedAddress}=${planIndex}-${index}`}
                           className="pb-4"
                         >
-                          <Call key={index} {...step.call} />
+                          <Call
+                            key={index}
+                            {...step.call}
+                            chainId={getChainId(account.prefixedAddress)}
+                          />
                         </div>
                       )),
                     )}
@@ -297,7 +316,7 @@ const DeployDraft = ({
 
 export default DeployDraft
 
-type CallProps = AccountBuilderCall
+type CallProps = AccountBuilderCall & { chainId: ChainId }
 
 const Call = (props: CallProps) => {
   switch (props.call) {
@@ -310,6 +329,9 @@ const Call = (props: CallProps) => {
     case 'setAllowance': {
       return <SetAllowanceCall {...props} />
     }
+    case 'scopeTarget': {
+      return <ScopeTargetCall {...props} />
+    }
 
     default: {
       return (
@@ -319,8 +341,22 @@ const Call = (props: CallProps) => {
   }
 }
 
+const ScopeTargetCall = (
+  props: Extract<CallProps, { call: 'scopeTarget' }>,
+) => (
+  <FeedEntry icon={Crosshair} action="Scope target">
+    <LabeledItem label="Target">
+      <LabeledAddress shorten>{props.targetAddress}</LabeledAddress>
+    </LabeledItem>
+
+    <LabeledItem label="Role">
+      <LabeledRoleKey>{props.roleKey}</LabeledRoleKey>
+    </LabeledItem>
+  </FeedEntry>
+)
+
 const SetAllowanceCall = (
-  props: Extract<AccountBuilderCall, { call: 'setAllowance' }>,
+  props: Extract<CallProps, { call: 'setAllowance' }>,
 ) => (
   <FeedEntry icon={HandCoins} action="Set allowance">
     <LabeledItem label="Allowance">
@@ -330,7 +366,7 @@ const SetAllowanceCall = (
 )
 
 const AssignRolesCall = (
-  props: Extract<AccountBuilderCall, { call: 'assignRoles' }>,
+  props: Extract<CallProps, { call: 'assignRoles' }>,
 ) => {
   return (
     <FeedEntry icon={UserRoundPlus} action="Add role member">
@@ -347,9 +383,7 @@ const AssignRolesCall = (
   )
 }
 
-const CreateNodeCall = (
-  props: Extract<AccountBuilderCall, { call: 'createNode' }>,
-) => {
+const CreateNodeCall = (props: Extract<CallProps, { call: 'createNode' }>) => {
   switch (props.accountType) {
     case AccountType.SAFE: {
       return (
