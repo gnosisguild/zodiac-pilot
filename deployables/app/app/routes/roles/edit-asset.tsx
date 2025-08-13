@@ -1,17 +1,27 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
+import { Token } from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
 import {
   dbClient,
   getRoleAction,
   getRoleActionAsset,
+  removeAllowance,
   updateAllowance,
   updatePermissions,
 } from '@zodiac/db'
 import { getEnumValue, getNumber, getOptionalInt } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
 import { AllowanceInterval, isUUID } from '@zodiac/schema'
-import { Form, Modal, NumberInput, PrimaryButton } from '@zodiac/ui'
+import {
+  Form,
+  InputLayout,
+  Labeled,
+  Modal,
+  NumberInput,
+  PrimaryButton,
+} from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
+import { prefixAddress } from 'ser-kit'
 import { Route } from './+types/edit-asset'
 import { AllowanceIntervalSelect } from './AllowanceIntervalSelect'
 import {
@@ -62,7 +72,9 @@ export const action = (args: Route.ActionArgs) =>
       await dbClient().transaction(async (tx) => {
         const allowanceAmount = getOptionalInt(data, 'allowance')
 
-        if (allowanceAmount != null) {
+        if (allowanceAmount == null) {
+          await removeAllowance(tx, assetId)
+        } else {
           await updateAllowance(tx, assetId, {
             allowance: BigInt(getNumber(data, 'allowance')),
             interval: getEnumValue(AllowanceInterval, data, 'interval'),
@@ -128,6 +140,18 @@ const EditAsset = ({
       }
     >
       <Form replace>
+        <Labeled label="Asset">
+          <InputLayout disabled>
+            <div className="px-4 py-2">
+              <Token
+                contractAddress={prefixAddress(asset.chainId, asset.address)}
+              >
+                {asset.symbol}
+              </Token>
+            </div>
+          </InputLayout>
+        </Labeled>
+
         <AssetPermission
           required
           label="Permission"
@@ -164,6 +188,7 @@ const EditAsset = ({
           >
             Update
           </PrimaryButton>
+
           <Modal.CloseAction>Cancel</Modal.CloseAction>
         </Modal.Actions>
       </Form>

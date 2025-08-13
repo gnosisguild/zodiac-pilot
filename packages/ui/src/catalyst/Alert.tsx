@@ -104,7 +104,7 @@ export function AlertActions({
       {...props}
       className={classNames(
         className,
-        'mt-6 flex flex-col-reverse items-center justify-end gap-3 *:w-full sm:mt-4 sm:flex-row-reverse sm:justify-start sm:*:w-auto',
+        'flex flex-col-reverse items-center justify-end gap-3 *:w-full sm:flex-row-reverse sm:justify-start sm:*:w-auto',
       )}
     />
   )

@@ -47,7 +47,7 @@ export const Token = ({ children, ...props }: TokenProps) => {
         </div>
       </div>
 
-      <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+      <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm">
         {children}
       </span>
     </div>
