@@ -27,6 +27,7 @@ import {
   GhostLinkButton,
   Info,
   MultiSelect,
+  NumberValue,
   Popover,
   PrimaryButton,
   SecondaryLinkButton,
@@ -302,7 +303,7 @@ const EditRole = ({
                       {action.assets
                         .filter((asset) => asset.allowSell)
                         .map((asset) => (
-                          <Asset key={asset.id} asset={asset} />
+                          <Asset key={asset.id} asset={asset} context="sell" />
                         ))}
                     </div>
 
@@ -314,7 +315,7 @@ const EditRole = ({
                       {action.assets
                         .filter((asset) => asset.allowBuy)
                         .map((asset) => (
-                          <Asset key={asset.id} asset={asset} />
+                          <Asset key={asset.id} asset={asset} context="buy" />
                         ))}
                     </div>
                   </div>
@@ -349,11 +350,27 @@ const EditRole = ({
 
 export default EditRole
 
-const Asset = ({ asset }: { asset: RoleActionAsset }) => (
+const Asset = ({
+  asset,
+  context,
+}: {
+  asset: RoleActionAsset
+  context: 'sell' | 'buy'
+}) => (
   <div className="group flex items-center justify-between py-2 pl-4 pr-2">
-    <Token contractAddress={prefixAddress(asset.chainId, asset.address)}>
-      {asset.symbol}
-    </Token>
+    <div className="flex flex-col gap-1">
+      <Token contractAddress={prefixAddress(asset.chainId, asset.address)}>
+        {asset.symbol}
+
+        {asset.allowance && asset.interval && (
+          <div className="flex gap-1 text-xs opacity-75">
+            {context}
+            <NumberValue>{asset.allowance}</NumberValue>
+            {asset.interval}
+          </div>
+        )}
+      </Token>
+    </div>
 
     <div
       className={classNames(
