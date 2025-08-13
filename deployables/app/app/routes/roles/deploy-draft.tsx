@@ -1,5 +1,5 @@
 import { authorizedLoader } from '@/auth-server'
-import { Page } from '@/components'
+import { DebugJson, Page } from '@/components'
 import { Chain } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import { getChainId } from '@zodiac/chains'
@@ -15,9 +15,10 @@ import {
 import { type Role as DbRole } from '@zodiac/db/schema'
 import { encodeRoleKey } from '@zodiac/modules'
 import { isUUID } from '@zodiac/schema'
-import { Info, NumberValue } from '@zodiac/ui'
+import { GhostButton, Info, Modal, NumberValue } from '@zodiac/ui'
 import { UUID } from 'crypto'
 import {
+  Code,
   Crosshair,
   HandCoins,
   LucideIcon,
@@ -25,7 +26,7 @@ import {
   SquareFunction,
   UserRoundPlus,
 } from 'lucide-react'
-import { PropsWithChildren, Suspense } from 'react'
+import { PropsWithChildren, Suspense, useState } from 'react'
 import { Await } from 'react-router'
 import {
   Account,
@@ -280,7 +281,7 @@ const DeployDraft = ({
       <Page.Main>
         <div className="mb-8">
           <Info>
-            The following changes need to be applies to deploy this role. Please
+            The following changes need to be applied to deploy this role. Please
             execute one transaction after the other.
           </Info>
         </div>
@@ -349,7 +350,7 @@ const Call = (props: CallProps) => {
 const ScopeFunctionCall = (
   props: Extract<CallProps, { call: 'scopeFunction' }>,
 ) => (
-  <FeedEntry action="Scope function" icon={SquareFunction}>
+  <FeedEntry action="Scope function" icon={SquareFunction} raw={props}>
     <LabeledItem label="Target">
       <LabeledAddress>{props.targetAddress}</LabeledAddress>
     </LabeledItem>
@@ -363,7 +364,7 @@ const ScopeFunctionCall = (
 const ScopeTargetCall = (
   props: Extract<CallProps, { call: 'scopeTarget' }>,
 ) => (
-  <FeedEntry icon={Crosshair} action="Scope target">
+  <FeedEntry icon={Crosshair} action="Scope target" raw={props}>
     <LabeledItem label="Target">
       <LabeledAddress>{props.targetAddress}</LabeledAddress>
     </LabeledItem>
@@ -377,7 +378,7 @@ const ScopeTargetCall = (
 const SetAllowanceCall = (
   props: Extract<CallProps, { call: 'setAllowance' }>,
 ) => (
-  <FeedEntry icon={HandCoins} action="Set allowance">
+  <FeedEntry icon={HandCoins} action="Set allowance" raw={props}>
     <LabeledItem label="Allowance">
       <NumberValue>{props.refill}</NumberValue>
     </LabeledItem>
@@ -388,7 +389,7 @@ const AssignRolesCall = (
   props: Extract<CallProps, { call: 'assignRoles' }>,
 ) => {
   return (
-    <FeedEntry icon={UserRoundPlus} action="Add role member">
+    <FeedEntry icon={UserRoundPlus} action="Add role member" raw={props}>
       <LabeledItem label="Member">
         <LabeledAddress>{props.member}</LabeledAddress>
       </LabeledItem>
@@ -404,7 +405,7 @@ const CreateNodeCall = (props: Extract<CallProps, { call: 'createNode' }>) => {
   switch (props.accountType) {
     case AccountType.SAFE: {
       return (
-        <FeedEntry icon={Plus} action="Create Safe">
+        <FeedEntry icon={Plus} action="Create Safe" raw={props}>
           <LabeledItem label="Safe">
             <LabeledAddress>{props.deploymentAddress}</LabeledAddress>
           </LabeledItem>
@@ -423,7 +424,7 @@ const CreateNodeCall = (props: Extract<CallProps, { call: 'createNode' }>) => {
     }
     case AccountType.ROLES: {
       return (
-        <FeedEntry icon={Plus} action="Create role">
+        <FeedEntry icon={Plus} action="Create role" raw={props}>
           <LabeledItem label="Chain">
             <Chain chainId={props.chainId} />
           </LabeledItem>
@@ -446,25 +447,56 @@ const CreateNodeCall = (props: Extract<CallProps, { call: 'createNode' }>) => {
 type FeedEntryProps = PropsWithChildren<{
   icon: LucideIcon
   action: string
+  raw: unknown
 }>
 
-const FeedEntry = ({ action, icon: Icon, children }: FeedEntryProps) => (
-  <div className="grid grid-cols-10 items-center gap-4 text-sm">
-    <div className="col-span-2 flex items-start justify-start gap-2">
-      <div className="rounded-full border border-zinc-700 bg-zinc-800 p-1">
-        <Icon className="size-3" />
+const FeedEntry = ({ action, icon: Icon, children, raw }: FeedEntryProps) => {
+  const [showRaw, setShowRaw] = useState(false)
+
+  return (
+    <>
+      <div className="grid grid-cols-10 items-center gap-4 text-sm">
+        <div className="col-span-2 flex items-start justify-start gap-2">
+          <div className="rounded-full border border-zinc-700 bg-zinc-800 p-1">
+            <Icon className="size-3" />
+          </div>
+
+          {action}
+        </div>
+
+        {children && (
+          <div className="col-span-7 col-start-3 grid grid-cols-4 gap-4">
+            {children}
+          </div>
+        )}
+
+        <div className="flex justify-end">
+          <GhostButton
+            iconOnly
+            size="tiny"
+            icon={Code}
+            onClick={() => setShowRaw(true)}
+          >
+            Show raw
+          </GhostButton>
+        </div>
       </div>
 
-      {action}
-    </div>
+      <Modal
+        open={showRaw}
+        onClose={() => setShowRaw(false)}
+        size="4xl"
+        title="Raw call data"
+      >
+        <DebugJson data={raw} />
 
-    {children && (
-      <div className="col-span-8 col-start-3 grid grid-cols-4 gap-4">
-        {children}
-      </div>
-    )}
-  </div>
-)
+        <Modal.Actions>
+          <Modal.CloseAction>Close</Modal.CloseAction>
+        </Modal.Actions>
+      </Modal>
+    </>
+  )
+}
 
 const LabeledItem = ({
   label,
