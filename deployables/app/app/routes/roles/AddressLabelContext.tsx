@@ -21,13 +21,13 @@ export const ProvideAddressLabels = ({
 export const LabeledAddress = ({
   children,
   ...props
-}: ComponentProps<typeof Address>) => {
+}: Omit<ComponentProps<typeof Address>, 'shorten' | 'size'>) => {
   const labels = useContext(AddressLabelContext)
 
   const address = unprefixAddress(children)
 
   return (
-    <Address {...props} label={labels[address]}>
+    <Address {...props} label={labels[address]} shorten size="small">
       {children}
     </Address>
   )

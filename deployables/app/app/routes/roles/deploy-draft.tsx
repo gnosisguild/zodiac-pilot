@@ -22,6 +22,7 @@ import {
   HandCoins,
   LucideIcon,
   Plus,
+  SquareFunction,
   UserRoundPlus,
 } from 'lucide-react'
 import { PropsWithChildren, Suspense } from 'react'
@@ -333,6 +334,9 @@ const Call = (props: CallProps) => {
     case 'scopeTarget': {
       return <ScopeTargetCall {...props} />
     }
+    case 'scopeFunction': {
+      return <ScopeFunctionCall {...props} />
+    }
 
     default: {
       return (
@@ -342,12 +346,26 @@ const Call = (props: CallProps) => {
   }
 }
 
+const ScopeFunctionCall = (
+  props: Extract<CallProps, { call: 'scopeFunction' }>,
+) => (
+  <FeedEntry action="Scope function" icon={SquareFunction}>
+    <LabeledItem label="Target">
+      <LabeledAddress>{props.targetAddress}</LabeledAddress>
+    </LabeledItem>
+
+    <LabeledItem label="Role">
+      <LabeledRoleKey>{props.roleKey}</LabeledRoleKey>
+    </LabeledItem>
+  </FeedEntry>
+)
+
 const ScopeTargetCall = (
   props: Extract<CallProps, { call: 'scopeTarget' }>,
 ) => (
   <FeedEntry icon={Crosshair} action="Scope target">
     <LabeledItem label="Target">
-      <LabeledAddress shorten>{props.targetAddress}</LabeledAddress>
+      <LabeledAddress>{props.targetAddress}</LabeledAddress>
     </LabeledItem>
 
     <LabeledItem label="Role">
@@ -372,9 +390,7 @@ const AssignRolesCall = (
   return (
     <FeedEntry icon={UserRoundPlus} action="Add role member">
       <LabeledItem label="Member">
-        <LabeledAddress size="small" shorten>
-          {props.member}
-        </LabeledAddress>
+        <LabeledAddress>{props.member}</LabeledAddress>
       </LabeledItem>
 
       <LabeledItem label="Role">
@@ -390,18 +406,14 @@ const CreateNodeCall = (props: Extract<CallProps, { call: 'createNode' }>) => {
       return (
         <FeedEntry icon={Plus} action="Create Safe">
           <LabeledItem label="Safe">
-            <LabeledAddress size="small" shorten>
-              {props.deploymentAddress}
-            </LabeledAddress>
+            <LabeledAddress>{props.deploymentAddress}</LabeledAddress>
           </LabeledItem>
 
           <LabeledItem label="Owners">
             <ul>
               {props.args.owners.map((owner) => (
                 <li key={owner}>
-                  <LabeledAddress size="small" shorten>
-                    {owner}
-                  </LabeledAddress>
+                  <LabeledAddress>{owner}</LabeledAddress>
                 </li>
               ))}
             </ul>
@@ -417,15 +429,11 @@ const CreateNodeCall = (props: Extract<CallProps, { call: 'createNode' }>) => {
           </LabeledItem>
 
           <LabeledItem label="Role">
-            <LabeledAddress shorten size="small">
-              {props.deploymentAddress}
-            </LabeledAddress>
+            <LabeledAddress>{props.deploymentAddress}</LabeledAddress>
           </LabeledItem>
 
           <LabeledItem label="Target Safe">
-            <LabeledAddress shorten size="small">
-              {props.args.target}
-            </LabeledAddress>
+            <LabeledAddress>{props.args.target}</LabeledAddress>
           </LabeledItem>
         </FeedEntry>
       )
