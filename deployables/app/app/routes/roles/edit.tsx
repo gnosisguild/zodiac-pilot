@@ -15,6 +15,7 @@ import {
   setRoleMembers,
   updateRole,
 } from '@zodiac/db'
+import { RoleActionAsset } from '@zodiac/db/schema'
 import { getString, getUUIDList } from '@zodiac/form-data'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
@@ -32,7 +33,8 @@ import {
   successToast,
   Tag,
 } from '@zodiac/ui'
-import { ArrowRight, ArrowRightLeft, Pencil } from 'lucide-react'
+import classNames from 'classnames'
+import { ArrowRight, ArrowRightLeft, HandCoins, Pencil } from 'lucide-react'
 import { UUID } from 'node:crypto'
 import { href, Outlet } from 'react-router'
 import { prefixAddress } from 'ser-kit'
@@ -300,16 +302,7 @@ const EditRole = ({
                       {action.assets
                         .filter((asset) => asset.allowSell)
                         .map((asset) => (
-                          <div key={asset.id} className="px-4 py-2">
-                            <Token
-                              contractAddress={prefixAddress(
-                                asset.chainId,
-                                asset.address,
-                              )}
-                            >
-                              {asset.symbol}
-                            </Token>
-                          </div>
+                          <Asset key={asset.id} asset={asset} />
                         ))}
                     </div>
 
@@ -321,16 +314,7 @@ const EditRole = ({
                       {action.assets
                         .filter((asset) => asset.allowBuy)
                         .map((asset) => (
-                          <div key={asset.id} className="px-4 py-2">
-                            <Token
-                              contractAddress={prefixAddress(
-                                asset.chainId,
-                                asset.address,
-                              )}
-                            >
-                              {asset.symbol}
-                            </Token>
-                          </div>
+                          <Asset key={asset.id} asset={asset} />
                         ))}
                     </div>
                   </div>
@@ -364,3 +348,35 @@ const EditRole = ({
 }
 
 export default EditRole
+
+const Asset = ({ asset }: { asset: RoleActionAsset }) => (
+  <div className="group flex items-center justify-between py-2 pl-4 pr-2">
+    <Token contractAddress={prefixAddress(asset.chainId, asset.address)}>
+      {asset.symbol}
+    </Token>
+
+    <div
+      className={classNames(
+        'transition-opacity',
+        asset.allowance == null && 'opacity-0 group-hover:opacity-100',
+      )}
+    >
+      <GhostLinkButton
+        iconOnly
+        icon={HandCoins}
+        size="tiny"
+        to={href(
+          '/workspace/:workspaceId/roles/:roleId/action/:actionId/asset/:assetId',
+          {
+            workspaceId: asset.workspaceId,
+            roleId: asset.roleId,
+            actionId: asset.roleActionId,
+            assetId: asset.id,
+          },
+        )}
+      >
+        Edit allowance
+      </GhostLinkButton>
+    </div>
+  </div>
+)
