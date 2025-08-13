@@ -573,6 +573,7 @@ export const RoleTable = pgTable(
     nonce: bigint({ mode: 'bigint' })
       .notNull()
       .$defaultFn(() => randomBigInt(63)),
+    key: varchar({ length: 32 }).notNull(),
 
     ...createdTimestamp,
     ...updatedTimestamp,
@@ -581,6 +582,7 @@ export const RoleTable = pgTable(
     ...createdByReference,
   },
   (table) => [
+    unique().on(table.workspaceId, table.key),
     index().on(table.tenantId),
     index().on(table.workspaceId),
     index().on(table.createdById),
@@ -666,7 +668,6 @@ export const RoleActionTable = pgTable(
     id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
 
     label: text().notNull(),
-    key: varchar({ length: 32 }).notNull(),
     type: RoleActionTypeEnum().notNull(),
 
     ...roleReference,
@@ -677,7 +678,6 @@ export const RoleActionTable = pgTable(
     ...updatedTimestamp,
   },
   (table) => [
-    unique().on(table.roleId, table.key),
     index().on(table.createdById),
     index().on(table.roleId),
     index().on(table.tenantId),

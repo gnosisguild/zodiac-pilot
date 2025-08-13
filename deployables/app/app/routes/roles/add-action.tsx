@@ -5,19 +5,16 @@ import {
   createRoleAction,
   createRoleActionAssets,
   dbClient,
-  findRoleActionByKey,
   getActivatedAccounts,
   getRole,
 } from '@zodiac/db'
 import { RoleActionType } from '@zodiac/db/schema'
 import { getPrefixedAddressList, getString } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
-import { getRoleActionKey } from '@zodiac/modules'
 import { isUUID } from '@zodiac/schema'
-import { Error, Form, Modal, PrimaryButton } from '@zodiac/ui'
+import { Form, Modal, PrimaryButton, TextInput } from '@zodiac/ui'
 import { href, redirect, useNavigate } from 'react-router'
 import { Route } from './+types/add-action'
-import { ActionLabelInput } from './ActionLabelInput'
 import { Intent } from './intents'
 import { RoleActionTypeSelect } from './RoleActionTypeSelect'
 
@@ -65,18 +62,10 @@ export const action = (args: Route.ActionArgs) =>
       const role = await getRole(dbClient(), roleId)
 
       const label = getString(data, 'label')
-      const key = getRoleActionKey(label)
-
-      const existingAction = await findRoleActionByKey(dbClient(), roleId, key)
-
-      if (existingAction != null) {
-        return { error: 'duplicate-action' }
-      }
 
       await dbClient().transaction(async (tx) => {
         const action = await createRoleAction(tx, role, user, {
           label,
-          key,
           type: RoleActionType.Swapper,
         })
 
@@ -113,7 +102,6 @@ export const action = (args: Route.ActionArgs) =>
 const AddAction = ({
   params: { workspaceId, roleId },
   loaderData: { tokens },
-  actionData,
 }: Route.ComponentProps) => {
   const navigate = useNavigate()
 
@@ -133,27 +121,20 @@ const AddAction = ({
       }
     >
       <Form replace>
-        <ActionLabelInput required label="Action label" name="label" />
+        <TextInput required label="Action label" name="label" />
 
         <RoleActionTypeSelect />
-
-        {actionData != null && (
-          <Error title="Could not add action">
-            An action with this name already exists. Please choose another
-            label.
-          </Error>
-        )}
 
         <div className="grid grid-cols-2 gap-4">
           <TokenSelect
             tokens={tokens}
-            label="Swap from"
+            label="Sell"
             name="sell"
             placeholder="Select tokens to sell"
           />
           <TokenSelect
             tokens={tokens}
-            label="Swap for"
+            label="Buy"
             name="buy"
             placeholder="Select tokens to buy"
           />

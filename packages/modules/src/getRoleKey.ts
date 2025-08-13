@@ -1,4 +1,4 @@
-export const getRoleActionKey = (label: string) =>
+export const getRoleKey = (label: string) =>
   label
     .toLowerCase()
     .replace(/ /g, '_')

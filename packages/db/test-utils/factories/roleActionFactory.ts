@@ -7,7 +7,6 @@ import {
   RoleActionType,
   User,
 } from '@zodiac/db/schema'
-import { getRoleActionKey } from '@zodiac/modules'
 import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 
@@ -19,7 +18,6 @@ export const roleActionFactory = createFactory<
   build(role, createdBy, { label = faker.word.noun(), ...data } = {}) {
     return {
       label,
-      key: getRoleActionKey(label),
       type: RoleActionType.Swapper,
 
       createdById: createdBy.id,

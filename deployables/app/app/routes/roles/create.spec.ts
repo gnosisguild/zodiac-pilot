@@ -11,6 +11,7 @@ import {
 import {
   accountFactory,
   dbIt,
+  roleFactory,
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
@@ -145,4 +146,39 @@ describe('Create role', () => {
       }),
     ).resolves.toEqual([accountA, accountB])
   })
+
+  dbIt(
+    'informs users that roles with the same name are not possible',
+    async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      await roleFactory.create(tenant, user, {
+        label: 'Test role',
+      })
+
+      await render(
+        href('/workspace/:workspaceId/roles/create', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.type(
+        await screen.findByRole('textbox', { name: 'Label' }),
+        'Test role',
+      )
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Create' }),
+      )
+
+      await waitForPendingActions()
+
+      expect(
+        await screen.findByRole('alert', { name: 'Could not create role' }),
+      ).toHaveAccessibleDescription(
+        'A role with this name already exists. Please choose another label.',
+      )
+    },
+  )
 })

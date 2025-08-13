@@ -6,6 +6,7 @@ import {
   Tenant,
   User,
 } from '@zodiac/db/schema'
+import { getRoleKey } from '@zodiac/modules'
 import { randomUUID } from 'crypto'
 import randomBigInt from 'crypto-random-bigint'
 import { createFactory } from './createFactory'
@@ -15,12 +16,13 @@ export const roleFactory = createFactory<
   Role,
   [tenant: Tenant, createdBy: User]
 >({
-  build(tenant, createdBy, data) {
+  build(tenant, createdBy, { label = faker.word.noun(), ...data } = {}) {
     return {
       createdById: createdBy.id,
       workspaceId: tenant.defaultWorkspaceId,
       tenantId: tenant.id,
-      label: faker.word.noun(),
+      label,
+      key: getRoleKey(label),
 
       ...data,
     }
