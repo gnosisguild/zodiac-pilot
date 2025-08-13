@@ -209,8 +209,8 @@ importers:
         specifier: 4.0.17
         version: 4.0.17
       zodiac-roles-sdk:
-        specifier: 3.2.0
-        version: 3.2.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+        specifier: 3.2.1
+        version: 3.2.1(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     devDependencies:
       '@dotenvx/dotenvx':
         specifier: 1.48.4
@@ -10824,8 +10824,8 @@ packages:
   zodiac-roles-deployments@3.1.0:
     resolution: {integrity: sha512-DHqvJ6SQbk/lCfjVrnfhEglAa4bg0EHCFr2IhfzKki03PbIu16kbp6NRNFwTzrevQm8VbduG2gEfK0dp1Rw9VA==}
 
-  zodiac-roles-sdk@3.2.0:
-    resolution: {integrity: sha512-u5df8T/H0iUF9hWdChDMz3UZ0StPPbWa/uViFpsiD0YgHEZ429zL9EpcxM25KdWwDDxdoxuzUXVkpyt9tTOiEw==}
+  zodiac-roles-sdk@3.2.1:
+    resolution: {integrity: sha512-eNdjqajAclkjJ4uPbDwgRQpkaDuXrmbCRmb3NSPsijk4iS61yfE+arLMBpGlVenqfj4/5BEYpy4dk9u2g3sCNw==}
     peerDependencies:
       '@gnosis-guild/eth-sdk-client': ^0.1.6
       openapi-backend: ^5.11.0
@@ -22631,7 +22631,7 @@ snapshots:
 
   zodiac-roles-deployments@3.1.0: {}
 
-  zodiac-roles-sdk@3.2.0(bufferutil@4.0.9)(utf-8-validate@5.0.10):
+  zodiac-roles-sdk@3.2.1(bufferutil@4.0.9)(utf-8-validate@5.0.10):
     dependencies:
       ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
       zodiac-roles-deployments: 3.1.0

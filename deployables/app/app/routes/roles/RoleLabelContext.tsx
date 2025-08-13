@@ -13,9 +13,8 @@ export const ProvideRoleLabels = ({
 
 export const LabeledRoleKey = ({ children }: { children: string }) => {
   const labels = useContext(RoleLabelContext)
-  const label = labels[children]
-
   const key = decodeRoleKey(children)
+  const label = labels[key]
 
   if (label == null) {
     return <span className="font-mono">{key}</span>
