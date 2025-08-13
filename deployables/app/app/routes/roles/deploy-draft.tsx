@@ -55,7 +55,7 @@ import {
   ProvideRoleLabels,
   RoleLabels,
 } from './RoleLabelContext'
-import { getRefillPeriod } from './getRefillPeriod'
+import { getRefillPeriod, parseRefillPeriod } from './getRefillPeriod'
 
 type Safe = Extract<Account, { type: AccountType.SAFE }>
 type Roles = Extract<Account, { type: AccountType.ROLES }>
@@ -380,6 +380,8 @@ const SetAllowanceCall = (
     <LabeledItem label="Allowance">
       <NumberValue>{props.refill}</NumberValue>
     </LabeledItem>
+
+    <LabeledItem label="Period">{parseRefillPeriod(props.period)}</LabeledItem>
   </FeedEntry>
 )
 

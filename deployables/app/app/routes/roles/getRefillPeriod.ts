@@ -19,3 +19,23 @@ export const getRefillPeriod = (interval: AllowanceInterval): bigint => {
     }
   }
 }
+
+export const parseRefillPeriod = (
+  period: bigint,
+): AllowanceInterval | bigint => {
+  switch (period) {
+    case getRefillPeriod(AllowanceInterval.Daily):
+      return AllowanceInterval.Daily
+    case getRefillPeriod(AllowanceInterval.Weekly):
+      return AllowanceInterval.Weekly
+    case getRefillPeriod(AllowanceInterval.Monthly):
+      return AllowanceInterval.Monthly
+    case getRefillPeriod(AllowanceInterval.Quarterly):
+      return AllowanceInterval.Quarterly
+    case getRefillPeriod(AllowanceInterval.Yearly):
+      return AllowanceInterval.Yearly
+
+    default:
+      return period
+  }
+}
