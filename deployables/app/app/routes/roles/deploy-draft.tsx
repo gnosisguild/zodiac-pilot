@@ -43,7 +43,6 @@ import {
   processPermissions,
   Target,
 } from 'zodiac-roles-sdk'
-import { allowCowOrderSigning } from 'zodiac-roles-sdk/swaps'
 import { Route } from './+types/deploy-draft'
 import {
   LabeledAddress,
@@ -55,6 +54,7 @@ import {
   ProvideRoleLabels,
   RoleLabels,
 } from './RoleLabelContext'
+import { computeSwapPermissions } from './computeSwapPermissions'
 import { getRefillPeriod, parseRefillPeriod } from './getRefillPeriod'
 
 type Safe = Extract<Account, { type: AccountType.SAFE }>
@@ -197,14 +197,7 @@ const getRolesMods = async (
             return result
           }
 
-          const permissions = allowCowOrderSigning({
-            sell: actionAssets
-              .filter((asset) => asset.allowSell)
-              .map((asset) => asset.address),
-            buy: actionAssets
-              .filter((asset) => asset.allowBuy)
-              .map((asset) => asset.address),
-          })
+          const permissions = computeSwapPermissions(actionAssets)
 
           const { annotations, targets } = processPermissions(permissions)
 
