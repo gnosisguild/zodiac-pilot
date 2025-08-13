@@ -372,8 +372,8 @@ describe('Edit role', () => {
             'Test action',
           )
 
-          await selectOption('Swap from', 'WETH')
-          await selectOption('Swap for', 'AAVE')
+          await selectOption('Sell', 'WETH')
+          await selectOption('Buy', 'AAVE')
 
           await userEvent.click(
             await screen.findByRole('button', { name: 'Add' }),
@@ -431,8 +431,8 @@ describe('Edit role', () => {
             await screen.findByRole('link', { name: 'Edit action' }),
           )
 
-          await selectOption('Swap from', 'WETH')
-          await selectOption('Swap for', 'AAVE')
+          await selectOption('Sell', 'WETH')
+          await selectOption('Buy', 'AAVE')
 
           await userEvent.click(
             await screen.findByRole('button', { name: 'Update' }),

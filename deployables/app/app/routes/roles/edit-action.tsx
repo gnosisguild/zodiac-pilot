@@ -152,14 +152,14 @@ const EditAction = ({
 
         <div className="grid grid-cols-2 gap-4">
           <TokenSelect
-            label="Swap from"
+            label="Sell"
             name="sell"
             tokens={tokens}
             defaultValue={assetsToSell}
             placeholder="Select tokens to sell"
           />
           <TokenSelect
-            label="Swap for"
+            label="Buy"
             name="buy"
             tokens={tokens}
             defaultValue={assetsToBuy}

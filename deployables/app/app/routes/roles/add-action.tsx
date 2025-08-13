@@ -128,13 +128,13 @@ const AddAction = ({
         <div className="grid grid-cols-2 gap-4">
           <TokenSelect
             tokens={tokens}
-            label="Swap from"
+            label="Sell"
             name="sell"
             placeholder="Select tokens to sell"
           />
           <TokenSelect
             tokens={tokens}
-            label="Swap for"
+            label="Buy"
             name="buy"
             placeholder="Select tokens to buy"
           />
