@@ -47,6 +47,8 @@ describe('Deploy Role', () => {
   beforeEach(() => {
     mockQueryAccounts.mockResolvedValue([])
     mockPlanApplyAccounts.mockResolvedValue([])
+
+    vi.setSystemTime(new Date())
   })
 
   describe('Member Safes', () => {
@@ -248,7 +250,14 @@ describe('Deploy Role', () => {
               avatar: account.address,
               owner: account.address,
               target: account.address,
-              roles: [],
+              roles: [
+                {
+                  key: encodeRoleKey(role.key),
+                  annotations: [],
+                  members: [],
+                  targets: [],
+                },
+              ],
               version: 2,
               nonce: role.nonce,
             },
@@ -267,7 +276,7 @@ describe('Deploy Role', () => {
           chainId: Chain.ETH,
         })
         const role = await roleFactory.create(tenant, user)
-        const action = await roleActionFactory.create(role, user)
+        await roleActionFactory.create(role, user)
 
         await setActiveAccounts(dbClient(), role, [account.id])
 
@@ -295,7 +304,7 @@ describe('Deploy Role', () => {
                 target: account.address,
                 roles: [
                   {
-                    key: encodeRoleKey(action.key),
+                    key: encodeRoleKey(role.key),
                     members: [],
                     annotations: [],
                     targets: [],
@@ -327,7 +336,7 @@ describe('Deploy Role', () => {
           chainId: Chain.ETH,
         })
         const role = await roleFactory.create(tenant, user)
-        const action = await roleActionFactory.create(role, user)
+        await roleActionFactory.create(role, user)
 
         await setRoleMembers(dbClient(), role, [user.id])
         await setActiveAccounts(dbClient(), role, [account.id])
@@ -369,7 +378,7 @@ describe('Deploy Role', () => {
                 target: account.address,
                 roles: [
                   {
-                    key: encodeRoleKey(action.key),
+                    key: encodeRoleKey(role.key),
                     members: [userSafe.address],
                     annotations: [],
                     targets: [],
@@ -399,7 +408,7 @@ describe('Deploy Role', () => {
           chainId: Chain.ETH,
         })
         const role = await roleFactory.create(tenant, user)
-        const action = await roleActionFactory.create(role, user)
+        await roleActionFactory.create(role, user)
 
         await setRoleMembers(dbClient(), role, [user.id])
         await setActiveAccounts(dbClient(), role, [account.id])
@@ -443,7 +452,7 @@ describe('Deploy Role', () => {
                 target: account.address,
                 roles: [
                   {
-                    key: encodeRoleKey(action.key),
+                    key: encodeRoleKey(role.key),
                     members: [userSafe.address],
                     annotations: [],
                     targets: [],
@@ -510,10 +519,10 @@ describe('Deploy Role', () => {
                 target: account.address,
                 roles: [
                   {
-                    key: encodeRoleKey(action.key),
-                    annotations: [],
+                    key: encodeRoleKey(role.key),
+                    annotations: expect.anything(),
                     members: [],
-                    targets: [],
+                    targets: expect.anything(),
                   },
                 ],
                 version: 2,

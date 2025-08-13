@@ -27,7 +27,13 @@ import {
   withPredictedAddress,
   type AccountBuilderCall,
 } from 'ser-kit'
-import { Allowance, processPermissions, Role } from 'zodiac-roles-sdk'
+import {
+  Allowance,
+  Annotation,
+  processPermissions,
+  Target,
+} from 'zodiac-roles-sdk'
+import { allowCowOrderSigning } from 'zodiac-roles-sdk/swaps'
 import { Route } from './+types/deploy-draft'
 import {
   LabeledAddress,
@@ -39,7 +45,6 @@ import {
   ProvideRoleLabels,
   RoleLabels,
 } from './RoleLabelContext'
-import { allowCowOrderSigning } from './allowCowOrderSigning'
 import { getRefillPeriod } from './getRefillPeriod'
 
 type Safe = Extract<Account, { type: AccountType.SAFE }>
@@ -163,41 +168,36 @@ const getRolesMods = async (
     roleLabels: RoleLabels
   }>(
     (result, activeAccount) => {
-      const { roles, labels } = actions.reduce<{
-        roles: Omit<Role, 'lastUpdate'>[]
-        labels: RoleLabels
+      const { annotations, targets } = actions.reduce<{
+        annotations: Annotation[]
+        targets: Target[]
       }>(
         (result, action) => {
-          const key = encodeRoleKey(action.key)
+          const actionAssets = assets.filter(
+            (asset) => asset.roleActionId === action.id,
+          )
+
+          if (actionAssets.length === 0) {
+            return result
+          }
 
           const permissions = allowCowOrderSigning({
-            sell: assets
-              .filter(
-                (asset) => asset.allowSell && asset.roleActionId === action.id,
-              )
+            sell: actionAssets
+              .filter((asset) => asset.allowSell)
               .map((asset) => asset.address),
-            buy: assets
-              .filter(
-                (asset) => asset.allowBuy && asset.roleActionId === action.id,
-              )
+            buy: actionAssets
+              .filter((asset) => asset.allowBuy)
               .map((asset) => asset.address),
           })
 
           const { annotations, targets } = processPermissions(permissions)
 
-          const role = {
-            key,
-            members: members.map((member) => member.address),
-            annotations,
-            targets,
-          }
-
           return {
-            roles: [...result.roles, role],
-            labels: { ...result.labels, [key]: action.label },
+            annotations: [...result.annotations, ...annotations],
+            targets: [...result.targets, ...targets],
           }
         },
-        { roles: [], labels: {} },
+        { annotations: [], targets: [] },
       )
 
       const account = withPredictedAddress<Roles>(
@@ -225,7 +225,14 @@ const getRolesMods = async (
           modules: [],
           multisend: [],
           owner: activeAccount.address,
-          roles,
+          roles: [
+            {
+              key: encodeRoleKey(draft.key),
+              members: members.map((member) => member.address),
+              annotations,
+              targets,
+            },
+          ],
           target: activeAccount.address,
           version: 2,
         },
@@ -239,7 +246,7 @@ const getRolesMods = async (
           [account.address]: draft.label,
           [activeAccount.address]: activeAccount.label,
         },
-        roleLabels: { ...result.roleLabels, ...labels },
+        roleLabels: { ...result.roleLabels, [draft.key]: draft.label },
       }
     },
     { accounts: [], labels: {}, roleLabels: {} },
