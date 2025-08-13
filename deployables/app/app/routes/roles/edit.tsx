@@ -31,7 +31,6 @@ import {
   SecondaryLinkButton,
   successToast,
   Tag,
-  TextInput,
 } from '@zodiac/ui'
 import { ArrowRight, ArrowRightLeft, Pencil } from 'lucide-react'
 import { UUID } from 'node:crypto'
@@ -40,6 +39,7 @@ import { prefixAddress } from 'ser-kit'
 import { Route } from './+types/edit'
 import { AccountSelect } from './AccountSelect'
 import { Intent } from './intents'
+import { RoleLabelInput } from './RoleLabelInput'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -168,11 +168,12 @@ const EditRole = ({
             title="Base configuration"
             description="Defines the basics for this role. Who should it be enabled for and what accounts are affected."
           >
-            <TextInput
+            <RoleLabelInput
               required
               label="Label"
               name="label"
               defaultValue={role.label}
+              keyValue={role.key}
             />
 
             <MultiSelect

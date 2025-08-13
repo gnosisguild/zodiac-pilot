@@ -4,6 +4,7 @@ import { invariantResponse } from '@epic-web/invariant'
 import {
   createRole,
   dbClient,
+  findRoleByKey,
   getAccounts,
   getUsers,
   getWorkspace,
@@ -12,8 +13,10 @@ import {
 } from '@zodiac/db'
 import { getString, getUUIDList } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
+import { getRoleKey } from '@zodiac/modules'
 import { isUUID } from '@zodiac/schema'
 import {
+  Error,
   Form,
   FormLayout,
   GhostLinkButton,
@@ -21,12 +24,12 @@ import {
   MultiSelect,
   PrimaryButton,
   SecondaryButton,
-  TextInput,
 } from '@zodiac/ui'
 import { href, redirect } from 'react-router'
 import { Route } from './+types/create'
 import { AccountSelect } from './AccountSelect'
 import { Intent } from './intents'
+import { RoleLabelInput } from './RoleLabelInput'
 
 export const loader = async (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -71,9 +74,19 @@ export const action = (args: Route.ActionArgs) =>
       const data = await request.formData()
       invariantResponse(isUUID(workspaceId), '"workspaceId" is not a UUID')
 
+      const label = getString(data, 'label')
+      const key = getRoleKey(label)
+
+      const existingRole = await findRoleByKey(dbClient(), workspaceId, key)
+
+      if (existingRole != null) {
+        return { error: 'duplicate-role' }
+      }
+
       const role = await dbClient().transaction(async (tx) => {
         const role = await createRole(tx, user, tenant, {
-          label: getString(data, 'label'),
+          label,
+          key,
           workspaceId,
         })
 
@@ -104,6 +117,7 @@ export const action = (args: Route.ActionArgs) =>
 
 const CreateRole = ({
   loaderData: { users, accounts },
+  actionData,
   params: { workspaceId },
 }: Route.ComponentProps) => {
   return (
@@ -115,7 +129,14 @@ const CreateRole = ({
             title="Base configuration"
             description="Defines the basics for this role. Who should it be enabled for and what accounts are affected."
           >
-            <TextInput
+            {actionData != null && (
+              <Error title="Could not create role">
+                A role with this name already exists. Please choose another
+                label.
+              </Error>
+            )}
+
+            <RoleLabelInput
               required
               label="Label"
               name="label"

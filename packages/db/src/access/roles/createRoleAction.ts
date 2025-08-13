@@ -4,20 +4,18 @@ import { DBClient } from '../../dbClient'
 type CreateRoleActionOptions = {
   label: string
   type: RoleActionType
-  key: string
 }
 
 export const createRoleAction = async (
   db: DBClient,
   role: Role,
   user: User,
-  { label, type, key }: CreateRoleActionOptions,
+  { label, type }: CreateRoleActionOptions,
 ) => {
   const [action] = await db
     .insert(RoleActionTable)
     .values({
       label,
-      key,
       type,
       createdById: user.id,
       roleId: role.id,

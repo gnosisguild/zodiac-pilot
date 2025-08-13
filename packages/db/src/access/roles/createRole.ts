@@ -5,13 +5,14 @@ import { DBClient } from '../../dbClient'
 type CreateRoleOptions = {
   workspaceId: UUID
   label: string
+  key: string
 }
 
 export const createRole = async (
   db: DBClient,
   user: User,
   tenant: Tenant,
-  { label, workspaceId }: CreateRoleOptions,
+  { label, key, workspaceId }: CreateRoleOptions,
 ) => {
   const [role] = await db
     .insert(RoleTable)
@@ -20,6 +21,7 @@ export const createRole = async (
       tenantId: tenant.id,
       workspaceId,
       createdById: user.id,
+      key,
     })
     .returning()
 

@@ -1,8 +1,8 @@
-import { getRoleActionKey } from '@zodiac/modules'
+import { getRoleKey } from '@zodiac/modules'
 import { Kbd, TextInput } from '@zodiac/ui'
 import { ComponentProps, useState } from 'react'
 
-export const ActionLabelInput = ({
+export const RoleLabelInput = ({
   defaultValue = '',
   keyValue,
   ...props
@@ -19,9 +19,7 @@ export const ActionLabelInput = ({
 
       <div className="flex items-center gap-2">
         <span className="text-xs">Generated key</span>
-        <Kbd>
-          {keyValue || getRoleActionKey(value) || '<key will show up here>'}
-        </Kbd>
+        <Kbd>{keyValue || getRoleKey(value) || '<key will show up here>'}</Kbd>
       </div>
     </div>
   )
