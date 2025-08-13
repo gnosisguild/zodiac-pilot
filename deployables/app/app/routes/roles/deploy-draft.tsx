@@ -98,8 +98,6 @@ export const loader = (args: Route.LoaderArgs) =>
 
       return {
         plan: planApplyAccounts({
-          // TODO: remove this
-          current: [],
           desired,
         }),
         labels: {

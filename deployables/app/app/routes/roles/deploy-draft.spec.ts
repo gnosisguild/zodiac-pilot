@@ -80,8 +80,6 @@ describe('Deploy Role', () => {
       )
 
       expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-        // TODO: remove this
-        current: [],
         desired: expect.arrayContaining([
           withPredictedAddress<Extract<Account, { type: AccountType.SAFE }>>(
             {
@@ -132,8 +130,6 @@ describe('Deploy Role', () => {
       )
 
       expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-        // TODO: remove this
-        current: [],
         desired: expect.arrayContaining([
           withPredictedAddress<Extract<Account, { type: AccountType.SAFE }>>(
             {
@@ -202,8 +198,6 @@ describe('Deploy Role', () => {
       )
 
       expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-        // TODO: remove this
-        current: [],
         desired: expect.not.arrayContaining([existingSafe]),
       })
     })
@@ -237,8 +231,6 @@ describe('Deploy Role', () => {
       )
 
       expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-        // TODO: remove this
-        current: [],
         desired: expect.arrayContaining([
           withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
             {
@@ -289,8 +281,6 @@ describe('Deploy Role', () => {
         )
 
         expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-          // TODO: remove this
-          current: [],
           desired: expect.arrayContaining([
             withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
               {
@@ -363,8 +353,6 @@ describe('Deploy Role', () => {
         )
 
         expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-          // TODO: remove this
-          current: [],
           desired: expect.arrayContaining([
             withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
               {
@@ -437,8 +425,6 @@ describe('Deploy Role', () => {
         )
 
         expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-          // TODO: remove this
-          current: [],
           desired: expect.arrayContaining([
             withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
               {
@@ -495,8 +481,6 @@ describe('Deploy Role', () => {
         )
 
         expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-          // TODO: remove this
-          current: [],
           desired: expect.arrayContaining([
             withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
               {
