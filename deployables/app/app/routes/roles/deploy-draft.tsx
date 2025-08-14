@@ -6,10 +6,8 @@ import { getChainId } from '@zodiac/chains'
 import {
   dbClient,
   getActivatedAccounts,
-  getDefaultWallets,
   getRole,
   getRoleActionAssets,
-  getRoleMembers,
 } from '@zodiac/db'
 import { isUUID } from '@zodiac/schema'
 import {
@@ -20,7 +18,6 @@ import {
   Modal,
   NumberValue,
 } from '@zodiac/ui'
-import { UUID } from 'crypto'
 import {
   ArrowRight,
   Code,
@@ -38,8 +35,6 @@ import {
   AccountType,
   ChainId,
   planApplyAccounts,
-  queryAccounts,
-  withPredictedAddress,
   type AccountBuilderCall,
 } from 'ser-kit'
 import { Route } from './+types/deploy-draft'
@@ -49,11 +44,10 @@ import {
   ProvideAddressLabels,
 } from './AddressLabelContext'
 import { LabeledRoleKey, ProvideRoleLabels } from './RoleLabelContext'
+import { getMemberSafes } from './getMemberSafes'
 import { parseRefillPeriod } from './getRefillPeriod'
 import { getRoleMods } from './getRoleMods'
 import { Issues } from './issues'
-
-type Safe = Extract<Account, { type: AccountType.SAFE }>
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -82,12 +76,13 @@ export const loader = (args: Route.LoaderArgs) =>
         newSafes,
         allSafes,
         labels: memberLabels,
+        issues: memberIssues,
       } = await getMemberSafes(draft.id, activeChains)
       const {
         accounts: rolesMods,
         labels: rolesLabels,
         roleLabels,
-        issues,
+        issues: roleIssues,
       } = await getRoleMods(draft, allSafes)
 
       const desired = [...newSafes, ...rolesMods]
@@ -102,7 +97,7 @@ export const loader = (args: Route.LoaderArgs) =>
           ...assetLabels,
         },
         roleLabels,
-        issues,
+        issues: [...roleIssues, ...memberIssues],
       }
     },
     {
@@ -116,52 +111,6 @@ export const loader = (args: Route.LoaderArgs) =>
       },
     },
   )
-
-const getMemberSafes = async (
-  roleId: UUID,
-  activeChains: ChainId[],
-): Promise<{ newSafes: Account[]; allSafes: Account[]; labels: Labels }> => {
-  const members = await getRoleMembers(dbClient(), { roleId })
-
-  const newSafes: Account[] = []
-  const allSafes: Account[] = []
-
-  const labels: Labels = {}
-
-  for (const member of members) {
-    const defaultWallets = await getDefaultWallets(dbClient(), member.id)
-
-    for (const chainId of activeChains) {
-      if (defaultWallets[chainId] == null) {
-        continue
-      }
-
-      const safe = withPredictedAddress<Safe>(
-        {
-          type: AccountType.SAFE,
-          chain: chainId,
-          modules: [],
-          owners: [defaultWallets[chainId].address],
-          threshold: 1,
-        },
-        member.nonce,
-      )
-
-      const [existingSafe] = await queryAccounts([safe.prefixedAddress])
-
-      labels[safe.address] = member.fullName
-      labels[defaultWallets[chainId].address] = defaultWallets[chainId].label
-
-      if (existingSafe == null) {
-        newSafes.push(safe)
-      }
-
-      allSafes.push(safe)
-    }
-  }
-
-  return { newSafes, allSafes, labels }
-}
 
 const DeployDraft = ({
   loaderData: { plan, labels, roleLabels, issues },
