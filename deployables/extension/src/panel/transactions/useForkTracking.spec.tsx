@@ -19,7 +19,7 @@ describe('useForkTracking', () => {
   it('deletes the current fork', async () => {
     await renderHook(() => useForkTracking())
 
-    expect(MockProvider.getInstance().deleteFork).toHaveBeenCalled()
+    expect(MockProvider.getInstance().reset).toHaveBeenCalled()
   })
 
   it('does not delete the fork, when there are transactions', async () => {
@@ -29,7 +29,7 @@ describe('useForkTracking', () => {
       },
     })
 
-    expect(MockProvider.getInstance().deleteFork).not.toHaveBeenCalled()
+    expect(MockProvider.getInstance().reset).not.toHaveBeenCalled()
   })
 
   it('deletes the fork when transactions exist and a refresh has been requested', async () => {
@@ -37,6 +37,6 @@ describe('useForkTracking', () => {
       initialState: { executed: [createConfirmedTransaction()], refresh: true },
     })
 
-    expect(MockProvider.getInstance().deleteFork).toHaveBeenCalled()
+    expect(MockProvider.getInstance().reset).toHaveBeenCalled()
   })
 })
