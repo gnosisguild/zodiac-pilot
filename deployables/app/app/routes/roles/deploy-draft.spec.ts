@@ -1,4 +1,5 @@
 import { render } from '@/test-utils'
+import { screen } from '@testing-library/react'
 import { Chain } from '@zodiac/chains'
 import {
   dbClient,
@@ -49,6 +50,35 @@ describe('Deploy Role', () => {
     mockPlanApplyAccounts.mockResolvedValue([])
 
     vi.setSystemTime(new Date())
+  })
+
+  describe('Warnings', () => {
+    describe('Members', () => {
+      dbIt.todo('warns when not all members have default safes set up')
+    })
+
+    describe('Accounts', () => {
+      dbIt('warns when no account shave been selected', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+
+        const role = await roleFactory.create(tenant, user)
+
+        await render(
+          href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+            workspaceId: tenant.defaultWorkspaceId,
+            draftId: role.id,
+          }),
+          { tenant, user },
+        )
+
+        expect(
+          await screen.findByRole('alert', { name: 'Accounts missing' }),
+        ).toHaveAccessibleDescription(
+          'You have not selected any accounts that this role should be active on.',
+        )
+      })
+    })
   })
 
   describe('Member Safes', () => {

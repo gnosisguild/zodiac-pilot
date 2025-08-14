@@ -9,11 +9,8 @@ import {
   getDefaultWallets,
   getRole,
   getRoleActionAssets,
-  getRoleActions,
   getRoleMembers,
 } from '@zodiac/db'
-import { type Role as DbRole } from '@zodiac/db/schema'
-import { encodeRoleKey } from '@zodiac/modules'
 import { isUUID } from '@zodiac/schema'
 import {
   Card,
@@ -45,28 +42,18 @@ import {
   withPredictedAddress,
   type AccountBuilderCall,
 } from 'ser-kit'
-import {
-  Allowance,
-  Annotation,
-  processPermissions,
-  Target,
-} from 'zodiac-roles-sdk'
 import { Route } from './+types/deploy-draft'
 import {
   LabeledAddress,
   Labels,
   ProvideAddressLabels,
 } from './AddressLabelContext'
-import {
-  LabeledRoleKey,
-  ProvideRoleLabels,
-  RoleLabels,
-} from './RoleLabelContext'
-import { computeSwapPermissions } from './computeSwapPermissions'
-import { getRefillPeriod, parseRefillPeriod } from './getRefillPeriod'
+import { LabeledRoleKey, ProvideRoleLabels } from './RoleLabelContext'
+import { parseRefillPeriod } from './getRefillPeriod'
+import { getRoleMods } from './getRoleMods'
+import { Issues } from './issues'
 
 type Safe = Extract<Account, { type: AccountType.SAFE }>
-type Roles = Extract<Account, { type: AccountType.ROLES }>
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -100,7 +87,8 @@ export const loader = (args: Route.LoaderArgs) =>
         accounts: rolesMods,
         labels: rolesLabels,
         roleLabels,
-      } = await getRolesMods(draft, allSafes)
+        issues,
+      } = await getRoleMods(draft, allSafes)
 
       const desired = [...newSafes, ...rolesMods]
 
@@ -114,6 +102,7 @@ export const loader = (args: Route.LoaderArgs) =>
           ...assetLabels,
         },
         roleLabels,
+        issues,
       }
     },
     {
@@ -174,104 +163,8 @@ const getMemberSafes = async (
   return { newSafes, allSafes, labels }
 }
 
-const getRolesMods = async (
-  draft: DbRole,
-  members: Account[],
-): Promise<{ accounts: Roles[]; labels: Labels; roleLabels: RoleLabels }> => {
-  const activeAccounts = await getActivatedAccounts(dbClient(), {
-    roleId: draft.id,
-  })
-  const actions = await getRoleActions(dbClient(), draft.id)
-  const assets = await getRoleActionAssets(dbClient(), {
-    roleId: draft.id,
-  })
-
-  return activeAccounts.reduce<{
-    accounts: Roles[]
-    labels: Labels
-    roleLabels: RoleLabels
-  }>(
-    (result, activeAccount) => {
-      const { annotations, targets } = actions.reduce<{
-        annotations: Annotation[]
-        targets: Target[]
-      }>(
-        (result, action) => {
-          const actionAssets = assets.filter(
-            (asset) => asset.roleActionId === action.id,
-          )
-
-          if (actionAssets.length === 0) {
-            return result
-          }
-
-          const permissions = computeSwapPermissions(actionAssets)
-
-          const { annotations, targets } = processPermissions(permissions)
-
-          return {
-            annotations: [...result.annotations, ...annotations],
-            targets: [...result.targets, ...targets],
-          }
-        },
-        { annotations: [], targets: [] },
-      )
-
-      const account = withPredictedAddress<Roles>(
-        {
-          type: AccountType.ROLES,
-          allowances: assets.reduce<Allowance[]>((result, asset) => {
-            if (asset.allowance == null || asset.interval == null) {
-              return result
-            }
-
-            return [
-              ...result,
-              {
-                balance: asset.allowance,
-                key: encodeRoleKey(asset.allowanceKey),
-                maxRefill: asset.allowance,
-                period: getRefillPeriod(asset.interval),
-                refill: asset.allowance,
-                timestamp: BigInt(new Date().getTime()),
-              },
-            ]
-          }, []),
-          avatar: activeAccount.address,
-          chain: activeAccount.chainId,
-          modules: [],
-          multisend: [],
-          owner: activeAccount.address,
-          roles: [
-            {
-              key: encodeRoleKey(draft.key),
-              members: members.map((member) => member.address),
-              annotations,
-              targets,
-            },
-          ],
-          target: activeAccount.address,
-          version: 2,
-        },
-        draft.nonce,
-      )
-
-      return {
-        accounts: [...result.accounts, account],
-        labels: {
-          ...result.labels,
-          [account.address]: draft.label,
-          [activeAccount.address]: activeAccount.label,
-        },
-        roleLabels: { ...result.roleLabels, [draft.key]: draft.label },
-      }
-    },
-    { accounts: [], labels: {}, roleLabels: {} },
-  )
-}
-
 const DeployDraft = ({
-  loaderData: { plan, labels, roleLabels },
+  loaderData: { plan, labels, roleLabels, issues },
 }: Route.ComponentProps) => {
   return (
     <Page>
@@ -284,6 +177,8 @@ const DeployDraft = ({
             execute one transaction after the other.
           </Info>
         </div>
+
+        <Issues issues={issues} />
 
         <ProvideRoleLabels labels={roleLabels}>
           <ProvideAddressLabels labels={labels}>
