@@ -1,7 +1,8 @@
-import { Warning } from '@zodiac/ui'
+import { Error, Warning } from '@zodiac/ui'
 
 export enum Issue {
   NoActiveAccounts = 'NoActiveAccounts',
+  NoActiveMembers = 'NoActiveMembers',
 }
 
 export const Issues = ({ issues }: { issues: Issue[] }) => {
@@ -15,9 +16,17 @@ export const Issues = ({ issues }: { issues: Issue[] }) => {
         switch (issue) {
           case Issue.NoActiveAccounts: {
             return (
-              <Warning key={issue} title="Accounts missing">
+              <Error key={issue} title="Accounts missing">
                 You have not selected any accounts that this role should be
                 active on.
+              </Error>
+            )
+          }
+          case Issue.NoActiveMembers: {
+            return (
+              <Warning key={issue} title="Members missing">
+                You have not selected any members that should be part of this
+                role.
               </Warning>
             )
           }

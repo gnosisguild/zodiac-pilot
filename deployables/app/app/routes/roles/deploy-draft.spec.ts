@@ -54,7 +54,26 @@ describe('Deploy Role', () => {
 
   describe('Warnings', () => {
     describe('Members', () => {
-      dbIt.todo('warns when not all members have default safes set up')
+      dbIt('warns when not all members have default safes set up', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+
+        const role = await roleFactory.create(tenant, user)
+
+        await render(
+          href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+            workspaceId: tenant.defaultWorkspaceId,
+            draftId: role.id,
+          }),
+          { tenant, user },
+        )
+
+        expect(
+          await screen.findByRole('alert', { name: 'Members missing' }),
+        ).toHaveAccessibleDescription(
+          'You have not selected any members that should be part of this role.',
+        )
+      })
     })
 
     describe('Accounts', () => {
