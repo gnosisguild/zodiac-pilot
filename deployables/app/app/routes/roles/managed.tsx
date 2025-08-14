@@ -20,6 +20,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableRowActions,
 } from '@zodiac/ui'
 import { Address } from '@zodiac/web3'
 import { CloudUpload, Pencil } from 'lucide-react'
@@ -125,29 +126,31 @@ const ManagedRoles = ({
               )}
             </TableCell>
             <TableCell>
-              <GhostLinkButton
-                iconOnly
-                icon={Pencil}
-                size="tiny"
-                to={href('/workspace/:workspaceId/roles/:roleId', {
-                  workspaceId,
-                  roleId: role.id,
-                })}
-              >
-                Edit
-              </GhostLinkButton>
+              <TableRowActions>
+                <GhostLinkButton
+                  iconOnly
+                  icon={Pencil}
+                  size="tiny"
+                  to={href('/workspace/:workspaceId/roles/:roleId', {
+                    workspaceId,
+                    roleId: role.id,
+                  })}
+                >
+                  Edit
+                </GhostLinkButton>
 
-              <GhostLinkButton
-                size="tiny"
-                icon={CloudUpload}
-                intent={Intent.Deploy}
-                to={href('/workspace/:workspaceId/roles/:roleId/deploy', {
-                  workspaceId,
-                  roleId: role.id,
-                })}
-              >
-                Deploy
-              </GhostLinkButton>
+                <GhostLinkButton
+                  size="tiny"
+                  icon={CloudUpload}
+                  intent={Intent.Deploy}
+                  to={href('/workspace/:workspaceId/roles/:roleId/deploy', {
+                    workspaceId,
+                    roleId: role.id,
+                  })}
+                >
+                  Deploy
+                </GhostLinkButton>
+              </TableRowActions>
             </TableCell>
           </TableRow>
         ))}

@@ -167,7 +167,7 @@ export default [
         ]),
 
         ...prefix('roles/:roleId', [
-          route('deploy', 'routes/roles/deploy-draft.tsx'),
+          route('deploy', 'routes/roles/deploy-role.tsx'),
         ]),
 
         ...prefix('roles', [

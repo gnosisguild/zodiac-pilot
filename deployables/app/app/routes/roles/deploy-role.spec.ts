@@ -61,9 +61,9 @@ describe('Deploy Role', () => {
         const role = await roleFactory.create(tenant, user)
 
         await render(
-          href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+          href('/workspace/:workspaceId/roles/:roleId/deploy', {
             workspaceId: tenant.defaultWorkspaceId,
-            draftId: role.id,
+            roleId: role.id,
           }),
           { tenant, user },
         )
@@ -86,9 +86,9 @@ describe('Deploy Role', () => {
         await setRoleMembers(dbClient(), role, [user.id])
 
         await render(
-          href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+          href('/workspace/:workspaceId/roles/:roleId/deploy', {
             workspaceId: tenant.defaultWorkspaceId,
-            draftId: role.id,
+            roleId: role.id,
           }),
           { tenant, user },
         )
@@ -109,9 +109,9 @@ describe('Deploy Role', () => {
         const role = await roleFactory.create(tenant, user)
 
         await render(
-          href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+          href('/workspace/:workspaceId/roles/:roleId/deploy', {
             workspaceId: tenant.defaultWorkspaceId,
-            draftId: role.id,
+            roleId: role.id,
           }),
           { tenant, user },
         )
@@ -146,9 +146,9 @@ describe('Deploy Role', () => {
       await setActiveAccounts(dbClient(), role, [account.id])
 
       await render(
-        href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+        href('/workspace/:workspaceId/roles/:roleId/deploy', {
           workspaceId: tenant.defaultWorkspaceId,
-          draftId: role.id,
+          roleId: role.id,
         }),
         { tenant, user },
       )
@@ -196,9 +196,9 @@ describe('Deploy Role', () => {
       await setActiveAccounts(dbClient(), role, [accountA.id, accountB.id])
 
       await render(
-        href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+        href('/workspace/:workspaceId/roles/:roleId/deploy', {
           workspaceId: tenant.defaultWorkspaceId,
-          draftId: role.id,
+          roleId: role.id,
         }),
         { tenant, user },
       )
@@ -264,9 +264,9 @@ describe('Deploy Role', () => {
       mockQueryAccounts.mockResolvedValue([existingSafe])
 
       await render(
-        href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+        href('/workspace/:workspaceId/roles/:roleId/deploy', {
           workspaceId: tenant.defaultWorkspaceId,
-          draftId: role.id,
+          roleId: role.id,
         }),
         { tenant, user },
       )
@@ -297,9 +297,9 @@ describe('Deploy Role', () => {
       await setActiveAccounts(dbClient(), role, [account.id])
 
       await render(
-        href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+        href('/workspace/:workspaceId/roles/:roleId/deploy', {
           workspaceId: tenant.defaultWorkspaceId,
-          draftId: role.id,
+          roleId: role.id,
         }),
         { tenant, user },
       )
@@ -347,9 +347,9 @@ describe('Deploy Role', () => {
         await setActiveAccounts(dbClient(), role, [account.id])
 
         await render(
-          href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+          href('/workspace/:workspaceId/roles/:roleId/deploy', {
             workspaceId: tenant.defaultWorkspaceId,
-            draftId: role.id,
+            roleId: role.id,
           }),
           { tenant, user },
         )
@@ -406,9 +406,9 @@ describe('Deploy Role', () => {
         await setActiveAccounts(dbClient(), role, [account.id])
 
         await render(
-          href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+          href('/workspace/:workspaceId/roles/:roleId/deploy', {
             workspaceId: tenant.defaultWorkspaceId,
-            draftId: role.id,
+            roleId: role.id,
           }),
           { tenant, user },
         )
@@ -491,9 +491,9 @@ describe('Deploy Role', () => {
         mockQueryAccounts.mockResolvedValue([userSafe])
 
         await render(
-          href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+          href('/workspace/:workspaceId/roles/:roleId/deploy', {
             workspaceId: tenant.defaultWorkspaceId,
-            draftId: role.id,
+            roleId: role.id,
           }),
           { tenant, user },
         )
@@ -547,9 +547,9 @@ describe('Deploy Role', () => {
         await setActiveAccounts(dbClient(), role, [account.id])
 
         await render(
-          href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+          href('/workspace/:workspaceId/roles/:roleId/deploy', {
             workspaceId: tenant.defaultWorkspaceId,
-            draftId: role.id,
+            roleId: role.id,
           }),
           { tenant, user },
         )

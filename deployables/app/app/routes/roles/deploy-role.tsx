@@ -37,7 +37,7 @@ import {
   planApplyAccounts,
   type AccountBuilderCall,
 } from 'ser-kit'
-import { Route } from './+types/deploy-draft'
+import { Route } from './+types/deploy-role'
 import {
   LabeledAddress,
   Labels,
@@ -52,20 +52,20 @@ import { Issues } from './issues'
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
-    async ({ params: { draftId } }) => {
-      invariantResponse(isUUID(draftId), '"draftId" is not a UUID')
+    async ({ params: { roleId } }) => {
+      invariantResponse(isUUID(roleId), '"roleId" is not a UUID')
 
-      const draft = await getRole(dbClient(), draftId)
+      const role = await getRole(dbClient(), roleId)
 
       const activatedAccounts = await getActivatedAccounts(dbClient(), {
-        roleId: draft.id,
+        roleId,
       })
 
       const activeChains = Array.from(
         new Set(activatedAccounts.map((account) => account.chainId)),
       )
 
-      const assets = await getRoleActionAssets(dbClient(), { roleId: draft.id })
+      const assets = await getRoleActionAssets(dbClient(), { roleId })
 
       const assetLabels = assets.reduce<Labels>(
         (result, asset) => ({ ...result, [asset.address]: asset.symbol }),
@@ -77,13 +77,13 @@ export const loader = (args: Route.LoaderArgs) =>
         allSafes,
         labels: memberLabels,
         issues: memberIssues,
-      } = await getMemberSafes(draft.id, activeChains)
+      } = await getMemberSafes(roleId, activeChains)
       const {
         accounts: rolesMods,
         labels: rolesLabels,
         roleLabels,
         issues: roleIssues,
-      } = await getRoleMods(draft, allSafes)
+      } = await getRoleMods(role, allSafes)
 
       const desired = [...newSafes, ...rolesMods]
 
@@ -102,22 +102,22 @@ export const loader = (args: Route.LoaderArgs) =>
     },
     {
       ensureSignedIn: true,
-      async hasAccess({ params: { draftId, workspaceId }, tenant }) {
-        invariantResponse(isUUID(draftId), '"draftId" is no UUID')
+      async hasAccess({ params: { roleId, workspaceId }, tenant }) {
+        invariantResponse(isUUID(roleId), '"roleId" is no UUID')
 
-        const draft = await getRole(dbClient(), draftId)
+        const role = await getRole(dbClient(), roleId)
 
-        return draft.tenantId === tenant.id && draft.workspaceId === workspaceId
+        return role.tenantId === tenant.id && role.workspaceId === workspaceId
       },
     },
   )
 
-const DeployDraft = ({
+const DeployRole = ({
   loaderData: { plan, labels, roleLabels, issues },
 }: Route.ComponentProps) => {
   return (
     <Page>
-      <Page.Header>Deploy draft</Page.Header>
+      <Page.Header>Deploy role</Page.Header>
 
       <Page.Main>
         <Issues issues={issues} />
@@ -178,7 +178,7 @@ const DeployDraft = ({
   )
 }
 
-export default DeployDraft
+export default DeployRole
 
 const Description = ({ account }: { account: Account }) => {
   switch (account.type) {
