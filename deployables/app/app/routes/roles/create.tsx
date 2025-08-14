@@ -165,7 +165,7 @@ const CreateRole = ({
               </PrimaryButton>
 
               <GhostLinkButton
-                to={href('/workspace/:workspaceId/roles/drafts', {
+                to={href('/workspace/:workspaceId/roles', {
                   workspaceId,
                 })}
               >
@@ -176,9 +176,9 @@ const CreateRole = ({
 
           <FormLayout>
             <FormLayout.Section title="Actions">
-              <Info title="Create draft to add actions">
+              <Info title="Create role to add actions">
                 You can add actions to this role once you've created the initial
-                version of the draft
+                version of the role
               </Info>
 
               <FormLayout.Actions>
