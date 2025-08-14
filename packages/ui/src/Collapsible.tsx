@@ -23,7 +23,7 @@ export const Collapsible = ({
         <>
           <DisclosureButton
             as="div"
-            className="group flex w-full cursor-pointer justify-between"
+            className="group flex w-full cursor-pointer items-center justify-between"
           >
             <div className="flex">{header}</div>
 
