@@ -49,6 +49,10 @@ import { parseRefillPeriod } from './getRefillPeriod'
 import { getRoleMods } from './getRoleMods'
 import { Issues } from './issues'
 
+const contractLabels: Labels = {
+  ['0x23da9ade38e4477b23770ded512fd37b12381fab']: 'Cowswap',
+}
+
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
@@ -95,6 +99,7 @@ export const loader = (args: Route.LoaderArgs) =>
           ...rolesLabels,
           ...memberLabels,
           ...assetLabels,
+          ...contractLabels,
         },
         roleLabels,
         issues: [...roleIssues, ...memberIssues],
