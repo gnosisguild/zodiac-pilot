@@ -1,55 +1,48 @@
-import classNames from 'classnames'
-import { ChevronDown } from 'lucide-react'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import {
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+} from '@headlessui/react'
+import { ChevronDown, ChevronUp } from 'lucide-react'
+import { PropsWithChildren, type ReactNode } from 'react'
+import { GhostButton } from './buttons'
 
-type CollapsibleProps = {
-  title: string
-  children: ReactNode
+type CollapsibleProps = PropsWithChildren<{
+  header: ReactNode
   defaultOpen?: boolean
-}
+}>
 
 export const Collapsible = ({
-  title,
+  header,
   children,
   defaultOpen = false,
 }: CollapsibleProps) => {
-  const [open, setOpen] = useState(defaultOpen)
-  const [contentHeight, setContentHeight] = useState<number>(0)
-  const contentRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    if (contentRef.current) {
-      setContentHeight(contentRef.current.scrollHeight)
-    }
-  }, [children, open])
-
-  const toggleOpen = () => setOpen((prev) => !prev)
-
   return (
-    <div className="w-full rounded-md border border-zinc-200 bg-zinc-50 px-4 py-2 dark:border-zinc-700 dark:bg-zinc-900">
-      <button
-        type="button"
-        onClick={toggleOpen}
-        className="flex w-full items-center justify-between text-left focus:outline-none"
-      >
-        <span className="text-sm font-semibold dark:text-zinc-50">{title}</span>
-        <ChevronDown
-          size={16}
-          className={classNames(
-            'text-zinc-500 transition-transform duration-300',
-            {
-              'rotate-180': open,
-            },
-          )}
-        />
-      </button>
-      <div
-        ref={contentRef}
-        className="overflow-hidden transition-all duration-300"
-        style={{ maxHeight: open ? `${contentHeight}px` : '0px' }}
-      >
-        <div className="py-4">{children}</div>
-      </div>
-    </div>
+    <Disclosure as="div" defaultOpen={defaultOpen} className="w-full">
+      {({ open }) => (
+        <>
+          <DisclosureButton className="group flex w-full cursor-pointer justify-between">
+            <div className="flex">{header}</div>
+
+            <GhostButton
+              iconOnly
+              icon={open ? ChevronUp : ChevronDown}
+              size="small"
+            >
+              {open ? 'Close' : 'Open'}
+            </GhostButton>
+          </DisclosureButton>
+
+          <div className="overflow-hidden">
+            <DisclosurePanel
+              transition
+              className="data-closed:-translate-y-6 data-closed:opacity-0 origin-top transition duration-200 ease-out"
+            >
+              {children}
+            </DisclosurePanel>
+          </div>
+        </>
+      )}
+    </Disclosure>
   )
 }
