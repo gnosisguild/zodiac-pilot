@@ -15,9 +15,17 @@ import {
 import { type Role as DbRole } from '@zodiac/db/schema'
 import { encodeRoleKey } from '@zodiac/modules'
 import { isUUID } from '@zodiac/schema'
-import { Card, GhostButton, Info, Modal, NumberValue } from '@zodiac/ui'
+import {
+  Card,
+  Collapsible,
+  GhostButton,
+  Info,
+  Modal,
+  NumberValue,
+} from '@zodiac/ui'
 import { UUID } from 'crypto'
 import {
+  ArrowRight,
   Code,
   Crosshair,
   HandCoins,
@@ -284,20 +292,22 @@ const DeployDraft = ({
                 {(plan) =>
                   plan.map(({ account, steps }, planIndex) => (
                     <Card key={`${account.prefixedAddress}-${planIndex}`}>
-                      <div className="flex flex-col gap-4 divide-y divide-zinc-700">
-                        {steps.map((step, index) => (
-                          <div
-                            key={`${account.prefixedAddress}=${planIndex}-${index}`}
-                            className="not-last:pb-4"
-                          >
-                            <Call
-                              key={index}
-                              {...step.call}
-                              chainId={getChainId(account.prefixedAddress)}
-                            />
-                          </div>
-                        ))}
-                      </div>
+                      <Collapsible header={<Description account={account} />}>
+                        <div className="flex flex-col gap-4 divide-y divide-zinc-700 pt-4">
+                          {steps.map((step, index) => (
+                            <div
+                              key={`${account.prefixedAddress}=${planIndex}-${index}`}
+                              className="not-last:pb-4"
+                            >
+                              <Call
+                                key={index}
+                                {...step.call}
+                                chainId={getChainId(account.prefixedAddress)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </Collapsible>
                     </Card>
                   ))
                 }
@@ -311,6 +321,36 @@ const DeployDraft = ({
 }
 
 export default DeployDraft
+
+const Description = ({ account }: { account: Account }) => {
+  switch (account.type) {
+    case AccountType.SAFE: {
+      return (
+        <div className="flex flex-col items-start gap-2 text-sm">
+          <div className="font-semibold">
+            Setup <span className="underline">Safe</span>{' '}
+          </div>
+          <LabeledAddress>{account.address}</LabeledAddress>
+        </div>
+      )
+    }
+    case AccountType.ROLES: {
+      return (
+        <div className="flex flex-col items-start gap-2 text-sm">
+          <div className="font-semibold">
+            Setup <span className="underline">Roles mod</span>{' '}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <LabeledAddress>{account.address}</LabeledAddress>
+            <ArrowRight className="size-4" />
+            <LabeledAddress>{account.target}</LabeledAddress>
+          </div>
+        </div>
+      )
+    }
+  }
+}
 
 type CallProps = AccountBuilderCall & { chainId: ChainId }
 
