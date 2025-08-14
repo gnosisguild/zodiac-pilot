@@ -57,7 +57,6 @@ enum BatchStatus {
 /** This is separated from TenderlyProvider to provide an abstraction over Tenderly implementation details. That way we will be able to more easily plug in alternative simulation back-ends. */
 export class ForkProvider extends EventEmitter {
   private provider: TenderlyProvider
-  private abortController: AbortController
 
   private chainId: ChainId
   private avatarAddress: HexAddress
@@ -69,6 +68,9 @@ export class ForkProvider extends EventEmitter {
 
   private pendingMetaTransaction: Promise<TransactionResult> | undefined
   private initForkPromise: Promise<void> | undefined
+  private destroyed: boolean = false
+
+  private initialCheckpointId: string | undefined
 
   // This map is used to serve the EIP-5792 `wallet_getCallsStatus` request.
   // It maps the `id` parameter of `wallet_sendCalls` to the hashes of the resulting transactions.
@@ -91,7 +93,6 @@ export class ForkProvider extends EventEmitter {
     this.avatarAddress = avatarAddress
     this.simulationModuleAddress = simulationModuleAddress
     this.setupRequests = setupRequests
-    this.abortController = new AbortController()
 
     this.blockGasLimitPromise = readBlockGasLimit(this.provider)
 
@@ -101,17 +102,17 @@ export class ForkProvider extends EventEmitter {
     // Usually we initialize the fork when the first transaction is sent, but if there are setup requests we rather initialize immediately.
     // This is to make sure any spoofed balances or other setup effects are visible right away.
     if (this.setupRequests.length > 0) {
-      this.initForkPromise = this.initFork()
+      this.ensureForkInitialized()
     }
   }
 
-  private isDeleted() {
-    return this.abortController.signal.aborted
+  private isDestroyed(): boolean {
+    return this.destroyed
   }
 
-  private assertNotDeleted() {
-    if (this.isDeleted()) {
-      throw new Error('ForkProvider deleted')
+  private assertNotDestroyed() {
+    if (this.isDestroyed()) {
+      throw new Error('ForkProvider destroyed')
     }
   }
 
@@ -369,7 +370,7 @@ export class ForkProvider extends EventEmitter {
   ): Promise<TransactionResult> {
     await this.ensureForkInitialized()
 
-    this.assertNotDeleted()
+    this.assertNotDestroyed()
 
     const isSafe = await this.isSafePromise
     const isDelegateCall = metaTx.operation === 1
@@ -379,18 +380,23 @@ export class ForkProvider extends EventEmitter {
       'delegatecall is only supported for Safes as avatar',
     )
 
-    this.assertNotDeleted()
+    this.assertNotDestroyed()
 
     // take a snapshot and record the meta transaction
     const checkpointId: string = await this.provider.request({
       method: 'evm_snapshot',
     })
+    // keep track of the initial checkpoint id so we can revert to it when resetting the fork
+    if (this.initialCheckpointId === undefined) {
+      this.initialCheckpointId = checkpointId
+    }
+
     await this.provider.request({
       method: 'evm_setNextBlockTimestamp',
       params: [Math.ceil(Date.now() / 1000).toString()],
     })
 
-    this.assertNotDeleted()
+    this.assertNotDestroyed()
 
     let tx: TransactionData
     if (isSafe) {
@@ -432,19 +438,18 @@ export class ForkProvider extends EventEmitter {
     await this.initForkPromise
   }
 
-  async initFork(): Promise<void> {
-    // Check if we've been aborted before starting initialization.
-    // Then check again after each async operation. This is to make sure we don't do any work if the fork is deleted.
-    if (this.isDeleted()) {
-      console.debug('fork deleted, skipping initialization')
-      return
+  private async initFork(): Promise<void> {
+    if (this.isDestroyed()) {
+      throw new Error(
+        'ForkProvider must be uninitialized or destroyed before initialization',
+      )
     }
 
     console.debug('Initializing fork for simulation...')
     const isSafe = await this.isSafePromise
 
-    if (this.isDeleted()) {
-      console.debug('fork deleted, skipping initialization')
+    if (this.isDestroyed()) {
+      console.debug('fork destroyed, skipping initialization')
       return
     }
 
@@ -460,8 +465,8 @@ export class ForkProvider extends EventEmitter {
     }
 
     for (const request of this.setupRequests) {
-      if (this.isDeleted()) {
-        console.debug('fork deleted, skipping initialization')
+      if (this.isDestroyed()) {
+        console.debug('fork destroyed, skipping initialization')
         return
       }
 
@@ -469,8 +474,8 @@ export class ForkProvider extends EventEmitter {
       await this.provider.request(translateJsonRpcRequest(request))
     }
 
-    if (this.isDeleted()) {
-      console.debug('fork deleted, skipping initialization')
+    if (this.isDestroyed()) {
+      console.debug('fork destroyed, skipping initialization')
       return
     }
 
@@ -478,8 +483,8 @@ export class ForkProvider extends EventEmitter {
     // we use the public RPC for requests originating from apps
     const activeTab = await getActiveTab()
 
-    if (this.isDeleted()) {
-      console.debug('fork deleted, skipping initialization')
+    if (this.isDestroyed()) {
+      console.debug('fork destroyed, skipping initialization')
       return
     }
 
@@ -492,8 +497,8 @@ export class ForkProvider extends EventEmitter {
     })
 
     this.provider.on('update', ({ rpcUrl, vnetId }) => {
-      // Check abort signal before sending update messages
-      if (this.isDeleted()) {
+      // Check if destroyed before sending update messages
+      if (this.isDestroyed()) {
         return
       }
 
@@ -506,9 +511,45 @@ export class ForkProvider extends EventEmitter {
     })
   }
 
-  async deleteFork(): Promise<void> {
-    // Abort any ongoing operations immediately
-    this.abortController.abort('ForkProvider being deleted')
+  /**
+   * Resets the fork to the initial state.
+   * If the fork uses setup calls it will roll back to the initial state after the setup calls.
+   * Without setup calls it will wipe the underlying virtual testnet to start fresh. This has the advantage of having block numbers in sync with the underlying network.
+   */
+  async reset() {
+    this.eip5792Calls.clear()
+
+    if (this.setupRequests.length > 0) {
+      // setup requests are to be applied, we need to revert to the initial checkpoint
+      if (this.initialCheckpointId) {
+        await this.provider.request({
+          method: 'evm_revert',
+          params: [this.initialCheckpointId],
+        })
+      } else {
+        // we have not yet executed anything after the setup requests, nothing to reset
+        console.warn('Nothing to reset')
+      }
+    } else {
+      // no setup requests, we can just delete the fork
+      await this.deleteFork()
+    }
+  }
+
+  /**
+   * Destroys the instance. Should be called over reset() when we no longer want to work with this ForkProvider instance.
+   * This will stop the fork from being used and discard the underlying virtual testnet.
+   */
+  async destroy(): Promise<void> {
+    // Immediately mark as destroyed
+    this.destroyed = true
+    await this.deleteFork()
+  }
+
+  private async deleteFork(): Promise<void> {
+    // Immediately mark as uninitialized so any incoming requests will re-initialize a fresh fork
+    this.initForkPromise = undefined
+    this.initialCheckpointId = undefined
 
     // notify the background script to stop intercepting JSON RPC requests
     const activeTab = await getActiveTab()
@@ -521,8 +562,6 @@ export class ForkProvider extends EventEmitter {
     })
 
     await this.provider.deleteFork()
-    this.eip5792Calls.clear()
-    this.initForkPromise = undefined
   }
 
   getTransactionLink(txHash: string) {

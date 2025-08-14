@@ -12,7 +12,8 @@ export class MockProvider extends EventEmitter implements Eip1193Provider {
   request: MockedFunction<Eip1193Provider['request']>
 
   // ForkProvider specific
-  deleteFork: MockedFunction<ForkProvider['deleteFork']>
+  reset: MockedFunction<ForkProvider['reset']>
+  destroy: MockedFunction<ForkProvider['destroy']>
   sendMetaTransaction: MockedFunction<ForkProvider['sendMetaTransaction']>
   getTransactionLink: MockedFunction<ForkProvider['getTransactionLink']>
 
@@ -37,7 +38,8 @@ export class MockProvider extends EventEmitter implements Eip1193Provider {
 
     this.request = vi.fn<ForkProvider['request']>().mockResolvedValue(null)
 
-    this.deleteFork = vi.fn<ForkProvider['deleteFork']>().mockResolvedValue()
+    this.reset = vi.fn<ForkProvider['reset']>().mockResolvedValue()
+    this.destroy = vi.fn<ForkProvider['destroy']>().mockResolvedValue()
     this.sendMetaTransaction = vi.fn<ForkProvider['sendMetaTransaction']>()
 
     this.getTransactionLink = vi

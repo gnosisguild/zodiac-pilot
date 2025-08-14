@@ -37,7 +37,7 @@ export const ProvideForkProvider = ({
     setProvider(provider)
 
     return () => {
-      provider.deleteFork()
+      provider.destroy()
     }
   }, [chainId, address, simulationModuleAddress])
 
