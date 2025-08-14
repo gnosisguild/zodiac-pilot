@@ -90,8 +90,10 @@ export const loader = (args: Route.LoaderArgs) =>
         role,
         users,
         accounts,
-        activeAccounts,
-        members,
+        activeAccountIds: activeAccounts.map(
+          (activeAccount) => activeAccount.id,
+        ),
+        memberIds: members.map((member) => member.id),
         actions,
         missingDefaultWallets,
       }
@@ -147,9 +149,9 @@ const EditRole = ({
   loaderData: {
     role,
     users,
-    members,
+    memberIds,
     accounts,
-    activeAccounts,
+    activeAccountIds,
     actions,
     missingDefaultWallets,
   },
@@ -187,7 +189,7 @@ const EditRole = ({
                 label: user.fullName,
                 value: user.id,
               }))}
-              defaultValue={members.map((member) => member.id)}
+              defaultValue={memberIds}
             >
               {({ data: { label, value } }) => (
                 <div className="flex flex-col gap-1">
@@ -209,7 +211,10 @@ const EditRole = ({
               )}
             </MultiSelect>
 
-            <AccountSelect accounts={accounts} defaultValue={activeAccounts} />
+            <AccountSelect
+              accounts={accounts}
+              defaultValue={activeAccountIds}
+            />
 
             <Form.Actions>
               <PrimaryButton

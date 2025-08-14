@@ -3,10 +3,11 @@ import { chainName } from '@zodiac/chains'
 import { Account } from '@zodiac/db/schema'
 import { MultiSelect, Tag } from '@zodiac/ui'
 import { Address } from '@zodiac/web3'
+import { UUID } from 'node:crypto'
 
 type AccountSelectProps = {
   accounts: Account[]
-  defaultValue?: Account[]
+  defaultValue?: UUID[]
 }
 
 export const AccountSelect = ({
@@ -22,7 +23,7 @@ export const AccountSelect = ({
         label: account.label,
         value: account.id,
       }))}
-      defaultValue={defaultValue.map((account) => account.id)}
+      defaultValue={defaultValue}
     >
       {({ data: { value } }) => {
         const account = accounts.find((account) => account.id === value)
