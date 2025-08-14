@@ -29,15 +29,15 @@ type Result = {
 }
 
 export const getRoleMods = async (
-  draft: Role,
+  role: Role,
   members: Account[],
 ): Promise<Result> => {
   const activeAccounts = await getActivatedAccounts(dbClient(), {
-    roleId: draft.id,
+    roleId: role.id,
   })
-  const actions = await getRoleActions(dbClient(), draft.id)
+  const actions = await getRoleActions(dbClient(), role.id)
   const assets = await getRoleActionAssets(dbClient(), {
-    roleId: draft.id,
+    roleId: role.id,
   })
 
   if (activeAccounts.length === 0) {
@@ -103,7 +103,7 @@ export const getRoleMods = async (
           owner: activeAccount.address,
           roles: [
             {
-              key: encodeRoleKey(draft.key),
+              key: encodeRoleKey(role.key),
               members: members.map((member) => member.address),
               annotations,
               targets,
@@ -112,7 +112,7 @@ export const getRoleMods = async (
           target: activeAccount.address,
           version: 2,
         },
-        draft.nonce,
+        role.nonce,
       )
 
       return {
@@ -120,10 +120,10 @@ export const getRoleMods = async (
         accounts: [...result.accounts, account],
         labels: {
           ...result.labels,
-          [account.address]: draft.label,
+          [account.address]: role.label,
           [activeAccount.address]: activeAccount.label,
         },
-        roleLabels: { ...result.roleLabels, [draft.key]: draft.label },
+        roleLabels: { ...result.roleLabels, [role.key]: role.label },
       }
     },
     { accounts: [], labels: {}, roleLabels: {}, issues: [] },
