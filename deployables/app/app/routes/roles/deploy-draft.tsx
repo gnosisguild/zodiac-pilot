@@ -15,7 +15,7 @@ import {
 import { type Role as DbRole } from '@zodiac/db/schema'
 import { encodeRoleKey } from '@zodiac/modules'
 import { isUUID } from '@zodiac/schema'
-import { GhostButton, Info, Modal, NumberValue } from '@zodiac/ui'
+import { Card, GhostButton, Info, Modal, NumberValue } from '@zodiac/ui'
 import { UUID } from 'crypto'
 import {
   Code,
@@ -281,24 +281,26 @@ const DeployDraft = ({
           <ProvideAddressLabels labels={labels}>
             <Suspense>
               <Await resolve={plan}>
-                {(plan) => (
-                  <div className="flex flex-col gap-4 divide-y divide-zinc-700">
-                    {plan.map(({ account, steps }, planIndex) =>
-                      steps.map((step, index) => (
-                        <div
-                          key={`${account.prefixedAddress}=${planIndex}-${index}`}
-                          className="pb-4"
-                        >
-                          <Call
-                            key={index}
-                            {...step.call}
-                            chainId={getChainId(account.prefixedAddress)}
-                          />
-                        </div>
-                      )),
-                    )}
-                  </div>
-                )}
+                {(plan) =>
+                  plan.map(({ account, steps }, planIndex) => (
+                    <Card key={`${account.prefixedAddress}-${planIndex}`}>
+                      <div className="flex flex-col gap-4 divide-y divide-zinc-700">
+                        {steps.map((step, index) => (
+                          <div
+                            key={`${account.prefixedAddress}=${planIndex}-${index}`}
+                            className="not-last:pb-4"
+                          >
+                            <Call
+                              key={index}
+                              {...step.call}
+                              chainId={getChainId(account.prefixedAddress)}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </Card>
+                  ))
+                }
               </Await>
             </Suspense>
           </ProvideAddressLabels>
