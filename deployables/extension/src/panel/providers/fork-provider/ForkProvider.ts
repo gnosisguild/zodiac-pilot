@@ -110,7 +110,9 @@ export class ForkProvider extends EventEmitter {
   }
 
   private assertNotDeleted() {
-    invariant(!this.isDeleted(), 'ForkProvider deleted')
+    if (this.isDeleted()) {
+      throw new Error('ForkProvider deleted')
+    }
   }
 
   async request(
@@ -491,7 +493,7 @@ export class ForkProvider extends EventEmitter {
 
     this.provider.on('update', ({ rpcUrl, vnetId }) => {
       // Check abort signal before sending update messages
-      if (this.abortController.signal.aborted) {
+      if (this.isDeleted()) {
         return
       }
 
