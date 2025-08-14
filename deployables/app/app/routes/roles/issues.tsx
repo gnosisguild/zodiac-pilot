@@ -3,6 +3,7 @@ import { Error, Warning } from '@zodiac/ui'
 export enum Issue {
   NoActiveAccounts = 'NoActiveAccounts',
   NoActiveMembers = 'NoActiveMembers',
+  MissingDefaultWallet = 'MissingDefaultWallet',
 }
 
 export const Issues = ({ issues }: { issues: Issue[] }) => {
@@ -27,6 +28,15 @@ export const Issues = ({ issues }: { issues: Issue[] }) => {
               <Warning key={issue} title="Members missing">
                 You have not selected any members that should be part of this
                 role.
+              </Warning>
+            )
+          }
+          case Issue.MissingDefaultWallet: {
+            return (
+              <Warning key={issue} title="Members missing">
+                Not all members have selected a default safes for the chains
+                this role will be deployed to. This means the role will not be
+                active for them on these chains.
               </Warning>
             )
           }
