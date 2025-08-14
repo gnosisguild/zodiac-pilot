@@ -24,7 +24,7 @@ export const LabeledAddress = ({
 }: Omit<ComponentProps<typeof Address>, 'shorten' | 'size'>) => {
   const labels = useContext(AddressLabelContext)
 
-  const address = unprefixAddress(children)
+  const address = unprefixAddress(children as HexAddress)
 
   return (
     <Address {...props} label={labels[address]} shorten size="small">
