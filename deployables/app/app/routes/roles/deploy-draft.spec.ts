@@ -54,7 +54,7 @@ describe('Deploy Role', () => {
 
   describe('Warnings', () => {
     describe('Members', () => {
-      dbIt('warns when not all members have default safes set up', async () => {
+      dbIt('warns when no members have been selected', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
 
@@ -72,6 +72,31 @@ describe('Deploy Role', () => {
           await screen.findByRole('alert', { name: 'Members missing' }),
         ).toHaveAccessibleDescription(
           'You have not selected any members that should be part of this role.',
+        )
+      })
+
+      dbIt('warns when not all members have default safes set up', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+
+        const account = await accountFactory.create(tenant, user)
+        const role = await roleFactory.create(tenant, user)
+
+        await setActiveAccounts(dbClient(), role, [account.id])
+        await setRoleMembers(dbClient(), role, [user.id])
+
+        await render(
+          href('/workspace/:workspaceId/roles/drafts/:draftId/deploy', {
+            workspaceId: tenant.defaultWorkspaceId,
+            draftId: role.id,
+          }),
+          { tenant, user },
+        )
+
+        expect(
+          await screen.findByRole('alert', { name: 'Members missing' }),
+        ).toHaveAccessibleDescription(
+          'Not all members have selected a default safes for the chains this role will be deployed to. This means the role will not be active for them on these chains.',
         )
       })
     })

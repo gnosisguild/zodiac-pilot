@@ -138,14 +138,13 @@ const ManagedRoles = ({
               </GhostLinkButton>
 
               <GhostLinkButton
-                replace
                 size="tiny"
                 icon={CloudUpload}
                 intent={Intent.Deploy}
-                to={href(
-                  '/workspace/:workspaceId/roles/managed/:roleId/deploy',
-                  { workspaceId, roleId: role.id },
-                )}
+                to={href('/workspace/:workspaceId/roles/:roleId/deploy', {
+                  workspaceId,
+                  roleId: role.id,
+                })}
               >
                 Deploy
               </GhostLinkButton>

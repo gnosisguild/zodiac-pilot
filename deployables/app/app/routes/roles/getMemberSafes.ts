@@ -39,11 +39,17 @@ export const getMemberSafes = async (
     }
   }
 
+  const issues: Issue[] = []
+
   for (const member of members) {
     const defaultWallets = await getDefaultWallets(dbClient(), member.id)
 
     for (const chainId of activeChains) {
       if (defaultWallets[chainId] == null) {
+        if (!issues.includes(Issue.MissingDefaultWallet)) {
+          issues.push(Issue.MissingDefaultWallet)
+        }
+
         continue
       }
 
@@ -71,5 +77,5 @@ export const getMemberSafes = async (
     }
   }
 
-  return { newSafes, allSafes, labels, issues: [] }
+  return { newSafes, allSafes, labels, issues }
 }
