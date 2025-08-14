@@ -171,41 +171,55 @@ const DeployDraft = ({
       <Page.Header>Deploy draft</Page.Header>
 
       <Page.Main>
-        <div className="mb-8">
-          <Info>
-            The following changes need to be applied to deploy this role. Please
-            execute one transaction after the other.
-          </Info>
-        </div>
-
         <Issues issues={issues} />
 
         <ProvideRoleLabels labels={roleLabels}>
           <ProvideAddressLabels labels={labels}>
             <Suspense>
               <Await resolve={plan}>
-                {(plan) =>
-                  plan.map(({ account, steps }, planIndex) => (
-                    <Card key={`${account.prefixedAddress}-${planIndex}`}>
-                      <Collapsible header={<Description account={account} />}>
-                        <div className="flex flex-col gap-4 divide-y divide-zinc-700 pt-4">
-                          {steps.map((step, index) => (
-                            <div
-                              key={`${account.prefixedAddress}=${planIndex}-${index}`}
-                              className="not-last:pb-4"
-                            >
-                              <Call
-                                key={index}
-                                {...step.call}
-                                chainId={getChainId(account.prefixedAddress)}
-                              />
+                {(plan) => {
+                  if (plan.length === 0) {
+                    return (
+                      <Info title="Nothing to deploy">
+                        No changes to be applied.
+                      </Info>
+                    )
+                  }
+
+                  return (
+                    <div className="flex flex-col gap-8">
+                      <Info>
+                        The following changes need to be applied to deploy this
+                        role. Please execute one transaction after the other.
+                      </Info>
+
+                      {plan.map(({ account, steps }, planIndex) => (
+                        <Card key={`${account.prefixedAddress}-${planIndex}`}>
+                          <Collapsible
+                            header={<Description account={account} />}
+                          >
+                            <div className="flex flex-col gap-4 divide-y divide-zinc-700 pt-4">
+                              {steps.map((step, index) => (
+                                <div
+                                  key={`${account.prefixedAddress}=${planIndex}-${index}`}
+                                  className="not-last:pb-4"
+                                >
+                                  <Call
+                                    key={index}
+                                    {...step.call}
+                                    chainId={getChainId(
+                                      account.prefixedAddress,
+                                    )}
+                                  />
+                                </div>
+                              ))}
                             </div>
-                          ))}
-                        </div>
-                      </Collapsible>
-                    </Card>
-                  ))
-                }
+                          </Collapsible>
+                        </Card>
+                      ))}
+                    </div>
+                  )
+                }}
               </Await>
             </Suspense>
           </ProvideAddressLabels>
