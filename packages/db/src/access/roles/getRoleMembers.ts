@@ -13,10 +13,12 @@ type GetByRole = {
 
 type GetRoleMembersOptions = GetByWorkspace | GetByRole
 
+type UserFragment = Pick<User, 'id' | 'fullName'>
+
 export async function getRoleMembers(
   db: DBClient,
   options: GetByWorkspace,
-): Promise<Record<UUID, User[]>>
+): Promise<Record<UUID, UserFragment[]>>
 export async function getRoleMembers(
   db: DBClient,
   options: GetByRole,
@@ -24,31 +26,38 @@ export async function getRoleMembers(
 export async function getRoleMembers(
   db: DBClient,
   options: GetRoleMembersOptions,
-): Promise<Record<UUID, User[]> | User[]> {
+): Promise<Record<UUID, UserFragment[]> | User[]> {
+  if ('roleId' in options) {
+    const members = await db
+      .select()
+      .from(RoleMembershipTable)
+      .where(getWhere(options))
+      .innerJoin(UserTable, eq(RoleMembershipTable.userId, UserTable.id))
+      .orderBy(asc(UserTable.fullName))
+
+    return members.map(({ User }) => User)
+  }
+
   const members = await db
-    .select()
+    .select({
+      roleId: RoleMembershipTable.roleId,
+      member: { id: UserTable.id, fullName: UserTable.fullName },
+    })
     .from(RoleMembershipTable)
     .where(getWhere(options))
     .innerJoin(UserTable, eq(RoleMembershipTable.userId, UserTable.id))
     .orderBy(asc(UserTable.fullName))
 
-  if ('roleId' in options) {
-    return members.map(({ User }) => User)
-  }
-
-  return members.reduce<Record<UUID, User[]>>(
-    (result, { RoleMembership, User }) => {
-      if (RoleMembership.roleId in result) {
-        return {
-          ...result,
-          [RoleMembership.roleId]: [...result[RoleMembership.roleId], User],
-        }
+  return members.reduce<Record<UUID, User[]>>((result, { roleId, member }) => {
+    if (roleId in result) {
+      return {
+        ...result,
+        [roleId]: [...result[roleId], member],
       }
+    }
 
-      return { ...result, [RoleMembership.roleId]: [User] }
-    },
-    {},
-  )
+    return { ...result, [roleId]: [member] }
+  }, {})
 }
 
 const getWhere = (options: GetRoleMembersOptions) => {

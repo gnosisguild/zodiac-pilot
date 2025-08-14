@@ -21,7 +21,10 @@ export const Collapsible = ({
     <Disclosure as="div" defaultOpen={defaultOpen} className="w-full">
       {({ open }) => (
         <>
-          <DisclosureButton className="group flex w-full cursor-pointer justify-between">
+          <DisclosureButton
+            as="div"
+            className="group flex w-full cursor-pointer justify-between"
+          >
             <div className="flex">{header}</div>
 
             <GhostButton

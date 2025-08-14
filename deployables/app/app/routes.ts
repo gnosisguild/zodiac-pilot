@@ -162,7 +162,6 @@ export default [
 
         route('roles', 'routes/roles/list-layout.tsx', [
           index('routes/roles/managed.tsx'),
-          route('drafts', 'routes/roles/drafts.tsx'),
           route('on-chain', 'routes/roles/on-chain.tsx'),
         ]),
 

@@ -28,15 +28,9 @@ const RoleListLayout = ({ params: { workspaceId } }: Route.ComponentProps) => {
           </TabBar.LinkTab>
 
           <TabBar.LinkTab
-            to={href('/workspace/:workspaceId/roles/drafts', { workspaceId })}
-          >
-            Drafts
-          </TabBar.LinkTab>
-
-          <TabBar.LinkTab
             to={href('/workspace/:workspaceId/roles/on-chain', { workspaceId })}
           >
-            On-Chain only
+            On-Chain
           </TabBar.LinkTab>
         </TabBar>
 
