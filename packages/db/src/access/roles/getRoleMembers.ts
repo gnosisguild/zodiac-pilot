@@ -22,11 +22,22 @@ export async function getRoleMembers(
 export async function getRoleMembers(
   db: DBClient,
   options: GetByRole,
-): Promise<UserFragment[]>
+): Promise<User[]>
 export async function getRoleMembers(
   db: DBClient,
   options: GetRoleMembersOptions,
-): Promise<Record<UUID, UserFragment[]> | UserFragment[]> {
+): Promise<Record<UUID, UserFragment[]> | User[]> {
+  if ('roleId' in options) {
+    const members = await db
+      .select()
+      .from(RoleMembershipTable)
+      .where(getWhere(options))
+      .innerJoin(UserTable, eq(RoleMembershipTable.userId, UserTable.id))
+      .orderBy(asc(UserTable.fullName))
+
+    return members.map(({ User }) => User)
+  }
+
   const members = await db
     .select({
       roleId: RoleMembershipTable.roleId,
@@ -36,10 +47,6 @@ export async function getRoleMembers(
     .where(getWhere(options))
     .innerJoin(UserTable, eq(RoleMembershipTable.userId, UserTable.id))
     .orderBy(asc(UserTable.fullName))
-
-  if ('roleId' in options) {
-    return members.map(({ member }) => member)
-  }
 
   return members.reduce<Record<UUID, User[]>>((result, { roleId, member }) => {
     if (roleId in result) {

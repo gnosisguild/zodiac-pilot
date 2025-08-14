@@ -22,11 +22,24 @@ export async function getActivatedAccounts(
 export async function getActivatedAccounts(
   db: DBClient,
   options: GetByRole,
-): Promise<AccountFragment[]>
+): Promise<Account[]>
 export async function getActivatedAccounts(
   db: DBClient,
   options: GetActivatedAccountsOptions,
-): Promise<Record<UUID, AccountFragment[]> | AccountFragment[]> {
+): Promise<Record<UUID, AccountFragment[]> | Account[]> {
+  if ('roleId' in options) {
+    const results = await db
+      .select()
+      .from(ActivatedRoleTable)
+      .where(getWhere(options))
+      .innerJoin(
+        AccountTable,
+        eq(AccountTable.id, ActivatedRoleTable.accountId),
+      )
+      .orderBy(asc(AccountTable.label))
+    return results.map(({ Account }) => Account)
+  }
+
   const results = await db
     .select({
       roleId: ActivatedRoleTable.roleId,
@@ -41,10 +54,6 @@ export async function getActivatedAccounts(
     .where(getWhere(options))
     .innerJoin(AccountTable, eq(AccountTable.id, ActivatedRoleTable.accountId))
     .orderBy(asc(AccountTable.label))
-
-  if ('roleId' in options) {
-    return results.map(({ account }) => account)
-  }
 
   return results.reduce<Record<UUID, Account[]>>(
     (result, { roleId, account }) => {
