@@ -1,3 +1,4 @@
+import { TokenIcon } from '@/components'
 import { chainName } from '@zodiac/chains'
 import type { Account } from '@zodiac/schema'
 import { Popover } from '@zodiac/ui'
@@ -83,12 +84,10 @@ export const Waypoint = ({ account, highlight = false }: WaypointProps) => {
               </span>
             }
           >
-            <img
-              src={href('/system/chain-icon/:chainId', {
+            <TokenIcon
+              logoUrl={href('/system/chain-icon/:chainId', {
                 chainId: `${chainId}`,
               })}
-              alt={chainName(chainId)}
-              className="size-4"
             />
           </Popover>
         )}
