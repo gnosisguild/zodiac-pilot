@@ -205,7 +205,7 @@ const DeployRole = ({
                         <Card key={`${account.prefixedAddress}-${planIndex}`}>
                           <Collapsible
                             header={
-                              <div className="flex items-center justify-between gap-8">
+                              <div className="flex flex-1 items-center justify-between gap-8">
                                 <Description account={account} />
 
                                 <InlineForm
@@ -215,6 +215,7 @@ const DeployRole = ({
                                     submit
                                     size="small"
                                     intent={Intent.ExecuteTransaction}
+                                    onClick={(event) => event.stopPropagation()}
                                   >
                                     Deploy
                                   </SecondaryButton>
@@ -223,14 +224,13 @@ const DeployRole = ({
                             }
                           >
                             <div className="flex flex-col gap-4 divide-y divide-zinc-700 pt-4">
-                              {steps.map((step, index) => (
+                              {steps.map(({ call }, index) => (
                                 <div
                                   key={`${account.prefixedAddress}=${planIndex}-${index}`}
                                   className="not-last:pb-4"
                                 >
                                   <Call
-                                    key={index}
-                                    {...step.call}
+                                    callData={call}
                                     chainId={getChainId(
                                       account.prefixedAddress,
                                     )}
@@ -285,102 +285,103 @@ const Description = ({ account }: { account: Account }) => {
   }
 }
 
-type CallProps = AccountBuilderCall & { chainId: ChainId }
+type CallProps = { chainId: ChainId; callData: AccountBuilderCall }
+type DetailCallProps<CallType extends AccountBuilderCall['call']> = {
+  chainId: ChainId
+  callData: Extract<AccountBuilderCall, { call: CallType }>
+}
 
-const Call = (props: CallProps) => {
-  switch (props.call) {
+const Call = ({ chainId, callData }: CallProps) => {
+  switch (callData.call) {
     case 'createNode': {
-      return <CreateNodeCall {...props} />
+      return <CreateNodeCall chainId={chainId} callData={callData} />
     }
     case 'assignRoles': {
-      return <AssignRolesCall {...props} />
+      return <AssignRolesCall chainId={chainId} callData={callData} />
     }
     case 'setAllowance': {
-      return <SetAllowanceCall {...props} />
+      return <SetAllowanceCall chainId={chainId} callData={callData} />
     }
     case 'scopeTarget': {
-      return <ScopeTargetCall {...props} />
+      return <ScopeTargetCall chainId={chainId} callData={callData} />
     }
     case 'scopeFunction': {
-      return <ScopeFunctionCall {...props} />
+      return <ScopeFunctionCall chainId={chainId} callData={callData} />
     }
 
     default: {
       return (
-        <div className="text-xs">{`Missing node type for call "${props.call}"`}</div>
+        <div className="text-xs">{`Missing node type for call "${callData.call}"`}</div>
       )
     }
   }
 }
 
-const ScopeFunctionCall = (
-  props: Extract<CallProps, { call: 'scopeFunction' }>,
-) => (
-  <FeedEntry action="Scope function" icon={SquareFunction} raw={props}>
+const ScopeFunctionCall = ({ callData }: DetailCallProps<'scopeFunction'>) => (
+  <FeedEntry action="Scope function" icon={SquareFunction} raw={callData}>
     <LabeledItem label="Target">
-      <LabeledAddress>{props.targetAddress}</LabeledAddress>
+      <LabeledAddress>{callData.targetAddress}</LabeledAddress>
     </LabeledItem>
 
     <LabeledItem label="Role">
-      <LabeledRoleKey>{props.roleKey}</LabeledRoleKey>
+      <LabeledRoleKey>{callData.roleKey}</LabeledRoleKey>
     </LabeledItem>
   </FeedEntry>
 )
 
-const ScopeTargetCall = (
-  props: Extract<CallProps, { call: 'scopeTarget' }>,
-) => (
-  <FeedEntry icon={Crosshair} action="Scope target" raw={props}>
+const ScopeTargetCall = ({ callData }: DetailCallProps<'scopeTarget'>) => (
+  <FeedEntry icon={Crosshair} action="Scope target" raw={callData}>
     <LabeledItem label="Target">
-      <LabeledAddress>{props.targetAddress}</LabeledAddress>
+      <LabeledAddress>{callData.targetAddress}</LabeledAddress>
     </LabeledItem>
 
     <LabeledItem label="Role">
-      <LabeledRoleKey>{props.roleKey}</LabeledRoleKey>
+      <LabeledRoleKey>{callData.roleKey}</LabeledRoleKey>
     </LabeledItem>
   </FeedEntry>
 )
 
-const SetAllowanceCall = (
-  props: Extract<CallProps, { call: 'setAllowance' }>,
-) => (
-  <FeedEntry icon={HandCoins} action="Set allowance" raw={props}>
+const SetAllowanceCall = ({ callData }: DetailCallProps<'setAllowance'>) => (
+  <FeedEntry icon={HandCoins} action="Set allowance" raw={callData}>
     <LabeledItem label="Allowance">
-      <NumberValue>{props.refill}</NumberValue>
+      <NumberValue>{callData.refill}</NumberValue>
     </LabeledItem>
 
-    <LabeledItem label="Period">{parseRefillPeriod(props.period)}</LabeledItem>
+    <LabeledItem label="Period">
+      {parseRefillPeriod(callData.period)}
+    </LabeledItem>
   </FeedEntry>
 )
 
-const AssignRolesCall = (
-  props: Extract<CallProps, { call: 'assignRoles' }>,
-) => {
+const AssignRolesCall = ({ callData }: DetailCallProps<'assignRoles'>) => {
   return (
-    <FeedEntry icon={UserRoundPlus} action="Add role member" raw={props}>
+    <FeedEntry icon={UserRoundPlus} action="Add role member" raw={callData}>
       <LabeledItem label="Member">
-        <LabeledAddress>{props.member}</LabeledAddress>
+        <LabeledAddress>{callData.member}</LabeledAddress>
       </LabeledItem>
 
       <LabeledItem label="Role">
-        <LabeledRoleKey>{props.roleKey}</LabeledRoleKey>
+        <LabeledRoleKey>{callData.roleKey}</LabeledRoleKey>
       </LabeledItem>
     </FeedEntry>
   )
 }
 
-const CreateNodeCall = (props: Extract<CallProps, { call: 'createNode' }>) => {
-  switch (props.accountType) {
+const CreateNodeCall = ({
+  callData,
+  chainId,
+}: DetailCallProps<'createNode'>) => {
+  switch (callData.accountType) {
     case AccountType.SAFE: {
       return (
-        <FeedEntry icon={Plus} action="Create Safe" raw={props}>
+        <FeedEntry icon={Plus} action="Create Safe" raw={callData}>
           <LabeledItem label="Safe">
-            <LabeledAddress>{props.deploymentAddress}</LabeledAddress>
+            <LabeledAddress>{callData.deploymentAddress}</LabeledAddress>
           </LabeledItem>
 
           <LabeledItem label="Owners">
             <ul>
-              {props.args.owners.map((owner) => (
+              {callData.args.owners.map((owner) => (
                 <li key={owner}>
                   <LabeledAddress>{owner}</LabeledAddress>
                 </li>
@@ -392,17 +393,17 @@ const CreateNodeCall = (props: Extract<CallProps, { call: 'createNode' }>) => {
     }
     case AccountType.ROLES: {
       return (
-        <FeedEntry icon={Plus} action="Create role" raw={props}>
+        <FeedEntry icon={Plus} action="Create role" raw={callData}>
           <LabeledItem label="Chain">
-            <Chain chainId={props.chainId} />
+            <Chain chainId={chainId} />
           </LabeledItem>
 
           <LabeledItem label="Role">
-            <LabeledAddress>{props.deploymentAddress}</LabeledAddress>
+            <LabeledAddress>{callData.deploymentAddress}</LabeledAddress>
           </LabeledItem>
 
           <LabeledItem label="Target Safe">
-            <LabeledAddress>{props.args.target}</LabeledAddress>
+            <LabeledAddress>{callData.args.target}</LabeledAddress>
           </LabeledItem>
         </FeedEntry>
       )
