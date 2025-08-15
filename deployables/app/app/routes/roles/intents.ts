@@ -1,7 +1,7 @@
 export enum Intent {
   Create = 'Create',
   Save = 'Save',
-  Deploy = 'Deploy',
+  ExecuteTransaction = 'ExecuteTransaction',
   AddAction = 'AddAction',
   EditAction = 'EditAction',
   AddAsset = 'AddAsset',

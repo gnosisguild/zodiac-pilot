@@ -1,22 +1,28 @@
-import { authorizedLoader } from '@/auth-server'
+import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { DebugJson, Page } from '@/components'
 import { Chain } from '@/routes-ui'
 import { invariantResponse } from '@epic-web/invariant'
 import { getChainId } from '@zodiac/chains'
 import {
   dbClient,
+  getAccountByAddress,
   getActivatedAccounts,
   getRole,
   getRoleActionAssets,
+  proposeTransaction,
 } from '@zodiac/db'
+import { getPrefixedAddress } from '@zodiac/form-data'
+import { createMockTransactionRequest } from '@zodiac/modules/test-utils'
 import { isUUID } from '@zodiac/schema'
 import {
   Card,
   Collapsible,
   GhostButton,
   Info,
+  InlineForm,
   Modal,
   NumberValue,
+  SecondaryButton,
 } from '@zodiac/ui'
 import {
   ArrowRight,
@@ -29,7 +35,7 @@ import {
   UserRoundPlus,
 } from 'lucide-react'
 import { PropsWithChildren, Suspense, useState } from 'react'
-import { Await } from 'react-router'
+import { Await, href, redirect } from 'react-router'
 import {
   Account,
   AccountType,
@@ -47,6 +53,7 @@ import { LabeledRoleKey, ProvideRoleLabels } from './RoleLabelContext'
 import { getMemberSafes } from './getMemberSafes'
 import { parseRefillPeriod } from './getRefillPeriod'
 import { getRoleMods } from './getRoleMods'
+import { Intent } from './intents'
 import { Issues } from './issues'
 
 const contractLabels: Labels = {
@@ -117,6 +124,53 @@ export const loader = (args: Route.LoaderArgs) =>
     },
   )
 
+export const action = (args: Route.ActionArgs) =>
+  authorizedAction(
+    args,
+    async ({
+      request,
+      params: { roleId, workspaceId },
+      context: {
+        auth: { user, tenant },
+      },
+    }) => {
+      invariantResponse(isUUID(roleId), '"roleId" is no UUID')
+
+      const data = await request.formData()
+
+      const role = await getRole(dbClient(), roleId)
+      const account = await getAccountByAddress(dbClient(), {
+        tenantId: tenant.id,
+        prefixedAddress: getPrefixedAddress(data, 'account'),
+      })
+
+      const transactionProposal = await proposeTransaction(dbClient(), {
+        userId: user.id,
+        tenantId: tenant.id,
+        workspaceId: role.workspaceId,
+        accountId: account.id,
+        transaction: [createMockTransactionRequest()],
+      })
+
+      return redirect(
+        href('/workspace/:workspaceId/submit/proposal/:proposalId', {
+          workspaceId,
+          proposalId: transactionProposal.id,
+        }),
+      )
+    },
+    {
+      ensureSignedIn: true,
+      async hasAccess({ params: { roleId, workspaceId }, tenant }) {
+        invariantResponse(isUUID(roleId), '"roleId" is no UUID')
+
+        const role = await getRole(dbClient(), roleId)
+
+        return role.tenantId === tenant.id && role.workspaceId === workspaceId
+      },
+    },
+  )
+
 const DeployRole = ({
   loaderData: { plan, labels, roleLabels, issues },
 }: Route.ComponentProps) => {
@@ -150,7 +204,23 @@ const DeployRole = ({
                       {plan.map(({ account, steps }, planIndex) => (
                         <Card key={`${account.prefixedAddress}-${planIndex}`}>
                           <Collapsible
-                            header={<Description account={account} />}
+                            header={
+                              <div className="flex items-center justify-between gap-8">
+                                <Description account={account} />
+
+                                <InlineForm
+                                  context={{ account: account.prefixedAddress }}
+                                >
+                                  <SecondaryButton
+                                    submit
+                                    size="small"
+                                    intent={Intent.ExecuteTransaction}
+                                  >
+                                    Deploy
+                                  </SecondaryButton>
+                                </InlineForm>
+                              </div>
+                            }
                           >
                             <div className="flex flex-col gap-4 divide-y divide-zinc-700 pt-4">
                               {steps.map((step, index) => (
@@ -353,7 +423,7 @@ const FeedEntry = ({ action, icon: Icon, children, raw }: FeedEntryProps) => {
 
   return (
     <>
-      <div className="grid grid-cols-10 items-center gap-4 text-sm">
+      <div className="grid flex-1 grid-cols-10 items-center gap-4 text-sm">
         <div className="col-span-2 flex items-start justify-start gap-2">
           <div className="rounded-full border border-zinc-700 bg-zinc-800 p-1">
             <Icon className="size-3" />
@@ -363,7 +433,7 @@ const FeedEntry = ({ action, icon: Icon, children, raw }: FeedEntryProps) => {
         </div>
 
         {children && (
-          <div className="col-span-7 col-start-3 grid grid-cols-4 gap-4">
+          <div className="col-span-7 col-start-3 grid grid-cols-3 gap-4">
             {children}
           </div>
         )}
