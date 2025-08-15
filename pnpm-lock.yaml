@@ -880,6 +880,9 @@ importers:
       zodiac-roles-deployments:
         specifier: 3.1.0
         version: 3.1.0
+      zodiac-roles-sdk:
+        specifier: 3.2.2
+        version: 3.2.2(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     devDependencies:
       '@faker-js/faker':
         specifier: 9.9.0
