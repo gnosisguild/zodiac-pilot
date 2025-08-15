@@ -330,6 +330,7 @@ export const accountSchema = createSelectSchema(AccountTable, {
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date().nullable(),
   deletedAt: z.coerce.date().optional().nullable(),
+  nonce: z.coerce.bigint(),
 })
 
 export const WalletTable = pgTable(

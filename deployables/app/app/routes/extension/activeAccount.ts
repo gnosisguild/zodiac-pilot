@@ -8,7 +8,7 @@ import {
   removeActiveAccount,
 } from '@zodiac/db'
 import { getString } from '@zodiac/form-data'
-import { isUUID } from '@zodiac/schema'
+import { isUUID, jsonStringify } from '@zodiac/schema'
 import type { Route } from './+types/activeAccount'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -23,7 +23,13 @@ export const loader = (args: Route.LoaderArgs) =>
         return null
       }
 
-      return await findActiveAccount(dbClient(), tenant, user)
+      const account = await findActiveAccount(dbClient(), tenant, user)
+
+      if (account == null) {
+        return null
+      }
+
+      return jsonStringify(account)
     },
   )
 
@@ -46,7 +52,9 @@ export const action = (args: Route.ActionArgs) =>
       if (isUUID(accountId)) {
         await activateAccount(dbClient(), tenant, user, accountId)
 
-        return await getActiveAccount(dbClient(), tenant, user)
+        const account = await getActiveAccount(dbClient(), tenant, user)
+
+        return jsonStringify(account)
       }
 
       await removeActiveAccount(dbClient(), tenant, user)
