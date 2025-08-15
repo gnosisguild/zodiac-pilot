@@ -23,9 +23,9 @@ export const Collapsible = ({
         <>
           <DisclosureButton
             as="div"
-            className="group flex w-full cursor-pointer items-center justify-between"
+            className="group flex w-full cursor-pointer items-center justify-between gap-4"
           >
-            <div className="flex">{header}</div>
+            <div className="flex flex-1">{header}</div>
 
             <GhostButton
               iconOnly
