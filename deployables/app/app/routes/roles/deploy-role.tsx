@@ -1,6 +1,6 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
-import { invariantResponse } from '@epic-web/invariant'
+import { invariant, invariantResponse } from '@epic-web/invariant'
 import { getChainId } from '@zodiac/chains'
 import {
   dbClient,
@@ -10,9 +10,8 @@ import {
   getRoleActionAssets,
   proposeTransaction,
 } from '@zodiac/db'
-import { getPrefixedAddress } from '@zodiac/form-data'
-import { createMockTransactionRequest } from '@zodiac/modules/test-utils'
-import { isUUID } from '@zodiac/schema'
+import { getPrefixedAddress, getString } from '@zodiac/form-data'
+import { encode, isUUID, parseTransactionData } from '@zodiac/schema'
 import {
   Card,
   Collapsible,
@@ -20,9 +19,15 @@ import {
   InlineForm,
   SecondaryButton,
 } from '@zodiac/ui'
-import { Suspense } from 'react'
+import { ConnectWalletButton } from '@zodiac/web3'
+import { Suspense, useMemo } from 'react'
 import { Await, href, redirect } from 'react-router'
-import { planApplyAccounts } from 'ser-kit'
+import {
+  AccountBuilderStep,
+  ChainId,
+  planApplyAccounts,
+  prefixAddress,
+} from 'ser-kit'
 import { Route } from './+types/deploy-role'
 import { Labels, ProvideAddressLabels } from './AddressLabelContext'
 import { Call } from './Call'
@@ -116,9 +121,10 @@ export const action = (args: Route.ActionArgs) =>
       const data = await request.formData()
 
       const role = await getRole(dbClient(), roleId)
+
       const account = await getAccountByAddress(dbClient(), {
         tenantId: tenant.id,
-        prefixedAddress: getPrefixedAddress(data, 'account'),
+        prefixedAddress: getPrefixedAddress(data, 'targetAccount'),
       })
 
       const transactionProposal = await proposeTransaction(dbClient(), {
@@ -126,7 +132,7 @@ export const action = (args: Route.ActionArgs) =>
         tenantId: tenant.id,
         workspaceId: role.workspaceId,
         accountId: account.id,
-        transaction: [createMockTransactionRequest()],
+        transaction: parseTransactionData(getString(data, 'bundle')),
       })
 
       return redirect(
@@ -153,7 +159,16 @@ const DeployRole = ({
 }: Route.ComponentProps) => {
   return (
     <Page>
-      <Page.Header>Deploy role</Page.Header>
+      <Page.Header
+        action={
+          <ConnectWalletButton
+            connectLabel="Connect signer wallet"
+            connectedLabel="Signer wallet"
+          />
+        }
+      >
+        Deploy role
+      </Page.Header>
 
       <Page.Main>
         <Issues issues={issues} />
@@ -185,35 +200,30 @@ const DeployRole = ({
                               <div className="flex flex-1 items-center justify-between gap-8">
                                 <Description account={account} />
 
-                                <InlineForm
-                                  context={{ account: account.prefixedAddress }}
-                                >
-                                  <SecondaryButton
-                                    submit
-                                    size="small"
-                                    intent={Intent.ExecuteTransaction}
-                                    onClick={(event) => event.stopPropagation()}
-                                  >
-                                    Deploy
-                                  </SecondaryButton>
-                                </InlineForm>
+                                <Deploy
+                                  steps={steps}
+                                  chainId={getChainId(account.prefixedAddress)}
+                                />
                               </div>
                             }
                           >
                             <div className="flex flex-col gap-4 divide-y divide-zinc-700 pt-4">
-                              {steps.map(({ call }, index) => (
-                                <div
-                                  key={`${account.prefixedAddress}=${planIndex}-${index}`}
-                                  className="not-last:pb-4"
-                                >
-                                  <Call
-                                    callData={call}
-                                    chainId={getChainId(
-                                      account.prefixedAddress,
-                                    )}
-                                  />
-                                </div>
-                              ))}
+                              {steps.map(({ call, from }, index) => {
+                                console.log({ from, account: account.address })
+                                return (
+                                  <div
+                                    key={`${account.prefixedAddress}=${planIndex}-${index}`}
+                                    className="not-last:pb-4"
+                                  >
+                                    <Call
+                                      callData={call}
+                                      chainId={getChainId(
+                                        account.prefixedAddress,
+                                      )}
+                                    />
+                                  </div>
+                                )
+                              })}
                             </div>
                           </Collapsible>
                         </Card>
@@ -231,3 +241,51 @@ const DeployRole = ({
 }
 
 export default DeployRole
+
+type DeployProps = {
+  chainId: ChainId
+  steps: AccountBuilderStep[]
+}
+
+const Deploy = ({ steps, chainId }: DeployProps) => {
+  const targetAccount = useMemo(() => {
+    const firstStepWithFrom = steps.find((step) => step.from != null)
+
+    if (firstStepWithFrom == null) {
+      return null
+    }
+
+    invariant(
+      firstStepWithFrom.from != null,
+      'Step was supposed to have a from address but did not',
+    )
+
+    return firstStepWithFrom.from
+  }, [steps])
+
+  const bundle = useMemo(() => {
+    return encode(steps.map(({ transaction }) => transaction))
+  }, [steps])
+
+  if (targetAccount == null) {
+    return 'TODO'
+  }
+
+  return (
+    <InlineForm
+      context={{
+        targetAccount: prefixAddress(chainId, targetAccount),
+        bundle,
+      }}
+    >
+      <SecondaryButton
+        submit
+        size="small"
+        intent={Intent.ExecuteTransaction}
+        onClick={(event) => event.stopPropagation()}
+      >
+        Deploy
+      </SecondaryButton>
+    </InlineForm>
+  )
+}
