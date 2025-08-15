@@ -18,7 +18,7 @@ export type TokenIconProps = TokenByContractId | TokenByLogoUrl
 
 export const TokenIcon = (props: TokenIconProps) => {
   const [loaded, setLoaded] = useState(false)
-  const [logoUrlLoadFailed, setLogoUrlLoadFailed] = useState(false)
+  const [loadFailed, setLoadFailed] = useState(false)
 
   return (
     <div className="pointer-events-none relative flex size-4 items-center justify-center">
@@ -29,8 +29,10 @@ export const TokenIcon = (props: TokenIconProps) => {
           className={classNames(
             'absolute inset-0 z-10 size-4 overflow-hidden rounded-full',
             loaded && 'bg-zinc-300',
+            loadFailed && 'hidden',
           )}
           onLoad={() => setLoaded(true)}
+          onError={() => setLoadFailed(true)}
         />
       )}
 
@@ -40,9 +42,9 @@ export const TokenIcon = (props: TokenIconProps) => {
           alt=""
           className={classNames(
             'absolute inset-0 z-10 size-4 overflow-hidden rounded-full',
-            logoUrlLoadFailed && 'hidden',
+            loadFailed && 'hidden',
           )}
-          onError={() => setLogoUrlLoadFailed(true)}
+          onError={() => setLoadFailed(true)}
         />
       )}
 
