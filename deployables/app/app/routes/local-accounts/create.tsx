@@ -3,6 +3,7 @@ import { OnlyConnected, Page, useConnected } from '@/components'
 import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
 import { Chain, verifyChainId } from '@zodiac/chains'
+import { dbClient, getWalletLabels } from '@zodiac/db'
 import {
   getBoolean,
   getHexString,
@@ -25,6 +26,19 @@ import type { Route } from './+types/create'
 export const meta: Route.MetaFunction = ({ matches }) => [
   { title: routeTitle(matches, 'New local Safe account') },
 ]
+
+export const loader = (args: Route.LoaderArgs) =>
+  authorizedAction(
+    args,
+    async ({
+      context: {
+        auth: { user },
+      },
+    }) => ({
+      addressLabels:
+        user == null ? {} : await getWalletLabels(dbClient(), user.id),
+    }),
+  )
 
 export const action = (args: Route.ActionArgs) =>
   authorizedAction(args, async ({ request }) => {
@@ -80,17 +94,19 @@ export const clientAction = async ({
   return redirect(href(`/offline/accounts`))
 }
 
-const CreateLocalAccount = ({ actionData }: Route.ComponentProps) => {
+const CreateLocalAccount = ({
+  actionData,
+  loaderData: { addressLabels },
+}: Route.ComponentProps) => {
   const connected = useConnected()
 
   return (
     <Page>
       <Page.Header
         action={
-          <ConnectWalletButton
-            connectLabel="Connect Pilot Signer"
-            connectedLabel="Pilot Signer"
-          />
+          <ConnectWalletButton addressLabels={addressLabels}>
+            Connect Pilot Signer
+          </ConnectWalletButton>
         }
       >
         New local Safe Account

@@ -1,3 +1,4 @@
+import { authorizedLoader } from '@/auth-server'
 import {
   AvatarInput,
   InitiatorInput,
@@ -9,6 +10,7 @@ import { ChainSelect, getRouteId, RouteSelect } from '@/routes-ui'
 import { editRoute, jsonRpcProvider, parseRouteData, routeTitle } from '@/utils'
 import { invariant, invariantResponse } from '@epic-web/invariant'
 import { getChainId, verifyChainId } from '@zodiac/chains'
+import { dbClient, getWalletLabels } from '@zodiac/db'
 import {
   getHexString,
   getInt,
@@ -40,32 +42,48 @@ import { rankRoutes, type ChainId, type PrefixedAddress } from 'ser-kit'
 import type { Route as RouteType } from './+types/edit'
 import { Intent } from './intents'
 
-export const meta: RouteType.MetaFunction = ({ data, matches }) => [
-  { title: routeTitle(matches, data?.currentRoute.label || 'Unnamed route') },
+export const meta: RouteType.MetaFunction = ({ loaderData, matches }) => [
+  {
+    title: routeTitle(
+      matches,
+      loaderData?.currentRoute.label || 'Unnamed route',
+    ),
+  },
 ]
 
-export const loader = async ({ params }: RouteType.LoaderArgs) => {
-  const route = parseRouteData(params.data)
+export const loader = async (args: RouteType.LoaderArgs) =>
+  authorizedLoader(
+    args,
+    async ({
+      params,
+      context: {
+        auth: { user },
+      },
+    }) => {
+      const route = parseRouteData(params.data)
 
-  const queryRoutesResult =
-    route.initiator == null
-      ? { routes: [] }
-      : await queryRoutes(route.initiator, route.avatar)
+      const queryRoutesResult =
+        route.initiator == null
+          ? { routes: [] }
+          : await queryRoutes(route.initiator, route.avatar)
 
-  return {
-    currentRoute: {
-      comparableId:
-        route.initiator == null ? undefined : getRouteId(route.waypoints),
-      label: route.label ?? undefined,
-      initiator: route.initiator,
-      avatar: route.avatar,
-      waypoints:
-        queryRoutesResult.routes.length === 0 ? route.waypoints : undefined,
+      return {
+        currentRoute: {
+          comparableId:
+            route.initiator == null ? undefined : getRouteId(route.waypoints),
+          label: route.label ?? undefined,
+          initiator: route.initiator,
+          avatar: route.avatar,
+          waypoints:
+            queryRoutesResult.routes.length === 0 ? route.waypoints : undefined,
+        },
+
+        possibleRoutes: rankRoutes(queryRoutesResult.routes),
+        addressLabels:
+          user == null ? {} : await getWalletLabels(dbClient(), user.id),
+      }
     },
-
-    possibleRoutes: rankRoutes(queryRoutesResult.routes),
-  }
-}
+  )
 
 export const clientLoader = async ({
   serverLoader,
@@ -205,6 +223,7 @@ const EditRoute = ({ loaderData }: RouteType.ComponentProps) => {
   const {
     currentRoute: { comparableId, label, initiator, avatar, waypoints },
     possibleRoutes,
+    addressLabels,
   } = loaderData
 
   const formId = useId()
@@ -215,10 +234,9 @@ const EditRoute = ({ loaderData }: RouteType.ComponentProps) => {
     <Page>
       <Page.Header
         action={
-          <ConnectWalletButton
-            connectedLabel="Wallet"
-            connectLabel="Connect wallet"
-          />
+          <ConnectWalletButton addressLabels={addressLabels}>
+            Connect wallet
+          </ConnectWalletButton>
         }
       >
         Edit Account

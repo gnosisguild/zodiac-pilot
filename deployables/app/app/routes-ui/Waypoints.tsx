@@ -1,13 +1,14 @@
-import { chainName } from '@zodiac/chains'
+import { TokenIcon } from '@/components'
+import { chainName, ZERO_ADDRESS } from '@zodiac/chains'
 import type { Account } from '@zodiac/schema'
 import { Popover } from '@zodiac/ui'
 import { Address } from '@zodiac/web3'
 import classNames from 'classnames'
 import { MoveDown, MoveRight } from 'lucide-react'
 import { Children, cloneElement, type ReactElement } from 'react'
-import { href } from 'react-router'
 import {
   AccountType,
+  prefixAddress,
   splitPrefixedAddress,
   type Connection as SerConnection,
 } from 'ser-kit'
@@ -83,13 +84,7 @@ export const Waypoint = ({ account, highlight = false }: WaypointProps) => {
               </span>
             }
           >
-            <img
-              src={href('/system/chain-icon/:chainId', {
-                chainId: `${chainId}`,
-              })}
-              alt={chainName(chainId)}
-              className="size-4"
-            />
+            <TokenIcon contractAddress={prefixAddress(chainId, ZERO_ADDRESS)} />
           </Popover>
         )}
 

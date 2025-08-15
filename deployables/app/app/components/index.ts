@@ -8,6 +8,7 @@ export * from './navigation'
 export { Page } from './Page'
 export * from './pilotStatus'
 export { Token } from './Token'
+export { TokenIcon } from './TokenIcon'
 export * from './versionManagement'
 
 export const DebugJson = lazy(async () => {
