@@ -12,8 +12,8 @@ export const findActiveAccount = async (
   tenant: Tenant,
   user: User,
 ) => {
-  const [account] = await db
-    .select(AccountTable._.columns)
+  const [result] = await db
+    .select()
     .from(AccountTable)
     .innerJoin(
       ActiveAccountTable,
@@ -24,9 +24,9 @@ export const findActiveAccount = async (
       ),
     )
 
-  if (account == null) {
+  if (result == null) {
     return null
   }
 
-  return account
+  return result.Account
 }
