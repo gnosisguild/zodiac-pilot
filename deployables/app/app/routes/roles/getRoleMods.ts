@@ -112,7 +112,7 @@ export const getRoleMods = async (
           target: activeAccount.address,
           version: 2,
         },
-        role.nonce,
+        activeAccount.nonce,
       )
 
       return {
