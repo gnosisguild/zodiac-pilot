@@ -11,6 +11,7 @@ import {
   proposeTransaction,
 } from '@zodiac/db'
 import { getPrefixedAddress, getString } from '@zodiac/form-data'
+import { useIsPending } from '@zodiac/hooks'
 import { encode, isUUID, parseTransactionData } from '@zodiac/schema'
 import {
   Card,
@@ -19,9 +20,9 @@ import {
   InlineForm,
   SecondaryButton,
 } from '@zodiac/ui'
-import { ConnectWalletButton } from '@zodiac/web3'
+import { ConnectWalletButton, useSendTransaction } from '@zodiac/web3'
 import { Suspense, useMemo } from 'react'
-import { Await, href, redirect } from 'react-router'
+import { Await, href, redirect, useRevalidator } from 'react-router'
 import {
   AccountBuilderStep,
   ChainId,
@@ -161,10 +162,9 @@ const DeployRole = ({
     <Page>
       <Page.Header
         action={
-          <ConnectWalletButton
-            connectLabel="Connect signer wallet"
-            connectedLabel="Signer wallet"
-          />
+          <ConnectWalletButton addressLabels={labels}>
+            Connect signer wallet
+          </ConnectWalletButton>
         }
       >
         Deploy role
@@ -208,22 +208,19 @@ const DeployRole = ({
                             }
                           >
                             <div className="flex flex-col gap-4 divide-y divide-zinc-700 pt-4">
-                              {steps.map(({ call, from }, index) => {
-                                console.log({ from, account: account.address })
-                                return (
-                                  <div
-                                    key={`${account.prefixedAddress}=${planIndex}-${index}`}
-                                    className="not-last:pb-4"
-                                  >
-                                    <Call
-                                      callData={call}
-                                      chainId={getChainId(
-                                        account.prefixedAddress,
-                                      )}
-                                    />
-                                  </div>
-                                )
-                              })}
+                              {steps.map(({ call }, index) => (
+                                <div
+                                  key={`${account.prefixedAddress}=${planIndex}-${index}`}
+                                  className="not-last:pb-4"
+                                >
+                                  <Call
+                                    callData={call}
+                                    chainId={getChainId(
+                                      account.prefixedAddress,
+                                    )}
+                                  />
+                                </div>
+                              ))}
                             </div>
                           </Collapsible>
                         </Card>
@@ -267,8 +264,34 @@ const Deploy = ({ steps, chainId }: DeployProps) => {
     return encode(steps.map(({ transaction }) => transaction))
   }, [steps])
 
+  const revalidator = useRevalidator()
+
+  const { sendTransaction, isPending } = useSendTransaction({
+    mutation: {
+      onSuccess() {
+        revalidator.revalidate()
+      },
+    },
+  })
+
+  const pending = useIsPending(Intent.ExecuteTransaction, (data) => {
+    invariant(targetAccount != null, 'Target account missing')
+
+    return data.get('targetAccount') === prefixAddress(chainId, targetAccount)
+  })
+
   if (targetAccount == null) {
-    return 'TODO'
+    const [step] = steps
+
+    return (
+      <SecondaryButton
+        size="small"
+        busy={isPending || revalidator.state === 'loading'}
+        onClick={() => sendTransaction(step.transaction)}
+      >
+        Deploy
+      </SecondaryButton>
+    )
   }
 
   return (
@@ -282,6 +305,7 @@ const Deploy = ({ steps, chainId }: DeployProps) => {
         submit
         size="small"
         intent={Intent.ExecuteTransaction}
+        busy={pending}
         onClick={(event) => event.stopPropagation()}
       >
         Deploy
