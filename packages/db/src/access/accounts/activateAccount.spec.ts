@@ -4,7 +4,9 @@ import {
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
+import { and, eq } from 'drizzle-orm'
 import { describe, expect } from 'vitest'
+import { AccountTable, ActiveAccountTable } from '../../../schema'
 import { dbClient } from '../../dbClient'
 import { activateAccount } from './activateAccount'
 
@@ -19,13 +21,17 @@ describe('Activate account', () => {
     await activateAccount(dbClient(), tenant, user, accountA.id)
     await activateAccount(dbClient(), tenant, user, accountB.id)
 
-    const activatedAccounts = await dbClient().query.activeAccount.findMany({
-      where(fields, { eq }) {
-        return eq(fields.userId, user.id)
-      },
-      with: { account: true },
-    })
-    const activeAccounts = activatedAccounts.map(({ account }) => account)
+    const activatedAccounts = await dbClient()
+      .select()
+      .from(AccountTable)
+      .innerJoin(
+        ActiveAccountTable,
+        and(
+          eq(ActiveAccountTable.accountId, AccountTable.id),
+          eq(ActiveAccountTable.userId, user.id),
+        ),
+      )
+    const activeAccounts = activatedAccounts.map(({ Account }) => Account)
 
     expect(activeAccounts).toEqual([accountB])
   })

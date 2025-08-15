@@ -1,4 +1,10 @@
-import type { Tenant, User } from '@zodiac/db/schema'
+import {
+  AccountTable,
+  ActiveAccountTable,
+  type Tenant,
+  type User,
+} from '@zodiac/db/schema'
+import { and, eq } from 'drizzle-orm'
 import type { DBClient } from '../../dbClient'
 
 export const findActiveAccount = async (
@@ -6,18 +12,21 @@ export const findActiveAccount = async (
   tenant: Tenant,
   user: User,
 ) => {
-  const result = await db.query.activeAccount.findFirst({
-    where(fields, { eq, and }) {
-      return and(eq(fields.tenantId, tenant.id), eq(fields.userId, user.id))
-    },
-    with: {
-      account: true,
-    },
-  })
+  const [account] = await db
+    .select(AccountTable._.columns)
+    .from(AccountTable)
+    .innerJoin(
+      ActiveAccountTable,
+      and(
+        eq(ActiveAccountTable.tenantId, tenant.id),
+        eq(ActiveAccountTable.userId, user.id),
+        eq(ActiveAccountTable.accountId, AccountTable.id),
+      ),
+    )
 
-  if (result == null) {
+  if (account == null) {
     return null
   }
 
-  return result.account
+  return account
 }

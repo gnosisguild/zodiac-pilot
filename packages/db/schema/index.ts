@@ -487,10 +487,6 @@ const ActiveAccountRelations = relations(ActiveAccountTable, ({ one }) => ({
     fields: [ActiveAccountTable.userId],
     references: [UserTable.id],
   }),
-  account: one(AccountTable, {
-    fields: [ActiveAccountTable.accountId],
-    references: [AccountTable.id],
-  }),
 }))
 
 export const ProposedTransactionTable = pgTable(
