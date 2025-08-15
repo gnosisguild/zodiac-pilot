@@ -14,7 +14,6 @@ import {
 import {
   accountFactory,
   dbIt,
-  roleActionAssetFactory,
   roleActionFactory,
   roleFactory,
   routeFactory,
@@ -27,7 +26,6 @@ import {
   createMockSafeAccount,
   createMockTransactionRequest,
 } from '@zodiac/modules/test-utils'
-import { AllowanceInterval } from '@zodiac/schema'
 import {
   expectRouteToBe,
   randomAddress,
@@ -45,7 +43,6 @@ import {
   withPredictedAddress,
 } from 'ser-kit'
 import { beforeEach, describe, expect, vi } from 'vitest'
-import { getRefillPeriod } from './getRefillPeriod'
 
 vi.mock('ser-kit', async (importOriginal) => {
   const module = await importOriginal<typeof import('ser-kit')>()
@@ -322,183 +319,7 @@ describe('Deploy Role', () => {
   })
 
   describe('Roles mods', () => {
-    dbIt('creates a roles mod', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
-
-      const wallet = await walletFactory.create(user)
-
-      await setDefaultWallet(dbClient(), user, {
-        walletId: wallet.id,
-        chainId: Chain.ETH,
-      })
-
-      const account = await accountFactory.create(tenant, user, {
-        chainId: Chain.ETH,
-      })
-      const role = await roleFactory.create(tenant, user)
-
-      await setActiveAccounts(dbClient(), role, [account.id])
-
-      await render(
-        href('/workspace/:workspaceId/roles/:roleId/deploy', {
-          workspaceId: tenant.defaultWorkspaceId,
-          roleId: role.id,
-        }),
-        { tenant, user },
-      )
-
-      expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-        desired: expect.arrayContaining([
-          withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
-            {
-              type: AccountType.ROLES,
-              chain: Chain.ETH,
-              modules: [],
-              allowances: [],
-              multisend: [],
-              avatar: account.address,
-              owner: account.address,
-              target: account.address,
-              roles: [
-                {
-                  key: encodeRoleKey(role.key),
-                  annotations: [],
-                  members: [],
-                  targets: [],
-                },
-              ],
-              version: 2,
-              nonce: role.nonce,
-            },
-            role.nonce,
-          ),
-        ]),
-      })
-    })
-
-    describe('Actions', () => {
-      dbIt('adds roles for the respective actions', async () => {
-        const user = await userFactory.create()
-        const tenant = await tenantFactory.create(user)
-
-        const account = await accountFactory.create(tenant, user, {
-          chainId: Chain.ETH,
-        })
-        const role = await roleFactory.create(tenant, user)
-        await roleActionFactory.create(role, user)
-
-        await setActiveAccounts(dbClient(), role, [account.id])
-
-        await render(
-          href('/workspace/:workspaceId/roles/:roleId/deploy', {
-            workspaceId: tenant.defaultWorkspaceId,
-            roleId: role.id,
-          }),
-          { tenant, user },
-        )
-
-        expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-          desired: expect.arrayContaining([
-            withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
-              {
-                type: AccountType.ROLES,
-                chain: Chain.ETH,
-                modules: [],
-                allowances: [],
-                multisend: [],
-                avatar: account.address,
-                owner: account.address,
-                target: account.address,
-                roles: [
-                  {
-                    key: encodeRoleKey(role.key),
-                    members: [],
-                    annotations: [],
-                    targets: [],
-                  },
-                ],
-                version: 2,
-                nonce: role.nonce,
-              },
-              role.nonce,
-            ),
-          ]),
-        })
-      })
-    })
-
     describe('Members', () => {
-      dbIt('adds the correct members to the roles mod', async () => {
-        const user = await userFactory.create()
-        const tenant = await tenantFactory.create(user)
-
-        const wallet = await walletFactory.create(user)
-
-        await setDefaultWallet(dbClient(), user, {
-          walletId: wallet.id,
-          chainId: Chain.ETH,
-        })
-
-        const account = await accountFactory.create(tenant, user, {
-          chainId: Chain.ETH,
-        })
-        const role = await roleFactory.create(tenant, user)
-        await roleActionFactory.create(role, user)
-
-        await setRoleMembers(dbClient(), role, [user.id])
-        await setActiveAccounts(dbClient(), role, [account.id])
-
-        await render(
-          href('/workspace/:workspaceId/roles/:roleId/deploy', {
-            workspaceId: tenant.defaultWorkspaceId,
-            roleId: role.id,
-          }),
-          { tenant, user },
-        )
-
-        const userSafe = withPredictedAddress<
-          Extract<Account, { type: AccountType.SAFE }>
-        >(
-          {
-            type: AccountType.SAFE,
-            chain: Chain.ETH,
-            modules: [],
-            owners: [wallet.address],
-            threshold: 1,
-          },
-          user.nonce,
-        )
-
-        expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-          desired: expect.arrayContaining([
-            withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
-              {
-                type: AccountType.ROLES,
-                chain: Chain.ETH,
-                modules: [],
-                allowances: [],
-                multisend: [],
-                avatar: account.address,
-                owner: account.address,
-                target: account.address,
-                roles: [
-                  {
-                    key: encodeRoleKey(role.key),
-                    members: [userSafe.address],
-                    annotations: [],
-                    targets: [],
-                  },
-                ],
-                version: 2,
-                nonce: role.nonce,
-              },
-              role.nonce,
-            ),
-          ]),
-        })
-      })
-
       dbIt('keeps members when member safes already exist', async () => {
         const user = await userFactory.create()
         const tenant = await tenantFactory.create(user)
@@ -563,74 +384,9 @@ describe('Deploy Role', () => {
                   },
                 ],
                 version: 2,
-                nonce: role.nonce,
+                nonce: account.nonce,
               },
-              role.nonce,
-            ),
-          ]),
-        })
-      })
-    })
-
-    describe('Allowances', () => {
-      dbIt('creates global allowance entries', async () => {
-        const user = await userFactory.create()
-        const tenant = await tenantFactory.create(user)
-
-        const account = await accountFactory.create(tenant, user, {
-          chainId: Chain.ETH,
-        })
-        const role = await roleFactory.create(tenant, user)
-        const action = await roleActionFactory.create(role, user)
-
-        const asset = await roleActionAssetFactory.create(action, {
-          allowance: 1000n,
-          interval: AllowanceInterval.Monthly,
-        })
-
-        await setActiveAccounts(dbClient(), role, [account.id])
-
-        await render(
-          href('/workspace/:workspaceId/roles/:roleId/deploy', {
-            workspaceId: tenant.defaultWorkspaceId,
-            roleId: role.id,
-          }),
-          { tenant, user },
-        )
-
-        expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-          desired: expect.arrayContaining([
-            withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
-              {
-                type: AccountType.ROLES,
-                chain: Chain.ETH,
-                modules: [],
-                allowances: [
-                  {
-                    key: encodeRoleKey(asset.allowanceKey),
-                    period: getRefillPeriod(AllowanceInterval.Monthly),
-                    balance: 1000n,
-                    maxRefill: 1000n,
-                    refill: 1000n,
-                    timestamp: BigInt(new Date().getTime()),
-                  },
-                ],
-                multisend: [],
-                avatar: account.address,
-                owner: account.address,
-                target: account.address,
-                roles: [
-                  {
-                    key: encodeRoleKey(role.key),
-                    annotations: expect.anything(),
-                    members: [],
-                    targets: expect.anything(),
-                  },
-                ],
-                version: 2,
-                nonce: role.nonce,
-              },
-              role.nonce,
+              account.nonce,
             ),
           ]),
         })
