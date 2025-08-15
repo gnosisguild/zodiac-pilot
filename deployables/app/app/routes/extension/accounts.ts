@@ -1,5 +1,6 @@
 import { authorizedLoader } from '@/auth-server'
 import { dbClient, getAccounts } from '@zodiac/db'
+import { jsonStringify } from '@zodiac/schema'
 import type { Route } from './+types/accounts'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -14,6 +15,8 @@ export const loader = (args: Route.LoaderArgs) =>
         return []
       }
 
-      return getAccounts(dbClient(), { tenantId: tenant.id })
+      const accounts = await getAccounts(dbClient(), { tenantId: tenant.id })
+
+      return jsonStringify(accounts)
     },
   )
