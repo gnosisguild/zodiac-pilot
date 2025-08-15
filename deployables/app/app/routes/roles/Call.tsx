@@ -122,7 +122,7 @@ const CreateNodeCall = ({
     }
     case AccountType.ROLES: {
       return (
-        <FeedEntry icon={Plus} action="Create role" raw={callData}>
+        <FeedEntry icon={Plus} action="Create Roles mod" raw={callData}>
           <LabeledItem label="Chain">
             <Chain chainId={chainId} />
           </LabeledItem>

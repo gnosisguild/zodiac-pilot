@@ -9,6 +9,7 @@ export { getNumberMap } from './getNumberMap'
 export { getOptionalString } from './getOptionalString'
 export { getOptionalUUID } from './getOptionalUUID'
 export {
+  getOptionalPrefixedAddress,
   getPrefixedAddress,
   getPrefixedAddressList,
 } from './getPrefixedAddress'
