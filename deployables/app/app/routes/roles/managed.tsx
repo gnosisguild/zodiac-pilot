@@ -26,7 +26,6 @@ import { Address } from '@zodiac/web3'
 import { CloudUpload, Pencil } from 'lucide-react'
 import { href } from 'react-router'
 import type { Route } from './+types/managed'
-import { Intent } from './intents'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -142,7 +141,6 @@ const ManagedRoles = ({
                 <GhostLinkButton
                   size="tiny"
                   icon={CloudUpload}
-                  intent={Intent.Deploy}
                   to={href('/workspace/:workspaceId/roles/:roleId/deploy', {
                     workspaceId,
                     roleId: role.id,
