@@ -73,11 +73,11 @@ export const loader = (args: Route.LoaderArgs) =>
         issues: memberIssues,
       } = await getMemberSafes(roleId, activeChains)
       const {
-        accounts: rolesMods,
+        mods: rolesMods,
         labels: rolesLabels,
         roleLabels,
         issues: roleIssues,
-      } = await getRoleMods(role, allSafes)
+      } = await getRoleMods(role, { members: allSafes })
 
       const desired = [...newSafes, ...rolesMods]
 

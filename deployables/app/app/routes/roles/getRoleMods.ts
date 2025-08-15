@@ -4,9 +4,16 @@ import {
   getRoleActionAssets,
   getRoleActions,
 } from '@zodiac/db'
-import { Role } from '@zodiac/db/schema'
+import { Account as DBAccount, Role } from '@zodiac/db/schema'
 import { encodeRoleKey } from '@zodiac/modules'
-import { Account, AccountType, withPredictedAddress } from 'ser-kit'
+import { UUID } from 'crypto'
+import {
+  Account,
+  AccountType,
+  prefixAddress,
+  queryAccounts,
+  withPredictedAddress,
+} from 'ser-kit'
 import {
   Allowance,
   Annotation,
@@ -17,20 +24,23 @@ import { Labels } from './AddressLabelContext'
 import { computeSwapPermissions } from './computeSwapPermissions'
 import { getRefillPeriod } from './getRefillPeriod'
 import { Issue } from './issues'
+import { predictRolesModAddress, Roles } from './predictRolesModAddress'
 import { RoleLabels } from './RoleLabelContext'
 
-type Roles = Extract<Account, { type: AccountType.ROLES }>
-
 type Result = {
-  accounts: Roles[]
+  mods: Roles[]
   labels: Labels
   roleLabels: RoleLabels
   issues: Issue[]
 }
 
+type GetRoleModsOptions = {
+  members: Account[]
+}
+
 export const getRoleMods = async (
   role: Role,
-  members: Account[],
+  { members }: GetRoleModsOptions,
 ): Promise<Result> => {
   const activeAccounts = await getActivatedAccounts(dbClient(), {
     roleId: role.id,
@@ -42,12 +52,14 @@ export const getRoleMods = async (
 
   if (activeAccounts.length === 0) {
     return {
-      accounts: [],
+      mods: [],
       labels: {},
       roleLabels: {},
       issues: [Issue.NoActiveAccounts],
     }
   }
+
+  const currentMods = await getCurrentMods(activeAccounts)
 
   return activeAccounts.reduce<Result>(
     (result, activeAccount) => {
@@ -76,7 +88,20 @@ export const getRoleMods = async (
         { annotations: [], targets: [] },
       )
 
-      const account = withPredictedAddress<Roles>(
+      const existingMod = currentMods[activeAccount.id]
+
+      const existingRoles = (existingMod?.roles || []).filter(
+        (currentRole) => currentRole.key !== encodeRoleKey(role.key),
+      )
+
+      const roleDefinition = {
+        key: encodeRoleKey(role.key),
+        members: members.map((member) => member.address),
+        annotations,
+        targets,
+      }
+
+      const mod = withPredictedAddress<Roles>(
         {
           type: AccountType.ROLES,
           allowances: assets.reduce<Allowance[]>((result, asset) => {
@@ -101,14 +126,7 @@ export const getRoleMods = async (
           modules: [],
           multisend: [],
           owner: activeAccount.address,
-          roles: [
-            {
-              key: encodeRoleKey(role.key),
-              members: members.map((member) => member.address),
-              annotations,
-              targets,
-            },
-          ],
+          roles: [...existingRoles, roleDefinition],
           target: activeAccount.address,
           version: 2,
         },
@@ -117,15 +135,31 @@ export const getRoleMods = async (
 
       return {
         ...result,
-        accounts: [...result.accounts, account],
+        mods: [...result.mods, mod],
         labels: {
           ...result.labels,
-          [account.address]: role.label,
+          [mod.address]: role.label,
           [activeAccount.address]: activeAccount.label,
         },
         roleLabels: { ...result.roleLabels, [role.key]: role.label },
       }
     },
-    { accounts: [], labels: {}, roleLabels: {}, issues: [] },
+    { mods: [], labels: {}, roleLabels: {}, issues: [] },
   )
+}
+
+const getCurrentMods = async (
+  accounts: DBAccount[],
+): Promise<Record<UUID, Roles>> => {
+  const existingMods = await Promise.all(
+    accounts.map(async (account) => {
+      const [rolesMod] = await queryAccounts([
+        prefixAddress(account.chainId, predictRolesModAddress(account)),
+      ])
+
+      return [account.id, rolesMod]
+    }),
+  )
+
+  return Object.fromEntries(existingMods)
 }
