@@ -7,13 +7,7 @@ import {
 import { Account as DBAccount, Role } from '@zodiac/db/schema'
 import { encodeRoleKey } from '@zodiac/modules'
 import { UUID } from 'crypto'
-import {
-  Account,
-  AccountType,
-  prefixAddress,
-  queryAccounts,
-  withPredictedAddress,
-} from 'ser-kit'
+import { Account, AccountType, prefixAddress, queryAccounts } from 'ser-kit'
 import {
   Allowance,
   Annotation,
@@ -101,37 +95,44 @@ export const getRoleMods = async (
         targets,
       }
 
-      const mod = withPredictedAddress<Roles>(
-        {
-          type: AccountType.ROLES,
-          allowances: assets.reduce<Allowance[]>((result, asset) => {
-            if (asset.allowance == null || asset.interval == null) {
-              return result
-            }
+      const address = predictRolesModAddress(activeAccount)
 
-            return [
-              ...result,
-              {
-                balance: asset.allowance,
-                key: encodeRoleKey(asset.allowanceKey),
-                maxRefill: asset.allowance,
-                period: getRefillPeriod(asset.interval),
-                refill: asset.allowance,
-                timestamp: BigInt(new Date().getTime()),
-              },
-            ]
-          }, []),
-          avatar: activeAccount.address,
-          chain: activeAccount.chainId,
-          modules: [],
-          multisend: [],
-          owner: activeAccount.address,
-          roles: [...existingRoles, roleDefinition],
-          target: activeAccount.address,
-          version: 2,
-        },
-        activeAccount.nonce,
-      )
+      const mod = {
+        address,
+        prefixedAddress: prefixAddress(activeAccount.chainId, address),
+        nonce: activeAccount.nonce,
+
+        avatar: activeAccount.address,
+        chain: activeAccount.chainId,
+        modules: [],
+        multisend: [],
+        owner: activeAccount.address,
+        target: activeAccount.address,
+        version: 2,
+
+        ...existingMod,
+
+        type: AccountType.ROLES,
+        allowances: assets.reduce<Allowance[]>((result, asset) => {
+          if (asset.allowance == null || asset.interval == null) {
+            return result
+          }
+
+          return [
+            ...result,
+            {
+              balance: asset.allowance,
+              key: encodeRoleKey(asset.allowanceKey),
+              maxRefill: asset.allowance,
+              period: getRefillPeriod(asset.interval),
+              refill: asset.allowance,
+              timestamp: BigInt(new Date().getTime()),
+            },
+          ]
+        }, []),
+
+        roles: [...existingRoles, roleDefinition],
+      } satisfies Roles
 
       return {
         ...result,
@@ -150,7 +151,7 @@ export const getRoleMods = async (
 
 const getCurrentMods = async (
   accounts: DBAccount[],
-): Promise<Record<UUID, Roles>> => {
+): Promise<Record<UUID, Roles | undefined>> => {
   const existingMods = await Promise.all(
     accounts.map(async (account) => {
       const [rolesMod] = await queryAccounts([

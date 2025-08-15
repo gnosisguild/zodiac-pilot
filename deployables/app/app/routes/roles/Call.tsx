@@ -2,7 +2,9 @@ import { Chain } from '@/routes-ui'
 import { ChainId } from '@zodiac/chains'
 import { NumberValue } from '@zodiac/ui'
 import {
+  BotOff,
   Crosshair,
+  Drama,
   HandCoins,
   Plus,
   SquareFunction,
@@ -37,6 +39,12 @@ export const Call = ({ chainId, callData }: CallProps) => {
     case 'scopeFunction': {
       return <ScopeFunctionCall chainId={chainId} callData={callData} />
     }
+    case 'setAvatar': {
+      return <SetAvatarCall chainId={chainId} callData={callData} />
+    }
+    case 'disableModule': {
+      return <DisableModuleCall chainId={chainId} callData={callData} />
+    }
 
     default: {
       return (
@@ -45,6 +53,34 @@ export const Call = ({ chainId, callData }: CallProps) => {
     }
   }
 }
+
+const DisableModuleCall = ({ callData }: DetailCallProps<'disableModule'>) => (
+  <FeedEntry action="Disable module" icon={BotOff} raw={callData}>
+    <LabeledItem label="Address">
+      <LabeledAddress>{callData.address}</LabeledAddress>
+    </LabeledItem>
+
+    <LabeledItem label="Module">
+      <LabeledAddress>{callData.args.module}</LabeledAddress>
+    </LabeledItem>
+
+    <LabeledItem label="Previous">
+      <LabeledAddress>{callData.args.prevModule}</LabeledAddress>
+    </LabeledItem>
+  </FeedEntry>
+)
+
+const SetAvatarCall = ({ callData }: DetailCallProps<'setAvatar'>) => (
+  <FeedEntry action="Set avatar" icon={Drama} raw={callData}>
+    <LabeledItem label="Address">
+      <LabeledAddress>{callData.address}</LabeledAddress>
+    </LabeledItem>
+
+    <LabeledItem label="Avatar">
+      <LabeledAddress>{callData.args.avatar}</LabeledAddress>
+    </LabeledItem>
+  </FeedEntry>
+)
 
 const ScopeFunctionCall = ({ callData }: DetailCallProps<'scopeFunction'>) => (
   <FeedEntry action="Scope function" icon={SquareFunction} raw={callData}>

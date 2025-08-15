@@ -178,7 +178,11 @@ const DeployRole = ({
             <Suspense>
               <Await resolve={plan}>
                 {(plan) => {
-                  if (plan.length === 0) {
+                  const filteredPlan = plan.filter(
+                    (entry) => entry.steps.length > 0,
+                  )
+
+                  if (filteredPlan.length === 0) {
                     return (
                       <Info title="Nothing to deploy">
                         No changes to be applied.
@@ -193,7 +197,7 @@ const DeployRole = ({
                         role. Please execute one transaction after the other.
                       </Info>
 
-                      {plan.map(({ account, steps }, planIndex) => (
+                      {filteredPlan.map(({ account, steps }, planIndex) => (
                         <Card key={`${account.prefixedAddress}-${planIndex}`}>
                           <Collapsible
                             header={
