@@ -295,6 +295,9 @@ export const AccountTable = pgTable(
       .references(() => UserTable.id, { onDelete: 'cascade' }),
     label: text(),
     address: text().$type<HexAddress>().notNull(),
+    nonce: bigint({ mode: 'bigint' })
+      .notNull()
+      .$defaultFn(() => randomBigInt(63)),
 
     ...chainReference,
     ...tenantReference,
@@ -570,9 +573,6 @@ export const RoleTable = pgTable(
     id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
 
     label: text().notNull(),
-    nonce: bigint({ mode: 'bigint' })
-      .notNull()
-      .$defaultFn(() => randomBigInt(63)),
     key: varchar({ length: 32 }).notNull(),
 
     ...createdTimestamp,
