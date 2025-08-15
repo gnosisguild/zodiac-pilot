@@ -8,6 +8,8 @@ import {
 import {
   accountFactory,
   dbIt,
+  roleActionAssetFactory,
+  roleActionFactory,
   roleFactory,
   tenantFactory,
   userFactory,
@@ -19,8 +21,10 @@ import {
   createMockRole,
   createMockRolesAccount,
 } from '@zodiac/modules/test-utils'
+import { AllowanceInterval } from '@zodiac/schema'
 import { AccountType, prefixAddress, queryAccounts } from 'ser-kit'
 import { beforeEach, describe, expect, vi } from 'vitest'
+import { getRefillPeriod } from './getRefillPeriod'
 import { getRoleMods } from './getRoleMods'
 import { predictRolesModAddress } from './predictRolesModAddress'
 
@@ -39,6 +43,8 @@ const mockQueryAccounts = vi.mocked(queryAccounts)
 describe('getRoleMods', () => {
   beforeEach(() => {
     mockQueryAccounts.mockResolvedValue([])
+
+    vi.setSystemTime(new Date())
   })
 
   dbIt('creates a roles mod for an active account', async () => {
@@ -77,7 +83,36 @@ describe('getRoleMods', () => {
   })
 
   describe('Allowances', () => {
-    dbIt.todo('adds allowances from the configured assets')
+    dbIt('adds allowances from the configured assets', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const account = await accountFactory.create(tenant, user)
+
+      const role = await roleFactory.create(tenant, user)
+      const action = await roleActionFactory.create(role, user)
+      const asset = await roleActionAssetFactory.create(action, {
+        allowance: 1000n,
+        interval: AllowanceInterval.Daily,
+      })
+
+      await setActiveAccounts(dbClient(), role, [account.id])
+
+      const {
+        mods: [mod],
+      } = await getRoleMods(role, { members: [] })
+
+      expect(mod).toHaveProperty('allowances', [
+        {
+          balance: 1000n,
+          maxRefill: 1000n,
+          period: getRefillPeriod(AllowanceInterval.Daily),
+          refill: 1000n,
+          timestamp: BigInt(new Date().getTime()),
+          key: encodeRoleKey(asset.allowanceKey),
+        },
+      ])
+    })
     dbIt.todo('keeps existing allowances')
   })
 
