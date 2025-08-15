@@ -9,6 +9,7 @@ import {
 } from '@zodiac/db/schema'
 import { randomAddress } from '@zodiac/test-utils'
 import { randomUUID } from 'crypto'
+import randomBigInt from 'crypto-random-bigint'
 import { createFactory } from './createFactory'
 
 export const accountFactory = createFactory<
@@ -41,6 +42,7 @@ export const accountFactory = createFactory<
       deletedById: null,
       deletedAt: null,
       updatedAt: null,
+      nonce: randomBigInt(63),
 
       ...data,
     }
