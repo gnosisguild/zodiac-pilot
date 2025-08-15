@@ -1,15 +1,32 @@
+import { authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
+import { dbClient, getWalletLabels } from '@zodiac/db'
 import { ConnectWalletButton } from '@zodiac/web3'
 import { Outlet } from 'react-router'
+import { Route } from './+types/layout'
 
-const SwapLayout = () => (
+export const loader = (args: Route.LoaderArgs) =>
+  authorizedLoader(
+    args,
+    async ({
+      context: {
+        auth: { user },
+      },
+    }) => ({
+      addressLabels:
+        user == null ? {} : await getWalletLabels(dbClient(), user.id),
+    }),
+  )
+
+const SwapLayout = ({
+  loaderData: { addressLabels },
+}: Route.ComponentProps) => (
   <Page>
     <Page.Header
       action={
-        <ConnectWalletButton
-          connectedLabel="Account"
-          connectLabel="Connect account"
-        />
+        <ConnectWalletButton addressLabels={addressLabels}>
+          Connect account
+        </ConnectWalletButton>
       }
     >
       Swap tokens

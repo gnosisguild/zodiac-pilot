@@ -4,7 +4,12 @@ import { ChainSelect } from '@/routes-ui'
 import { isSmartContractAddress, jsonRpcProvider, routeTitle } from '@/utils'
 import { invariantResponse } from '@epic-web/invariant'
 import { Chain, getChainId, verifyChainId } from '@zodiac/chains'
-import { dbClient, getOrCreateAccount, getWorkspace } from '@zodiac/db'
+import {
+  dbClient,
+  getOrCreateAccount,
+  getWalletLabels,
+  getWorkspace,
+} from '@zodiac/db'
 import {
   getBoolean,
   getHexString,
@@ -31,18 +36,28 @@ export const meta: Route.MetaFunction = ({ matches }) => [
 ]
 
 export const loader = (args: Route.LoaderArgs) =>
-  authorizedLoader(args, async ({ params: { prefixedAddress } }) => {
-    return {
-      defaultChainId:
-        prefixedAddress != null
-          ? getChainId(verifyPrefixedAddress(prefixedAddress))
-          : Chain.ETH,
-      defaultAddress:
-        prefixedAddress != null
-          ? unprefixAddress(verifyPrefixedAddress(prefixedAddress))
-          : undefined,
-    }
-  })
+  authorizedLoader(
+    args,
+    async ({
+      params: { prefixedAddress },
+      context: {
+        auth: { user },
+      },
+    }) => {
+      return {
+        defaultChainId:
+          prefixedAddress != null
+            ? getChainId(verifyPrefixedAddress(prefixedAddress))
+            : Chain.ETH,
+        defaultAddress:
+          prefixedAddress != null
+            ? unprefixAddress(verifyPrefixedAddress(prefixedAddress))
+            : undefined,
+        addressLabels: await getWalletLabels(dbClient(), user.id),
+      }
+    },
+    { ensureSignedIn: true },
+  )
 
 export const action = (args: Route.ActionArgs) =>
   authorizedAction(
@@ -130,7 +145,7 @@ export const clientAction = async ({
 }
 
 const CreateAccount = ({
-  loaderData: { defaultChainId, defaultAddress },
+  loaderData: { defaultChainId, defaultAddress, addressLabels },
   actionData,
 }: Route.ComponentProps) => {
   const connected = useConnected()
@@ -139,10 +154,9 @@ const CreateAccount = ({
     <Page>
       <Page.Header
         action={
-          <ConnectWalletButton
-            connectLabel="Connect Pilot Signer"
-            connectedLabel="Pilot Signer"
-          />
+          <ConnectWalletButton addressLabels={addressLabels}>
+            Connect Pilot Signer
+          </ConnectWalletButton>
         }
       >
         New Safe Account
