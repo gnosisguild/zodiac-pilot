@@ -1,7 +1,12 @@
 import type { HexAddress } from '@zodiac/schema'
-import { AccountType, prefixAddress, type Account, type ChainId } from 'ser-kit'
+import {
+  AccountType,
+  ExecutionAccount,
+  prefixAddress,
+  type ChainId,
+} from 'ser-kit'
 
-type Safe = Extract<Account, { type: AccountType.SAFE }>
+type Safe = Extract<ExecutionAccount, { type: AccountType.SAFE }>
 
 export type CreateSafeAccountOptions = {
   chainId: ChainId

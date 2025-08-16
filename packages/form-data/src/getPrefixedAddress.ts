@@ -2,15 +2,25 @@ import { invariant } from '@epic-web/invariant'
 import { PrefixedAddress, verifyPrefixedAddress } from '@zodiac/schema'
 import { getOptionalString } from './getOptionalString'
 
+export const getOptionalPrefixedAddress = (data: FormData, key: string) => {
+  const value = getOptionalString(data, key)
+
+  if (value == null) {
+    return null
+  }
+
+  return verifyPrefixedAddress(value)
+}
+
 export const getPrefixedAddress = (
   data: FormData,
   key: string,
 ): PrefixedAddress => {
-  const value = getOptionalString(data, key)
+  const value = getOptionalPrefixedAddress(data, key)
 
   invariant(value != null, `value under "${key}" is not present`)
 
-  return verifyPrefixedAddress(value)
+  return value
 }
 
 export const getPrefixedAddressList = (

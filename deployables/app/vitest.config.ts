@@ -14,7 +14,12 @@ const alias = Object.entries(tsConfig.compilerOptions.paths).reduce(
 
 export default defineConfig({
   ssr: {
-    noExternal: ['@gnosis.pm/zodiac', '@workos-inc/widgets'],
+    noExternal: [
+      '@gnosis.pm/zodiac',
+      '@workos-inc/widgets',
+      'ser-kit',
+      'zodiac-roles-sdk',
+    ],
   },
 
   test: {

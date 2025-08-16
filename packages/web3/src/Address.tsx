@@ -1,5 +1,5 @@
 import { ZERO_ADDRESS } from '@zodiac/chains'
-import type { HexAddress, PrefixedAddress } from '@zodiac/schema'
+import type { Hex, HexAddress, PrefixedAddress } from '@zodiac/schema'
 import {
   CopyToClipboard,
   defaultSize,
@@ -14,7 +14,7 @@ import { useEnsName } from 'wagmi'
 import { Blockie } from './Blockie'
 
 type AddressProps = {
-  children: HexAddress | PrefixedAddress
+  children: Hex | HexAddress | PrefixedAddress
   label?: string | null
   size?: Size
   /**
@@ -38,7 +38,7 @@ export const Address = ({
   shorten = false,
   label,
 }: AddressProps) => {
-  const [chainId, address] = splitPrefixedAddress(children)
+  const [chainId, address] = splitPrefixedAddress(children as HexAddress)
 
   const { data: ensName } = useEnsName({ address, chainId })
 
@@ -81,7 +81,7 @@ export const Address = ({
       <code
         aria-hidden={label != null}
         className={classNames(
-          'max-w-full flex-1 overflow-hidden text-ellipsis text-nowrap font-mono',
+          'inline-flex max-w-full flex-1 overflow-hidden text-ellipsis text-nowrap font-mono',
           shorten && 'cursor-default',
           size === 'small' && 'text-xs',
           size === 'tiny' && 'text-xs',

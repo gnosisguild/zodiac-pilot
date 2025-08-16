@@ -1,4 +1,4 @@
-import { decode, jsonStringify } from '@zodiac/schema'
+import { jsonStringify } from '@zodiac/schema'
 import hljs from 'highlight.js'
 import json from 'highlight.js/lib/languages/json'
 import 'highlight.js/styles/atom-one-dark.min.css'
@@ -6,7 +6,7 @@ import 'highlight.js/styles/atom-one-dark.min.css'
 hljs.registerLanguage('json', json)
 
 type DebugJsonProps = {
-  data?: string | null
+  data?: unknown
 }
 
 export const DebugJson = ({ data }: DebugJsonProps) => {
@@ -14,7 +14,7 @@ export const DebugJson = ({ data }: DebugJsonProps) => {
     return null
   }
 
-  const json = hljs.highlight(jsonStringify(decode(data), 2), {
+  const json = hljs.highlight(jsonStringify(data, 2), {
     language: 'json',
   })
 

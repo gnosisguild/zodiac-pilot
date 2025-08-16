@@ -1,8 +1,8 @@
-import { type Account, type StartingPoint } from 'ser-kit'
+import { ExecutionAccount, type StartingPoint } from 'ser-kit'
 import { createMockEoaAccount } from './createMockEoaAccount'
 
 export const createMockStartingWaypoint = (
-  account: Account = createMockEoaAccount(),
+  account: ExecutionAccount = createMockEoaAccount(),
 ): StartingPoint => ({
   account,
 })
