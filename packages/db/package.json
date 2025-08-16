@@ -53,7 +53,7 @@
   "devDependencies": {
     "@dotenvx/dotenvx": "1.48.4",
     "@faker-js/faker": "9.9.0",
-    "@types/node": "22.14.1",
+    "@types/node": "22.17.2",
     "@types/react": "19.1.10",
     "@workos-inc/node": "7.67.0",
     "@zodiac/eslint-config": "workspace:*",
