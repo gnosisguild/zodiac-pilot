@@ -169,22 +169,43 @@ export const action = async (args: Route.ActionArgs) =>
         }
 
         case Intent.SignTransaction: {
-          const transaction = await saveTransaction(dbClient(), tenant, user, {
-            accountId: proposal.accountId,
-            walletId: route.fromId,
-            routeId: route.id,
-            workspaceId,
+          await dbClient().transaction(async (tx) => {
+            const transaction = await saveTransaction(tx, tenant, user, {
+              accountId: proposal.accountId,
+              walletId: route.fromId,
+              routeId: route.id,
+              workspaceId,
 
-            transaction: metaTransactions,
+              transaction: metaTransactions,
 
-            safeWalletUrl: getOptionalString(data, 'safeWalletUrl'),
-            explorerUrl: getOptionalString(data, 'explorerUrl'),
+              safeWalletUrl: getOptionalString(data, 'safeWalletUrl'),
+              explorerUrl: getOptionalString(data, 'explorerUrl'),
+            })
+
+            await confirmTransactionProposal(tx, {
+              proposalId: proposal.id,
+              signedTransactionId: transaction.id,
+            })
           })
 
-          await confirmTransactionProposal(dbClient(), {
-            proposalId: proposal.id,
-            signedTransactionId: transaction.id,
-          })
+          const url = new URL(request.url)
+          const callback = url.searchParams.get('callback')
+
+          if (callback != null) {
+            const state = url.searchParams.get('state')
+
+            const callbackUrl = new URL(callback)
+
+            if (state != null) {
+              callbackUrl.searchParams.set('state', state)
+            }
+
+            await fetch(callbackUrl.toString(), { method: 'POST' }).catch(
+              (error) => {
+                console.error('Could not call callback after sign', { error })
+              },
+            )
+          }
 
           return null
         }

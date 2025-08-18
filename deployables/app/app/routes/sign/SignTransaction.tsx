@@ -4,7 +4,7 @@ import { explorerUrl } from '@zodiac/chains'
 import { useIsPending, useStableHandler } from '@zodiac/hooks'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
 import { multisigTransactionUrl } from '@zodiac/safe'
-import type { HexAddress } from '@zodiac/schema'
+import type { Hex, HexAddress } from '@zodiac/schema'
 import { errorToast, PrimaryButton, successToast } from '@zodiac/ui'
 import { useAccount, useConnectorClient } from '@zodiac/web3'
 import type { Eip1193Provider } from 'ethers'
@@ -26,7 +26,9 @@ type TransactionResult = {
   explorerUrl: string
 }
 
-type OnSignOptions = MultiSigResult | TransactionResult
+type OnSignOptions = (MultiSigResult | TransactionResult) & {
+  transactionHash: Hex
+}
 
 type SignTransactionProps = {
   chainId: ChainId
@@ -88,7 +90,10 @@ export const SignTransaction = ({
           const url = multisigTransactionUrl(chainId, safeAddress, safeTxHash)
 
           if (onSignRef.current) {
-            onSignRef.current({ safeWalletUrl: url.toString() })
+            onSignRef.current({
+              safeWalletUrl: url.toString(),
+              transactionHash: safeTxHash,
+            })
           }
 
           successToast({
@@ -127,7 +132,10 @@ export const SignTransaction = ({
             const url = new URL(`tx/${txHash}`, explorerUrl(chainId))
 
             if (onSignRef.current) {
-              onSignRef.current({ explorerUrl: url.toString() })
+              onSignRef.current({
+                explorerUrl: url.toString(),
+                transactionHash: txHash,
+              })
             }
 
             successToast({

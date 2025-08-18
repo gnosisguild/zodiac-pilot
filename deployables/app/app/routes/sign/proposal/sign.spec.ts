@@ -521,16 +521,14 @@ describe('Sign', () => {
 
       await userEvent.click(await screen.findByRole('button', { name: 'Sign' }))
 
-      await waitFor(async () => {
-        await waitForPendingActions()
+      await waitForPendingActions()
 
-        const [transaction] = await getTransactions(dbClient(), account.id)
+      const [transaction] = await getTransactions(dbClient(), account.id)
 
-        expect(transaction).toHaveProperty(
-          'explorerUrl',
-          new URL(`tx/${testHash}`, explorerUrl(account.chainId)).toString(),
-        )
-      })
+      expect(transaction).toHaveProperty(
+        'explorerUrl',
+        new URL(`tx/${testHash}`, explorerUrl(account.chainId)).toString(),
+      )
     })
 
     dbIt('stores a reference to the multisig.', async () => {
@@ -627,6 +625,121 @@ describe('Sign', () => {
         await expect(
           getProposedTransaction(dbClient(), proposal.id),
         ).resolves.toHaveProperty('signedTransactionId', transaction.id)
+      })
+    })
+
+    describe('Callback', () => {
+      dbIt('posts transaction hash to a provided callback URL', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+
+        const account = await accountFactory.create(tenant, user)
+        const wallet = await walletFactory.create(user, {
+          address: initiator,
+        })
+        const route = await routeFactory.create(account, wallet)
+        const proposal = await transactionProposalFactory.create(
+          tenant,
+          user,
+          account,
+        )
+
+        await setDefaultRoute(dbClient(), tenant, user, route)
+
+        const testHash = randomHex(18)
+
+        mockQueryRoutes.mockResolvedValue([])
+        mockPlanExecution.mockResolvedValue([
+          createMockExecuteTransactionAction({
+            from: wallet.address,
+          }),
+        ])
+        mockExecute.mockImplementation(async (_, state = []) => {
+          state.push(testHash)
+        })
+
+        const mockFetch = vi.spyOn(global, 'fetch')
+
+        await render(
+          href('/workspace/:workspaceId/submit/proposal/:proposalId', {
+            proposalId: proposal.id,
+            workspaceId: tenant.defaultWorkspaceId,
+          }),
+          {
+            user,
+            tenant,
+            searchParams: { callback: 'http://test.com/test-callback' },
+          },
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Sign' }),
+        )
+
+        await waitForPendingActions()
+
+        expect(mockFetch).toHaveBeenCalledWith(
+          'http://test.com/test-callback',
+          { method: 'POST' },
+        )
+      })
+
+      dbIt('passes along state to the callback', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+
+        const account = await accountFactory.create(tenant, user)
+        const wallet = await walletFactory.create(user, {
+          address: initiator,
+        })
+        const route = await routeFactory.create(account, wallet)
+        const proposal = await transactionProposalFactory.create(
+          tenant,
+          user,
+          account,
+        )
+
+        await setDefaultRoute(dbClient(), tenant, user, route)
+
+        const testHash = randomHex(18)
+
+        mockQueryRoutes.mockResolvedValue([])
+        mockPlanExecution.mockResolvedValue([
+          createMockExecuteTransactionAction({
+            from: wallet.address,
+          }),
+        ])
+        mockExecute.mockImplementation(async (_, state = []) => {
+          state.push(testHash)
+        })
+
+        const mockFetch = vi.spyOn(global, 'fetch')
+
+        await render(
+          href('/workspace/:workspaceId/submit/proposal/:proposalId', {
+            proposalId: proposal.id,
+            workspaceId: tenant.defaultWorkspaceId,
+          }),
+          {
+            user,
+            tenant,
+            searchParams: {
+              callback: 'http://test.com/test-callback',
+              state: 'test-state',
+            },
+          },
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Sign' }),
+        )
+
+        await waitForPendingActions()
+
+        expect(mockFetch).toHaveBeenCalledWith(
+          'http://test.com/test-callback?state=test-state',
+          { method: 'POST' },
+        )
       })
     })
   })
