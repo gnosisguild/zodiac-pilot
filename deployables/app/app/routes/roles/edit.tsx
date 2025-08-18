@@ -1,5 +1,5 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
-import { Page, Token } from '@/components'
+import { Page } from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
 import { chainName } from '@zodiac/chains'
 import {
@@ -15,32 +15,24 @@ import {
   setRoleMembers,
   updateRole,
 } from '@zodiac/db'
-import { RoleActionAsset } from '@zodiac/db/schema'
 import { getString, getUUIDList } from '@zodiac/form-data'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import {
-  Card,
-  DateValue,
   Form,
   FormLayout,
   GhostLinkButton,
   Info,
   MultiSelect,
-  NumberValue,
-  Popover,
   PrimaryButton,
   SecondaryLinkButton,
   successToast,
-  Tag,
 } from '@zodiac/ui'
-import classNames from 'classnames'
-import { ArrowRight, ArrowRightLeft, HandCoins, Pencil } from 'lucide-react'
 import { UUID } from 'node:crypto'
 import { href, Outlet } from 'react-router'
-import { prefixAddress } from 'ser-kit'
 import { Route } from './+types/edit'
 import { AccountSelect } from './AccountSelect'
+import { Action } from './Action'
 import { Intent } from './intents'
 import { RoleLabelInput } from './RoleLabelInput'
 
@@ -237,95 +229,11 @@ const EditRole = ({
         <FormLayout>
           <Form.Section title="Actions">
             {actions.map((action) => (
-              <Card
-                key={action.id}
-                titleId={action.id}
-                title={
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-4">
-                      <Popover
-                        popover={
-                          <span className="text-xs uppercase">
-                            {action.type}
-                          </span>
-                        }
-                      >
-                        <Tag head={<ArrowRightLeft />} />
-                      </Popover>
-
-                      <h2>
-                        <span id={action.id} className="font-semibold">
-                          {action.label}
-                        </span>
-                        <div className="text-xs text-zinc-500 dark:text-zinc-400">
-                          Created by{' '}
-                          <span className="text-zinc-600 dark:text-zinc-300">
-                            {action.createdBy.fullName}
-                          </span>{' '}
-                          on{' '}
-                          <span className="text-zinc-600 dark:text-zinc-300">
-                            <DateValue>{action.createdAt}</DateValue>
-                          </span>
-                        </div>
-                      </h2>
-                    </div>
-
-                    <GhostLinkButton
-                      iconOnly
-                      replace
-                      size="small"
-                      icon={Pencil}
-                      to={href(
-                        '/workspace/:workspaceId/roles/:roleId/action/:actionId',
-                        { workspaceId, roleId, actionId: action.id },
-                      )}
-                    >
-                      Edit action
-                    </GhostLinkButton>
-                  </div>
-                }
-              >
-                {action.assets.length === 0 && (
-                  <Info>
-                    No assets have been configured for this swap
-                    <Info.Actions>
-                      <SecondaryLinkButton
-                        size="small"
-                        to={href(
-                          '/workspace/:workspaceId/roles/:roleId/action/:actionId',
-                          { workspaceId, roleId, actionId: action.id },
-                        )}
-                      >
-                        Configure swap
-                      </SecondaryLinkButton>
-                    </Info.Actions>
-                  </Info>
-                )}
-
-                {action.assets.length > 0 && (
-                  <div className="grid grid-cols-9 items-center gap-4">
-                    <div className="col-span-4 flex flex-col divide-y divide-zinc-300 rounded bg-zinc-100 dark:divide-zinc-700 dark:bg-zinc-800">
-                      {action.assets
-                        .filter((asset) => asset.allowSell)
-                        .map((asset) => (
-                          <Asset key={asset.id} asset={asset} context="sell" />
-                        ))}
-                    </div>
-
-                    <div className="flex justify-center">
-                      <ArrowRight className="size-4" />
-                    </div>
-
-                    <div className="col-span-4 flex flex-col divide-y divide-zinc-300 rounded bg-zinc-100 dark:divide-zinc-700 dark:bg-zinc-800">
-                      {action.assets
-                        .filter((asset) => asset.allowBuy)
-                        .map((asset) => (
-                          <Asset key={asset.id} asset={asset} context="buy" />
-                        ))}
-                    </div>
-                  </div>
-                )}
-              </Card>
+              <Action
+                action={action}
+                assets={action.assets}
+                createdBy={action.createdBy.fullName}
+              />
             ))}
 
             {actions.length === 0 && (
@@ -354,51 +262,3 @@ const EditRole = ({
 }
 
 export default EditRole
-
-const Asset = ({
-  asset,
-  context,
-}: {
-  asset: RoleActionAsset
-  context: 'sell' | 'buy'
-}) => (
-  <div className="group flex items-center justify-between py-2 pl-4 pr-2">
-    <div className="flex flex-col gap-1">
-      <Token contractAddress={prefixAddress(asset.chainId, asset.address)}>
-        {asset.symbol}
-
-        {asset.allowance && asset.interval && (
-          <div className="flex gap-1 text-xs opacity-75">
-            {context}
-            <NumberValue>{asset.allowance}</NumberValue>
-            {asset.interval}
-          </div>
-        )}
-      </Token>
-    </div>
-
-    <div
-      className={classNames(
-        'transition-opacity',
-        asset.allowance == null && 'opacity-0 group-hover:opacity-100',
-      )}
-    >
-      <GhostLinkButton
-        iconOnly
-        icon={HandCoins}
-        size="tiny"
-        to={href(
-          '/workspace/:workspaceId/roles/:roleId/action/:actionId/asset/:assetId',
-          {
-            workspaceId: asset.workspaceId,
-            roleId: asset.roleId,
-            actionId: asset.roleActionId,
-            assetId: asset.id,
-          },
-        )}
-      >
-        Edit allowance
-      </GhostLinkButton>
-    </div>
-  </div>
-)
