@@ -3,7 +3,7 @@ import { Interface } from 'ethers'
 import type { MetaTransactionRequest } from 'ser-kit'
 
 // https://github.com/gnosisguild/snapshot-signer
-const SNAPSHOT_SIGNER_ADDRESS = '0xD88504B3e646454D6d458dd610B6c351d7bcAA0f'
+const SNAPSHOT_SIGNER_ADDRESS = '0xd88504b3e646454d6d458dd610b6c351d7bcaa0f'
 
 const SnapshotSignerInterface = new Interface([
   'function signSnapshotArrayVote(tuple(address from, string space, uint64 timestamp, bytes32 proposal, uint32[] choice, string reason, string app, string metadata) vote, tuple(string name, string version) domain)',
