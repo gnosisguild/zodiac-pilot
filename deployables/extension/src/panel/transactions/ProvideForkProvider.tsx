@@ -1,4 +1,5 @@
 import { useAccount } from '@/accounts'
+import { AD_HOC_ROUTE_ID } from '@/execution-routes'
 import { ForkProvider } from '@/providers'
 import type { ExecutionRoute, HexAddress } from '@/types'
 import { invariant } from '@epic-web/invariant'
@@ -19,7 +20,8 @@ export const ProvideForkProvider = ({
   children,
   route,
 }: PropsWithChildren<{ route: ExecutionRoute | null }>) => {
-  const { chainId, address } = useAccount()
+  const { chainId, address, id } = useAccount()
+  const isUsingAdHocRoute = id === AD_HOC_ROUTE_ID
 
   const simulationModuleAddress = getSimulationModuleAddress(route)
 
@@ -31,7 +33,9 @@ export const ProvideForkProvider = ({
       chainId,
       avatarAddress: address,
       simulationModuleAddress,
-      setupRequests: getSetupRequests(),
+      // For now we only support setup requests for ad-hoc routes.
+      // If we ever want to support this more generally, we need to let users configure the setup requests so they don't stay silently active via the search param state even when switching accounts.
+      setupRequests: isUsingAdHocRoute ? getSetupRequests() : [],
     })
 
     setProvider(provider)
@@ -39,7 +43,7 @@ export const ProvideForkProvider = ({
     return () => {
       provider.destroy()
     }
-  }, [chainId, address, simulationModuleAddress])
+  }, [chainId, address, simulationModuleAddress, isUsingAdHocRoute])
 
   if (provider == null) {
     return null
