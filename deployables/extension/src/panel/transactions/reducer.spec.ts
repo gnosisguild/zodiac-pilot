@@ -67,6 +67,21 @@ describe('Transactions reducer', () => {
         ],
       })
     })
+
+    it('ignores confirmations for transactions that are not in the pending state', () => {
+      const transaction = createConfirmedTransaction()
+
+      expect(
+        transactionsReducer(
+          createState({ executed: [transaction] }),
+          confirmTransaction({
+            id: 'not-found',
+            snapshotId: 'test',
+            transactionHash: 'test',
+          }),
+        ),
+      ).toMatchObject({ executed: [transaction] })
+    })
   })
 
   describe('Clear', () => {
