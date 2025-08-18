@@ -74,7 +74,7 @@ export const loader = (args: Route.LoaderArgs) =>
         plan: planApplyAccounts({
           desired,
         }),
-        labels: {
+        addressLabels: {
           ...modLabels,
           ...memberLabels,
           ...assetLabels,
@@ -145,13 +145,13 @@ export const action = (args: Route.ActionArgs) =>
   )
 
 const DeployRole = ({
-  loaderData: { plan, labels, roleLabels, issues },
+  loaderData: { plan, addressLabels, roleLabels, issues },
 }: Route.ComponentProps) => {
   return (
     <Page>
       <Page.Header
         action={
-          <ConnectWalletButton addressLabels={labels}>
+          <ConnectWalletButton addressLabels={addressLabels}>
             Connect signer wallet
           </ConnectWalletButton>
         }
@@ -163,7 +163,7 @@ const DeployRole = ({
         <Issues issues={issues} />
 
         <ProvideRoleLabels labels={roleLabels}>
-          <ProvideAddressLabels labels={labels}>
+          <ProvideAddressLabels labels={addressLabels}>
             <Suspense>
               <Await resolve={plan}>
                 {(plan) => {
