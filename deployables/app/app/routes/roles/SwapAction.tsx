@@ -5,6 +5,7 @@ import {
   Info,
   NumberValue,
   SecondaryLinkButton,
+  Warning,
 } from '@zodiac/ui'
 import classNames from 'classnames'
 import { ArrowRight, HandCoins } from 'lucide-react'
@@ -37,14 +38,21 @@ export const SwapAction = ({ action, assets }: SwapActionProps) => {
     )
   }
 
+  const sellAssets = assets.filter((asset) => asset.allowSell)
+  const buyAssets = assets.filter((asset) => asset.allowBuy)
+
   return (
     <div className="grid grid-cols-9 items-center gap-4">
       <div className="col-span-4 flex flex-col divide-y divide-zinc-300 rounded bg-zinc-100 dark:divide-zinc-700 dark:bg-zinc-800">
-        {assets
-          .filter((asset) => asset.allowSell)
-          .map((asset) => (
-            <Asset key={asset.id} asset={asset} context="sell" />
-          ))}
+        {sellAssets.map((asset) => (
+          <Asset key={asset.id} asset={asset} context="sell" />
+        ))}
+
+        {sellAssets.length === 0 && (
+          <Warning>
+            You have not configured any assets that should be sold.
+          </Warning>
+        )}
       </div>
 
       <div className="flex justify-center">
@@ -52,11 +60,15 @@ export const SwapAction = ({ action, assets }: SwapActionProps) => {
       </div>
 
       <div className="col-span-4 flex flex-col divide-y divide-zinc-300 rounded bg-zinc-100 dark:divide-zinc-700 dark:bg-zinc-800">
-        {assets
-          .filter((asset) => asset.allowBuy)
-          .map((asset) => (
-            <Asset key={asset.id} asset={asset} context="buy" />
-          ))}
+        {buyAssets.map((asset) => (
+          <Asset key={asset.id} asset={asset} context="buy" />
+        ))}
+
+        {buyAssets.length === 0 && (
+          <Warning>
+            You have not configured any assets that should be bought.
+          </Warning>
+        )}
       </div>
     </div>
   )
