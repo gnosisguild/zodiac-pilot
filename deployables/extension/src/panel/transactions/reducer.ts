@@ -40,7 +40,12 @@ export const transactionsReducer = (
     case Action.Confirm: {
       const { id, snapshotId, transactionHash } = payload
 
-      const transaction = getTransaction(state.pending, id)
+      const transaction = findTransaction(state.pending, id)
+      if (!transaction) {
+        // Since Action.Confirm is dispatched async, it's possible that the account has been switched and the state cleared through Action.Clear in the meantime.
+        // In that case, we ignore the confirmation.
+        return state
+      }
 
       return {
         ...state,
