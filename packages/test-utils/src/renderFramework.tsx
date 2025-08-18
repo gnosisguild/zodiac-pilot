@@ -42,6 +42,7 @@ export type RouteModule = {
 
 export type RenderFrameworkOptions = Omit<RenderOptions, 'inspectRoutes'> & {
   loadActions?: () => Promise<unknown>
+  extraRoutes?: StubRoute
 }
 
 export type RenderFrameworkResult = RenderResult
@@ -63,7 +64,12 @@ export async function createRenderFramework<
 
   return async function renderFramework(
     currentPath: string,
-    { searchParams = {}, loadActions, ...options }: RenderFrameworkOptions = {},
+    {
+      searchParams = {},
+      loadActions,
+      extraRoutes = [],
+      ...options
+    }: RenderFrameworkOptions = {},
   ): Promise<RenderFrameworkResult> {
     const { promise, resolve } = Promise.withResolvers<void>()
 
@@ -79,7 +85,7 @@ export async function createRenderFramework<
 
           return null
         },
-        children: [...stubbedRoutes],
+        children: [...stubbedRoutes, ...extraRoutes],
       },
     ])
 

@@ -15,6 +15,7 @@ export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
     async ({
+      request,
       params: { proposalId, workspaceId },
       context: {
         auth: { tenant, user },
@@ -22,6 +23,7 @@ export const loader = (args: Route.LoaderArgs) =>
     }) => {
       invariantResponse(isUUID(proposalId), '"proposalId" is not a UUID')
 
+      const url = new URL(request.url)
       const proposal = await getProposedTransaction(dbClient(), proposalId)
 
       const defaultRoute = await findDefaultRoute(
@@ -32,13 +34,16 @@ export const loader = (args: Route.LoaderArgs) =>
       )
 
       if (defaultRoute != null) {
-        return redirect(
-          href('/workspace/:workspaceId/submit/proposal/:proposalId/:routeId', {
+        url.pathname = href(
+          '/workspace/:workspaceId/submit/proposal/:proposalId/:routeId',
+          {
             proposalId,
             workspaceId,
             routeId: defaultRoute.routeId,
-          }),
+          },
         )
+
+        return redirect(url.toString())
       }
 
       const [route] = await getRoutes(dbClient(), tenant.id, {
