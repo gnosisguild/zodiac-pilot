@@ -28,6 +28,6 @@
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/typescript-config": "workspace:*",
     "eslint": "9.33.0",
-    "ser-kit": "3.10.1"
+    "ser-kit": "3.11.0"
   }
 }
