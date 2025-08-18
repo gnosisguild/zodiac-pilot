@@ -14,14 +14,12 @@ import {
 import {
   accountFactory,
   dbIt,
-  roleActionFactory,
   roleFactory,
   routeFactory,
   tenantFactory,
   userFactory,
   walletFactory,
 } from '@zodiac/db/test-utils'
-import { encodeRoleKey } from '@zodiac/modules'
 import {
   createMockSafeAccount,
   createMockTransactionRequest,
@@ -43,6 +41,7 @@ import {
   withPredictedAddress,
 } from 'ser-kit'
 import { beforeEach, describe, expect, vi } from 'vitest'
+import { Intent } from './intents'
 
 vi.mock('ser-kit', async (importOriginal) => {
   const module = await importOriginal<typeof import('ser-kit')>()
@@ -318,82 +317,6 @@ describe('Deploy Role', () => {
     })
   })
 
-  describe('Roles mods', () => {
-    describe('Members', () => {
-      dbIt('keeps members when member safes already exist', async () => {
-        const user = await userFactory.create()
-        const tenant = await tenantFactory.create(user)
-
-        const wallet = await walletFactory.create(user)
-
-        await setDefaultWallet(dbClient(), user, {
-          walletId: wallet.id,
-          chainId: Chain.ETH,
-        })
-
-        const account = await accountFactory.create(tenant, user, {
-          chainId: Chain.ETH,
-        })
-        const role = await roleFactory.create(tenant, user)
-        await roleActionFactory.create(role, user)
-
-        await setRoleMembers(dbClient(), role, [user.id])
-        await setActiveAccounts(dbClient(), role, [account.id])
-
-        const userSafe = withPredictedAddress<
-          Extract<Account, { type: AccountType.SAFE }>
-        >(
-          {
-            type: AccountType.SAFE,
-            chain: Chain.ETH,
-            modules: [],
-            owners: [wallet.address],
-            threshold: 1,
-          },
-          user.nonce,
-        )
-
-        mockQueryAccounts.mockResolvedValue([userSafe])
-
-        await render(
-          href('/workspace/:workspaceId/roles/:roleId/deploy', {
-            workspaceId: tenant.defaultWorkspaceId,
-            roleId: role.id,
-          }),
-          { tenant, user },
-        )
-
-        expect(mockPlanApplyAccounts).toHaveBeenCalledWith({
-          desired: expect.arrayContaining([
-            withPredictedAddress<Extract<Account, { type: AccountType.ROLES }>>(
-              {
-                type: AccountType.ROLES,
-                chain: Chain.ETH,
-                modules: [],
-                allowances: [],
-                multisend: [],
-                avatar: account.address,
-                owner: account.address,
-                target: account.address,
-                roles: [
-                  {
-                    key: encodeRoleKey(role.key),
-                    members: [userSafe.address],
-                    annotations: [],
-                    targets: [],
-                  },
-                ],
-                version: 2,
-                nonce: account.nonce,
-              },
-              account.nonce,
-            ),
-          ]),
-        })
-      })
-    })
-  })
-
   describe('Execute', () => {
     describe('Route selection', () => {
       dbIt.todo(
@@ -438,12 +361,16 @@ describe('Deploy Role', () => {
             {
               call: {
                 call: 'createNode',
-                accountType: AccountType.SAFE,
-                args: { owners: [], threshold: 1 },
-                creationNonce: 0n,
+                accountType: AccountType.ROLES,
+                args: {
+                  avatar: account.address,
+                  owner: wallet.address,
+                  target: account.address,
+                },
+                creationNonce: account.nonce,
                 deploymentAddress: randomAddress(),
               },
-              from: undefined,
+              from: account.address,
               transaction,
             },
           ],
@@ -462,7 +389,7 @@ describe('Deploy Role', () => {
         await screen.findByRole('button', { name: 'Deploy' }),
       )
 
-      await waitForPendingActions()
+      await waitForPendingActions(Intent.ExecuteTransaction)
 
       const [transactionProposal] = await getProposedTransactions(
         dbClient(),

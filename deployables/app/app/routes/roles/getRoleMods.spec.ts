@@ -57,11 +57,11 @@ describe('getRoleMods', () => {
 
     await setActiveAccounts(dbClient(), role, [account.id])
 
-    const { mods } = await getRoleMods(role, { members: [] })
+    const { rolesMods } = await getRoleMods(role, { members: [] })
 
-    expect(mods).toHaveLength(1)
+    expect(rolesMods).toHaveLength(1)
 
-    const [mod] = mods
+    const [mod] = rolesMods
 
     const address = predictRolesModAddress(account)
 
@@ -99,7 +99,7 @@ describe('getRoleMods', () => {
       await setActiveAccounts(dbClient(), role, [account.id])
 
       const {
-        mods: [mod],
+        rolesMods: [mod],
       } = await getRoleMods(role, { members: [] })
 
       expect(mod).toHaveProperty('allowances', [
@@ -128,7 +128,7 @@ describe('getRoleMods', () => {
       await setActiveAccounts(dbClient(), role, [account.id])
 
       const {
-        mods: [mod],
+        rolesMods: [mod],
       } = await getRoleMods(role, { members: [] })
 
       expect(mod).toHaveProperty('roles', [
@@ -164,7 +164,7 @@ describe('getRoleMods', () => {
       await setActiveAccounts(dbClient(), role, [account.id])
 
       const {
-        mods: [mod],
+        rolesMods: [mod],
       } = await getRoleMods(role, { members: [] })
 
       expect(mod).toHaveProperty('roles', [
@@ -178,35 +178,37 @@ describe('getRoleMods', () => {
       ])
     })
 
-    dbIt('adds the configured members to the role', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
+    describe('Members', () => {
+      dbIt('adds the configured members to the role', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
 
-      const wallet = await walletFactory.create(user)
+        const wallet = await walletFactory.create(user)
 
-      await setDefaultWallet(dbClient(), user, {
-        walletId: wallet.id,
-        chainId: Chain.ETH,
+        await setDefaultWallet(dbClient(), user, {
+          walletId: wallet.id,
+          chainId: Chain.ETH,
+        })
+
+        const account = await accountFactory.create(tenant, user, {
+          chainId: Chain.ETH,
+        })
+
+        const role = await roleFactory.create(tenant, user)
+
+        await setRoleMembers(dbClient(), role, [user.id])
+        await setActiveAccounts(dbClient(), role, [account.id])
+
+        const {
+          rolesMods: [mod],
+        } = await getRoleMods(role, {
+          members: [createMockEoaAccount({ address: wallet.address })],
+        })
+
+        expect(mod).toHaveProperty('roles', [
+          expect.objectContaining({ members: [wallet.address] }),
+        ])
       })
-
-      const account = await accountFactory.create(tenant, user, {
-        chainId: Chain.ETH,
-      })
-
-      const role = await roleFactory.create(tenant, user)
-
-      await setRoleMembers(dbClient(), role, [user.id])
-      await setActiveAccounts(dbClient(), role, [account.id])
-
-      const {
-        mods: [mod],
-      } = await getRoleMods(role, {
-        members: [createMockEoaAccount({ address: wallet.address })],
-      })
-
-      expect(mod).toHaveProperty('roles', [
-        expect.objectContaining({ members: [wallet.address] }),
-      ])
     })
   })
 })

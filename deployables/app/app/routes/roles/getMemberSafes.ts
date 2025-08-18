@@ -1,6 +1,10 @@
-import { ChainId } from '@zodiac/chains'
-import { dbClient, getDefaultWallets, getRoleMembers } from '@zodiac/db'
-import { UUID } from 'crypto'
+import {
+  dbClient,
+  getActivatedAccounts,
+  getDefaultWallets,
+  getRoleMembers,
+} from '@zodiac/db'
+import { Role } from '@zodiac/db/schema'
 import {
   Account,
   AccountType,
@@ -13,32 +17,38 @@ import { Issue } from './issues'
 type Safe = Extract<Account, { type: AccountType.SAFE }>
 
 type Result = {
-  newSafes: Account[]
-  allSafes: Account[]
-  labels: Labels
+  safes: Account[]
+  memberLabels: Labels
   issues: Issue[]
 }
 
-export const getMemberSafes = async (
-  roleId: UUID,
-  activeChains: ChainId[],
-): Promise<Result> => {
-  const members = await getRoleMembers(dbClient(), { roleId })
-
-  const newSafes: Account[] = []
-  const allSafes: Account[] = []
-
-  const labels: Labels = {}
+export const getMemberSafes = async (role: Role): Promise<Result> => {
+  const members = await getRoleMembers(dbClient(), { roleId: role.id })
 
   if (members.length === 0) {
     return {
-      allSafes: [],
-      labels: {},
-      newSafes: [],
+      safes: [],
+      memberLabels: {},
       issues: [Issue.NoActiveMembers],
     }
   }
 
+  const accounts = await getActivatedAccounts(dbClient(), { roleId: role.id })
+
+  if (accounts.length === 0) {
+    return {
+      safes: [],
+      memberLabels: {},
+      issues: [Issue.NoActiveAccounts],
+    }
+  }
+
+  const activeChains = Array.from(
+    new Set(accounts.map((account) => account.chainId)),
+  )
+
+  const safes: Account[] = []
+  const memberLabels: Labels = {}
   const issues: Issue[] = []
 
   for (const member of members) {
@@ -66,16 +76,17 @@ export const getMemberSafes = async (
 
       const [existingSafe] = await queryAccounts([safe.prefixedAddress])
 
-      labels[safe.address] = member.fullName
-      labels[defaultWallets[chainId].address] = defaultWallets[chainId].label
+      memberLabels[safe.address] = member.fullName
+      memberLabels[defaultWallets[chainId].address] =
+        defaultWallets[chainId].label
 
       if (existingSafe == null) {
-        newSafes.push(safe)
+        safes.push(safe)
+      } else {
+        safes.push(existingSafe)
       }
-
-      allSafes.push(safe)
     }
   }
 
-  return { newSafes, allSafes, labels, issues }
+  return { safes, memberLabels, issues }
 }

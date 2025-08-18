@@ -5,7 +5,6 @@ import { getChainId } from '@zodiac/chains'
 import {
   dbClient,
   getAccountByAddress,
-  getActivatedAccounts,
   getRole,
   getRoleActionAssets,
   proposeTransaction,
@@ -50,15 +49,6 @@ export const loader = (args: Route.LoaderArgs) =>
       invariantResponse(isUUID(roleId), '"roleId" is not a UUID')
 
       const role = await getRole(dbClient(), roleId)
-
-      const activatedAccounts = await getActivatedAccounts(dbClient(), {
-        roleId,
-      })
-
-      const activeChains = Array.from(
-        new Set(activatedAccounts.map((account) => account.chainId)),
-      )
-
       const assets = await getRoleActionAssets(dbClient(), { roleId })
 
       const assetLabels = assets.reduce<Labels>(
@@ -67,26 +57,25 @@ export const loader = (args: Route.LoaderArgs) =>
       )
 
       const {
-        newSafes,
-        allSafes,
-        labels: memberLabels,
+        safes,
+        memberLabels,
         issues: memberIssues,
-      } = await getMemberSafes(roleId, activeChains)
+      } = await getMemberSafes(role)
       const {
-        mods: rolesMods,
-        labels: rolesLabels,
+        rolesMods,
+        modLabels,
         roleLabels,
         issues: roleIssues,
-      } = await getRoleMods(role, { members: allSafes })
+      } = await getRoleMods(role, { members: safes })
 
-      const desired = [...newSafes, ...rolesMods]
+      const desired = [...safes, ...rolesMods]
 
       return {
         plan: planApplyAccounts({
           desired,
         }),
         labels: {
-          ...rolesLabels,
+          ...modLabels,
           ...memberLabels,
           ...assetLabels,
           ...contractLabels,

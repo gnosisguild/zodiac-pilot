@@ -22,8 +22,8 @@ import { predictRolesModAddress, Roles } from './predictRolesModAddress'
 import { RoleLabels } from './RoleLabelContext'
 
 type Result = {
-  mods: Roles[]
-  labels: Labels
+  rolesMods: Roles[]
+  modLabels: Labels
   roleLabels: RoleLabels
   issues: Issue[]
 }
@@ -46,8 +46,8 @@ export const getRoleMods = async (
 
   if (activeAccounts.length === 0) {
     return {
-      mods: [],
-      labels: {},
+      rolesMods: [],
+      modLabels: {},
       roleLabels: {},
       issues: [Issue.NoActiveAccounts],
     }
@@ -136,16 +136,16 @@ export const getRoleMods = async (
 
       return {
         ...result,
-        mods: [...result.mods, mod],
-        labels: {
-          ...result.labels,
+        rolesMods: [...result.rolesMods, mod],
+        modLabels: {
+          ...result.modLabels,
           [mod.address]: role.label,
           [activeAccount.address]: activeAccount.label,
         },
         roleLabels: { ...result.roleLabels, [role.key]: role.label },
       }
     },
-    { mods: [], labels: {}, roleLabels: {}, issues: [] },
+    { rolesMods: [], modLabels: {}, roleLabels: {}, issues: [] },
   )
 }
 
