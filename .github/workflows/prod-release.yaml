@@ -38,7 +38,7 @@ jobs:
         run: pnpm zip
 
       - name: Add zip to Github release
-        uses: softprops/action-gh-release@f82d31e53e61a962573dd0c5fcd6b446ca78871f
+        uses: softprops/action-gh-release@126b1e70939461ae1dc0252ce412cabf99778520
         with:
           files: ./deployables/extension/zodiac-pilot.zip
 
