@@ -41,7 +41,7 @@ export const processTransferLogs = (
       // Avatar sends tokens => decrease delta
       return {
         ...newDeltas,
-        [token]: (newDeltas[token] = (newDeltas[token] ?? 0n) - value),
+        [token]: (newDeltas[token] ?? 0n) - value,
       }
     }
 
