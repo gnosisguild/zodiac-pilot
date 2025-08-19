@@ -34,6 +34,7 @@ import { ApprovalOverviewSection, ReviewAccountSection } from '../sections'
 import { SignTransaction } from '../SignTransaction'
 import { SkeletonFlowTable, TokenTransferTable } from '../table'
 import type { Route } from './+types/sign'
+import { Intent } from './intents'
 import { toSerRoute } from './toSerRoute'
 
 export const meta: Route.MetaFunction = ({ matches }) => [
@@ -366,8 +367,3 @@ const SubmitPage = ({
 }
 
 export default SubmitPage
-
-enum Intent {
-  PlanExecution = 'PlanExecution',
-  SignTransaction = 'SignTransaction',
-}
