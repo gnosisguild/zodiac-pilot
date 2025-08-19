@@ -1,4 +1,4 @@
-import { KnownContracts } from '@gnosis.pm/zodiac'
+import { KnownContracts } from '@gnosis-guild/zodiac'
 import { AbiCoder } from 'ethers'
 import type { JsonRpcError } from './JsonRpcError'
 import { getInterface } from './getInterface'

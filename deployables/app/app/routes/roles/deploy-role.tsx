@@ -1,0 +1,308 @@
+import { authorizedAction, authorizedLoader } from '@/auth-server'
+import { Page } from '@/components'
+import { invariant, invariantResponse } from '@epic-web/invariant'
+import { getChainId } from '@zodiac/chains'
+import {
+  dbClient,
+  getAccountByAddress,
+  getRole,
+  getRoleActionAssets,
+  proposeTransaction,
+} from '@zodiac/db'
+import { getPrefixedAddress, getString } from '@zodiac/form-data'
+import { useIsPending } from '@zodiac/hooks'
+import { encode, isUUID, parseTransactionData } from '@zodiac/schema'
+import {
+  Card,
+  Collapsible,
+  Info,
+  InlineForm,
+  SecondaryButton,
+} from '@zodiac/ui'
+import { ConnectWalletButton, useSendTransaction } from '@zodiac/web3'
+import { Suspense, useMemo } from 'react'
+import { Await, href, redirect, useRevalidator } from 'react-router'
+import {
+  AccountBuilderStep,
+  ChainId,
+  planApplyAccounts,
+  prefixAddress,
+} from 'ser-kit'
+import { Route } from './+types/deploy-role'
+import { Labels, ProvideAddressLabels } from './AddressLabelContext'
+import { Call } from './Call'
+import { Description } from './FeedEntry'
+import { ProvideRoleLabels } from './RoleLabelContext'
+import { getMemberSafes } from './getMemberSafes'
+import { getRoleMods } from './getRoleMods'
+import { Intent } from './intents'
+import { Issues } from './issues'
+
+const contractLabels: Labels = {
+  ['0x23da9ade38e4477b23770ded512fd37b12381fab']: 'Cowswap',
+}
+
+export const loader = (args: Route.LoaderArgs) =>
+  authorizedLoader(
+    args,
+    async ({ params: { roleId } }) => {
+      invariantResponse(isUUID(roleId), '"roleId" is not a UUID')
+
+      const role = await getRole(dbClient(), roleId)
+      const assets = await getRoleActionAssets(dbClient(), { roleId })
+
+      const assetLabels = assets.reduce<Labels>(
+        (result, asset) => ({ ...result, [asset.address]: asset.symbol }),
+        {},
+      )
+
+      const {
+        safes,
+        memberLabels,
+        issues: memberIssues,
+      } = await getMemberSafes(role)
+      const {
+        rolesMods,
+        modLabels,
+        roleLabels,
+        issues: roleIssues,
+      } = await getRoleMods(role, { members: safes })
+
+      const desired = [...safes, ...rolesMods]
+
+      return {
+        plan: planApplyAccounts({
+          desired,
+        }),
+        addressLabels: {
+          ...modLabels,
+          ...memberLabels,
+          ...assetLabels,
+          ...contractLabels,
+        },
+        roleLabels,
+        issues: [...roleIssues, ...memberIssues],
+      }
+    },
+    {
+      ensureSignedIn: true,
+      async hasAccess({ params: { roleId, workspaceId }, tenant }) {
+        invariantResponse(isUUID(roleId), '"roleId" is no UUID')
+
+        const role = await getRole(dbClient(), roleId)
+
+        return role.tenantId === tenant.id && role.workspaceId === workspaceId
+      },
+    },
+  )
+
+export const action = (args: Route.ActionArgs) =>
+  authorizedAction(
+    args,
+    async ({
+      request,
+      params: { roleId, workspaceId },
+      context: {
+        auth: { user, tenant },
+      },
+    }) => {
+      invariantResponse(isUUID(roleId), '"roleId" is no UUID')
+
+      const data = await request.formData()
+
+      const role = await getRole(dbClient(), roleId)
+
+      const account = await getAccountByAddress(dbClient(), {
+        tenantId: tenant.id,
+        prefixedAddress: getPrefixedAddress(data, 'targetAccount'),
+      })
+
+      const transactionProposal = await proposeTransaction(dbClient(), {
+        userId: user.id,
+        tenantId: tenant.id,
+        workspaceId: role.workspaceId,
+        accountId: account.id,
+        transaction: parseTransactionData(getString(data, 'bundle')),
+      })
+
+      return redirect(
+        href('/workspace/:workspaceId/submit/proposal/:proposalId', {
+          workspaceId,
+          proposalId: transactionProposal.id,
+        }),
+      )
+    },
+    {
+      ensureSignedIn: true,
+      async hasAccess({ params: { roleId, workspaceId }, tenant }) {
+        invariantResponse(isUUID(roleId), '"roleId" is no UUID')
+
+        const role = await getRole(dbClient(), roleId)
+
+        return role.tenantId === tenant.id && role.workspaceId === workspaceId
+      },
+    },
+  )
+
+const DeployRole = ({
+  loaderData: { plan, addressLabels, roleLabels, issues },
+}: Route.ComponentProps) => {
+  return (
+    <Page>
+      <Page.Header
+        action={
+          <ConnectWalletButton addressLabels={addressLabels}>
+            Connect signer wallet
+          </ConnectWalletButton>
+        }
+      >
+        Deploy role
+      </Page.Header>
+
+      <Page.Main>
+        <Issues issues={issues} />
+
+        <ProvideRoleLabels labels={roleLabels}>
+          <ProvideAddressLabels labels={addressLabels}>
+            <Suspense>
+              <Await resolve={plan}>
+                {(plan) => {
+                  const filteredPlan = plan.filter(
+                    (entry) => entry.steps.length > 0,
+                  )
+
+                  if (filteredPlan.length === 0) {
+                    return (
+                      <Info title="Nothing to deploy">
+                        No changes to be applied.
+                      </Info>
+                    )
+                  }
+
+                  return (
+                    <div className="flex flex-col gap-8">
+                      <Info>
+                        The following changes need to be applied to deploy this
+                        role. Please execute one transaction after the other.
+                      </Info>
+
+                      {filteredPlan.map(({ account, steps }, planIndex) => (
+                        <Card key={`${account.prefixedAddress}-${planIndex}`}>
+                          <Collapsible
+                            header={
+                              <div className="flex flex-1 items-center justify-between gap-8">
+                                <Description account={account} />
+
+                                <Deploy
+                                  steps={steps}
+                                  chainId={getChainId(account.prefixedAddress)}
+                                />
+                              </div>
+                            }
+                          >
+                            <div className="flex flex-col gap-4 divide-y divide-zinc-700 pt-4">
+                              {steps.map(({ call }, index) => (
+                                <div
+                                  key={`${account.prefixedAddress}=${planIndex}-${index}`}
+                                  className="not-last:pb-4"
+                                >
+                                  <Call
+                                    callData={call}
+                                    chainId={getChainId(
+                                      account.prefixedAddress,
+                                    )}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </Collapsible>
+                        </Card>
+                      ))}
+                    </div>
+                  )
+                }}
+              </Await>
+            </Suspense>
+          </ProvideAddressLabels>
+        </ProvideRoleLabels>
+      </Page.Main>
+    </Page>
+  )
+}
+
+export default DeployRole
+
+type DeployProps = {
+  chainId: ChainId
+  steps: AccountBuilderStep[]
+}
+
+const Deploy = ({ steps, chainId }: DeployProps) => {
+  const targetAccount = useMemo(() => {
+    const firstStepWithFrom = steps.find((step) => step.from != null)
+
+    if (firstStepWithFrom == null) {
+      return null
+    }
+
+    invariant(
+      firstStepWithFrom.from != null,
+      'Step was supposed to have a from address but did not',
+    )
+
+    return firstStepWithFrom.from
+  }, [steps])
+
+  const bundle = useMemo(() => {
+    return encode(steps.map(({ transaction }) => transaction))
+  }, [steps])
+
+  const revalidator = useRevalidator()
+
+  const { sendTransaction, isPending } = useSendTransaction({
+    mutation: {
+      onSuccess() {
+        revalidator.revalidate()
+      },
+    },
+  })
+
+  const pending = useIsPending(Intent.ExecuteTransaction, (data) => {
+    invariant(targetAccount != null, 'Target account missing')
+
+    return data.get('targetAccount') === prefixAddress(chainId, targetAccount)
+  })
+
+  if (targetAccount == null) {
+    const [step] = steps
+
+    return (
+      <SecondaryButton
+        size="small"
+        busy={isPending || revalidator.state === 'loading'}
+        onClick={() => sendTransaction(step.transaction)}
+      >
+        Deploy
+      </SecondaryButton>
+    )
+  }
+
+  return (
+    <InlineForm
+      context={{
+        targetAccount: prefixAddress(chainId, targetAccount),
+        bundle,
+      }}
+    >
+      <SecondaryButton
+        submit
+        size="small"
+        intent={Intent.ExecuteTransaction}
+        busy={pending}
+        onClick={(event) => event.stopPropagation()}
+      >
+        Deploy
+      </SecondaryButton>
+    </InlineForm>
+  )
+}

@@ -676,12 +676,12 @@ describe('Sign', () => {
           await screen.findByRole('button', { name: 'Sign' }),
         )
 
-        await waitForPendingActions()
-
-        expect(mockFetch).toHaveBeenCalledWith(
-          'http://test.com/test-callback',
-          { method: 'POST' },
-        )
+        await waitFor(() => {
+          expect(mockFetch).toHaveBeenCalledWith(
+            'http://test.com/test-callback',
+            { method: 'POST' },
+          )
+        })
       })
 
       dbIt('passes along state to the callback', async () => {
@@ -734,12 +734,12 @@ describe('Sign', () => {
           await screen.findByRole('button', { name: 'Sign' }),
         )
 
-        await waitForPendingActions()
-
-        expect(mockFetch).toHaveBeenCalledWith(
-          'http://test.com/test-callback?state=test-state',
-          { method: 'POST' },
-        )
+        await waitFor(() => {
+          expect(mockFetch).toHaveBeenCalledWith(
+            'http://test.com/test-callback?state=test-state',
+            { method: 'POST' },
+          )
+        })
       })
     })
   })

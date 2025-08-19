@@ -1,4 +1,4 @@
-import { KnownContracts } from '@gnosis.pm/zodiac'
+import { KnownContracts } from '@gnosis-guild/zodiac'
 import { addressSchema, type Contract, type HexAddress } from '@zodiac/schema'
 import { AccountType } from 'ser-kit'
 import { z } from 'zod'

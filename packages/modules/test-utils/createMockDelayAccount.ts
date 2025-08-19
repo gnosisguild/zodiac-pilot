@@ -1,8 +1,13 @@
 import { Chain, ZERO_ADDRESS } from '@zodiac/chains'
 import type { HexAddress } from '@zodiac/schema'
-import { AccountType, prefixAddress, type Account, type ChainId } from 'ser-kit'
+import {
+  AccountType,
+  ExecutionAccount,
+  prefixAddress,
+  type ChainId,
+} from 'ser-kit'
 
-type Delay = Extract<Account, { type: AccountType.DELAY }>
+type Delay = Extract<ExecutionAccount, { type: AccountType.DELAY }>
 
 export type CreateDelayAccountOptions = {
   address?: HexAddress

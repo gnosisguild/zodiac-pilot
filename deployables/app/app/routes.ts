@@ -162,7 +162,12 @@ export default [
 
         route('roles', 'routes/roles/list-layout.tsx', [
           index('routes/roles/managed.tsx'),
+
           route('on-chain', 'routes/roles/on-chain.tsx'),
+        ]),
+
+        ...prefix('roles/:roleId', [
+          route('deploy', 'routes/roles/deploy-role.tsx'),
         ]),
 
         ...prefix('roles', [

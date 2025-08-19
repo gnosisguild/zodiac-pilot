@@ -18,7 +18,7 @@
     "@cowprotocol/widget-lib": "0.18.0",
     "@cowprotocol/widget-react": "0.13.0",
     "@epic-web/invariant": "1.0.0",
-    "@gnosis.pm/zodiac": "4.0.3",
+    "@gnosis-guild/zodiac": "4.2.1",
     "@graphql-codegen/cli": "5.0.7",
     "@graphql-typed-document-node/core": "3.2.0",
     "@icons-pack/react-simple-icons": "13.7.0",
@@ -54,7 +54,8 @@
     "react-dom": "19.1.1",
     "react-router": "7.8.1",
     "remix-utils": "8.8.0",
-    "ser-kit": "3.10.1",
+    "ser-kit": "3.11.1",
+    "zodiac-roles-sdk": "3.2.3",
     "viem": "2.33.3",
     "zod": "4.0.17"
   },

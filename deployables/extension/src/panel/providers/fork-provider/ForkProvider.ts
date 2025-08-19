@@ -14,7 +14,7 @@ import type {
 } from '@/types'
 import { decodeGenericError, getActiveTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
-import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
+import { ContractFactories, KnownContracts } from '@gnosis-guild/zodiac'
 import { ZERO_ADDRESS } from '@zodiac/chains'
 import {
   PilotSimulationMessageType,

@@ -1,4 +1,4 @@
-import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
+import { ContractFactories, KnownContracts } from '@gnosis-guild/zodiac'
 
 type Interfaces = {
   [KnownContracts.DELAY]: (typeof ContractFactories)[KnownContracts.DELAY]

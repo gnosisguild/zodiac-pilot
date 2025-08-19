@@ -1,5 +1,5 @@
 import { invariant } from '@epic-web/invariant'
-import { KnownContracts } from '@gnosis.pm/zodiac'
+import { KnownContracts } from '@gnosis-guild/zodiac'
 import { ZERO_ADDRESS } from '@zodiac/chains'
 import { getRolesWaypoint } from '@zodiac/modules'
 import type { ExecutionRoute, HexAddress } from '@zodiac/schema'
