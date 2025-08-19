@@ -6,8 +6,7 @@ import {
 import { applyDeltaToBalances, getVnetTransactionDelta } from '@/vnet-server'
 import { invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
-import { verifyHexAddress, type HexAddress } from '@zodiac/schema'
-import { erc20Abi, type PublicClient } from 'viem'
+import { verifyHexAddress } from '@zodiac/schema'
 import type { Route } from './+types/balances'
 
 export const loader = async ({
@@ -39,26 +38,4 @@ export const loader = async ({
   }
 
   return allBalances
-}
-
-type GetForkBalanceOptions = {
-  address: HexAddress
-  contractId: string
-  nativeChainId: string
-}
-
-const getForkBalance = (
-  client: PublicClient,
-  { contractId, address, nativeChainId }: GetForkBalanceOptions,
-): Promise<bigint> => {
-  if (contractId === nativeChainId) {
-    return client.getBalance({ address })
-  }
-
-  return client.readContract({
-    address: contractId,
-    abi: erc20Abi,
-    functionName: 'balanceOf',
-    args: [address],
-  })
 }
