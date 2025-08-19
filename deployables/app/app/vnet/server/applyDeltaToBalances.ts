@@ -16,6 +16,7 @@ export const applyDeltaToBalances = async (
     {},
   )
 
+  // fetch token info for any tokens that are not in the existing balances
   const newTokenBalances = await Promise.all(
     Object.keys(delta)
       .filter((tokenAddress) => balanceByAddress[tokenAddress] == null)
@@ -56,7 +57,7 @@ export const applyDeltaToBalances = async (
       }),
   )
 
-  return [...existingTokenBalances, ...newTokenBalances].map((balance) => {
+  return [...newTokenBalances, ...existingTokenBalances].map((balance) => {
     if (delta[balance.contractId.toLowerCase()] == null) {
       return balance
     }

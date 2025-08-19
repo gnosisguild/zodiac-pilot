@@ -6,14 +6,7 @@ import {
 import { applyDeltaToBalances, getVnetTransactionDelta } from '@/vnet-server'
 import { invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
-import { verifyHexAddress, type HexAddress } from '@zodiac/schema'
-import {
-  createPublicClient,
-  erc20Abi,
-  formatUnits,
-  http,
-  type PublicClient,
-} from 'viem'
+import { verifyHexAddress } from '@zodiac/schema'
 import type { Route } from './+types/balances'
 
 export const loader = async ({
@@ -28,77 +21,21 @@ export const loader = async ({
 
   if (url.searchParams.has('fork')) {
     const fork = url.searchParams.get('fork')
-
     invariantResponse(fork != null, `Fork param was no URL`)
 
     const vnetId = url.searchParams.get('vnetId')
+    invariantResponse(vnetId != null, 'vnetId is required')
 
-    if (vnetId) {
-      const deltas = await getVnetTransactionDelta(
-        vnetId,
-        fork,
-        verifyHexAddress(address),
-        allBalances,
-        chain.id,
-      )
-
-      return await applyDeltaToBalances(allBalances, deltas, chain.id)
-    }
-
-    /**
-     * Fallback approach for older extension versions (< v3.6.5) that do not send `vnetId`.
-     * We skip the delta approach and simply read each token’s balance from the fork.
-     *
-     * TODO: remove once extension adoption is high enough that `vnetId` is always provided
-     */
-    const client = createPublicClient({ transport: http(fork) })
-    return Promise.all(
-      allBalances.map(async (balance) => {
-        const forkBalance = await getForkBalance(client, {
-          contractId: balance.contractId,
-          nativeChainId: chain.id,
-          address: verifyHexAddress(address),
-        })
-
-        const amount = formatUnits(
-          BigInt(forkBalance),
-          balance.decimals,
-        ) as `${number}`
-
-        return {
-          ...balance,
-
-          amount,
-          usdValue:
-            balance.usdPrice == null
-              ? null
-              : parseFloat(amount) * balance.usdPrice,
-        }
-      }),
+    const deltas = await getVnetTransactionDelta(
+      vnetId,
+      fork,
+      verifyHexAddress(address),
+      allBalances,
+      chain.id,
     )
+
+    return await applyDeltaToBalances(allBalances, deltas, chain.id)
   }
 
   return allBalances
-}
-
-type GetForkBalanceOptions = {
-  address: HexAddress
-  contractId: string
-  nativeChainId: string
-}
-
-const getForkBalance = (
-  client: PublicClient,
-  { contractId, address, nativeChainId }: GetForkBalanceOptions,
-): Promise<bigint> => {
-  if (contractId === nativeChainId) {
-    return client.getBalance({ address })
-  }
-
-  return client.readContract({
-    address: contractId,
-    abi: erc20Abi,
-    functionName: 'balanceOf',
-    args: [address],
-  })
 }
