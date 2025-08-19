@@ -7,7 +7,7 @@
     "@zodiac/typescript-config": "workspace:*",
     "eslint": "9.33.0",
     "typescript": "5.9.2",
-    "wrangler": "4.30.0"
+    "wrangler": "4.31.0"
   },
   "private": true,
   "scripts": {
