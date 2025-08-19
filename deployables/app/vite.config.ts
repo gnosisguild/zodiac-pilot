@@ -35,7 +35,7 @@ export default defineConfig((config) => ({
     noExternal:
       config.command === 'build'
         ? true
-        : ['@gnosis.pm/zodiac', 'evm-proxy-detection', '@workos-inc/widgets'],
+        : ['evm-proxy-detection', '@workos-inc/widgets'],
   },
   plugins: [
     tailwindcss(),
