@@ -4,6 +4,7 @@ import { ForkProvider } from '@/providers'
 import type { ExecutionRoute, HexAddress } from '@/types'
 import { invariant } from '@epic-web/invariant'
 import { ZERO_ADDRESS } from '@zodiac/chains'
+import { jsonParse } from '@zodiac/schema'
 import {
   createContext,
   useContext,
@@ -139,7 +140,7 @@ const getSetupRequests = () => {
   const setup = url.searchParams.get('setup')
   if (!setup) return []
   try {
-    return jsonRpcRequestSchema.array().parse(JSON.parse(setup))
+    return jsonRpcRequestSchema.array().parse(jsonParse(setup))
   } catch (error) {
     console.error('Failed to parse setup requests', error)
     return []

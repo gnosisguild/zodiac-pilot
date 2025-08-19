@@ -22,21 +22,15 @@ import {
 import { ConnectWalletButton, useSendTransaction } from '@zodiac/web3'
 import { Suspense, useMemo } from 'react'
 import { Await, href, redirect, useRevalidator } from 'react-router'
-import {
-  AccountBuilderStep,
-  ChainId,
-  planApplyAccounts,
-  prefixAddress,
-} from 'ser-kit'
+import { AccountBuilderStep, ChainId, prefixAddress } from 'ser-kit'
 import { Route } from './+types/deploy-role'
 import { Labels, ProvideAddressLabels } from './AddressLabelContext'
 import { Call } from './Call'
 import { Description } from './FeedEntry'
 import { ProvideRoleLabels } from './RoleLabelContext'
-import { getMemberSafes } from './getMemberSafes'
-import { getRoleMods } from './getRoleMods'
 import { Intent } from './intents'
 import { Issues } from './issues'
+import { planRoleUpdate } from './planRoleUpdate'
 
 const contractLabels: Labels = {
   ['0x23da9ade38e4477b23770ded512fd37b12381fab']: 'Cowswap',
@@ -48,7 +42,6 @@ export const loader = (args: Route.LoaderArgs) =>
     async ({ params: { roleId } }) => {
       invariantResponse(isUUID(roleId), '"roleId" is not a UUID')
 
-      const role = await getRole(dbClient(), roleId)
       const assets = await getRoleActionAssets(dbClient(), { roleId })
 
       const assetLabels = assets.reduce<Labels>(
@@ -56,32 +49,17 @@ export const loader = (args: Route.LoaderArgs) =>
         {},
       )
 
-      const {
-        safes,
-        memberLabels,
-        issues: memberIssues,
-      } = await getMemberSafes(role)
-      const {
-        rolesMods,
-        modLabels,
-        roleLabels,
-        issues: roleIssues,
-      } = await getRoleMods(role, { members: safes })
-
-      const desired = [...safes, ...rolesMods]
+      const { plan, issues, labels, roleLabels } = await planRoleUpdate(roleId)
 
       return {
-        plan: planApplyAccounts({
-          desired,
-        }),
+        plan,
         addressLabels: {
-          ...modLabels,
-          ...memberLabels,
+          ...labels,
           ...assetLabels,
           ...contractLabels,
         },
         roleLabels,
-        issues: [...roleIssues, ...memberIssues],
+        issues,
       }
     },
     {

@@ -3,6 +3,7 @@ import { invariantResponse } from '@epic-web/invariant'
 import {
   cancelRoleDeployment,
   createRoleDeployment,
+  createRoleDeploymentStep,
   dbClient,
   findPendingRoleDeployment,
   getActivatedAccounts,
@@ -40,6 +41,7 @@ import { CloudUpload, Pencil } from 'lucide-react'
 import { href, redirect } from 'react-router'
 import type { Route } from './+types/managed'
 import { Intent } from './intents'
+import { planRoleUpdate } from './planRoleUpdate'
 
 export const loader = (args: Route.LoaderArgs) =>
   authorizedLoader(
@@ -92,7 +94,21 @@ export const action = (args: Route.ActionArgs) =>
             return { pendingDeploymentId: pendingDeployment.id, roleId }
           }
 
-          const deployment = await createRoleDeployment(dbClient(), user, role)
+          const { plan } = await planRoleUpdate(roleId)
+
+          const deployment = await dbClient().transaction(async (tx) => {
+            const deployment = await createRoleDeployment(tx, user, role)
+
+            for (const { steps, account } of plan) {
+              await createRoleDeploymentStep(tx, deployment, {
+                account,
+                calls: steps.map(({ call }) => call),
+                transactionBundle: steps.map(({ transaction }) => transaction),
+              })
+            }
+
+            return deployment
+          })
 
           return redirect(
             href(

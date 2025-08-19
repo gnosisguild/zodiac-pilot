@@ -18,6 +18,7 @@ import {
   index,
   integer,
   json,
+  jsonb,
   pgEnum,
   pgTable,
   primaryKey,
@@ -29,6 +30,7 @@ import {
   type AnyPgColumn,
 } from 'drizzle-orm/pg-core'
 import { createSelectSchema } from 'drizzle-zod'
+import { AccountBuilderCall, AccountType, Account as SerAccount } from 'ser-kit'
 import { z } from 'zod'
 import { createRandomString } from './createRandomString'
 import { enumToPgEnum } from './enumToPgEnum'
@@ -775,10 +777,16 @@ const roleDeploymentReference = {
 export type RoleDeployment = typeof RoleDeploymentTable.$inferSelect
 export type RoleDeploymentCreateInput = typeof RoleDeploymentTable.$inferInsert
 
+export const SerAccountType = pgEnum(
+  'SerAccountType',
+  enumToPgEnum(AccountType),
+)
+
 export const RoleDeploymentStepTable = pgTable(
   'RoleDeploymentStep',
   {
     id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+    index: integer().notNull(),
 
     proposedTransactionId: uuid().references(
       () => ProposedTransactionTable.id,
@@ -790,7 +798,23 @@ export const RoleDeploymentStepTable = pgTable(
       onDelete: 'set null',
     }),
 
+    ...chainReference,
+
+    account: jsonb().notNull().$type<SerAccount>(),
+    calls: jsonb().notNull().$type<AccountBuilderCall[]>(),
+    transactionBundle: jsonb().notNull().$type<MetaTransactionRequest[]>(),
+
     transactionHash: text().$type<Hex>(),
+
+    completedAt: timestamp({ withTimezone: true }),
+    completedById: uuid().references(() => UserTable.id, {
+      onDelete: 'set null',
+    }),
+
+    cancelledAt: timestamp({ withTimezone: true }),
+    cancelledById: uuid().references(() => UserTable.id, {
+      onDelete: 'set null',
+    }),
 
     ...roleDeploymentReference,
     ...createdTimestamp,
@@ -804,6 +828,8 @@ export const RoleDeploymentStepTable = pgTable(
     index().on(table.signedTransactionId),
     index().on(table.tenantId),
     index().on(table.workspaceId),
+    index().on(table.completedById),
+    index().on(table.cancelledById),
   ],
 )
 

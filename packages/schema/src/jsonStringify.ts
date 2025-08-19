@@ -3,7 +3,11 @@ export const jsonStringify = (value: unknown, indent?: number) =>
     value,
     (_, value) => {
       if (typeof value === 'bigint') {
-        return value.toString()
+        return `bigint::${value.toString()}`
+      }
+
+      if (Number.isNaN(value)) {
+        return 'number::NaN'
       }
 
       return value

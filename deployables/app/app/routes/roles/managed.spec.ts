@@ -1,7 +1,12 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { dbClient, getRoleDeployment, getRoleDeployments } from '@zodiac/db'
+import {
+  dbClient,
+  getRoleDeployment,
+  getRoleDeployments,
+  getRoleDeploymentSteps,
+} from '@zodiac/db'
 import {
   dbIt,
   roleDeploymentFactory,
@@ -9,12 +14,33 @@ import {
   tenantFactory,
   userFactory,
 } from '@zodiac/db/test-utils'
-import { expectRouteToBe, waitForPendingActions } from '@zodiac/test-utils'
+import {
+  createMockSafeAccount,
+  createMockTransactionRequest,
+} from '@zodiac/modules/test-utils'
+import {
+  expectRouteToBe,
+  randomAddress,
+  waitForPendingActions,
+} from '@zodiac/test-utils'
 import { href } from 'react-router'
+import { AccountBuilderCall, AccountType } from 'ser-kit'
 import { beforeEach, describe, expect, vi } from 'vitest'
+import { planRoleUpdate } from './planRoleUpdate'
+
+vi.mock('./planRoleUpdate', () => ({ planRoleUpdate: vi.fn() }))
+
+const mockPlanRoleUpdate = vi.mocked(planRoleUpdate)
 
 describe('Managed roles', () => {
   beforeEach(() => {
+    mockPlanRoleUpdate.mockResolvedValue({
+      issues: [],
+      labels: {},
+      plan: [],
+      roleLabels: {},
+    })
+
     vi.setSystemTime(new Date())
   })
 
@@ -47,6 +73,64 @@ describe('Managed roles', () => {
           deploymentId: deployment.id,
         }),
       )
+    })
+
+    dbIt('creates all necessary steps for the deployment', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const role = await roleFactory.create(tenant, user)
+
+      const account = createMockSafeAccount()
+      const call = {
+        call: 'createNode',
+        accountType: AccountType.SAFE,
+        args: { owners: [], threshold: 1 },
+        creationNonce: 1n,
+        deploymentAddress: randomAddress(),
+      } satisfies AccountBuilderCall
+      const transaction = createMockTransactionRequest()
+
+      mockPlanRoleUpdate.mockResolvedValue({
+        issues: [],
+        labels: {},
+        plan: [
+          {
+            account,
+            steps: [
+              {
+                from: undefined,
+                call,
+                transaction,
+              },
+            ],
+          },
+        ],
+        roleLabels: {},
+      })
+
+      await render(
+        href('/workspace/:workspaceId/roles', {
+          workspaceId: tenant.defaultWorkspaceId,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Deploy' }),
+      )
+
+      await waitForPendingActions()
+
+      const [deployment] = await getRoleDeployments(dbClient(), role.id)
+      const [step] = await getRoleDeploymentSteps(dbClient(), deployment.id)
+
+      expect(step).toMatchObject({
+        index: 0,
+        calls: [call],
+        account,
+        transactionBundle: [transaction],
+      })
     })
 
     describe('Outstanding deployment', () => {

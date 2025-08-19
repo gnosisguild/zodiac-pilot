@@ -442,6 +442,27 @@
       "when": 1755604659412,
       "tag": "0062_add deployment table",
       "breakpoints": true
+    },
+    {
+      "idx": 63,
+      "version": "7",
+      "when": 1755610410762,
+      "tag": "0063_add transaction information to deployment step",
+      "breakpoints": true
+    },
+    {
+      "idx": 64,
+      "version": "7",
+      "when": 1755611150315,
+      "tag": "0064_add status fields to deployment step",
+      "breakpoints": true
+    },
+    {
+      "idx": 65,
+      "version": "7",
+      "when": 1755611518043,
+      "tag": "0065_change json columns to jsonb",
+      "breakpoints": true
     }
   ]
 }

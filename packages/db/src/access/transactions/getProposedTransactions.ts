@@ -1,5 +1,5 @@
 import type { Account, User } from '@zodiac/db/schema'
-import { metaTransactionRequestSchema } from '@zodiac/schema'
+import { jsonParse, metaTransactionRequestSchema } from '@zodiac/schema'
 import type { DBClient } from '../../dbClient'
 
 export const getProposedTransactions = async (
@@ -18,6 +18,6 @@ export const getProposedTransactions = async (
 
     transaction: metaTransactionRequestSchema
       .array()
-      .parse(proposedTransaction.transaction),
+      .parse(jsonParse(proposedTransaction.transaction)),
   }))
 }
