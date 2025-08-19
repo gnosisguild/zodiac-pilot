@@ -435,6 +435,13 @@
       "when": 1755253828471,
       "tag": "0061_store nonce on account",
       "breakpoints": true
+    },
+    {
+      "idx": 62,
+      "version": "7",
+      "when": 1755604659412,
+      "tag": "0062_add deployment table",
+      "breakpoints": true
     }
   ]
 }

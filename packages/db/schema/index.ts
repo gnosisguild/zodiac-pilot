@@ -3,6 +3,7 @@ import {
   addressSchema,
   AllowanceInterval,
   chainIdSchema,
+  Hex,
   waypointsSchema,
   type HexAddress,
   type MetaTransactionRequest,
@@ -738,6 +739,74 @@ const ActionAssetRelations = relations(ActionAssetTable, ({ one }) => ({
   }),
 }))
 
+export const RoleDeploymentTable = pgTable(
+  'RoleDeployment',
+  {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+
+    completedAt: timestamp({ withTimezone: true }),
+
+    cancelledAt: timestamp({ withTimezone: true }),
+    cancelledById: uuid().references(() => UserTable.id, {
+      onDelete: 'set null',
+    }),
+
+    ...roleReference,
+    ...createdByReference,
+    ...createdTimestamp,
+    ...updatedTimestamp,
+    ...tenantReference,
+    ...workspaceReference,
+  },
+  (table) => [
+    index().on(table.roleId),
+    index().on(table.createdById),
+    index().on(table.tenantId),
+    index().on(table.workspaceId),
+  ],
+)
+
+const roleDeploymentReference = {
+  roleDeploymentId: uuid()
+    .notNull()
+    .references(() => RoleDeploymentTable.id, { onDelete: 'cascade' }),
+}
+
+export type RoleDeployment = typeof RoleDeploymentTable.$inferSelect
+export type RoleDeploymentCreateInput = typeof RoleDeploymentTable.$inferInsert
+
+export const RoleDeploymentStepTable = pgTable(
+  'RoleDeploymentStep',
+  {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+
+    proposedTransactionId: uuid().references(
+      () => ProposedTransactionTable.id,
+      {
+        onDelete: 'set null',
+      },
+    ),
+    signedTransactionId: uuid().references(() => SignedTransactionTable.id, {
+      onDelete: 'set null',
+    }),
+
+    transactionHash: text().$type<Hex>(),
+
+    ...roleDeploymentReference,
+    ...createdTimestamp,
+    ...updatedTimestamp,
+    ...tenantReference,
+    ...workspaceReference,
+  },
+  (table) => [
+    index().on(table.roleDeploymentId),
+    index().on(table.proposedTransactionId),
+    index().on(table.signedTransactionId),
+    index().on(table.tenantId),
+    index().on(table.workspaceId),
+  ],
+)
+
 export const schema = {
   tenant: TenantTable,
   user: UserTable,
@@ -760,6 +829,8 @@ export const schema = {
   roleAction: RoleActionTable,
   roleActionAsset: ActionAssetTable,
   defaultWallet: DefaultWalletTable,
+  roleDeployment: RoleDeploymentTable,
+  roleDeploymentStep: RoleDeploymentStepTable,
 
   TenantRelations,
   FeatureRelations,
