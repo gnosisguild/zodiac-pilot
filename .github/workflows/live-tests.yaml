@@ -88,7 +88,7 @@ jobs:
 
       - run: |
           RELEASE_HASH=$(git show-ref --hash=7 ${{ steps.fetch-latest-release.outputs.latest-release }})
-          echo "folder-name=gnosisguild-zodiac-pilot-$RELEASE_HASH" >> $GITHUB_OUTPUT
+          echo "folder-name=gnosisguild-zodiac-os-$RELEASE_HASH" >> $GITHUB_OUTPUT
         id: extract-folder
 
       - name: Install dependencies
