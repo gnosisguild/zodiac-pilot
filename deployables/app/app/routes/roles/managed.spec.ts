@@ -26,6 +26,7 @@ import {
 import { href } from 'react-router'
 import { AccountBuilderCall, AccountType } from 'ser-kit'
 import { beforeEach, describe, expect, vi } from 'vitest'
+import { Issue } from './issues'
 import { planRoleUpdate } from './planRoleUpdate'
 
 vi.mock('./planRoleUpdate', () => ({ planRoleUpdate: vi.fn() }))
@@ -130,6 +131,83 @@ describe('Managed roles', () => {
         calls: [call],
         account,
         transactionBundle: [transaction],
+      })
+    })
+
+    describe('Issues', () => {
+      dbIt(
+        'prompts the user to confirm deployment when issues are found',
+        async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
+
+          await roleFactory.create(tenant, user)
+
+          mockPlanRoleUpdate.mockResolvedValue({
+            issues: [Issue.MissingDefaultWallet],
+            labels: {},
+            plan: [],
+            roleLabels: {},
+          })
+
+          await render(
+            href('/workspace/:workspaceId/roles', {
+              workspaceId: tenant.defaultWorkspaceId,
+            }),
+            { tenant, user },
+          )
+
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Deploy' }),
+          )
+
+          await waitForPendingActions()
+
+          expect(
+            await screen.findByRole('dialog', {
+              name: 'Please check your configuration',
+            }),
+          ).toHaveAccessibleDescription(
+            'We identified one or more issues with your role configuration.',
+          )
+        },
+      )
+
+      dbIt('is possible to proceed with the deployment', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+
+        const role = await roleFactory.create(tenant, user)
+
+        mockPlanRoleUpdate.mockResolvedValue({
+          issues: [Issue.MissingDefaultWallet],
+          labels: {},
+          plan: [],
+          roleLabels: {},
+        })
+
+        await render(
+          href('/workspace/:workspaceId/roles', {
+            workspaceId: tenant.defaultWorkspaceId,
+          }),
+          { tenant, user },
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Deploy' }),
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Proceed' }),
+        )
+
+        await waitForPendingActions()
+
+        const [deployment] = await getRoleDeployments(dbClient(), role.id)
+
+        expect(deployment).toHaveProperty('issues', [
+          Issue.MissingDefaultWallet,
+        ])
       })
     })
 

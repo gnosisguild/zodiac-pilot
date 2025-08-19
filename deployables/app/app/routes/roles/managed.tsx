@@ -41,6 +41,7 @@ import { CloudUpload, Pencil } from 'lucide-react'
 import { href, redirect } from 'react-router'
 import type { Route } from './+types/managed'
 import { Intent } from './intents'
+import { Issues } from './issues'
 import { planRoleUpdate } from './planRoleUpdate'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -94,7 +95,11 @@ export const action = (args: Route.ActionArgs) =>
             return { pendingDeploymentId: pendingDeployment.id, roleId }
           }
 
-          const { plan } = await planRoleUpdate(roleId)
+          const { plan, issues } = await planRoleUpdate(roleId)
+
+          if (issues.length > 0) {
+            return { issues }
+          }
 
           const deployment = await dbClient().transaction(async (tx) => {
             const deployment = await createRoleDeployment(tx, user, role)
@@ -175,28 +180,50 @@ const ManagedRoles = ({
   return (
     <>
       {actionData != null && (
-        <Modal
-          open
-          title="Deployment already in progress"
-          description="This role is currently in the progress of being deployed. You can either open the current deployment or cancel it."
-        >
-          <Modal.Actions>
-            <PrimaryLinkButton
-              to={href(
-                '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId',
-                {
-                  workspaceId,
-                  roleId: actionData.roleId,
-                  deploymentId: actionData.pendingDeploymentId,
-                },
-              )}
+        <>
+          {actionData.pendingDeploymentId != null && (
+            <Modal
+              open
+              title="Deployment already in progress"
+              description="This role is currently in the progress of being deployed. You can either open the current deployment or cancel it."
             >
-              Open deployment
-            </PrimaryLinkButton>
+              <Modal.Actions>
+                <PrimaryLinkButton
+                  to={href(
+                    '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId',
+                    {
+                      workspaceId,
+                      roleId: actionData.roleId,
+                      deploymentId: actionData.pendingDeploymentId,
+                    },
+                  )}
+                >
+                  Open deployment
+                </PrimaryLinkButton>
 
-            <CancelDeployment deploymentId={actionData.pendingDeploymentId} />
-          </Modal.Actions>
-        </Modal>
+                <CancelDeployment
+                  deploymentId={actionData.pendingDeploymentId}
+                />
+
+                <Modal.CloseAction>Cancel</Modal.CloseAction>
+              </Modal.Actions>
+            </Modal>
+          )}
+
+          {actionData.issues != null && (
+            <Modal
+              open
+              title="Please check your configuration"
+              description="We identified one or more issues with your role configuration."
+            >
+              <Issues issues={actionData.issues} />
+
+              <Modal.Actions>
+                <Modal.CloseAction>Cancel</Modal.CloseAction>
+              </Modal.Actions>
+            </Modal>
+          )}
+        </>
       )}
 
       <Table>
