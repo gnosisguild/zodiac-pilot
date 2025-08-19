@@ -32,10 +32,7 @@ export default defineConfig((config) => ({
   },
 
   ssr: {
-    noExternal:
-      config.command === 'build'
-        ? true
-        : ['evm-proxy-detection', '@workos-inc/widgets'],
+    noExternal: config.command === 'build' ? true : ['evm-proxy-detection'],
   },
   plugins: [
     tailwindcss(),

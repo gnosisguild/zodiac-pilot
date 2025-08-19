@@ -13,10 +13,6 @@ const alias = Object.entries(tsConfig.compilerOptions.paths).reduce(
 )
 
 export default defineConfig({
-  ssr: {
-    noExternal: ['@workos-inc/widgets'],
-  },
-
   test: {
     alias,
     environment: 'jsdom',
