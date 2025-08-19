@@ -18,6 +18,7 @@ export const getVnetTransactionDelta = async (
   const relevantTransactions = transactions.filter(
     ({ rpc_method }) =>
       rpc_method === 'eth_sendTransaction' ||
+      rpc_method === 'tenderly_addErc20Balance' ||
       rpc_method === 'tenderly_sendTransaction',
   )
 
