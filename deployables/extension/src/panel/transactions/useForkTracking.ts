@@ -14,7 +14,7 @@ export const useForkTracking = () => {
       return
     }
 
-    provider.deleteFork().then(() => {
+    provider.reset().then(() => {
       dispatch(commitRefreshTransactions())
     })
   }, [dispatch, provider, refresh, transactions.length])

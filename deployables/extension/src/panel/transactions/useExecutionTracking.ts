@@ -51,7 +51,10 @@ export const useExecutionTracking = () => {
         }
       })
       .catch((error) => {
-        sentry.captureException(error)
+        if (!abortController.signal.aborted) {
+          // once aborted requests may fail as the fork provider is already deleted
+          sentry.captureException(error)
+        }
       })
 
     return () => {

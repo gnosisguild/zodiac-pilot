@@ -6,7 +6,12 @@ import {
   signTypedData,
   typedDataHash,
 } from '@/safe'
-import type { Eip1193Provider, HexAddress, TransactionData } from '@/types'
+import type {
+  Eip1193Provider,
+  HexAddress,
+  JsonRpcRequest,
+  TransactionData,
+} from '@/types'
 import { decodeGenericError, getActiveTab } from '@/utils'
 import { invariant } from '@epic-web/invariant'
 import { ContractFactories, KnownContracts } from '@gnosis.pm/zodiac'
@@ -56,12 +61,16 @@ export class ForkProvider extends EventEmitter {
   private chainId: ChainId
   private avatarAddress: HexAddress
   private simulationModuleAddress: HexAddress
+  private setupRequests: JsonRpcRequest[]
 
   private blockGasLimitPromise: Promise<bigint>
   private isSafePromise: Promise<boolean>
 
   private pendingMetaTransaction: Promise<TransactionResult> | undefined
-  private isInitialized = false
+  private initForkPromise: Promise<void> | undefined
+  private destroyed: boolean = false
+
+  private initialCheckpointId: string | undefined
 
   // This map is used to serve the EIP-5792 `wallet_getCallsStatus` request.
   // It maps the `id` parameter of `wallet_sendCalls` to the hashes of the resulting transactions.
@@ -71,21 +80,40 @@ export class ForkProvider extends EventEmitter {
     chainId,
     avatarAddress,
     simulationModuleAddress,
+    setupRequests = [],
   }: {
     chainId: ChainId
     avatarAddress: HexAddress
     simulationModuleAddress: HexAddress
+    setupRequests?: JsonRpcRequest[]
   }) {
     super()
     this.chainId = chainId
     this.provider = new TenderlyProvider(chainId)
     this.avatarAddress = avatarAddress
     this.simulationModuleAddress = simulationModuleAddress
+    this.setupRequests = setupRequests
 
     this.blockGasLimitPromise = readBlockGasLimit(this.provider)
 
     // for now we generally assume smart accounts are Safes
     this.isSafePromise = isSmartAccount(this.avatarAddress, this.provider)
+
+    // Usually we initialize the fork when the first transaction is sent, but if there are setup requests we rather initialize immediately.
+    // This is to make sure any spoofed balances or other setup effects are visible right away.
+    if (this.setupRequests.length > 0) {
+      this.ensureForkInitialized()
+    }
+  }
+
+  private isDestroyed(): boolean {
+    return this.destroyed
+  }
+
+  private assertNotDestroyed() {
+    if (this.isDestroyed()) {
+      throw new Error('ForkProvider destroyed')
+    }
   }
 
   async request(
@@ -340,10 +368,9 @@ export class ForkProvider extends EventEmitter {
   private async sendMetaTransactionInSeries(
     metaTx: MetaTransactionRequest,
   ): Promise<TransactionResult> {
-    if (!this.isInitialized) {
-      // we lazily initialize the fork (making the Safe ready for simulating transactions) when the first transaction is sent
-      await this.initFork()
-    }
+    await this.ensureForkInitialized()
+
+    this.assertNotDestroyed()
 
     const isSafe = await this.isSafePromise
     const isDelegateCall = metaTx.operation === 1
@@ -353,14 +380,23 @@ export class ForkProvider extends EventEmitter {
       'delegatecall is only supported for Safes as avatar',
     )
 
+    this.assertNotDestroyed()
+
     // take a snapshot and record the meta transaction
     const checkpointId: string = await this.provider.request({
       method: 'evm_snapshot',
     })
+    // keep track of the initial checkpoint id so we can revert to it when resetting the fork
+    if (this.initialCheckpointId === undefined) {
+      this.initialCheckpointId = checkpointId
+    }
+
     await this.provider.request({
       method: 'evm_setNextBlockTimestamp',
       params: [Math.ceil(Date.now() / 1000).toString()],
     })
+
+    this.assertNotDestroyed()
 
     let tx: TransactionData
     if (isSafe) {
@@ -390,9 +426,33 @@ export class ForkProvider extends EventEmitter {
     return { checkpointId, hash }
   }
 
-  async initFork(): Promise<void> {
+  private async ensureForkInitialized(): Promise<void> {
+    // If initialization is already in progress, wait for it to complete
+    if (this.initForkPromise) {
+      await this.initForkPromise
+      return
+    }
+
+    // Start initialization and store the promise
+    this.initForkPromise = this.initFork()
+    await this.initForkPromise
+  }
+
+  private async initFork(): Promise<void> {
+    if (this.isDestroyed()) {
+      throw new Error(
+        'ForkProvider must be uninitialized or destroyed before initialization',
+      )
+    }
+
     console.debug('Initializing fork for simulation...')
     const isSafe = await this.isSafePromise
+
+    if (this.isDestroyed()) {
+      console.debug('fork destroyed, skipping initialization')
+      return
+    }
+
     if (isSafe) {
       await prepareSafeForSimulation(
         {
@@ -404,9 +464,30 @@ export class ForkProvider extends EventEmitter {
       )
     }
 
+    for (const request of this.setupRequests) {
+      if (this.isDestroyed()) {
+        console.debug('fork destroyed, skipping initialization')
+        return
+      }
+
+      console.debug('Running setup request', request)
+      await this.provider.request(translateJsonRpcRequest(request))
+    }
+
+    if (this.isDestroyed()) {
+      console.debug('fork destroyed, skipping initialization')
+      return
+    }
+
     // notify the background script to start intercepting JSON RPC requests in the current window
     // we use the public RPC for requests originating from apps
     const activeTab = await getActiveTab()
+
+    if (this.isDestroyed()) {
+      console.debug('fork destroyed, skipping initialization')
+      return
+    }
+
     chrome.runtime.sendMessage<SimulationMessage>({
       type: PilotSimulationMessageType.SIMULATE_START,
       windowId: activeTab.windowId,
@@ -416,6 +497,11 @@ export class ForkProvider extends EventEmitter {
     })
 
     this.provider.on('update', ({ rpcUrl, vnetId }) => {
+      // Check if destroyed before sending update messages
+      if (this.isDestroyed()) {
+        return
+      }
+
       chrome.runtime.sendMessage<SimulationMessage>({
         type: PilotSimulationMessageType.SIMULATE_UPDATE,
         windowId: activeTab.windowId,
@@ -423,11 +509,48 @@ export class ForkProvider extends EventEmitter {
         vnetId,
       })
     })
-
-    this.isInitialized = true
   }
 
-  async deleteFork(): Promise<void> {
+  /**
+   * Resets the fork to the initial state.
+   * If the fork uses setup calls it will roll back to the initial state after the setup calls.
+   * Without setup calls it will wipe the underlying virtual testnet to start fresh. This has the advantage of having block numbers in sync with the underlying network.
+   */
+  async reset() {
+    this.eip5792Calls.clear()
+
+    if (this.setupRequests.length > 0) {
+      // setup requests are to be applied, we need to revert to the initial checkpoint
+      if (this.initialCheckpointId) {
+        await this.provider.request({
+          method: 'evm_revert',
+          params: [this.initialCheckpointId],
+        })
+      } else {
+        // we have not yet executed anything after the setup requests, nothing to reset
+        console.warn('Nothing to reset')
+      }
+    } else {
+      // no setup requests, we can just delete the fork
+      await this.deleteFork()
+    }
+  }
+
+  /**
+   * Destroys the instance. Should be called over reset() when we no longer want to work with this ForkProvider instance.
+   * This will stop the fork from being used and discard the underlying virtual testnet.
+   */
+  async destroy(): Promise<void> {
+    // Immediately mark as destroyed
+    this.destroyed = true
+    await this.deleteFork()
+  }
+
+  private async deleteFork(): Promise<void> {
+    // Immediately mark as uninitialized so any incoming requests will re-initialize a fresh fork
+    this.initForkPromise = undefined
+    this.initialCheckpointId = undefined
+
     // notify the background script to stop intercepting JSON RPC requests
     const activeTab = await getActiveTab()
 
@@ -439,8 +562,6 @@ export class ForkProvider extends EventEmitter {
     })
 
     await this.provider.deleteFork()
-    this.eip5792Calls.clear()
-    this.isInitialized = false
   }
 
   getTransactionLink(txHash: string) {
@@ -472,8 +593,6 @@ const execTransactionFromModule = (
     from: moduleAddress,
     // We simulate setting the entire block gas limit as the gas limit for the transaction
     gas: toQuantity(blockGasLimit), // Tenderly errors if the hex value has leading zeros
-    // With gas price 0 account don't need token for gas
-    // gasPrice: '0x0', // doesn't seem to be required
   }
 }
 
@@ -533,4 +652,18 @@ async function prepareSafeForSimulation(
       throw e
     }
   }
+}
+
+/**
+ * We don't want to expose the Tenderly API to users to keep the option open to switch to a different simulation provider in the future.
+ * So rather than telling users to use tenderly_addErc20Balance, for example, we expect pilot_addErc20Balance.
+ **/
+const translateJsonRpcRequest = (request: JsonRpcRequest) => {
+  if (request.method.startsWith('pilot_')) {
+    return {
+      method: 'tenderly_' + request.method.slice(6),
+      params: request.params,
+    }
+  }
+  return request
 }
