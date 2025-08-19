@@ -22,22 +22,20 @@ export const loader = async ({
 
   if (url.searchParams.has('fork')) {
     const fork = url.searchParams.get('fork')
-
     invariantResponse(fork != null, `Fork param was no URL`)
 
     const vnetId = url.searchParams.get('vnetId')
+    invariantResponse(vnetId != null, 'vnetId is required')
 
-    if (vnetId) {
-      const deltas = await getVnetTransactionDelta(
-        vnetId,
-        fork,
-        verifyHexAddress(address),
-        allBalances,
-        chain.id,
-      )
+    const deltas = await getVnetTransactionDelta(
+      vnetId,
+      fork,
+      verifyHexAddress(address),
+      allBalances,
+      chain.id,
+    )
 
-      return await applyDeltaToBalances(allBalances, deltas, chain.id)
-    }
+    return await applyDeltaToBalances(allBalances, deltas, chain.id)
   }
 
   return allBalances
