@@ -36,6 +36,6 @@
   },
   "peerDependencies": {
     "react": "19.1.1",
-    "ser-kit": "3.10.1"
+    "ser-kit": "3.11.1"
   }
 }

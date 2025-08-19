@@ -21,7 +21,7 @@
     "viem": "2.33.3"
   },
   "peerDependencies": {
-    "ser-kit": "3.10.1"
+    "ser-kit": "3.11.1"
   },
   "devDependencies": {
     "@types/node": "22.14.1",
