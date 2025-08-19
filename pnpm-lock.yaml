@@ -1141,8 +1141,8 @@ importers:
         specifier: 19.1.1
         version: 19.1.1
       ser-kit:
-        specifier: 3.10.1
-        version: 3.10.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
+        specifier: 3.11.1
+        version: 3.11.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
       viem:
         specifier: 2.33.3
         version: 2.33.3(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
@@ -9564,9 +9564,6 @@ packages:
 
   sentence-case@3.0.4:
     resolution: {integrity: sha512-8LS0JInaQMCRoQ7YUytAo/xUu5W2XnQxV2HI/6uM6U7CITS1RqPElr30V6uIqyMKM9lJGRVFy5/4CuzcixNYSg==}
-
-  ser-kit@3.10.1:
-    resolution: {integrity: sha512-Ogk1bLBmRyEEw8lgKPFBQ+ANdQYbwmdFCU3fT1eJY147Gnmj4n3RSshPAK9b3zJs/8Fbvd55LP6NZWyakfbT3Q==}
 
   ser-kit@3.11.1:
     resolution: {integrity: sha512-Ix4r4KoFYqwlPGO1Rcc5w97vCRoznWTaj+enpcxCbDAfP8V4hJSykK8YjZ6fYhECId4uJX06G9ZocCmGEWCPAA==}
@@ -21294,21 +21291,6 @@ snapshots:
       no-case: 3.0.4
       tslib: 2.8.1
       upper-case-first: 2.0.2
-
-  ser-kit@3.10.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76):
-    dependencies:
-      '@epic-web/invariant': 1.0.0
-      '@safe-global/api-kit': 3.0.2(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
-      '@safe-global/protocol-kit': 6.1.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
-      '@safe-global/safe-deployments': 1.37.36
-      '@safe-global/types-kit': 2.0.1(typescript@5.9.2)(zod@3.25.76)
-      viem: 2.33.3(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - typescript
-      - utf-8-validate
-      - zod
 
   ser-kit@3.11.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10):
     dependencies:
