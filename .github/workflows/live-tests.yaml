@@ -83,7 +83,7 @@ jobs:
       - name: Extract Action
         uses: ihiroky/extract-action@v1
         with:
-          file_path: zodiac-pilot-${{ steps.fetch-latest-release.outputs.latest-release }}.zip
+          file_path: zodiac-os-${{ steps.fetch-latest-release.outputs.latest-release }}.zip
           extract_dir: latest-release
 
       - run: |
