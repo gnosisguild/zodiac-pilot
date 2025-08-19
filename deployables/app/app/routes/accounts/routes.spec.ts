@@ -19,7 +19,7 @@ import {
   walletFactory,
 } from '@zodiac/db/test-utils'
 import {
-  createMockEoaAccount,
+  createMockEoaExecutionAccount,
   createMockExecutionRoute,
   createMockRoute,
   createMockSerRoute,
@@ -528,7 +528,7 @@ describe('Routes', () => {
       const waypoints = createMockWaypoints({
         end: true,
         start: createMockStartingWaypoint(
-          createMockEoaAccount({ address: randomAddress() }),
+          createMockEoaExecutionAccount({ address: randomAddress() }),
         ),
       })
 

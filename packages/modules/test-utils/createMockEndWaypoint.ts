@@ -1,7 +1,7 @@
 import type { Connection, Waypoint } from '@zodiac/schema'
 import { createMockEnabledConnection } from './createMockEnabledConnection'
 import {
-  createMockSafeAccount,
+  createMockSafeExecutionAccount,
   type CreateMockSafeAccountOptions,
 } from './createMockSafeAccount'
 
@@ -14,6 +14,6 @@ export const createMockEndWaypoint = ({
   account,
   connection = createMockEnabledConnection(),
 }: CreateMockEndWaypointOptions = {}): Waypoint => ({
-  account: createMockSafeAccount(account),
+  account: createMockSafeExecutionAccount(account),
   connection,
 })

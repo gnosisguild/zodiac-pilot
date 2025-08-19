@@ -2,7 +2,10 @@ export { createMockDelayAccount } from './createMockDelayAccount'
 export { createMockDelayWaypoint } from './createMockDelayWaypoint'
 export { createMockEnabledConnection } from './createMockEnabledConnection'
 export { createMockEndWaypoint } from './createMockEndWaypoint'
-export { createMockEoaAccount } from './createMockEoaAccount'
+export {
+  createMockEoaAccount,
+  createMockEoaExecutionAccount,
+} from './createMockEoaAccount'
 export { createMockExecutionRoute } from './createMockExecutionRoute'
 export { createMockOwnsConnection } from './createMockOwnsConnection'
 export { createMockRole } from './createMockRole'
