@@ -14,7 +14,7 @@ import {
   createMockStartingWaypoint,
   createMockWaypoints,
 } from '@zodiac/modules/test-utils'
-import { encode } from '@zodiac/schema'
+import { encode, safeJson } from '@zodiac/schema'
 import {
   expectRouteToBe,
   randomAddress,
@@ -23,7 +23,6 @@ import {
 import { href } from 'react-router'
 import { queryRoutes } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { safeJson } from '../../../../../packages/schema/src'
 
 const mockPostMessage = vi.spyOn(window, 'postMessage')
 
