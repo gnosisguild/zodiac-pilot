@@ -24,6 +24,7 @@ import {
   Collapsible,
   Info,
   InlineForm,
+  PrimaryLinkButton,
   SecondaryButton,
 } from '@zodiac/ui'
 import { ConnectWalletButton, useSendTransaction } from '@zodiac/web3'
@@ -176,6 +177,7 @@ export const action = (args: Route.ActionArgs) =>
 
 const DeployRole = ({
   loaderData: { steps, addressLabels, roleLabels, issues },
+  params: { workspaceId },
 }: Route.ComponentProps) => {
   return (
     <Page>
@@ -212,6 +214,7 @@ const DeployRole = ({
                       transactionBundle,
                       targetAccount,
                       calls,
+                      proposedTransactionId,
                     },
                     planIndex,
                   ) => (
@@ -221,12 +224,29 @@ const DeployRole = ({
                           <div className="flex flex-1 items-center justify-between gap-8">
                             <Description account={account} />
 
-                            <Deploy
-                              roleDeploymentStepId={id}
-                              chainId={chainId}
-                              transactions={transactionBundle}
-                              targetAccount={targetAccount}
-                            />
+                            <div className="flex items-center gap-2">
+                              <Deploy
+                                roleDeploymentStepId={id}
+                                chainId={chainId}
+                                transactions={transactionBundle}
+                                targetAccount={targetAccount}
+                              />
+
+                              {proposedTransactionId && (
+                                <PrimaryLinkButton
+                                  size="small"
+                                  to={href(
+                                    '/workspace/:workspaceId/submit/proposal/:proposalId',
+                                    {
+                                      workspaceId,
+                                      proposalId: proposedTransactionId,
+                                    },
+                                  )}
+                                >
+                                  Show transaction
+                                </PrimaryLinkButton>
+                              )}
+                            </div>
                           </div>
                         }
                       >

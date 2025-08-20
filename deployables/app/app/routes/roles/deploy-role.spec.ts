@@ -21,6 +21,7 @@ import {
   roleFactory,
   routeFactory,
   tenantFactory,
+  transactionProposalFactory,
   userFactory,
   walletFactory,
 } from '@zodiac/db/test-utils'
@@ -188,124 +189,211 @@ describe('Deploy Role', () => {
       dbIt.todo('allows you to select a route to use to execute a step')
     })
 
-    dbIt('redirects the user to a prepared transaction proposal', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
+    describe('Transaction proposal', () => {
+      dbIt(
+        'redirects the user to a prepared transaction proposal',
+        async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
 
-      const wallet = await walletFactory.create(user)
+          const wallet = await walletFactory.create(user)
 
-      await setDefaultWallet(dbClient(), user, {
-        walletId: wallet.id,
-        chainId: Chain.ETH,
-      })
+          await setDefaultWallet(dbClient(), user, {
+            walletId: wallet.id,
+            chainId: Chain.ETH,
+          })
 
-      const account = await accountFactory.create(tenant, user, {
-        chainId: Chain.ETH,
-      })
-      const route = await routeFactory.create(account, wallet)
+          const account = await accountFactory.create(tenant, user, {
+            chainId: Chain.ETH,
+          })
+          const route = await routeFactory.create(account, wallet)
 
-      await setDefaultRoute(dbClient(), tenant, user, route)
+          await setDefaultRoute(dbClient(), tenant, user, route)
 
-      const role = await roleFactory.create(tenant, user)
-      const deployment = await roleDeploymentFactory.create(user, role)
+          const role = await roleFactory.create(tenant, user)
+          const deployment = await roleDeploymentFactory.create(user, role)
 
-      const transaction = createMockTransactionRequest()
-      await roleDeploymentStepFactory.create(user, deployment, {
-        targetAccount: account.address,
-        transactionBundle: [transaction],
-      })
+          const transaction = createMockTransactionRequest()
+          await roleDeploymentStepFactory.create(user, deployment, {
+            targetAccount: account.address,
+            transactionBundle: [transaction],
+          })
 
-      await setRoleMembers(dbClient(), role, [user.id])
-      await setActiveAccounts(dbClient(), role, [account.id])
+          await setRoleMembers(dbClient(), role, [user.id])
+          await setActiveAccounts(dbClient(), role, [account.id])
 
-      await render(
-        href('/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          roleId: role.id,
-          deploymentId: deployment.id,
-        }),
-        { tenant, user },
-      )
+          await render(
+            href(
+              '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId',
+              {
+                workspaceId: tenant.defaultWorkspaceId,
+                roleId: role.id,
+                deploymentId: deployment.id,
+              },
+            ),
+            { tenant, user },
+          )
 
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Deploy' }),
-      )
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Deploy' }),
+          )
 
-      await waitForPendingActions(Intent.ExecuteTransaction)
+          await waitForPendingActions(Intent.ExecuteTransaction)
 
-      const [transactionProposal] = await getProposedTransactions(
-        dbClient(),
-        user,
-        account,
-      )
+          const [transactionProposal] = await getProposedTransactions(
+            dbClient(),
+            user,
+            account,
+          )
 
-      await expectRouteToBe(
-        href('/workspace/:workspaceId/submit/proposal/:proposalId/:routeId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          proposalId: transactionProposal.id,
-          routeId: route.id,
-        }),
-      )
-    })
-
-    dbIt('links the transaction proposal to the deployment step', async () => {
-      const user = await userFactory.create()
-      const tenant = await tenantFactory.create(user)
-
-      const wallet = await walletFactory.create(user)
-
-      await setDefaultWallet(dbClient(), user, {
-        walletId: wallet.id,
-        chainId: Chain.ETH,
-      })
-
-      const account = await accountFactory.create(tenant, user, {
-        chainId: Chain.ETH,
-      })
-      const route = await routeFactory.create(account, wallet)
-
-      await setDefaultRoute(dbClient(), tenant, user, route)
-
-      const role = await roleFactory.create(tenant, user)
-      const deployment = await roleDeploymentFactory.create(user, role)
-
-      const transaction = createMockTransactionRequest()
-      const deploymentStep = await roleDeploymentStepFactory.create(
-        user,
-        deployment,
-        {
-          targetAccount: account.address,
-          transactionBundle: [transaction],
+          await expectRouteToBe(
+            href(
+              '/workspace/:workspaceId/submit/proposal/:proposalId/:routeId',
+              {
+                workspaceId: tenant.defaultWorkspaceId,
+                proposalId: transactionProposal.id,
+                routeId: route.id,
+              },
+            ),
+          )
         },
       )
 
-      await setRoleMembers(dbClient(), role, [user.id])
-      await setActiveAccounts(dbClient(), role, [account.id])
+      dbIt(
+        'links the transaction proposal to the deployment step',
+        async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
 
-      await render(
-        href('/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId', {
-          workspaceId: tenant.defaultWorkspaceId,
-          roleId: role.id,
-          deploymentId: deployment.id,
-        }),
-        { tenant, user },
+          const wallet = await walletFactory.create(user)
+
+          await setDefaultWallet(dbClient(), user, {
+            walletId: wallet.id,
+            chainId: Chain.ETH,
+          })
+
+          const account = await accountFactory.create(tenant, user, {
+            chainId: Chain.ETH,
+          })
+          const route = await routeFactory.create(account, wallet)
+
+          await setDefaultRoute(dbClient(), tenant, user, route)
+
+          const role = await roleFactory.create(tenant, user)
+          const deployment = await roleDeploymentFactory.create(user, role)
+
+          const transaction = createMockTransactionRequest()
+          const deploymentStep = await roleDeploymentStepFactory.create(
+            user,
+            deployment,
+            {
+              targetAccount: account.address,
+              transactionBundle: [transaction],
+            },
+          )
+
+          await setRoleMembers(dbClient(), role, [user.id])
+          await setActiveAccounts(dbClient(), role, [account.id])
+
+          await render(
+            href(
+              '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId',
+              {
+                workspaceId: tenant.defaultWorkspaceId,
+                roleId: role.id,
+                deploymentId: deployment.id,
+              },
+            ),
+            { tenant, user },
+          )
+
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Deploy' }),
+          )
+
+          await waitForPendingActions(Intent.ExecuteTransaction)
+
+          const [transactionProposal] = await getProposedTransactions(
+            dbClient(),
+            user,
+            account,
+          )
+
+          await expect(
+            getRoleDeploymentStep(dbClient(), deploymentStep.id),
+          ).resolves.toHaveProperty(
+            'proposedTransactionId',
+            transactionProposal.id,
+          )
+        },
       )
 
-      await userEvent.click(
-        await screen.findByRole('button', { name: 'Deploy' }),
+      dbIt(
+        'offers to open the transaction proposal when one already exists',
+        async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
+
+          const wallet = await walletFactory.create(user)
+
+          await setDefaultWallet(dbClient(), user, {
+            walletId: wallet.id,
+            chainId: Chain.ETH,
+          })
+
+          const account = await accountFactory.create(tenant, user, {
+            chainId: Chain.ETH,
+          })
+          const route = await routeFactory.create(account, wallet)
+
+          await setDefaultRoute(dbClient(), tenant, user, route)
+
+          const role = await roleFactory.create(tenant, user)
+
+          await setRoleMembers(dbClient(), role, [user.id])
+          await setActiveAccounts(dbClient(), role, [account.id])
+
+          const deployment = await roleDeploymentFactory.create(user, role)
+
+          const proposal = await transactionProposalFactory.create(
+            tenant,
+            user,
+            account,
+          )
+
+          await roleDeploymentStepFactory.create(user, deployment, {
+            proposedTransactionId: proposal.id,
+          })
+
+          await render(
+            href(
+              '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId',
+              {
+                workspaceId: tenant.defaultWorkspaceId,
+                roleId: role.id,
+                deploymentId: deployment.id,
+              },
+            ),
+            { tenant, user },
+          )
+
+          expect(
+            await screen.findByRole('link', { name: 'Show transaction' }),
+          ).toHaveAttribute(
+            'href',
+            href('/workspace/:workspaceId/submit/proposal/:proposalId', {
+              proposalId: proposal.id,
+              workspaceId: proposal.workspaceId,
+            }),
+          )
+        },
       )
-
-      await waitForPendingActions(Intent.ExecuteTransaction)
-
-      const [transactionProposal] = await getProposedTransactions(
-        dbClient(),
-        user,
-        account,
-      )
-
-      await expect(
-        getRoleDeploymentStep(dbClient(), deploymentStep.id),
-      ).resolves.toHaveProperty('proposedTransactionId', transactionProposal.id)
     })
+  })
+
+  describe('Cancelled deployment', () => {
+    dbIt.todo('indicates that a deployment has been cancelled')
+    dbIt.todo('disables deploy buttons')
+    dbIt.todo('does not link to transaction proposals')
   })
 })

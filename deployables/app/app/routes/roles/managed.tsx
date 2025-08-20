@@ -339,6 +339,8 @@ const CheckConfigurationModal = () => {
     setDismissed(false),
   )
 
+  const pending = useIsPending(Intent.AcceptWarnings)
+
   if (actionData == null) {
     return null
   }
@@ -358,7 +360,12 @@ const CheckConfigurationModal = () => {
 
       <Modal.Actions>
         <InlineForm context={{ roleId: actionData.roleId }}>
-          <PrimaryButton submit style="warning" intent={Intent.AcceptWarnings}>
+          <PrimaryButton
+            submit
+            style="warning"
+            intent={Intent.AcceptWarnings}
+            busy={pending}
+          >
             Proceed
           </PrimaryButton>
         </InlineForm>
