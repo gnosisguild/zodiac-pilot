@@ -303,7 +303,7 @@ describe('Transactions', () => {
 
         expect(chromeMock.tabs.create).toHaveBeenCalledWith({
           active: true,
-          url: `http://localhost/offline/accounts/${route.id}/${encode(route)}`,
+          url: `http://localhost/offline/accounts/${route.id}`,
         })
       })
     })
@@ -385,7 +385,7 @@ describe('Transactions', () => {
 
         expect(chromeMock.tabs.create).toHaveBeenCalledWith({
           active: true,
-          url: `http://localhost/account/${account.id}`,
+          url: `http://localhost/workspace/${account.workspaceId}/accounts/${account.id}`,
         })
       })
     })

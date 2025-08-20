@@ -1,6 +1,4 @@
 import { getCompanionAppUrl } from '@zodiac/env'
-import { encode } from '@zodiac/schema'
-import { getDefaultRoute } from './getDefaultRoute'
 import type { TaggedAccount } from './TaggedAccount'
 
 export const editAccount = async (windowId: number, account: TaggedAccount) => {
@@ -10,23 +8,23 @@ export const editAccount = async (windowId: number, account: TaggedAccount) => {
     const existingTab = tabs.find(
       (tab) =>
         tab.url != null &&
-        tab.url.startsWith(`${getCompanionAppUrl()}/account/${account.id}`),
+        tab.url.startsWith(
+          `${getCompanionAppUrl()}/workspace/${account.workspaceId}/accounts/${account.id}`,
+        ),
     )
 
     if (existingTab != null && existingTab.id != null) {
       await chrome.tabs.update(existingTab.id, {
         active: true,
-        url: `${getCompanionAppUrl()}/account/${account.id}`,
+        url: `${getCompanionAppUrl()}/workspace/${account.workspaceId}/accounts/${account.id}`,
       })
     } else {
       await chrome.tabs.create({
         active: true,
-        url: `${getCompanionAppUrl()}/account/${account.id}`,
+        url: `${getCompanionAppUrl()}/workspace/${account.workspaceId}/accounts/${account.id}`,
       })
     }
   } else {
-    const route = await getDefaultRoute(account.id)
-
     const existingTab = tabs.find(
       (tab) =>
         tab.url != null &&
@@ -38,12 +36,12 @@ export const editAccount = async (windowId: number, account: TaggedAccount) => {
     if (existingTab != null && existingTab.id != null) {
       await chrome.tabs.update(existingTab.id, {
         active: true,
-        url: `${getCompanionAppUrl()}/offline/accounts/${account.id}/${encode(route)}`,
+        url: `${getCompanionAppUrl()}/offline/accounts/${account.id}`,
       })
     } else {
       await chrome.tabs.create({
         active: true,
-        url: `${getCompanionAppUrl()}/offline/accounts/${account.id}/${encode(route)}`,
+        url: `${getCompanionAppUrl()}/offline/accounts/${account.id}`,
       })
     }
   }

@@ -29,7 +29,6 @@ import {
   CompanionResponseMessageType,
   type CompanionResponseMessage,
 } from '@zodiac/messages'
-import { encode } from '@zodiac/schema'
 import { expectRouteToBe } from '@zodiac/test-utils'
 import { mockTab } from '@zodiac/test-utils/chrome'
 import { describe, expect, it, vi } from 'vitest'
@@ -185,7 +184,7 @@ describe('Active Account', () => {
 
           expect(chromeMock.tabs.create).toHaveBeenCalledWith({
             active: true,
-            url: `http://localhost/offline/accounts/${route.id}/${encode(route)}`,
+            url: `http://localhost/offline/accounts/${route.id}`,
           })
         })
 
@@ -208,7 +207,7 @@ describe('Active Account', () => {
 
           expect(chromeMock.tabs.update).toHaveBeenCalledWith(tab.id, {
             active: true,
-            url: `http://localhost/offline/accounts/${route.id}/${encode(route)}`,
+            url: `http://localhost/offline/accounts/${route.id}`,
           })
         })
       })
@@ -241,7 +240,7 @@ describe('Active Account', () => {
 
           expect(chromeMock.tabs.create).toHaveBeenCalledWith({
             active: true,
-            url: `http://localhost/account/${account.id}`,
+            url: `http://localhost/workspace/${account.workspaceId}/accounts/${account.id}`,
           })
         })
 
@@ -261,7 +260,7 @@ describe('Active Account', () => {
           mockCompanionAppUrl('http://localhost')
 
           const tab = mockTab({
-            url: `http://localhost/account/${account.id}`,
+            url: `http://localhost/workspace/${account.workspaceId}/accounts/${account.id}`,
           })
 
           await render(`/${account.id}`)
@@ -275,7 +274,7 @@ describe('Active Account', () => {
 
           expect(chromeMock.tabs.update).toHaveBeenCalledWith(tab.id, {
             active: true,
-            url: `http://localhost/account/${account.id}`,
+            url: `http://localhost/workspace/${account.workspaceId}/accounts/${account.id}`,
           })
         })
       })
