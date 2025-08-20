@@ -7,7 +7,7 @@ import {
   User,
 } from '@zodiac/db/schema'
 import { createMockSafeAccount } from '@zodiac/modules/test-utils'
-import { jsonStringify } from '@zodiac/schema'
+import { safeJson } from '@zodiac/schema'
 import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 
@@ -31,12 +31,12 @@ export const roleDeploymentStepFactory = createFactory<
       roleId: deployment.roleId,
       tenantId: deployment.tenantId,
       workspaceId: deployment.workspaceId,
-      account: JSON.parse(jsonStringify(account)),
-      calls: JSON.parse(jsonStringify(calls)),
+      account: safeJson(account),
+      calls: safeJson(calls),
       chainId: Chain.ETH,
       index: 0,
       roleDeploymentId: deployment.id,
-      transactionBundle: JSON.parse(jsonStringify(transactionBundle)),
+      transactionBundle: safeJson(transactionBundle),
 
       ...data,
     }

@@ -1,10 +1,6 @@
 import { getChainId } from '@zodiac/chains'
 import { RoleDeployment, RoleDeploymentStepTable } from '@zodiac/db/schema'
-import {
-  HexAddress,
-  jsonStringify,
-  MetaTransactionRequest,
-} from '@zodiac/schema'
+import { HexAddress, MetaTransactionRequest, safeJson } from '@zodiac/schema'
 import { Account, AccountBuilderCall } from 'ser-kit'
 import { DBClient } from '../../dbClient'
 
@@ -32,13 +28,13 @@ export const createRoleDeploymentStep = async (
   })
 
   return db.insert(RoleDeploymentStepTable).values({
-    account: JSON.parse(jsonStringify(account)),
-    calls: JSON.parse(jsonStringify(calls)),
+    account: safeJson(account),
+    calls: safeJson(calls),
     chainId: getChainId(account.prefixedAddress),
     index: previousStep == null ? 0 : previousStep.index + 1,
     roleDeploymentId: roleDeployment.id,
     tenantId: roleDeployment.tenantId,
-    transactionBundle: JSON.parse(jsonStringify(transactionBundle)),
+    transactionBundle: safeJson(transactionBundle),
     workspaceId: roleDeployment.workspaceId,
     targetAccount,
   })
