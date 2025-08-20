@@ -6,6 +6,7 @@ import { Chain } from '@zodiac/chains'
 import {
   dbClient,
   getProposedTransactions,
+  getRoleDeploymentStep,
   setActiveAccounts,
   setDefaultRoute,
   setDefaultWallet,
@@ -245,6 +246,66 @@ describe('Deploy Role', () => {
           routeId: route.id,
         }),
       )
+    })
+
+    dbIt('links the transaction proposal to the deployment step', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const wallet = await walletFactory.create(user)
+
+      await setDefaultWallet(dbClient(), user, {
+        walletId: wallet.id,
+        chainId: Chain.ETH,
+      })
+
+      const account = await accountFactory.create(tenant, user, {
+        chainId: Chain.ETH,
+      })
+      const route = await routeFactory.create(account, wallet)
+
+      await setDefaultRoute(dbClient(), tenant, user, route)
+
+      const role = await roleFactory.create(tenant, user)
+      const deployment = await roleDeploymentFactory.create(user, role)
+
+      const transaction = createMockTransactionRequest()
+      const deploymentStep = await roleDeploymentStepFactory.create(
+        user,
+        deployment,
+        {
+          targetAccount: account.address,
+          transactionBundle: [transaction],
+        },
+      )
+
+      await setRoleMembers(dbClient(), role, [user.id])
+      await setActiveAccounts(dbClient(), role, [account.id])
+
+      await render(
+        href('/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId', {
+          workspaceId: tenant.defaultWorkspaceId,
+          roleId: role.id,
+          deploymentId: deployment.id,
+        }),
+        { tenant, user },
+      )
+
+      await userEvent.click(
+        await screen.findByRole('button', { name: 'Deploy' }),
+      )
+
+      await waitForPendingActions(Intent.ExecuteTransaction)
+
+      const [transactionProposal] = await getProposedTransactions(
+        dbClient(),
+        user,
+        account,
+      )
+
+      await expect(
+        getRoleDeploymentStep(dbClient(), deploymentStep.id),
+      ).resolves.toHaveProperty('proposedTransactionId', transactionProposal.id)
     })
   })
 })

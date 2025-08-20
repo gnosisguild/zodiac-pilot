@@ -14,6 +14,7 @@ import {
   getRoleDeploymentSteps,
   getRoleMembers,
   proposeTransaction,
+  updateRoleDeploymentStep,
 } from '@zodiac/db'
 import { getPrefixedAddress, getUUID } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
@@ -127,12 +128,20 @@ export const action = (args: Route.ActionArgs) =>
         getUUID(data, 'roleDeploymentStepId'),
       )
 
-      const transactionProposal = await proposeTransaction(dbClient(), {
-        userId: user.id,
-        tenantId: deploymentStep.tenantId,
-        workspaceId: deploymentStep.workspaceId,
-        accountId: account.id,
-        transaction: deploymentStep.transactionBundle,
+      const transactionProposal = await dbClient().transaction(async (tx) => {
+        const transactionProposal = await proposeTransaction(tx, {
+          userId: user.id,
+          tenantId: deploymentStep.tenantId,
+          workspaceId: deploymentStep.workspaceId,
+          accountId: account.id,
+          transaction: deploymentStep.transactionBundle,
+        })
+
+        await updateRoleDeploymentStep(tx, deploymentStep.id, {
+          proposedTransactionId: transactionProposal.id,
+        })
+
+        return transactionProposal
       })
 
       return redirect(
