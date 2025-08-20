@@ -23,6 +23,7 @@ import {
 import { href } from 'react-router'
 import { queryRoutes } from 'ser-kit'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { safeJson } from '../../../../../packages/schema/src'
 
 const mockPostMessage = vi.spyOn(window, 'postMessage')
 
@@ -180,7 +181,7 @@ describe('Edit local account', () => {
       await expectMessage({
         type: CompanionAppMessageType.SAVE_ROUTE,
         data: expect.objectContaining({
-          waypoints: newRoute.waypoints,
+          waypoints: safeJson(newRoute.waypoints),
 
           id: route.id,
           label: route.label,

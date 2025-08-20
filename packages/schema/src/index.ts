@@ -5,6 +5,7 @@ export { encode } from './encode'
 export { hexSchema, isHex } from './hex'
 export type { Hex } from './hex'
 export { isUUID } from './isUUID'
+export { jsonParse } from './jsonParse'
 export { jsonStringify } from './jsonStringify'
 export {
   metaTransactionRequestEqual,
@@ -35,4 +36,5 @@ export type {
   Waypoint,
   Waypoints,
 } from './routeSchema'
+export { safeJson } from './safeJson'
 export { validateAddress } from './validateAddress'

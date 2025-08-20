@@ -8,7 +8,7 @@ import {
   removeActiveAccount,
 } from '@zodiac/db'
 import { getString } from '@zodiac/form-data'
-import { isUUID, jsonStringify } from '@zodiac/schema'
+import { isUUID, jsonStringify, safeJson } from '@zodiac/schema'
 import type { Route } from './+types/activeAccount'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -29,7 +29,7 @@ export const loader = (args: Route.LoaderArgs) =>
         return null
       }
 
-      return jsonStringify(account)
+      return safeJson(account)
     },
   )
 

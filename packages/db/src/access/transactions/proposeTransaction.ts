@@ -1,5 +1,5 @@
 import { ProposedTransactionTable } from '@zodiac/db/schema'
-import { jsonStringify, type MetaTransactionRequest } from '@zodiac/schema'
+import { safeJson, type MetaTransactionRequest } from '@zodiac/schema'
 import type { UUID } from 'crypto'
 import type { DBClient } from '../../dbClient'
 
@@ -26,7 +26,7 @@ export const proposeTransaction = async (
     .values({
       tenantId,
       workspaceId,
-      transaction: JSON.parse(jsonStringify(transaction)),
+      transaction: safeJson(transaction),
       userId,
       accountId,
     })

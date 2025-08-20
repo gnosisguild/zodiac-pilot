@@ -1,4 +1,5 @@
 import { useStableHandler } from '@zodiac/hooks'
+import { jsonParse } from '@zodiac/schema'
 import { useEffect } from 'react'
 import { type AllMessages } from './createTabMessageHandler'
 import {
@@ -14,7 +15,7 @@ export function useExtensionMessageHandler<
 
   useEffect(() => {
     const handleMessage = createWindowMessageHandler(type, (message) =>
-      onMessageRef.current(message as Message),
+      onMessageRef.current(jsonParse<Message>(message)),
     )
 
     window.addEventListener('message', handleMessage)

@@ -1,3 +1,4 @@
+import { jsonParse } from '@zodiac/schema'
 import type { CompanionAppMessage } from './companionApp'
 import type {
   CompanionResponseMessage,
@@ -55,7 +56,7 @@ export function createTabMessageHandler<
       }
     }
 
-    return handler(message as Message, {
+    return handler(jsonParse<Message>(message), {
       tabId: tab.id,
       windowId: tab.windowId,
       sendResponse,

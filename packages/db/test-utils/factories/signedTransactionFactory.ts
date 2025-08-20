@@ -10,7 +10,7 @@ import {
   createMockTransactionRequest,
   createMockWaypoints,
 } from '@zodiac/modules/test-utils'
-import { jsonStringify } from '@zodiac/schema'
+import { safeJson } from '@zodiac/schema'
 import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 
@@ -29,7 +29,7 @@ export const signedTransactionFactory = createFactory<
       userId: user.id,
       waypoints: createMockWaypoints(),
 
-      transaction: JSON.parse(jsonStringify([createMockTransactionRequest()])),
+      transaction: safeJson([createMockTransactionRequest()]),
 
       ...data,
     }
