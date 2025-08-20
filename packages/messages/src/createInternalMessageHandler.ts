@@ -1,3 +1,4 @@
+import { jsonParse } from '@zodiac/schema'
 import type { AllMessages, ResponseFn } from './createTabMessageHandler'
 
 type HandlerOptions = {
@@ -29,7 +30,7 @@ export function createInternalMessageHandler<
       }
     }
 
-    return handler(message as Message, {
+    return handler(jsonParse<Message>(message), {
       sendResponse,
     })
   }

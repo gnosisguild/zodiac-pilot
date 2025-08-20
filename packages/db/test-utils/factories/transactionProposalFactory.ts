@@ -7,7 +7,7 @@ import {
   type User,
 } from '@zodiac/db/schema'
 import { createMockTransactionRequest } from '@zodiac/modules/test-utils'
-import { jsonStringify } from '@zodiac/schema'
+import { safeJson } from '@zodiac/schema'
 import { randomUUID } from 'crypto'
 import { createFactory } from './createFactory'
 
@@ -35,7 +35,7 @@ export const transactionProposalFactory = createFactory<
       .values({
         ...data,
 
-        transaction: JSON.parse(jsonStringify(transaction)),
+        transaction: safeJson(transaction),
       })
       .returning()
 

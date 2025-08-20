@@ -1,5 +1,6 @@
 import { getCompanionAppUrl } from '@zodiac/env'
 import { formData } from '@zodiac/form-data'
+import { jsonParse } from '@zodiac/schema'
 import type { z, ZodTypeAny } from 'zod'
 
 export type FetchOptions = {
@@ -37,5 +38,5 @@ export const api = async <Schema extends ZodTypeAny>(
 
   const json = await response.json()
 
-  return schema.parse(json) as z.infer<Schema>
+  return schema.parse(jsonParse(json)) as z.infer<Schema>
 }

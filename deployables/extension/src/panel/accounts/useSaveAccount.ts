@@ -7,7 +7,7 @@ import {
   useTabMessageHandler,
   type CompanionAppMessage,
 } from '@zodiac/messages'
-import type { ExecutionRoute } from '@zodiac/schema'
+import { type ExecutionRoute } from '@zodiac/schema'
 import { useCallback, useState } from 'react'
 import { useRevalidator } from 'react-router'
 import { prefixAddress } from 'ser-kit'

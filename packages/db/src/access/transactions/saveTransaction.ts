@@ -3,7 +3,7 @@ import {
   type Tenant,
   type User,
 } from '@zodiac/db/schema'
-import { jsonStringify, type MetaTransactionRequest } from '@zodiac/schema'
+import { safeJson, type MetaTransactionRequest } from '@zodiac/schema'
 import type { UUID } from 'crypto'
 import type { DBClient } from '../../dbClient'
 import { getRoute } from '../routes'
@@ -33,7 +33,7 @@ export const saveTransaction = async (
     .values({
       tenantId: tenant.id,
       userId: user.id,
-      transaction: JSON.parse(jsonStringify(transaction)),
+      transaction: safeJson(transaction),
 
       routeLabel: route.label,
       waypoints: route.waypoints,

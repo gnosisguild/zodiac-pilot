@@ -1,3 +1,4 @@
+import { jsonParse } from '@zodiac/schema'
 import type { AllMessages } from './createTabMessageHandler'
 
 export type HandlerFn<Message> = (message: Message) => void
@@ -15,6 +16,6 @@ export function createWindowMessageHandler<
       return
     }
 
-    handler(event.data as Message)
+    handler(jsonParse<Message>(event.data))
   }
 }

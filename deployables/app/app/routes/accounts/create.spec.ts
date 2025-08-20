@@ -123,6 +123,7 @@ describe('New SafeAccount', () => {
         data: expect.objectContaining({
           label: 'Test label',
         }),
+        account: expect.objectContaining({ address }),
       })
     })
 

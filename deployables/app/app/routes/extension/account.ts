@@ -1,7 +1,7 @@
 import { authorizedLoader } from '@/auth-server'
 import { invariantResponse } from '@epic-web/invariant'
 import { dbClient, getAccount } from '@zodiac/db'
-import { isUUID, jsonStringify } from '@zodiac/schema'
+import { isUUID, safeJson } from '@zodiac/schema'
 import type { Route } from './+types/account'
 
 export const loader = (args: Route.LoaderArgs) =>
@@ -21,7 +21,7 @@ export const loader = (args: Route.LoaderArgs) =>
 
       const account = await getAccount(dbClient(), accountId)
 
-      return jsonStringify(account)
+      return safeJson(account)
     },
     {
       async hasAccess({ tenant, params: { accountId } }) {

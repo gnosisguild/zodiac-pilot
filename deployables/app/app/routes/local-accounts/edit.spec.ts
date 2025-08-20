@@ -14,7 +14,7 @@ import {
   createMockStartingWaypoint,
   createMockWaypoints,
 } from '@zodiac/modules/test-utils'
-import { encode } from '@zodiac/schema'
+import { encode, safeJson } from '@zodiac/schema'
 import {
   expectRouteToBe,
   randomAddress,
@@ -180,7 +180,7 @@ describe('Edit local account', () => {
       await expectMessage({
         type: CompanionAppMessageType.SAVE_ROUTE,
         data: expect.objectContaining({
-          waypoints: newRoute.waypoints,
+          waypoints: safeJson(newRoute.waypoints),
 
           id: route.id,
           label: route.label,

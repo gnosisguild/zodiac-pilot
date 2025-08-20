@@ -1,3 +1,4 @@
+import { safeJson } from '@zodiac/schema'
 import {
   CompanionAppMessageType,
   type CompanionAppMessage,
@@ -130,7 +131,7 @@ export function companionRequest(message: CompanionAppMessage, handler?: any) {
 
   window.addEventListener('message', handleMessage)
 
-  window.postMessage(message, '*')
+  window.postMessage(safeJson(message), '*')
 
   return () => {
     window.removeEventListener('message', handleMessage)
@@ -152,7 +153,7 @@ export function autoRespondToCompanionRequest<
     }
 
     window.removeEventListener('message', handleRequest)
-    window.postMessage(response, '*')
+    window.postMessage(safeJson(response), '*')
 
     resolve()
   }
