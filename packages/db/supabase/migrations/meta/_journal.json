@@ -463,6 +463,13 @@
       "when": 1755611518043,
       "tag": "0065_change json columns to jsonb",
       "breakpoints": true
+    },
+    {
+      "idx": 66,
+      "version": "7",
+      "when": 1755674364034,
+      "tag": "0066_add deployment issue enum",
+      "breakpoints": true
     }
   ]
 }

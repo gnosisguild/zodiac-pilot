@@ -741,6 +741,17 @@ const ActionAssetRelations = relations(ActionAssetTable, ({ one }) => ({
   }),
 }))
 
+export enum RoleDeploymentIssue {
+  NoActiveAccounts = 'NoActiveAccounts',
+  NoActiveMembers = 'NoActiveMembers',
+  MissingDefaultWallet = 'MissingDefaultWallet',
+}
+
+const RoleDeploymentIssueEnum = pgEnum(
+  'RoleDeploymentIssue',
+  enumToPgEnum(RoleDeploymentIssue),
+)
+
 export const RoleDeploymentTable = pgTable(
   'RoleDeployment',
   {
@@ -752,6 +763,8 @@ export const RoleDeploymentTable = pgTable(
     cancelledById: uuid().references(() => UserTable.id, {
       onDelete: 'set null',
     }),
+
+    issues: RoleDeploymentIssueEnum().array(),
 
     ...roleReference,
     ...createdByReference,
@@ -871,4 +884,5 @@ export const schema = {
   RoleActionRelations,
   ActionAssetRelations,
   DefaultWalletRelations,
+  RoleDeploymentIssueEnum,
 }

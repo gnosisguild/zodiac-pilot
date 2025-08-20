@@ -25,6 +25,7 @@ import {
   InlineForm,
   Modal,
   Popover,
+  PrimaryButton,
   PrimaryLinkButton,
   SecondaryButton,
   Table,
@@ -81,8 +82,11 @@ export const action = (args: Route.ActionArgs) =>
     }) => {
       const data = await request.formData()
 
-      switch (getEnumValue(Intent, data, 'intent')) {
-        case Intent.Deploy: {
+      const intent = getEnumValue(Intent, data, 'intent')
+
+      switch (intent) {
+        case Intent.Deploy:
+        case Intent.AcceptWarnings: {
           const roleId = getUUID(data, 'roleId')
           const role = await getRole(dbClient(), roleId)
 
@@ -97,12 +101,14 @@ export const action = (args: Route.ActionArgs) =>
 
           const { plan, issues } = await planRoleUpdate(roleId)
 
-          if (issues.length > 0) {
-            return { issues }
+          if (issues.length > 0 && intent !== Intent.AcceptWarnings) {
+            return { issues, roleId }
           }
 
           const deployment = await dbClient().transaction(async (tx) => {
-            const deployment = await createRoleDeployment(tx, user, role)
+            const deployment = await createRoleDeployment(tx, user, role, {
+              issues,
+            })
 
             for (const { steps, account } of plan) {
               await createRoleDeploymentStep(tx, deployment, {
@@ -143,7 +149,8 @@ export const action = (args: Route.ActionArgs) =>
         const data = await request.formData()
 
         switch (getEnumValue(Intent, data, 'intent')) {
-          case Intent.Deploy: {
+          case Intent.Deploy:
+          case Intent.AcceptWarnings: {
             const role = await getRole(dbClient(), getUUID(data, 'roleId'))
 
             return (
@@ -219,6 +226,16 @@ const ManagedRoles = ({
               <Issues issues={actionData.issues} />
 
               <Modal.Actions>
+                <InlineForm context={{ roleId: actionData.roleId }}>
+                  <PrimaryButton
+                    submit
+                    style="warning"
+                    intent={Intent.AcceptWarnings}
+                  >
+                    Proceed
+                  </PrimaryButton>
+                </InlineForm>
+
                 <Modal.CloseAction>Cancel</Modal.CloseAction>
               </Modal.Actions>
             </Modal>

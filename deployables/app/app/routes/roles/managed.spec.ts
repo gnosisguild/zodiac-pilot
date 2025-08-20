@@ -7,6 +7,7 @@ import {
   getRoleDeployments,
   getRoleDeploymentSteps,
 } from '@zodiac/db'
+import { RoleDeploymentIssue } from '@zodiac/db/schema'
 import {
   dbIt,
   roleDeploymentFactory,
@@ -26,7 +27,6 @@ import {
 import { href } from 'react-router'
 import { AccountBuilderCall, AccountType } from 'ser-kit'
 import { beforeEach, describe, expect, vi } from 'vitest'
-import { Issue } from './issues'
 import { planRoleUpdate } from './planRoleUpdate'
 
 vi.mock('./planRoleUpdate', () => ({ planRoleUpdate: vi.fn() }))
@@ -144,7 +144,7 @@ describe('Managed roles', () => {
           await roleFactory.create(tenant, user)
 
           mockPlanRoleUpdate.mockResolvedValue({
-            issues: [Issue.MissingDefaultWallet],
+            issues: [RoleDeploymentIssue.MissingDefaultWallet],
             labels: {},
             plan: [],
             roleLabels: {},
@@ -180,7 +180,7 @@ describe('Managed roles', () => {
         const role = await roleFactory.create(tenant, user)
 
         mockPlanRoleUpdate.mockResolvedValue({
-          issues: [Issue.MissingDefaultWallet],
+          issues: [RoleDeploymentIssue.MissingDefaultWallet],
           labels: {},
           plan: [],
           roleLabels: {},
@@ -206,7 +206,7 @@ describe('Managed roles', () => {
         const [deployment] = await getRoleDeployments(dbClient(), role.id)
 
         expect(deployment).toHaveProperty('issues', [
-          Issue.MissingDefaultWallet,
+          RoleDeploymentIssue.MissingDefaultWallet,
         ])
       })
     })
