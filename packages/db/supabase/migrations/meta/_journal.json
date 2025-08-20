@@ -470,6 +470,13 @@
       "when": 1755674364034,
       "tag": "0066_add deployment issue enum",
       "breakpoints": true
+    },
+    {
+      "idx": 67,
+      "version": "7",
+      "when": 1755677514318,
+      "tag": "0067_add target account to deployment step",
+      "breakpoints": true
     }
   ]
 }

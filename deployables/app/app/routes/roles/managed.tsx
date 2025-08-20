@@ -15,7 +15,7 @@ import {
 } from '@zodiac/db'
 import { getEnumValue, getUUID } from '@zodiac/form-data'
 import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
-import { isUUID } from '@zodiac/schema'
+import { HexAddress, isUUID } from '@zodiac/schema'
 import {
   DateValue,
   Empty,
@@ -112,10 +112,26 @@ export const action = (args: Route.ActionArgs) =>
             })
 
             for (const { steps, account } of plan) {
+              const targetAccount = steps.reduce<HexAddress | null>(
+                (result, { from }) => {
+                  if (result != null) {
+                    return result
+                  }
+
+                  if (from == null) {
+                    return null
+                  }
+
+                  return from
+                },
+                null,
+              )
+
               await createRoleDeploymentStep(tx, deployment, {
                 account,
                 calls: steps.map(({ call }) => call),
                 transactionBundle: steps.map(({ transaction }) => transaction),
+                targetAccount,
               })
             }
 
@@ -372,6 +388,7 @@ const PendingDeploymentModal = ({ workspaceId }: { workspaceId: string }) => {
   return (
     <Modal
       open={!dismissed}
+      size="xl"
       title="Deployment already in progress"
       description="This role is currently in the progress of being deployed. You can either open the current deployment or cancel it."
       onClose={() => setDismissed(true)}

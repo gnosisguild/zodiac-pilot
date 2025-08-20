@@ -20,7 +20,8 @@ export const getProposedTransaction = async (
 
   return {
     ...proposal,
-    transactions: metaTransactionRequestSchema
+
+    transaction: metaTransactionRequestSchema
       .array()
       .parse(jsonParse(proposal.transaction)),
   }

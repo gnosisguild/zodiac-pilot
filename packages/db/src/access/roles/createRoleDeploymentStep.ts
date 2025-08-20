@@ -1,6 +1,10 @@
 import { getChainId } from '@zodiac/chains'
 import { RoleDeployment, RoleDeploymentStepTable } from '@zodiac/db/schema'
-import { jsonStringify, MetaTransactionRequest } from '@zodiac/schema'
+import {
+  HexAddress,
+  jsonStringify,
+  MetaTransactionRequest,
+} from '@zodiac/schema'
 import { Account, AccountBuilderCall } from 'ser-kit'
 import { DBClient } from '../../dbClient'
 
@@ -8,12 +12,18 @@ type CreateRoleDeploymentStepOptions = {
   account: Account
   calls: AccountBuilderCall[]
   transactionBundle: MetaTransactionRequest[]
+  targetAccount: HexAddress | null
 }
 
 export const createRoleDeploymentStep = async (
   db: DBClient,
   roleDeployment: RoleDeployment,
-  { account, calls, transactionBundle }: CreateRoleDeploymentStepOptions,
+  {
+    account,
+    calls,
+    transactionBundle,
+    targetAccount,
+  }: CreateRoleDeploymentStepOptions,
 ) => {
   const previousStep = await db.query.roleDeploymentStep.findFirst({
     where(fields, { eq }) {
@@ -30,5 +40,6 @@ export const createRoleDeploymentStep = async (
     tenantId: roleDeployment.tenantId,
     transactionBundle: JSON.parse(jsonStringify(transactionBundle)),
     workspaceId: roleDeployment.workspaceId,
+    targetAccount,
   })
 }

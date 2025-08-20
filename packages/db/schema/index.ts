@@ -747,7 +747,7 @@ export enum RoleDeploymentIssue {
   MissingDefaultWallet = 'MissingDefaultWallet',
 }
 
-const RoleDeploymentIssueEnum = pgEnum(
+export const RoleDeploymentIssueEnum = pgEnum(
   'RoleDeploymentIssue',
   enumToPgEnum(RoleDeploymentIssue),
 )
@@ -764,7 +764,7 @@ export const RoleDeploymentTable = pgTable(
       onDelete: 'set null',
     }),
 
-    issues: RoleDeploymentIssueEnum().array(),
+    issues: RoleDeploymentIssueEnum().array().notNull().default([]),
 
     ...roleReference,
     ...createdByReference,
@@ -817,6 +817,8 @@ export const RoleDeploymentStepTable = pgTable(
     calls: jsonb().notNull().$type<AccountBuilderCall[]>(),
     transactionBundle: jsonb().notNull().$type<MetaTransactionRequest[]>(),
 
+    targetAccount: text().$type<HexAddress>(),
+
     transactionHash: text().$type<Hex>(),
 
     completedAt: timestamp({ withTimezone: true }),
@@ -845,6 +847,10 @@ export const RoleDeploymentStepTable = pgTable(
     index().on(table.cancelledById),
   ],
 )
+
+export type RoleDeploymentStep = typeof RoleDeploymentStepTable.$inferSelect
+export type RoleDeploymentStepCreateInput =
+  typeof RoleDeploymentStepTable.$inferInsert
 
 export const schema = {
   tenant: TenantTable,

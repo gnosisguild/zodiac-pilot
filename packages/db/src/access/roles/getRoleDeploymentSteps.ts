@@ -1,5 +1,6 @@
 import { jsonParse, metaTransactionRequestSchema } from '@zodiac/schema'
 import { UUID } from 'crypto'
+import { Account, AccountBuilderCall } from 'ser-kit'
 import { DBClient } from '../../dbClient'
 
 export const getRoleDeploymentSteps = async (
@@ -18,8 +19,8 @@ export const getRoleDeploymentSteps = async (
   return steps.map(({ account, calls, transactionBundle, ...step }) => {
     return {
       ...step,
-      account: jsonParse(account),
-      calls: jsonParse(calls),
+      account: jsonParse<Account>(account),
+      calls: jsonParse<AccountBuilderCall[]>(calls),
       transactionBundle: metaTransactionRequestSchema
         .array()
         .parse(jsonParse(transactionBundle)),
