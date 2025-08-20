@@ -98,7 +98,7 @@ export const action = (args: Route.ActionArgs) =>
         route = updateLabel(route, account.label)
       }
 
-      return { route }
+      return { route, account }
     },
     {
       ensureSignedIn: true,
@@ -119,7 +119,7 @@ export const clientAction = async ({
 }: Route.ClientActionArgs) => {
   const data = await request.clone().formData()
 
-  const { error, route } = await serverAction()
+  const { error, route, account } = await serverAction()
 
   if (error != null) {
     return { error }
@@ -132,6 +132,7 @@ export const clientAction = async ({
       {
         type: CompanionAppMessageType.SAVE_AND_LAUNCH,
         data: route,
+        account,
       },
       () => {
         resolve()

@@ -1,3 +1,4 @@
+import { jsonStringify } from '@zodiac/schema'
 import {
   CompanionAppMessageType,
   type CompanionAppMessage,
@@ -130,7 +131,7 @@ export function companionRequest(message: CompanionAppMessage, handler?: any) {
 
   window.addEventListener('message', handleMessage)
 
-  window.postMessage(message, '*')
+  window.postMessage(JSON.parse(jsonStringify(message)), '*')
 
   return () => {
     window.removeEventListener('message', handleMessage)
