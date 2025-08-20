@@ -4,7 +4,11 @@ import {
   getRoleActionAssets,
   getRoleActions,
 } from '@zodiac/db'
-import { Account as DBAccount, Role } from '@zodiac/db/schema'
+import {
+  Account as DBAccount,
+  Role,
+  RoleDeploymentIssue,
+} from '@zodiac/db/schema'
 import { encodeRoleKey } from '@zodiac/modules'
 import { UUID } from 'crypto'
 import { Account, AccountType, prefixAddress, queryAccounts } from 'ser-kit'
@@ -17,7 +21,6 @@ import {
 import { Labels } from './AddressLabelContext'
 import { computeSwapPermissions } from './computeSwapPermissions'
 import { getRefillPeriod } from './getRefillPeriod'
-import { Issue } from './issues'
 import { predictRolesModAddress, Roles } from './predictRolesModAddress'
 import { RoleLabels } from './RoleLabelContext'
 
@@ -25,7 +28,7 @@ type Result = {
   rolesMods: Roles[]
   modLabels: Labels
   roleLabels: RoleLabels
-  issues: Issue[]
+  issues: RoleDeploymentIssue[]
 }
 
 type GetRoleModsOptions = {
@@ -49,7 +52,7 @@ export const getRoleMods = async (
       rolesMods: [],
       modLabels: {},
       roleLabels: {},
-      issues: [Issue.NoActiveAccounts],
+      issues: [RoleDeploymentIssue.NoActiveAccounts],
     }
   }
 

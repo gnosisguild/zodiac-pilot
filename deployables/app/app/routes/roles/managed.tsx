@@ -14,7 +14,7 @@ import {
   getWorkspace,
 } from '@zodiac/db'
 import { getEnumValue, getUUID } from '@zodiac/form-data'
-import { useIsPending } from '@zodiac/hooks'
+import { useAfterSubmit, useIsPending } from '@zodiac/hooks'
 import { isUUID } from '@zodiac/schema'
 import {
   DateValue,
@@ -39,7 +39,8 @@ import {
 import { Address } from '@zodiac/web3'
 import { UUID } from 'crypto'
 import { CloudUpload, Pencil } from 'lucide-react'
-import { href, redirect } from 'react-router'
+import { useState } from 'react'
+import { href, redirect, useActionData } from 'react-router'
 import type { Route } from './+types/managed'
 import { Intent } from './intents'
 import { Issues } from './issues'
@@ -177,7 +178,6 @@ export const action = (args: Route.ActionArgs) =>
 
 const ManagedRoles = ({
   loaderData: { roles, activatedAccounts, members },
-  actionData,
   params: { workspaceId },
 }: Route.ComponentProps) => {
   if (roles.length === 0) {
@@ -186,62 +186,9 @@ const ManagedRoles = ({
 
   return (
     <>
-      {actionData != null && (
-        <>
-          {actionData.pendingDeploymentId != null && (
-            <Modal
-              open
-              title="Deployment already in progress"
-              description="This role is currently in the progress of being deployed. You can either open the current deployment or cancel it."
-            >
-              <Modal.Actions>
-                <PrimaryLinkButton
-                  to={href(
-                    '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId',
-                    {
-                      workspaceId,
-                      roleId: actionData.roleId,
-                      deploymentId: actionData.pendingDeploymentId,
-                    },
-                  )}
-                >
-                  Open deployment
-                </PrimaryLinkButton>
+      <PendingDeploymentModal workspaceId={workspaceId} />
 
-                <CancelDeployment
-                  deploymentId={actionData.pendingDeploymentId}
-                />
-
-                <Modal.CloseAction>Cancel</Modal.CloseAction>
-              </Modal.Actions>
-            </Modal>
-          )}
-
-          {actionData.issues != null && (
-            <Modal
-              open
-              title="Please check your configuration"
-              description="We identified one or more issues with your role configuration."
-            >
-              <Issues issues={actionData.issues} />
-
-              <Modal.Actions>
-                <InlineForm context={{ roleId: actionData.roleId }}>
-                  <PrimaryButton
-                    submit
-                    style="warning"
-                    intent={Intent.AcceptWarnings}
-                  >
-                    Proceed
-                  </PrimaryButton>
-                </InlineForm>
-
-                <Modal.CloseAction>Cancel</Modal.CloseAction>
-              </Modal.Actions>
-            </Modal>
-          )}
-        </>
-      )}
+      <CheckConfigurationModal />
 
       <Table>
         <TableHead>
@@ -367,3 +314,86 @@ const CancelDeployment = ({ deploymentId }: { deploymentId: UUID }) => (
     </SecondaryButton>
   </InlineForm>
 )
+
+const CheckConfigurationModal = () => {
+  const actionData = useActionData<typeof action>()
+  const [dismissed, setDismissed] = useState(false)
+
+  useAfterSubmit([Intent.Deploy, Intent.AcceptWarnings], () =>
+    setDismissed(false),
+  )
+
+  if (actionData == null) {
+    return null
+  }
+
+  if (actionData.issues == null) {
+    return null
+  }
+
+  return (
+    <Modal
+      open={!dismissed}
+      title="Please check your configuration"
+      description="We identified one or more issues with your role configuration."
+      onClose={() => setDismissed(true)}
+    >
+      <Issues issues={actionData.issues} />
+
+      <Modal.Actions>
+        <InlineForm context={{ roleId: actionData.roleId }}>
+          <PrimaryButton submit style="warning" intent={Intent.AcceptWarnings}>
+            Proceed
+          </PrimaryButton>
+        </InlineForm>
+
+        <Modal.CloseAction>Cancel</Modal.CloseAction>
+      </Modal.Actions>
+    </Modal>
+  )
+}
+
+const PendingDeploymentModal = ({ workspaceId }: { workspaceId: string }) => {
+  const actionData = useActionData<typeof action>()
+  const [dismissed, setDismissed] = useState(false)
+
+  useAfterSubmit([Intent.Deploy, Intent.AcceptWarnings], () =>
+    setDismissed(false),
+  )
+
+  if (actionData == null) {
+    return null
+  }
+
+  if (actionData.pendingDeploymentId == null) {
+    return null
+  }
+
+  return (
+    <Modal
+      open={!dismissed}
+      title="Deployment already in progress"
+      description="This role is currently in the progress of being deployed. You can either open the current deployment or cancel it."
+      onClose={() => setDismissed(true)}
+    >
+      <Modal.Actions>
+        <PrimaryLinkButton
+          to={href(
+            '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId',
+            {
+              workspaceId,
+              roleId: actionData.roleId,
+              deploymentId: actionData.pendingDeploymentId,
+            },
+          )}
+        >
+          Open deployment
+        </PrimaryLinkButton>
+
+        <CancelDeployment deploymentId={actionData.pendingDeploymentId} />
+
+        <Modal.CloseAction>Cancel</Modal.CloseAction>
+      </Modal.Actions>
+    </Modal>
+  )
+}
