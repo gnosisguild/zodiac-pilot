@@ -47,6 +47,8 @@ export const transactionProposalFactory = createFactory<
       id: randomUUID(),
       createdAt: new Date(),
       signedTransactionId: null,
+      callbackUrl: null,
+      callbackState: null,
 
       ...data,
     }
