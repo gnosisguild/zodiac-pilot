@@ -800,7 +800,7 @@ describe('Sign', () => {
             {
               user,
               tenant,
-              extraRoutes: [{ path: '/test-route' }],
+              extraRoutes: [{ path: '/test-route', Component: () => null }],
             },
           )
 
