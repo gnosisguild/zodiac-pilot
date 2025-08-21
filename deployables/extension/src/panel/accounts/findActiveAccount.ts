@@ -5,7 +5,7 @@ import {
 } from '@/companion'
 import {
   findAdHocRoute,
-  getLastUsedRouteId,
+  getLastUsedAccountId,
   getRoutes,
 } from '@/execution-routes'
 
@@ -22,7 +22,7 @@ export const findActiveAccount = async (options: FetchOptions = {}) => {
   }
 
   const routes = await getRoutes()
-  const activeAccountId = await getLastUsedRouteId()
+  const activeAccountId = await getLastUsedAccountId()
 
   const route = routes.find((route) => route.id === activeAccountId)
 
