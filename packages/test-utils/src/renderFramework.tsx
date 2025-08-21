@@ -42,7 +42,7 @@ export type RouteModule = {
 
 export type RenderFrameworkOptions = Omit<RenderOptions, 'inspectRoutes'> & {
   loadActions?: () => Promise<unknown>
-  extraRoutes?: StubRoute
+  extraRoutes?: StubRoute[]
 }
 
 export type RenderFrameworkResult = RenderResult
@@ -103,7 +103,7 @@ export async function createRenderFramework<
   }
 }
 
-type StubRoute = Parameters<typeof createRoutesStub>[0]
+export type StubRoute = Parameters<typeof createRoutesStub>[0][number]
 
 type AnyRouteFiles = Record<
   string,
@@ -112,10 +112,10 @@ type AnyRouteFiles = Record<
     page: string
   }
 >
-function stubRoutes<R extends Register>(
+export function stubRoutes<R extends Register>(
   basePath: URL,
   routes: RouteConfigEntry[],
-): Promise<StubRoute> {
+): Promise<StubRoute[]> {
   type RouteFiles = R extends {
     routeFiles: infer Registered extends AnyRouteFiles
   }
@@ -162,38 +162,44 @@ function stubRoutes<R extends Register>(
         // the test stub from react-router unfortunately
         // doesn't handle the clientLoader/loader hierarchy
         // so we built it ouselves.
-        async loader(loaderArgs: LoaderFunctionArgs) {
-          if (clientLoader != null) {
-            return await clientLoader({
-              ...loaderArgs,
-              serverLoader:
-                loader == null ? undefined : () => loader(loaderArgs),
-            })
-          }
+        loader:
+          clientLoader != null || loader != null
+            ? async (loaderArgs: LoaderFunctionArgs) => {
+                if (clientLoader != null) {
+                  return await clientLoader({
+                    ...loaderArgs,
+                    serverLoader:
+                      loader == null ? undefined : () => loader(loaderArgs),
+                  })
+                }
 
-          if (loader != null) {
-            return await loader(loaderArgs)
-          }
+                if (loader != null) {
+                  return await loader(loaderArgs)
+                }
 
-          return null
-        },
+                return null
+              }
+            : undefined,
         // the test stub from react-router unfortunately
         // doesn't handle the clientAction/action hierarchy
         // so we built it ouselves.
-        async action(actionArgs: ActionFunctionArgs) {
-          if (clientAction != null) {
-            return await clientAction({
-              ...actionArgs,
-              serverAction: action ? () => action(actionArgs) : undefined,
-            })
-          }
+        action:
+          clientAction != null || action != null
+            ? async (actionArgs: ActionFunctionArgs) => {
+                if (clientAction != null) {
+                  return await clientAction({
+                    ...actionArgs,
+                    serverAction: action ? () => action(actionArgs) : undefined,
+                  })
+                }
 
-          if (action != null) {
-            return await action(actionArgs)
-          }
+                if (action != null) {
+                  return await action(actionArgs)
+                }
 
-          return null
-        },
+                return null
+              }
+            : undefined,
         Component:
           Component == null
             ? undefined
