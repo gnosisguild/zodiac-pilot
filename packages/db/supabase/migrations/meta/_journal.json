@@ -484,6 +484,13 @@
       "when": 1755772469139,
       "tag": "0068_remove ser account type enum",
       "breakpoints": true
+    },
+    {
+      "idx": 69,
+      "version": "7",
+      "when": 1755774252987,
+      "tag": "0069_add callback to proposal",
+      "breakpoints": true
     }
   ]
 }

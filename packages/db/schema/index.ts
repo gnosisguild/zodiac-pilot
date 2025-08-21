@@ -501,6 +501,9 @@ export const ProposedTransactionTable = pgTable(
         onDelete: 'cascade',
       }),
 
+    callbackUrl: text(),
+    callbackState: text(),
+
     ...userReference,
     ...tenantReference,
     ...accountReference,

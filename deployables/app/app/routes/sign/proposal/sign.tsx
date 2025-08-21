@@ -189,23 +189,22 @@ export const action = async (args: Route.ActionArgs) =>
             })
           })
 
-          const url = new URL(request.url)
-          const callback = url.searchParams.get('callback')
+          if (proposal.callbackUrl != null) {
+            const callbackUrl = new URL(proposal.callbackUrl)
 
-          if (callback != null) {
-            const state = url.searchParams.get('state')
-
-            const callbackUrl = new URL(callback)
-
-            if (state != null) {
-              callbackUrl.searchParams.set('state', state)
+            if (proposal.callbackState != null) {
+              callbackUrl.searchParams.set('state', proposal.callbackState)
             }
 
-            await fetch(callbackUrl.toString(), { method: 'POST' }).catch(
-              (error) => {
-                console.error('Could not call callback after sign', { error })
-              },
-            )
+            await fetch(callbackUrl.toString(), {
+              method: 'POST',
+              body: formData({
+                proposalId: proposal.id,
+                transactionHash: getString(data, 'transactionHash'),
+              }),
+            }).catch((error) => {
+              console.error('Could not call callback after sign', { error })
+            })
           }
 
           return null
