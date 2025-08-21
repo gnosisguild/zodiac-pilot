@@ -2,6 +2,7 @@ import { OperationType } from '@safe-global/types-kit'
 import { z } from 'zod'
 import { decode } from './decode'
 import { hexSchema } from './hex'
+import { jsonParse } from './jsonParse'
 import { addressSchema } from './routeSchema'
 
 const operationTypeSchema = z.union([
@@ -50,7 +51,7 @@ export const parseTransactionData = (
   try {
     const rawJson = decode(transactionData)
 
-    return metaTransactionRequestSchema.array().parse(rawJson)
+    return metaTransactionRequestSchema.array().parse(jsonParse(rawJson))
   } catch (error) {
     console.error('Error parsing the route from the URL', { error })
 

@@ -435,6 +435,55 @@
       "when": 1755253828471,
       "tag": "0061_store nonce on account",
       "breakpoints": true
+    },
+    {
+      "idx": 62,
+      "version": "7",
+      "when": 1755604659412,
+      "tag": "0062_add deployment table",
+      "breakpoints": true
+    },
+    {
+      "idx": 63,
+      "version": "7",
+      "when": 1755610410762,
+      "tag": "0063_add transaction information to deployment step",
+      "breakpoints": true
+    },
+    {
+      "idx": 64,
+      "version": "7",
+      "when": 1755611150315,
+      "tag": "0064_add status fields to deployment step",
+      "breakpoints": true
+    },
+    {
+      "idx": 65,
+      "version": "7",
+      "when": 1755611518043,
+      "tag": "0065_change json columns to jsonb",
+      "breakpoints": true
+    },
+    {
+      "idx": 66,
+      "version": "7",
+      "when": 1755674364034,
+      "tag": "0066_add deployment issue enum",
+      "breakpoints": true
+    },
+    {
+      "idx": 67,
+      "version": "7",
+      "when": 1755677514318,
+      "tag": "0067_add target account to deployment step",
+      "breakpoints": true
+    },
+    {
+      "idx": 68,
+      "version": "7",
+      "when": 1755772469139,
+      "tag": "0068_remove ser account type enum",
+      "breakpoints": true
     }
   ]
 }

@@ -20,3 +20,5 @@ export const DateValue = ({ children }: DateValueProps) => {
     </span>
   )
 }
+
+export const formatDate = (value: Date | number) => dateFormatter.format(value)

@@ -1,1 +1,3 @@
-export const decode = (data: string) => JSON.parse(atob(data).toString())
+import { jsonParse } from './jsonParse'
+
+export const decode = (data: string) => jsonParse(atob(data).toString())

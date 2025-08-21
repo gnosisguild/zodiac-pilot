@@ -29,7 +29,8 @@ export const loader = (args: Route.LoaderArgs) =>
         return null
       }
 
-      return safeJson(account)
+      // TODO: remove when 3.20.1 reaches saturation
+      return safeJson(account, { noInternalRepresentation: true })
     },
   )
 

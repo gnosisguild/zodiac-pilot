@@ -4,7 +4,7 @@ import {
   getDefaultWallets,
   getRoleMembers,
 } from '@zodiac/db'
-import { Role } from '@zodiac/db/schema'
+import { Role, RoleDeploymentIssue } from '@zodiac/db/schema'
 import {
   Account,
   AccountType,
@@ -12,14 +12,13 @@ import {
   withPredictedAddress,
 } from 'ser-kit'
 import { Labels } from './AddressLabelContext'
-import { Issue } from './issues'
 
 type Safe = Extract<Account, { type: AccountType.SAFE }>
 
 type Result = {
   safes: Account[]
   memberLabels: Labels
-  issues: Issue[]
+  issues: RoleDeploymentIssue[]
 }
 
 export const getMemberSafes = async (role: Role): Promise<Result> => {
@@ -29,7 +28,7 @@ export const getMemberSafes = async (role: Role): Promise<Result> => {
     return {
       safes: [],
       memberLabels: {},
-      issues: [Issue.NoActiveMembers],
+      issues: [RoleDeploymentIssue.NoActiveMembers],
     }
   }
 
@@ -39,7 +38,7 @@ export const getMemberSafes = async (role: Role): Promise<Result> => {
     return {
       safes: [],
       memberLabels: {},
-      issues: [Issue.NoActiveAccounts],
+      issues: [RoleDeploymentIssue.NoActiveAccounts],
     }
   }
 
@@ -49,15 +48,15 @@ export const getMemberSafes = async (role: Role): Promise<Result> => {
 
   const safes: Account[] = []
   const memberLabels: Labels = {}
-  const issues: Issue[] = []
+  const issues: RoleDeploymentIssue[] = []
 
   for (const member of members) {
     const defaultWallets = await getDefaultWallets(dbClient(), member.id)
 
     for (const chainId of activeChains) {
       if (defaultWallets[chainId] == null) {
-        if (!issues.includes(Issue.MissingDefaultWallet)) {
-          issues.push(Issue.MissingDefaultWallet)
+        if (!issues.includes(RoleDeploymentIssue.MissingDefaultWallet)) {
+          issues.push(RoleDeploymentIssue.MissingDefaultWallet)
         }
 
         continue

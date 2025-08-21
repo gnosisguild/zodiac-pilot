@@ -2,7 +2,7 @@ import { authorizedAction } from '@/auth-server'
 import { invariantResponse } from '@epic-web/invariant'
 import { dbClient, getAccount, proposeTransaction } from '@zodiac/db'
 import { getString } from '@zodiac/form-data'
-import { isUUID, metaTransactionRequestSchema } from '@zodiac/schema'
+import { isUUID, jsonParse, metaTransactionRequestSchema } from '@zodiac/schema'
 import type { Route } from './+types/propose-transaction'
 
 export const action = (args: Route.ActionArgs) =>
@@ -28,7 +28,7 @@ export const action = (args: Route.ActionArgs) =>
         workspaceId: account.workspaceId,
         transaction: metaTransactionRequestSchema
           .array()
-          .parse(JSON.parse(getString(data, 'transaction'))),
+          .parse(jsonParse(getString(data, 'transaction'))),
       })
 
       return { proposalId: proposal.id }

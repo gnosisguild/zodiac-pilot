@@ -3,6 +3,9 @@ import {
   addressSchema,
   AllowanceInterval,
   chainIdSchema,
+  Hex,
+  NonNullableProperties,
+  NullProperties,
   waypointsSchema,
   type HexAddress,
   type MetaTransactionRequest,
@@ -17,6 +20,7 @@ import {
   index,
   integer,
   json,
+  jsonb,
   pgEnum,
   pgTable,
   primaryKey,
@@ -28,6 +32,7 @@ import {
   type AnyPgColumn,
 } from 'drizzle-orm/pg-core'
 import { createSelectSchema } from 'drizzle-zod'
+import { AccountBuilderCall, Account as SerAccount } from 'ser-kit'
 import { z } from 'zod'
 import { createRandomString } from './createRandomString'
 import { enumToPgEnum } from './enumToPgEnum'
@@ -738,6 +743,138 @@ const ActionAssetRelations = relations(ActionAssetTable, ({ one }) => ({
   }),
 }))
 
+export enum RoleDeploymentIssue {
+  NoActiveAccounts = 'NoActiveAccounts',
+  NoActiveMembers = 'NoActiveMembers',
+  MissingDefaultWallet = 'MissingDefaultWallet',
+}
+
+export const RoleDeploymentIssueEnum = pgEnum(
+  'RoleDeploymentIssue',
+  enumToPgEnum(RoleDeploymentIssue),
+)
+
+export const RoleDeploymentTable = pgTable(
+  'RoleDeployment',
+  {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+
+    completedAt: timestamp({ withTimezone: true }),
+
+    cancelledAt: timestamp({ withTimezone: true }),
+    cancelledById: uuid()
+      .$type<UUID>()
+      .references(() => UserTable.id, {
+        onDelete: 'set null',
+      }),
+
+    issues: RoleDeploymentIssueEnum().array().notNull().default([]),
+
+    ...roleReference,
+    ...createdByReference,
+    ...createdTimestamp,
+    ...updatedTimestamp,
+    ...tenantReference,
+    ...workspaceReference,
+  },
+  (table) => [
+    index().on(table.roleId),
+    index().on(table.createdById),
+    index().on(table.tenantId),
+    index().on(table.workspaceId),
+  ],
+)
+
+const roleDeploymentReference = {
+  roleDeploymentId: uuid()
+    .notNull()
+    .references(() => RoleDeploymentTable.id, { onDelete: 'cascade' }),
+}
+
+export type BaseRoleDeployment = typeof RoleDeploymentTable.$inferSelect
+export type RoleDeploymentCreateInput = typeof RoleDeploymentTable.$inferInsert
+
+export type ActiveRoleDeployment = NullProperties<
+  BaseRoleDeployment,
+  'cancelledAt' | 'cancelledById' | 'completedAt'
+>
+
+export type CompletedRoleDeployment = NonNullableProperties<
+  NullProperties<BaseRoleDeployment, 'cancelledAt' | 'cancelledById'>,
+  'completedAt'
+>
+
+export type CancelledRoleDeployment = NonNullableProperties<
+  NullProperties<BaseRoleDeployment, 'completedAt'>,
+  'cancelledAt' | 'cancelledById'
+>
+
+export type RoleDeployment =
+  | ActiveRoleDeployment
+  | CompletedRoleDeployment
+  | CancelledRoleDeployment
+
+export const RoleDeploymentStepTable = pgTable(
+  'RoleDeploymentStep',
+  {
+    id: uuid().notNull().$type<UUID>().defaultRandom().primaryKey(),
+    index: integer().notNull(),
+
+    proposedTransactionId: uuid().references(
+      () => ProposedTransactionTable.id,
+      {
+        onDelete: 'set null',
+      },
+    ),
+    signedTransactionId: uuid().references(() => SignedTransactionTable.id, {
+      onDelete: 'set null',
+    }),
+
+    ...chainReference,
+
+    account: jsonb().notNull().$type<SerAccount>(),
+    calls: jsonb().notNull().$type<AccountBuilderCall[]>(),
+    transactionBundle: jsonb().notNull().$type<MetaTransactionRequest[]>(),
+
+    targetAccount: text().$type<HexAddress>(),
+
+    transactionHash: text().$type<Hex>(),
+
+    completedAt: timestamp({ withTimezone: true }),
+    completedById: uuid()
+      .$type<UUID>()
+      .references(() => UserTable.id, {
+        onDelete: 'set null',
+      }),
+
+    cancelledAt: timestamp({ withTimezone: true }),
+    cancelledById: uuid()
+      .$type<UUID>()
+      .references(() => UserTable.id, {
+        onDelete: 'set null',
+      }),
+
+    ...roleDeploymentReference,
+    ...createdTimestamp,
+    ...updatedTimestamp,
+    ...tenantReference,
+    ...workspaceReference,
+  },
+  (table) => [
+    index().on(table.roleDeploymentId),
+    index().on(table.proposedTransactionId),
+    index().on(table.signedTransactionId),
+    index().on(table.tenantId),
+    index().on(table.workspaceId),
+    index().on(table.completedById),
+    index().on(table.cancelledById),
+  ],
+)
+
+export type RoleDeploymentStep = typeof RoleDeploymentStepTable.$inferSelect
+export type RoleDeploymentStepCreateInput =
+  typeof RoleDeploymentStepTable.$inferInsert
+
 export const schema = {
   tenant: TenantTable,
   user: UserTable,
@@ -760,6 +897,8 @@ export const schema = {
   roleAction: RoleActionTable,
   roleActionAsset: ActionAssetTable,
   defaultWallet: DefaultWalletTable,
+  roleDeployment: RoleDeploymentTable,
+  roleDeploymentStep: RoleDeploymentStepTable,
 
   TenantRelations,
   FeatureRelations,
@@ -774,4 +913,5 @@ export const schema = {
   RoleActionRelations,
   ActionAssetRelations,
   DefaultWalletRelations,
+  RoleDeploymentIssueEnum,
 }

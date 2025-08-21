@@ -2,17 +2,17 @@ import { type DBClient } from '@zodiac/db'
 import { getMockedDb } from '../dbIt'
 
 type FactoryOptions<Input, Output, BuildArgs extends Array<unknown>> = {
-  build: (...data: [...BuildArgs, input?: Partial<Input>]) => Input
+  build: (...data: [...BuildArgs, data?: Partial<Input>]) => Input
   create: (
     db: DBClient,
-    ...input: [data: Input, ...BuildArgs, input?: Partial<Input>]
+    ...input: [data: Input, ...BuildArgs, data?: Partial<Input>]
   ) => Promise<Output>
   createWithoutDb: (input: Input) => Output
 }
 
 type Factory<Input, Output, BuildArgs extends Array<unknown>> = {
-  createWithoutDb: (...data: [...BuildArgs, input?: Partial<Input>]) => Output
-  create: (...data: [...BuildArgs, input?: Partial<Input>]) => Promise<Output>
+  createWithoutDb: (...data: [...BuildArgs, data?: Partial<Input>]) => Output
+  create: (...data: [...BuildArgs, data?: Partial<Input>]) => Promise<Output>
 }
 
 export const createFactory = <

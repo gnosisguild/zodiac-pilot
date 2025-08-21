@@ -1,5 +1,5 @@
 import { invariant } from '@epic-web/invariant'
-import { metaTransactionRequestSchema } from '@zodiac/schema'
+import { jsonParse, metaTransactionRequestSchema } from '@zodiac/schema'
 import type { UUID } from 'crypto'
 import type { DBClient } from '../../dbClient'
 
@@ -20,8 +20,9 @@ export const getProposedTransaction = async (
 
   return {
     ...proposal,
-    transactions: metaTransactionRequestSchema
+
+    transaction: metaTransactionRequestSchema
       .array()
-      .parse(proposal.transaction),
+      .parse(jsonParse(proposal.transaction)),
   }
 }
