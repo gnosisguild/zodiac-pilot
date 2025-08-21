@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm'
 import { DBClient } from '../../dbClient'
 
 type UpdateRoleDeploymentStepOptions = {
-  proposedTransactionId: UUID
+  proposedTransactionId?: UUID
 }
 
 export const updateRoleDeploymentStep = (

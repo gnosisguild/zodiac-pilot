@@ -14,6 +14,7 @@ export { createMockSimulatedTransaction } from './createMockSimulatedTransaction
 export { createMockTokenBalance } from './createMockTokenBalance'
 export { loadAndActivateRoute } from './loadAndActivateRoute'
 export { loadRoutes } from './loadRoutes'
+export { post } from './post'
 export { postMessage } from './postMessage'
 export { regexEscape } from './regexEscape'
 export { render } from './render'

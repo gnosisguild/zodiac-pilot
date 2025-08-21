@@ -1,6 +1,5 @@
 import { ProvideUser } from '@/auth-client'
 import { ProvideExtensionVersion } from '@/components'
-import { getOrganization, getOrganizationsForUser } from '@/workOS/server'
 import { authkitLoader } from '@workos-inc/authkit-react-router'
 import type {
   AuthorizedData,
@@ -9,7 +8,6 @@ import type {
 import type { Organization } from '@workos-inc/node'
 import { activateFeatures, createFeature, dbClient } from '@zodiac/db'
 import type { Tenant, User } from '@zodiac/db/schema'
-import { getAdminOrganizationId } from '@zodiac/env'
 import {
   CompanionAppMessageType,
   CompanionResponseMessageType,
@@ -32,11 +30,7 @@ import { afterEach, beforeEach, vi } from 'vitest'
 import { default as routes } from '../app/routes'
 import { loadRoutes } from './loadRoutes'
 import { postMessage } from './postMessage'
-import { createMockWorkOsOrganization, createMockWorkOsUser } from './workOS'
-
-const mockGetOrganizationsForUser = vi.mocked(getOrganizationsForUser)
-const mockGetOrganization = vi.mocked(getOrganization)
-const mockGetAdminOrgId = vi.mocked(getAdminOrganizationId)
+import { mockWorkOs } from './workOS'
 
 const baseRender = await createRenderFramework<Register, typeof routes>(
   new URL(/* @vite-ignore */ '../app', import.meta.url),
@@ -256,7 +250,7 @@ const RenderWrapper = ({ children, user, features }: RenderWrapperOptions) => (
   </ProvideExtensionVersion>
 )
 
-const createAuth = (user?: AuthorizedData['user'] | null) => {
+export const createAuth = (user?: AuthorizedData['user'] | null) => {
   if (user == null) {
     return {
       entitlements: null,
@@ -280,49 +274,4 @@ const createAuth = (user?: AuthorizedData['user'] | null) => {
     sessionId: '',
     user,
   } satisfies AuthorizedData
-}
-
-type MockWorkOsOptions = {
-  tenant?: Tenant | null
-  user?: User | null
-  workOsOrganization?: Partial<Organization> | null
-  isSystemAdmin?: boolean
-}
-
-const mockWorkOs = ({
-  tenant,
-  user,
-  workOsOrganization,
-  isSystemAdmin = false,
-}: MockWorkOsOptions) => {
-  if (user == null || tenant == null) {
-    return null
-  }
-
-  const mockOrganization = createMockWorkOsOrganization({
-    id: tenant.externalId ?? undefined,
-    createdAt: user.createdAt.toISOString(),
-    updatedAt: user.createdAt.toISOString(),
-    externalId: tenant.id,
-
-    ...workOsOrganization,
-  })
-
-  if (isSystemAdmin) {
-    mockGetAdminOrgId.mockReturnValue(mockOrganization.id)
-  }
-
-  mockGetOrganizationsForUser.mockResolvedValue([mockOrganization])
-  mockGetOrganization.mockResolvedValue(mockOrganization)
-
-  const [firstName, ...lastNames] = user.fullName.split(' ')
-
-  return createMockWorkOsUser({
-    id: user.externalId ?? undefined,
-    createdAt: user.createdAt.toISOString(),
-    externalId: user.id,
-    firstName,
-    lastName: lastNames.join(' '),
-    updatedAt: user.createdAt.toISOString(),
-  })
 }

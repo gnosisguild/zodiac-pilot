@@ -166,8 +166,9 @@ export default [
           route('on-chain', 'routes/roles/on-chain.tsx'),
         ]),
 
-        ...prefix('roles/:roleId', [
-          route('deployment/:deploymentId', 'routes/roles/deploy-role.tsx'),
+        ...prefix('roles/:roleId/deployment/:deploymentId', [
+          index('routes/roles/deploy-role.tsx'),
+          route('sign-callback', 'routes/roles/sign-callback.ts'),
         ]),
 
         ...prefix('roles', [

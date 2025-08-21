@@ -196,15 +196,21 @@ export const action = async (args: Route.ActionArgs) =>
               callbackUrl.searchParams.set('state', proposal.callbackState)
             }
 
-            await fetch(callbackUrl.toString(), {
-              method: 'POST',
-              body: formData({
-                proposalId: proposal.id,
-                transactionHash: getString(data, 'transactionHash'),
-              }),
-            }).catch((error) => {
+            try {
+              const response = await fetch(callbackUrl.toString(), {
+                method: 'POST',
+                body: formData({
+                  proposalId: proposal.id,
+                  transactionHash: getString(data, 'transactionHash'),
+                }),
+              })
+
+              if (response.status === 302) {
+                return response
+              }
+            } catch (error) {
               console.error('Could not call callback after sign', { error })
-            })
+            }
           }
 
           return null
