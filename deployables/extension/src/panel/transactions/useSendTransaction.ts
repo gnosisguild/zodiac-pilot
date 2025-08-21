@@ -3,6 +3,7 @@ import { useOptionalExecutionRoute } from '@/execution-routes'
 import type { ExecutionRoute, HexAddress } from '@zodiac/schema'
 import { AbiCoder, BrowserProvider, id, TransactionReceipt } from 'ethers'
 import { useCallback } from 'react'
+import { TransactionResult } from '../providers/fork-provider/ForkProvider'
 import {
   getSimulationModuleAddress,
   useForkProvider,
@@ -24,20 +25,33 @@ export const useSendTransaction = () => {
 
   return useCallback(
     async (transaction: UnconfirmedTransaction) => {
+      let result: TransactionResult
       try {
-        const { checkpointId, hash } =
-          await provider.sendMetaTransaction(transaction)
+        result = await provider.sendMetaTransaction(transaction)
+        provider.emit('transactionEnd', transaction, { hash: result.hash })
+      } catch (error) {
+        console.error(`Error executing transaction ${transaction.id}`, {
+          error,
+        })
+        const message = error instanceof Error ? error.message : String(error)
+        provider.emit('transactionEnd', transaction, {
+          hash: null,
+          error: message,
+        })
+        return
+      }
 
-        provider.emit('transactionEnd', transaction, hash)
+      const { checkpointId, hash } = result
 
-        dispatch(
-          confirmTransaction({
-            id: transaction.id,
-            snapshotId: checkpointId,
-            transactionHash: hash,
-          }),
-        )
+      dispatch(
+        confirmTransaction({
+          id: transaction.id,
+          snapshotId: checkpointId,
+          transactionHash: hash,
+        }),
+      )
 
+      try {
         const receipt = await new BrowserProvider(
           provider,
         ).getTransactionReceipt(hash)
@@ -60,8 +74,7 @@ export const useSendTransaction = () => {
           dispatch(finishTransaction({ id: transaction.id }))
         }
       } catch (error) {
-        console.debug(`Transaction ${transaction.id} failed`, { error })
-
+        console.error(`Transaction ${transaction.id} failed`, { error })
         dispatch(failTransaction({ id: transaction.id }))
       }
     },

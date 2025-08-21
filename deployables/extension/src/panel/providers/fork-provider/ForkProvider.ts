@@ -319,13 +319,19 @@ export class ForkProvider extends EventEmitter {
   }
 
   waitForTransaction(transaction: MetaTransactionRequest) {
-    const { promise, resolve } = Promise.withResolvers<string>()
+    const { promise, resolve, reject } = Promise.withResolvers<string>()
 
-    const handleTransactionEnd = (tx: MetaTransactionRequest, hash: string) => {
+    const handleTransactionEnd = (
+      tx: MetaTransactionRequest,
+      { hash, error }: { hash: string | null; error?: string },
+    ) => {
       if (metaTransactionRequestEqual(tx, transaction)) {
         this.off('transactionEnd', handleTransactionEnd)
-
-        resolve(hash)
+        if (hash) {
+          resolve(hash)
+        } else {
+          reject(new Error(error ?? 'Unknown error'))
+        }
       }
     }
 
@@ -531,8 +537,9 @@ export class ForkProvider extends EventEmitter {
         console.warn('Nothing to reset')
       }
     } else {
-      // no setup requests, we can just delete the fork
+      // no setup requests, we can just delete the fork and reinitialize the TenderlyProvider to create a fresh fork once needed
       await this.deleteFork()
+      this.provider = new TenderlyProvider(this.chainId)
     }
   }
 
