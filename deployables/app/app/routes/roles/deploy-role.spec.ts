@@ -20,6 +20,7 @@ import {
   roleDeploymentStepFactory,
   roleFactory,
   routeFactory,
+  signedTransactionFactory,
   tenantFactory,
   transactionProposalFactory,
   userFactory,
@@ -386,6 +387,68 @@ describe('Deploy Role', () => {
               workspaceId: proposal.workspaceId,
             }),
           )
+        },
+      )
+
+      dbIt(
+        'disables the deploy button when a transaction has been signed',
+        async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
+
+          const wallet = await walletFactory.create(user)
+
+          await setDefaultWallet(dbClient(), user, {
+            walletId: wallet.id,
+            chainId: Chain.ETH,
+          })
+
+          const account = await accountFactory.create(tenant, user, {
+            chainId: Chain.ETH,
+          })
+          const route = await routeFactory.create(account, wallet)
+
+          await setDefaultRoute(dbClient(), tenant, user, route)
+
+          const role = await roleFactory.create(tenant, user)
+
+          await setRoleMembers(dbClient(), role, [user.id])
+          await setActiveAccounts(dbClient(), role, [account.id])
+
+          const deployment = await roleDeploymentFactory.create(user, role)
+
+          const transaction = await signedTransactionFactory.create(
+            tenant,
+            user,
+            route,
+          )
+          const proposal = await transactionProposalFactory.create(
+            tenant,
+            user,
+            account,
+            { signedTransactionId: transaction.id },
+          )
+
+          await roleDeploymentStepFactory.create(user, deployment, {
+            proposedTransactionId: proposal.id,
+            signedTransactionId: transaction.id,
+          })
+
+          await render(
+            href(
+              '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId',
+              {
+                workspaceId: tenant.defaultWorkspaceId,
+                roleId: role.id,
+                deploymentId: deployment.id,
+              },
+            ),
+            { tenant, user },
+          )
+
+          expect(
+            await screen.findByRole('button', { name: 'Deploy' }),
+          ).toBeDisabled()
         },
       )
     })

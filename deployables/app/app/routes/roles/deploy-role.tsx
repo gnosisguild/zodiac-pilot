@@ -26,9 +26,11 @@ import {
   InlineForm,
   PrimaryLinkButton,
   SecondaryButton,
+  Tag,
 } from '@zodiac/ui'
 import { ConnectWalletButton, useSendTransaction } from '@zodiac/web3'
 import { UUID } from 'crypto'
+import { Check } from 'lucide-react'
 import { href, redirect, useRevalidator } from 'react-router'
 import { ChainId, prefixAddress } from 'ser-kit'
 import { Route } from './+types/deploy-role'
@@ -215,6 +217,7 @@ const DeployRole = ({
                       targetAccount,
                       calls,
                       proposedTransactionId,
+                      signedTransactionId,
                     },
                     planIndex,
                   ) => (
@@ -225,7 +228,14 @@ const DeployRole = ({
                             <Description account={account} />
 
                             <div className="flex items-center gap-2">
+                              {signedTransactionId != null && (
+                                <Tag color="green" head={<Check size={16} />}>
+                                  Deployed
+                                </Tag>
+                              )}
+
                               <Deploy
+                                disabled={signedTransactionId != null}
                                 roleDeploymentStepId={id}
                                 chainId={chainId}
                                 transactions={transactionBundle}
@@ -283,6 +293,7 @@ type DeployProps = {
   chainId: ChainId
   targetAccount: HexAddress | null
   transactions: MetaTransactionRequest[]
+  disabled: boolean
 }
 
 const Deploy = ({
@@ -290,6 +301,7 @@ const Deploy = ({
   chainId,
   transactions,
   roleDeploymentStepId,
+  disabled,
 }: DeployProps) => {
   const revalidator = useRevalidator()
 
@@ -312,6 +324,7 @@ const Deploy = ({
     return (
       <SecondaryButton
         size="small"
+        disabled={disabled}
         busy={isPending || revalidator.state === 'loading'}
         onClick={() => sendTransaction(transaction)}
       >
@@ -330,6 +343,7 @@ const Deploy = ({
       <SecondaryButton
         submit
         size="small"
+        disabled={disabled}
         intent={Intent.ExecuteTransaction}
         busy={pending}
         onClick={(event) => event.stopPropagation()}
