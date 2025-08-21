@@ -257,14 +257,17 @@ const DeployRole = ({
                               )}
 
                               <Deploy
-                                disabled={signedTransactionId != null}
+                                disabled={
+                                  signedTransactionId != null ||
+                                  cancelledAt != null
+                                }
                                 roleDeploymentStepId={id}
                                 chainId={chainId}
                                 transactions={transactionBundle}
                                 targetAccount={targetAccount}
                               />
 
-                              {proposedTransactionId && (
+                              {proposedTransactionId && cancelledAt == null && (
                                 <PrimaryLinkButton
                                   size="small"
                                   to={href(

@@ -489,7 +489,68 @@ describe('Deploy Role', () => {
       )
     })
 
-    dbIt.todo('disables deploy buttons')
-    dbIt.todo('does not link to transaction proposals')
+    dbIt('disables deploy buttons', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const role = await roleFactory.create(tenant, user)
+      const deployment = await roleDeploymentFactory.create(user, role)
+
+      await roleDeploymentStepFactory.create(user, deployment)
+
+      assertActiveRoleDeployment(deployment)
+
+      await cancelRoleDeployment(dbClient(), user, deployment)
+
+      await render(
+        href('/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId', {
+          workspaceId: tenant.defaultWorkspaceId,
+          roleId: role.id,
+          deploymentId: deployment.id,
+        }),
+        { tenant, user },
+      )
+
+      expect(
+        await screen.findByRole('button', { name: 'Deploy' }),
+      ).toBeDisabled()
+    })
+
+    dbIt('does not link to transaction proposals', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const account = await accountFactory.create(tenant, user)
+
+      const role = await roleFactory.create(tenant, user)
+      const deployment = await roleDeploymentFactory.create(user, role)
+
+      const proposal = await transactionProposalFactory.create(
+        tenant,
+        user,
+        account,
+      )
+
+      await roleDeploymentStepFactory.create(user, deployment, {
+        proposedTransactionId: proposal.id,
+      })
+
+      assertActiveRoleDeployment(deployment)
+
+      await cancelRoleDeployment(dbClient(), user, deployment)
+
+      await render(
+        href('/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId', {
+          workspaceId: tenant.defaultWorkspaceId,
+          roleId: role.id,
+          deploymentId: deployment.id,
+        }),
+        { tenant, user },
+      )
+
+      expect(
+        screen.queryByRole('link', { name: 'Show transaction' }),
+      ).not.toBeInTheDocument()
+    })
   })
 })
