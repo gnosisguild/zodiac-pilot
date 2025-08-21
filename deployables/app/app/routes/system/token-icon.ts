@@ -12,17 +12,8 @@ export const loader = async ({
 
   const [token] = await getVerifiedTokens([verifiedAddress])
 
-  if (token == null) {
-    const chain = await getChain(getChainId(verifiedAddress))
-    const details = await getTokenDetails(chain, {
-      address: unprefixAddress(verifiedAddress),
-    })
-
-    if (details == null || details.logoUrl == null) {
-      return null
-    }
-
-    const response = await fetch(details.logoUrl)
+  if (token != null) {
+    const response = await fetch(token.logoURI)
 
     return new Response(response.body, {
       headers: {
@@ -32,7 +23,16 @@ export const loader = async ({
     })
   }
 
-  const response = await fetch(token.logoURI)
+  const chain = await getChain(getChainId(verifiedAddress))
+  const details = await getTokenDetails(chain, {
+    address: unprefixAddress(verifiedAddress),
+  })
+
+  if (details == null || details.logoUrl == null) {
+    return null
+  }
+
+  const response = await fetch(details.logoUrl)
 
   return new Response(response.body, {
     headers: {
