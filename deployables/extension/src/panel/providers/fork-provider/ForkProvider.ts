@@ -110,6 +110,10 @@ export class ForkProvider extends EventEmitter {
     return this.destroyed
   }
 
+  private isInitialized(): boolean {
+    return this.initForkPromise !== undefined
+  }
+
   private assertNotDestroyed() {
     if (this.isDestroyed()) {
       throw new Error('ForkProvider destroyed')
@@ -446,16 +450,20 @@ export class ForkProvider extends EventEmitter {
 
   private async initFork(): Promise<void> {
     if (this.isDestroyed()) {
+      throw new Error('ForkProvider is destroyed and can not be re-initialized')
+    }
+    if (this.isInitialized()) {
       throw new Error(
-        'ForkProvider must be uninitialized or destroyed before initialization',
+        'ForkProvider must be uninitialized before initialization',
       )
     }
+    const initializingProvider = this.provider
 
     console.debug('Initializing fork for simulation...')
     const isSafe = await this.isSafePromise
 
-    if (this.isDestroyed()) {
-      console.debug('fork destroyed, skipping initialization')
+    if (this.isDestroyed() || this.provider !== initializingProvider) {
+      console.debug('fork destroyed or re-initialized, skipping initialization')
       return
     }
 
@@ -471,8 +479,10 @@ export class ForkProvider extends EventEmitter {
     }
 
     for (const request of this.setupRequests) {
-      if (this.isDestroyed()) {
-        console.debug('fork destroyed, skipping initialization')
+      if (this.isDestroyed() || this.provider !== initializingProvider) {
+        console.debug(
+          'fork destroyed or re-initialized, skipping initialization',
+        )
         return
       }
 
@@ -480,8 +490,8 @@ export class ForkProvider extends EventEmitter {
       await this.provider.request(translateJsonRpcRequest(request))
     }
 
-    if (this.isDestroyed()) {
-      console.debug('fork destroyed, skipping initialization')
+    if (this.isDestroyed() || this.provider !== initializingProvider) {
+      console.debug('fork destroyed or re-initialized, skipping initialization')
       return
     }
 
@@ -489,8 +499,8 @@ export class ForkProvider extends EventEmitter {
     // we use the public RPC for requests originating from apps
     const activeTab = await getActiveTab()
 
-    if (this.isDestroyed()) {
-      console.debug('fork destroyed, skipping initialization')
+    if (this.isDestroyed() || this.provider !== initializingProvider) {
+      console.debug('fork destroyed or re-initialized, skipping initialization')
       return
     }
 
@@ -503,8 +513,8 @@ export class ForkProvider extends EventEmitter {
     })
 
     this.provider.on('update', ({ rpcUrl, vnetId }) => {
-      // Check if destroyed before sending update messages
-      if (this.isDestroyed()) {
+      // Check if destroyed before or re-initialized before sending update messages
+      if (this.isDestroyed() || this.provider !== initializingProvider) {
         return
       }
 
@@ -536,7 +546,7 @@ export class ForkProvider extends EventEmitter {
         // we have not yet executed anything after the setup requests, nothing to reset
         console.warn('Nothing to reset')
       }
-    } else {
+    } else if (this.isInitialized()) {
       // no setup requests, we can just delete the fork and reinitialize the TenderlyProvider to create a fresh fork once needed
       await this.deleteFork()
       this.provider = new TenderlyProvider(this.chainId)
