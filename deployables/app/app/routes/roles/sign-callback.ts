@@ -1,8 +1,8 @@
 import { authorizedLoader } from '@/auth-server'
 import {
+  completeRoleDeploymentStep,
   dbClient,
   getRoleDeploymentStepByProposalId,
-  updateRoleDeploymentStep,
 } from '@zodiac/db'
 import { getHexString, getUUID } from '@zodiac/form-data'
 import { Route } from './+types/sign-callback'
@@ -10,7 +10,12 @@ import { Route } from './+types/sign-callback'
 export const action = (args: Route.LoaderArgs) =>
   authorizedLoader(
     args,
-    async ({ request }) => {
+    async ({
+      request,
+      context: {
+        auth: { user },
+      },
+    }) => {
       const data = await request.formData()
 
       const deploymentStep = await getRoleDeploymentStepByProposalId(
@@ -18,7 +23,8 @@ export const action = (args: Route.LoaderArgs) =>
         getUUID(data, 'proposalId'),
       )
 
-      await updateRoleDeploymentStep(dbClient(), deploymentStep.id, {
+      await completeRoleDeploymentStep(dbClient(), user, {
+        roleDeploymentStepId: deploymentStep.id,
         transactionHash: getHexString(data, 'transactionHash'),
       })
 
