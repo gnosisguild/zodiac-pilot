@@ -21,7 +21,8 @@ export const loader = (args: Route.LoaderArgs) =>
 
       const account = await getAccount(dbClient(), accountId)
 
-      return safeJson(account)
+      // TODO: remove when 3.20.1 reaches saturation
+      return safeJson(account, { noInternalRepresentation: true })
     },
     {
       async hasAccess({ tenant, params: { accountId } }) {

@@ -1,4 +1,4 @@
-type Options = {
+export type JsonStringifyOptions = {
   /**
    * To safely pass around data internally within our apps we're representing
    * values like BigInt or NaN with strings and convert them back with `parseJson`.
@@ -13,7 +13,7 @@ type Options = {
 export const jsonStringify = (
   value: unknown,
   indent?: number,
-  { noInternalRepresentation = false }: Options = {},
+  { noInternalRepresentation = false }: JsonStringifyOptions = {},
 ) =>
   JSON.stringify(
     value,

@@ -180,7 +180,10 @@ describe('Edit local account', () => {
       await expectMessage({
         type: CompanionAppMessageType.SAVE_ROUTE,
         data: expect.objectContaining({
-          waypoints: safeJson(newRoute.waypoints),
+          // TODO: remove when 3.20.1 reaches saturation
+          waypoints: safeJson(newRoute.waypoints, {
+            noInternalRepresentation: true,
+          }),
 
           id: route.id,
           label: route.label,

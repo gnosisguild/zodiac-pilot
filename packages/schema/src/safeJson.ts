@@ -1,3 +1,4 @@
-import { jsonStringify } from './jsonStringify'
+import { jsonStringify, JsonStringifyOptions } from './jsonStringify'
 
-export const safeJson = <T>(data: T): T => JSON.parse(jsonStringify(data))
+export const safeJson = <T>(data: T, options?: JsonStringifyOptions): T =>
+  JSON.parse(jsonStringify(data, undefined, options))

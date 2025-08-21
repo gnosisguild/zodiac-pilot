@@ -131,7 +131,8 @@ export function companionRequest(message: CompanionAppMessage, handler?: any) {
 
   window.addEventListener('message', handleMessage)
 
-  window.postMessage(safeJson(message), '*')
+  // TODO: remove when 3.20.1 reaches saturation
+  window.postMessage(safeJson(message, { noInternalRepresentation: true }), '*')
 
   return () => {
     window.removeEventListener('message', handleMessage)
@@ -153,7 +154,11 @@ export function autoRespondToCompanionRequest<
     }
 
     window.removeEventListener('message', handleRequest)
-    window.postMessage(safeJson(response), '*')
+    window.postMessage(
+      // TODO: remove when 3.20.1 reaches saturation
+      safeJson(response, { noInternalRepresentation: true }),
+      '*',
+    )
 
     resolve()
   }
