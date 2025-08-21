@@ -11,7 +11,11 @@ export async function createPost<
 
   const pathToAction = mapPathsToActions(stubbedRoutes)
 
-  return async function post(path: string, body: FormData, context: unknown) {
+  return async function post(
+    path: string,
+    body: FormData,
+    context: unknown,
+  ): Promise<Response> {
     for (const [pattern, action] of Object.entries(pathToAction)) {
       const match = matchPath(pattern, path)
 
@@ -24,8 +28,16 @@ export async function createPost<
         body,
       })
 
-      await action({ request, params: match.params, context })
+      const response = await action({ request, params: match.params, context })
+
+      if (response == null) {
+        return new Response(null)
+      }
+
+      return response as Response
     }
+
+    throw new Error(`No action could be found for path "${path}"`)
   }
 }
 

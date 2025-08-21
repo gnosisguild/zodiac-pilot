@@ -144,4 +144,44 @@ describe('Sign callback', () => {
       })
     },
   )
+
+  dbIt('redirects to the deployment page', async () => {
+    const user = await userFactory.create()
+    const tenant = await tenantFactory.create(user)
+
+    const account = await accountFactory.create(tenant, user)
+
+    const role = await roleFactory.create(tenant, user)
+    const deployment = await roleDeploymentFactory.create(user, role)
+
+    const proposal = await transactionProposalFactory.create(
+      tenant,
+      user,
+      account,
+    )
+
+    await roleDeploymentStepFactory.create(user, deployment, {
+      proposedTransactionId: proposal.id,
+    })
+
+    const transactionHash = randomHex(18)
+
+    const response = await post(
+      href(
+        '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId/sign-callback',
+        {
+          workspaceId: tenant.defaultWorkspaceId,
+          deploymentId: deployment.id,
+          roleId: role.id,
+        },
+      ),
+      formData({ proposalId: proposal.id, transactionHash }),
+      { tenant, user },
+    )
+
+    expect(response.status).toEqual(302)
+    expect(response.headers.get('location')).toEqual(
+      `/workspace/${tenant.defaultWorkspaceId}/roles/${role.id}/deployment/${deployment.id}`,
+    )
+  })
 })

@@ -6,6 +6,7 @@ import {
   getRoleDeploymentStepByProposalId,
 } from '@zodiac/db'
 import { getHexString, getUUID } from '@zodiac/form-data'
+import { href, redirect } from 'react-router'
 import { Route } from './+types/sign-callback'
 
 export const action = (args: Route.LoaderArgs) =>
@@ -13,6 +14,7 @@ export const action = (args: Route.LoaderArgs) =>
     args,
     async ({
       request,
+      params: { workspaceId, deploymentId, roleId },
       context: {
         auth: { user },
       },
@@ -36,7 +38,13 @@ export const action = (args: Route.LoaderArgs) =>
         )
       })
 
-      return null
+      return redirect(
+        href('/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId', {
+          workspaceId,
+          deploymentId,
+          roleId,
+        }),
+      )
     },
     {
       ensureSignedIn: true,
