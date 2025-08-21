@@ -13,6 +13,7 @@ import {
   getRoleDeploymentStep,
   getRoleDeploymentSteps,
   getRoleMembers,
+  getUser,
   proposeTransaction,
   updateRoleDeploymentStep,
 } from '@zodiac/db'
@@ -22,6 +23,7 @@ import { HexAddress, isUUID, MetaTransactionRequest } from '@zodiac/schema'
 import {
   Card,
   Collapsible,
+  DateValue,
   Info,
   InlineForm,
   PrimaryLinkButton,
@@ -88,6 +90,12 @@ export const loader = (args: Route.LoaderArgs) =>
         },
         roleLabels: { [role.key]: role.label },
         issues: deployment.issues,
+        ...(deployment.cancelledAt == null
+          ? { cancelledAt: null, cancelledBy: null }
+          : {
+              cancelledAt: deployment.cancelledAt,
+              cancelledBy: await getUser(dbClient(), deployment.cancelledById),
+            }),
       }
     },
     {
@@ -178,7 +186,14 @@ export const action = (args: Route.ActionArgs) =>
   )
 
 const DeployRole = ({
-  loaderData: { steps, addressLabels, roleLabels, issues },
+  loaderData: {
+    steps,
+    addressLabels,
+    roleLabels,
+    issues,
+    cancelledAt,
+    cancelledBy,
+  },
   params: { workspaceId },
 }: Route.ComponentProps) => {
   return (
@@ -195,6 +210,13 @@ const DeployRole = ({
 
       <Page.Main>
         <Issues issues={issues} />
+
+        {cancelledAt != null && (
+          <Info title="Deployment cancelled">
+            {cancelledBy.fullName} cancelled this deployment on{' '}
+            <DateValue>{cancelledAt}</DateValue>
+          </Info>
+        )}
 
         <ProvideRoleLabels labels={roleLabels}>
           <ProvideAddressLabels labels={addressLabels}>

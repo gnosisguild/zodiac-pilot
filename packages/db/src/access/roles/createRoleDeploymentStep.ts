@@ -1,5 +1,8 @@
 import { getChainId } from '@zodiac/chains'
-import { RoleDeployment, RoleDeploymentStepTable } from '@zodiac/db/schema'
+import {
+  ActiveRoleDeployment,
+  RoleDeploymentStepTable,
+} from '@zodiac/db/schema'
 import { HexAddress, MetaTransactionRequest, safeJson } from '@zodiac/schema'
 import { Account, AccountBuilderCall } from 'ser-kit'
 import { DBClient } from '../../dbClient'
@@ -13,7 +16,7 @@ type CreateRoleDeploymentStepOptions = {
 
 export const createRoleDeploymentStep = async (
   db: DBClient,
-  roleDeployment: RoleDeployment,
+  roleDeployment: ActiveRoleDeployment,
   {
     account,
     calls,

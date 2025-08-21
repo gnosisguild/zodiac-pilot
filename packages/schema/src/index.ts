@@ -14,6 +14,8 @@ export {
   toMetaTransactionRequest,
 } from './metaTransactionRequestSchema'
 export type { MetaTransactionRequest } from './metaTransactionRequestSchema'
+export type { NonNullableProperties } from './NonNullableProperties'
+export type { NullProperties } from './NullProperties'
 export * from './roles'
 export {
   addressSchema,

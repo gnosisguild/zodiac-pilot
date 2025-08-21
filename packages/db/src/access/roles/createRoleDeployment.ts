@@ -1,4 +1,6 @@
+import { invariant } from '@epic-web/invariant'
 import {
+  ActiveRoleDeployment,
   Role,
   RoleDeploymentIssue,
   RoleDeploymentTable,
@@ -15,8 +17,8 @@ export const createRoleDeployment = async (
   user: User,
   role: Role,
   { issues }: CreateRoleDeploymentOptions,
-) => {
-  const [deployment] = await db
+): Promise<ActiveRoleDeployment> => {
+  const [{ completedAt, cancelledAt, cancelledById, ...deployment }] = await db
     .insert(RoleDeploymentTable)
     .values({
       roleId: role.id,
@@ -27,5 +29,12 @@ export const createRoleDeployment = async (
     })
     .returning()
 
-  return deployment
+  invariant(completedAt == null, 'Deployment has already been completed')
+
+  invariant(
+    cancelledById == null && cancelledAt == null,
+    'Deployment has already been cancelled',
+  )
+
+  return { completedAt, cancelledAt, cancelledById, ...deployment }
 }

@@ -4,6 +4,8 @@ import {
   AllowanceInterval,
   chainIdSchema,
   Hex,
+  NonNullableProperties,
+  NullProperties,
   waypointsSchema,
   type HexAddress,
   type MetaTransactionRequest,
@@ -760,9 +762,11 @@ export const RoleDeploymentTable = pgTable(
     completedAt: timestamp({ withTimezone: true }),
 
     cancelledAt: timestamp({ withTimezone: true }),
-    cancelledById: uuid().references(() => UserTable.id, {
-      onDelete: 'set null',
-    }),
+    cancelledById: uuid()
+      .$type<UUID>()
+      .references(() => UserTable.id, {
+        onDelete: 'set null',
+      }),
 
     issues: RoleDeploymentIssueEnum().array().notNull().default([]),
 
@@ -787,8 +791,28 @@ const roleDeploymentReference = {
     .references(() => RoleDeploymentTable.id, { onDelete: 'cascade' }),
 }
 
-export type RoleDeployment = typeof RoleDeploymentTable.$inferSelect
+export type BaseRoleDeployment = typeof RoleDeploymentTable.$inferSelect
 export type RoleDeploymentCreateInput = typeof RoleDeploymentTable.$inferInsert
+
+export type ActiveRoleDeployment = NullProperties<
+  BaseRoleDeployment,
+  'cancelledAt' | 'cancelledById' | 'completedAt'
+>
+
+export type CompletedRoleDeployment = NonNullableProperties<
+  NullProperties<BaseRoleDeployment, 'cancelledAt' | 'cancelledById'>,
+  'completedAt'
+>
+
+export type CancelledRoleDeployment = NonNullableProperties<
+  NullProperties<BaseRoleDeployment, 'completedAt'>,
+  'cancelledAt' | 'cancelledById'
+>
+
+export type RoleDeployment =
+  | ActiveRoleDeployment
+  | CompletedRoleDeployment
+  | CancelledRoleDeployment
 
 export const SerAccountType = pgEnum(
   'SerAccountType',
@@ -822,14 +846,18 @@ export const RoleDeploymentStepTable = pgTable(
     transactionHash: text().$type<Hex>(),
 
     completedAt: timestamp({ withTimezone: true }),
-    completedById: uuid().references(() => UserTable.id, {
-      onDelete: 'set null',
-    }),
+    completedById: uuid()
+      .$type<UUID>()
+      .references(() => UserTable.id, {
+        onDelete: 'set null',
+      }),
 
     cancelledAt: timestamp({ withTimezone: true }),
-    cancelledById: uuid().references(() => UserTable.id, {
-      onDelete: 'set null',
-    }),
+    cancelledById: uuid()
+      .$type<UUID>()
+      .references(() => UserTable.id, {
+        onDelete: 'set null',
+      }),
 
     ...roleDeploymentReference,
     ...createdTimestamp,

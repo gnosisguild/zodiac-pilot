@@ -1,6 +1,7 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { invariantResponse } from '@epic-web/invariant'
 import {
+  assertActiveRoleDeployment,
   cancelRoleDeployment,
   createRoleDeployment,
   createRoleDeploymentStep,
@@ -150,11 +151,14 @@ export const action = (args: Route.ActionArgs) =>
           )
         }
         case Intent.CancelDeployment: {
-          await cancelRoleDeployment(
+          const deployment = await getRoleDeployment(
             dbClient(),
-            user,
             getUUID(data, 'deploymentId'),
           )
+
+          assertActiveRoleDeployment(deployment)
+
+          await cancelRoleDeployment(dbClient(), user, deployment)
 
           return null
         }

@@ -1,3 +1,5 @@
+import { invariant } from '@epic-web/invariant'
+import { assertRoleDeployment } from '@zodiac/db'
 import {
   Role,
   RoleDeployment,
@@ -29,9 +31,46 @@ export const roleDeploymentFactory = createFactory<
       .values(data)
       .returning()
 
+    assertRoleDeployment(deployment)
+
     return deployment
   },
-  createWithoutDb(input) {
+  createWithoutDb({ completedAt, cancelledAt, cancelledById, ...input }) {
+    if (completedAt != null) {
+      return {
+        id: randomUUID(),
+
+        cancelledAt: null,
+        cancelledById: null,
+        completedAt,
+        createdAt: new Date(),
+        updatedAt: null,
+        issues: [],
+
+        ...input,
+      }
+    }
+
+    if (cancelledAt != null) {
+      invariant(
+        cancelledById != null,
+        'Cancelled deployments must specify who cancelled them',
+      )
+
+      return {
+        id: randomUUID(),
+
+        cancelledAt,
+        cancelledById,
+        completedAt: null,
+        createdAt: new Date(),
+        updatedAt: null,
+        issues: [],
+
+        ...input,
+      }
+    }
+
     return {
       id: randomUUID(),
 
@@ -43,6 +82,6 @@ export const roleDeploymentFactory = createFactory<
       issues: [],
 
       ...input,
-    }
+    } satisfies RoleDeployment
   },
 })

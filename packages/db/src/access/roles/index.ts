@@ -1,3 +1,5 @@
+export { assertActiveRoleDeployment } from './assertActiveRoleDeployment'
+export { assertRoleDeployment } from './assertRoleDeployment'
 export { cancelRoleDeployment } from './cancelRoleDeployment'
 export { createRole } from './createRole'
 export { createRoleAction } from './createRoleAction'

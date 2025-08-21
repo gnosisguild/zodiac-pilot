@@ -4,6 +4,8 @@ import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Chain } from '@zodiac/chains'
 import {
+  assertActiveRoleDeployment,
+  cancelRoleDeployment,
   dbClient,
   getProposedTransactions,
   getRoleDeploymentStep,
@@ -28,6 +30,7 @@ import {
 } from '@zodiac/db/test-utils'
 import { createMockTransactionRequest } from '@zodiac/modules/test-utils'
 import { expectRouteToBe, waitForPendingActions } from '@zodiac/test-utils'
+import { formatDate } from '@zodiac/ui'
 import { href } from 'react-router'
 import {
   checkPermissions,
@@ -455,7 +458,37 @@ describe('Deploy Role', () => {
   })
 
   describe('Cancelled deployment', () => {
-    dbIt.todo('indicates that a deployment has been cancelled')
+    dbIt('indicates that a deployment has been cancelled', async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const role = await roleFactory.create(tenant, user)
+      const deployment = await roleDeploymentFactory.create(user, role)
+
+      assertActiveRoleDeployment(deployment)
+
+      const cancelledDeployment = await cancelRoleDeployment(
+        dbClient(),
+        user,
+        deployment,
+      )
+
+      await render(
+        href('/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId', {
+          workspaceId: tenant.defaultWorkspaceId,
+          roleId: role.id,
+          deploymentId: deployment.id,
+        }),
+        { tenant, user },
+      )
+
+      expect(
+        await screen.findByRole('alert', { name: 'Deployment cancelled' }),
+      ).toHaveAccessibleDescription(
+        `${user.fullName} cancelled this deployment on ${formatDate(cancelledDeployment.cancelledAt)}`,
+      )
+    })
+
     dbIt.todo('disables deploy buttons')
     dbIt.todo('does not link to transaction proposals')
   })

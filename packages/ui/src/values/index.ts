@@ -1,4 +1,4 @@
-export { DateValue } from './DateValue'
+export { DateValue, formatDate } from './DateValue'
 export { Kbd } from './Kbd'
 export { NumberValue } from './NumberValue'
 export { TokenValue } from './TokenValue'
