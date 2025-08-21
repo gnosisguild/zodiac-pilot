@@ -73,5 +73,12 @@ export const post = (
     return data({ ...auth })
   })
 
-  return basePost(path, body, { auth })
+  return basePost(path, body, {
+    auth: {
+      ...auth,
+      user: options.user,
+      tenant: options.tenant,
+      workOsUser: auth.user,
+    },
+  })
 }
