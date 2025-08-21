@@ -24,5 +24,10 @@ export const completeRoleDeploymentIfNeeded = async (
   return db
     .update(RoleDeploymentTable)
     .set({ completedAt: new Date() })
-    .where(eq(RoleDeploymentTable.id, roleDeploymentId))
+    .where(
+      and(
+        eq(RoleDeploymentTable.id, roleDeploymentId),
+        isNull(RoleDeploymentTable.cancelledAt),
+      ),
+    )
 }
