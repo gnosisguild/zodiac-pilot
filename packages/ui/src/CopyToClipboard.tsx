@@ -14,7 +14,9 @@ export const CopyToClipboard = ({ data, ...props }: CopyToClipboardProps) => (
     {...props}
     icon={Copy}
     onClick={() => {
-      navigator.clipboard.writeText(jsonStringify(data, 2))
+      navigator.clipboard.writeText(
+        jsonStringify(data, 2, { noInternalRepresentation: true }),
+      )
 
       infoToast({
         title: 'Copied!',
