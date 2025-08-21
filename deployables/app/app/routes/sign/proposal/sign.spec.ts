@@ -28,13 +28,14 @@ import {
 import { formData } from '@zodiac/form-data'
 import { multisigTransactionUrl } from '@zodiac/safe'
 import {
+  expectRouteToBe,
   randomAddress,
   randomHex,
   waitForPendingActions,
 } from '@zodiac/test-utils'
 import { MockJsonRpcProvider } from '@zodiac/test-utils/rpc'
 import { useAccount, useConnectorClient } from '@zodiac/web3'
-import { href } from 'react-router'
+import { href, redirect } from 'react-router'
 import {
   checkPermissions,
   execute,
@@ -754,6 +755,62 @@ describe('Sign', () => {
           )
         })
       })
+
+      dbIt(
+        'redirects to the callback response when it is a redirect',
+        async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
+
+          const account = await accountFactory.create(tenant, user)
+          const wallet = await walletFactory.create(user, {
+            address: initiator,
+          })
+          const route = await routeFactory.create(account, wallet)
+          const proposal = await transactionProposalFactory.create(
+            tenant,
+            user,
+            account,
+            { callbackUrl: 'http://test.com/test-callback' },
+          )
+
+          await setDefaultRoute(dbClient(), tenant, user, route)
+
+          const testHash = randomHex(18)
+
+          mockQueryRoutes.mockResolvedValue([])
+          mockPlanExecution.mockResolvedValue([
+            createMockExecuteTransactionAction({
+              from: wallet.address,
+            }),
+          ])
+          mockExecute.mockImplementation(async (_, state = []) => {
+            state.push(testHash)
+          })
+
+          const mockFetch = vi.spyOn(global, 'fetch')
+
+          mockFetch.mockResolvedValue(redirect('/test-route'))
+
+          await render(
+            href('/workspace/:workspaceId/submit/proposal/:proposalId', {
+              proposalId: proposal.id,
+              workspaceId: tenant.defaultWorkspaceId,
+            }),
+            {
+              user,
+              tenant,
+              extraRoutes: [{ path: '/test-route' }],
+            },
+          )
+
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Sign' }),
+          )
+
+          await expectRouteToBe('/test-route')
+        },
+      )
     })
   })
 
