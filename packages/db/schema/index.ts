@@ -32,7 +32,7 @@ import {
   type AnyPgColumn,
 } from 'drizzle-orm/pg-core'
 import { createSelectSchema } from 'drizzle-zod'
-import { AccountBuilderCall, AccountType, Account as SerAccount } from 'ser-kit'
+import { AccountBuilderCall, Account as SerAccount } from 'ser-kit'
 import { z } from 'zod'
 import { createRandomString } from './createRandomString'
 import { enumToPgEnum } from './enumToPgEnum'
@@ -813,11 +813,6 @@ export type RoleDeployment =
   | ActiveRoleDeployment
   | CompletedRoleDeployment
   | CancelledRoleDeployment
-
-export const SerAccountType = pgEnum(
-  'SerAccountType',
-  enumToPgEnum(AccountType),
-)
 
 export const RoleDeploymentStepTable = pgTable(
   'RoleDeploymentStep',
