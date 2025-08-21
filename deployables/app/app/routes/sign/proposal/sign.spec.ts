@@ -25,6 +25,7 @@ import {
   userFactory,
   walletFactory,
 } from '@zodiac/db/test-utils'
+import { formData } from '@zodiac/form-data'
 import { multisigTransactionUrl } from '@zodiac/safe'
 import {
   randomAddress,
@@ -642,6 +643,7 @@ describe('Sign', () => {
           tenant,
           user,
           account,
+          { callbackUrl: 'http://test.com/test-callback' },
         )
 
         await setDefaultRoute(dbClient(), tenant, user, route)
@@ -668,7 +670,6 @@ describe('Sign', () => {
           {
             user,
             tenant,
-            searchParams: { callback: 'http://test.com/test-callback' },
           },
         )
 
@@ -679,7 +680,13 @@ describe('Sign', () => {
         await waitFor(() => {
           expect(mockFetch).toHaveBeenCalledWith(
             'http://test.com/test-callback',
-            { method: 'POST' },
+            {
+              method: 'POST',
+              body: formData({
+                proposalId: proposal.id,
+                transactionHash: testHash,
+              }),
+            },
           )
         })
       })
@@ -697,6 +704,10 @@ describe('Sign', () => {
           tenant,
           user,
           account,
+          {
+            callbackUrl: 'http://test.com/test-callback',
+            callbackState: 'test-state',
+          },
         )
 
         await setDefaultRoute(dbClient(), tenant, user, route)
@@ -723,10 +734,6 @@ describe('Sign', () => {
           {
             user,
             tenant,
-            searchParams: {
-              callback: 'http://test.com/test-callback',
-              state: 'test-state',
-            },
           },
         )
 
@@ -737,7 +744,13 @@ describe('Sign', () => {
         await waitFor(() => {
           expect(mockFetch).toHaveBeenCalledWith(
             'http://test.com/test-callback?state=test-state',
-            { method: 'POST' },
+            {
+              method: 'POST',
+              body: formData({
+                proposalId: proposal.id,
+                transactionHash: testHash,
+              }),
+            },
           )
         })
       })
