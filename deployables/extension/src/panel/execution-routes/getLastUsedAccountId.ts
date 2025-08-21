@@ -1,4 +1,4 @@
 import { getStorageEntry } from '@/storage'
 
-export const getLastUsedRouteId = () =>
+export const getLastUsedAccountId = () =>
   getStorageEntry<string | null>({ key: 'lastUsedRoute' })
