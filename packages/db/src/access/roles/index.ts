@@ -1,6 +1,7 @@
 export { assertActiveRoleDeployment } from './assertActiveRoleDeployment'
 export { assertRoleDeployment } from './assertRoleDeployment'
 export { cancelRoleDeployment } from './cancelRoleDeployment'
+export { completeRoleDeploymentIfNeeded } from './completeRoleDeploymentIfNeeded'
 export { completeRoleDeploymentStep } from './completeRoleDeploymentStep'
 export { createRole } from './createRole'
 export { createRoleAction } from './createRoleAction'

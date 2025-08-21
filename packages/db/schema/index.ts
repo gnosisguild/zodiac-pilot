@@ -791,6 +791,7 @@ export const RoleDeploymentTable = pgTable(
 const roleDeploymentReference = {
   roleDeploymentId: uuid()
     .notNull()
+    .$type<UUID>()
     .references(() => RoleDeploymentTable.id, { onDelete: 'cascade' }),
 }
 

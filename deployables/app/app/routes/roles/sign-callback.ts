@@ -1,5 +1,6 @@
 import { authorizedLoader } from '@/auth-server'
 import {
+  completeRoleDeploymentIfNeeded,
   completeRoleDeploymentStep,
   dbClient,
   getRoleDeploymentStepByProposalId,
@@ -23,9 +24,16 @@ export const action = (args: Route.LoaderArgs) =>
         getUUID(data, 'proposalId'),
       )
 
-      await completeRoleDeploymentStep(dbClient(), user, {
-        roleDeploymentStepId: deploymentStep.id,
-        transactionHash: getHexString(data, 'transactionHash'),
+      await dbClient().transaction(async (tx) => {
+        await completeRoleDeploymentStep(tx, user, {
+          roleDeploymentStepId: deploymentStep.id,
+          transactionHash: getHexString(data, 'transactionHash'),
+        })
+
+        await completeRoleDeploymentIfNeeded(
+          tx,
+          deploymentStep.roleDeploymentId,
+        )
       })
 
       return null

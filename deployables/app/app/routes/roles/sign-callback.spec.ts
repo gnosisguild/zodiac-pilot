@@ -1,5 +1,5 @@
 import { post } from '@/test-utils'
-import { dbClient, getRoleDeploymentStep } from '@zodiac/db'
+import { dbClient, getRoleDeployment, getRoleDeploymentStep } from '@zodiac/db'
 import {
   accountFactory,
   dbIt,
@@ -100,4 +100,48 @@ describe('Sign callback', () => {
       completedById: user.id,
     })
   })
+
+  dbIt(
+    'completes the deployment if all steps have been completed',
+    async () => {
+      const user = await userFactory.create()
+      const tenant = await tenantFactory.create(user)
+
+      const account = await accountFactory.create(tenant, user)
+
+      const role = await roleFactory.create(tenant, user)
+      const deployment = await roleDeploymentFactory.create(user, role)
+
+      const proposal = await transactionProposalFactory.create(
+        tenant,
+        user,
+        account,
+      )
+
+      await roleDeploymentStepFactory.create(user, deployment, {
+        proposedTransactionId: proposal.id,
+      })
+
+      const transactionHash = randomHex(18)
+
+      await post(
+        href(
+          '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId/sign-callback',
+          {
+            workspaceId: tenant.defaultWorkspaceId,
+            deploymentId: deployment.id,
+            roleId: role.id,
+          },
+        ),
+        formData({ proposalId: proposal.id, transactionHash }),
+        { tenant, user },
+      )
+
+      await expect(
+        getRoleDeployment(dbClient(), deployment.id),
+      ).resolves.toMatchObject({
+        completedAt: new Date(),
+      })
+    },
+  )
 })
