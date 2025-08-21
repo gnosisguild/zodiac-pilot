@@ -24,7 +24,7 @@
     "classnames": "2.5.1",
     "connectkit": "1.9.1",
     "ethereum-blockies-base64": "1.0.2",
-    "viem": "2.33.3",
+    "viem": "2.34.0",
     "wagmi": "2.16.4"
   },
   "devDependencies": {
