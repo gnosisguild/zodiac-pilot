@@ -122,12 +122,13 @@ export const action = (args: Route.ActionArgs) =>
     args,
     async ({
       request,
-      params: { workspaceId },
+      params: { workspaceId, roleId, deploymentId },
       context: {
         auth: { user, tenant },
       },
     }) => {
       const data = await request.formData()
+      const url = new URL(request.url)
 
       const account = await getAccountByAddress(dbClient(), {
         tenantId: tenant.id,
@@ -140,12 +141,26 @@ export const action = (args: Route.ActionArgs) =>
       )
 
       const transactionProposal = await dbClient().transaction(async (tx) => {
+        const callbackUrl = new URL(
+          href(
+            '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId/step/:deploymentStepId/sign-callback',
+            {
+              workspaceId,
+              roleId,
+              deploymentId,
+              deploymentStepId: deploymentStep.id,
+            },
+          ),
+          url.origin,
+        )
+
         const transactionProposal = await proposeTransaction(tx, {
           userId: user.id,
           tenantId: deploymentStep.tenantId,
           workspaceId: deploymentStep.workspaceId,
           accountId: account.id,
           transaction: deploymentStep.transactionBundle,
+          callbackUrl,
         })
 
         await updateRoleDeploymentStep(tx, deploymentStep.id, {

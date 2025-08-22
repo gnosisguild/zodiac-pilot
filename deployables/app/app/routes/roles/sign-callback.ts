@@ -1,11 +1,13 @@
 import { authorizedLoader } from '@/auth-server'
+import { invariantResponse } from '@epic-web/invariant'
 import {
   completeRoleDeploymentIfNeeded,
   completeRoleDeploymentStep,
   dbClient,
-  getRoleDeploymentStepByProposalId,
+  getRoleDeploymentStep,
 } from '@zodiac/db'
-import { getHexString, getUUID } from '@zodiac/form-data'
+import { getHexString } from '@zodiac/form-data'
+import { isUUID } from '@zodiac/schema'
 import { href, redirect } from 'react-router'
 import { Route } from './+types/sign-callback'
 
@@ -14,28 +16,26 @@ export const action = (args: Route.LoaderArgs) =>
     args,
     async ({
       request,
-      params: { workspaceId, deploymentId, roleId },
+      params: { workspaceId, deploymentId, roleId, deploymentStepId },
       context: {
         auth: { user },
       },
     }) => {
-      const data = await request.formData()
-
-      const deploymentStep = await getRoleDeploymentStepByProposalId(
-        dbClient(),
-        getUUID(data, 'proposalId'),
+      invariantResponse(
+        isUUID(deploymentStepId),
+        '"deploymentStepId" is not a UUID',
       )
+      invariantResponse(isUUID(deploymentId), '"deploymentId" is not a UUID')
+
+      const data = await request.formData()
 
       await dbClient().transaction(async (tx) => {
         await completeRoleDeploymentStep(tx, user, {
-          roleDeploymentStepId: deploymentStep.id,
+          roleDeploymentStepId: deploymentStepId,
           transactionHash: getHexString(data, 'transactionHash'),
         })
 
-        await completeRoleDeploymentIfNeeded(
-          tx,
-          deploymentStep.roleDeploymentId,
-        )
+        await completeRoleDeploymentIfNeeded(tx, deploymentId)
       })
 
       return redirect(
@@ -49,15 +49,17 @@ export const action = (args: Route.LoaderArgs) =>
     {
       ensureSignedIn: true,
       async hasAccess({
-        request,
         tenant,
-        params: { deploymentId, workspaceId },
+        params: { deploymentId, workspaceId, deploymentStepId },
       }) {
-        const data = await request.formData()
+        invariantResponse(
+          isUUID(deploymentStepId),
+          '"deploymentStepId" is not a UUID',
+        )
 
-        const deploymentStep = await getRoleDeploymentStepByProposalId(
+        const deploymentStep = await getRoleDeploymentStep(
           dbClient(),
-          getUUID(data, 'proposalId'),
+          deploymentStepId,
         )
 
         return (
