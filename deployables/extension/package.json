@@ -29,7 +29,7 @@
   "devDependencies": {
     "@depay/web3-mock": "15.3.0",
     "@dotenvx/dotenvx": "1.49.0",
-    "@playwright/test": "1.54.2",
+    "@playwright/test": "1.55.0",
     "@safe-global/safe-gateway-typescript-sdk": "3.23.1",
     "@sentry/esbuild-plugin": "4.1.1",
     "@tailwindcss/postcss": "4.1.12",
