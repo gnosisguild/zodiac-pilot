@@ -6,6 +6,7 @@ import { Chain } from '@zodiac/chains'
 import {
   assertActiveRoleDeployment,
   cancelRoleDeployment,
+  completeRoleDeploymentStep,
   dbClient,
   getProposedTransactions,
   getRoleDeploymentStep,
@@ -29,7 +30,11 @@ import {
   walletFactory,
 } from '@zodiac/db/test-utils'
 import { createMockTransactionRequest } from '@zodiac/modules/test-utils'
-import { expectRouteToBe, waitForPendingActions } from '@zodiac/test-utils'
+import {
+  expectRouteToBe,
+  randomHex,
+  waitForPendingActions,
+} from '@zodiac/test-utils'
 import { formatDate } from '@zodiac/ui'
 import { href } from 'react-router'
 import {
@@ -492,9 +497,18 @@ describe('Deploy Role', () => {
             { signedTransactionId: transaction.id },
           )
 
-          await roleDeploymentStepFactory.create(user, deployment, {
-            proposedTransactionId: proposal.id,
-            signedTransactionId: transaction.id,
+          const step = await roleDeploymentStepFactory.create(
+            user,
+            deployment,
+            {
+              proposedTransactionId: proposal.id,
+              signedTransactionId: transaction.id,
+            },
+          )
+
+          await completeRoleDeploymentStep(dbClient(), user, {
+            roleDeploymentStepId: step.id,
+            transactionHash: randomHex(18),
           })
 
           await render(

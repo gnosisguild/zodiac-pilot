@@ -1137,6 +1137,9 @@ importers:
       ethereum-blockies-base64:
         specifier: 1.0.2
         version: 1.0.2
+      lucide-react:
+        specifier: 0.540.0
+        version: 0.540.0(react@19.1.1)
       react:
         specifier: 19.1.1
         version: 19.1.1
@@ -14559,9 +14562,9 @@ snapshots:
   '@safe-global/api-kit@3.0.2(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)':
     dependencies:
       '@safe-global/protocol-kit': 6.1.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)
-      '@safe-global/types-kit': 2.0.1(typescript@5.9.2)
+      '@safe-global/types-kit': 2.0.1(typescript@5.9.2)(zod@4.0.17)
       node-fetch: 2.7.0
-      viem: 2.34.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.22.4)
+      viem: 2.34.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.0.17)
     transitivePeerDependencies:
       - bufferutil
       - encoding
@@ -14612,10 +14615,10 @@ snapshots:
     dependencies:
       '@safe-global/safe-deployments': 1.37.36
       '@safe-global/safe-modules-deployments': 2.2.10
-      '@safe-global/types-kit': 3.0.0(typescript@5.9.2)
-      abitype: 1.0.8(typescript@5.9.2)(zod@3.22.4)
+      '@safe-global/types-kit': 3.0.0(typescript@5.9.2)(zod@4.0.17)
+      abitype: 1.0.8(typescript@5.9.2)(zod@4.0.17)
       semver: 7.7.2
-      viem: 2.34.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.22.4)
+      viem: 2.34.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.0.17)
     optionalDependencies:
       '@noble/curves': 1.9.2
       '@peculiar/asn1-schema': 2.3.15
@@ -14687,13 +14690,6 @@ snapshots:
 
   '@safe-global/safe-modules-deployments@2.2.10': {}
 
-  '@safe-global/types-kit@2.0.1(typescript@5.9.2)':
-    dependencies:
-      abitype: 1.0.8(typescript@5.9.2)(zod@3.22.4)
-    transitivePeerDependencies:
-      - typescript
-      - zod
-
   '@safe-global/types-kit@2.0.1(typescript@5.9.2)(zod@3.25.76)':
     dependencies:
       abitype: 1.0.8(typescript@5.9.2)(zod@3.25.76)
@@ -14704,13 +14700,6 @@ snapshots:
   '@safe-global/types-kit@2.0.1(typescript@5.9.2)(zod@4.0.17)':
     dependencies:
       abitype: 1.0.8(typescript@5.9.2)(zod@4.0.17)
-    transitivePeerDependencies:
-      - typescript
-      - zod
-
-  '@safe-global/types-kit@3.0.0(typescript@5.9.2)':
-    dependencies:
-      abitype: 1.0.8(typescript@5.9.2)(zod@3.22.4)
     transitivePeerDependencies:
       - typescript
       - zod
@@ -20974,7 +20963,7 @@ snapshots:
     dependencies:
       '@epic-web/invariant': 1.0.0
       '@safe-global/api-kit': 3.0.2(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)
-      viem: 2.34.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.22.4)
+      viem: 2.34.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.0.17)
       zodiac-roles-sdk: 3.2.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - '@gnosis-guild/eth-sdk-client'

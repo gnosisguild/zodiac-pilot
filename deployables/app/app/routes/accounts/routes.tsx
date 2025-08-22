@@ -128,7 +128,7 @@ const Routes = ({
               placeholder="Select a wallet form the list"
               defaultValue={initiatorAddress ?? undefined}
               options={possibleInitiators}
-              onChange={submit}
+              onChange={() => submit()}
             />
           </>
         )}

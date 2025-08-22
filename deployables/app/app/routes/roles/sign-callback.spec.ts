@@ -6,9 +6,12 @@ import {
   roleDeploymentFactory,
   roleDeploymentStepFactory,
   roleFactory,
+  routeFactory,
+  signedTransactionFactory,
   tenantFactory,
   transactionProposalFactory,
   userFactory,
+  walletFactory,
 } from '@zodiac/db/test-utils'
 import { formData } from '@zodiac/form-data'
 import { randomHex } from '@zodiac/test-utils'
@@ -24,15 +27,26 @@ describe('Sign callback', () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
 
+    const wallet = await walletFactory.create(user)
     const account = await accountFactory.create(tenant, user)
+
+    const route = await routeFactory.create(account, wallet)
 
     const role = await roleFactory.create(tenant, user)
     const deployment = await roleDeploymentFactory.create(user, role)
 
+    const transaction = await signedTransactionFactory.create(
+      tenant,
+      user,
+      route,
+    )
     const proposal = await transactionProposalFactory.create(
       tenant,
       user,
       account,
+      {
+        signedTransactionId: transaction.id,
+      },
     )
 
     const step = await roleDeploymentStepFactory.create(user, deployment, {
@@ -52,7 +66,6 @@ describe('Sign callback', () => {
         },
       ),
       formData({ proposalId: proposal.id, transactionHash }),
-      { tenant, user },
     )
 
     await expect(
@@ -64,15 +77,23 @@ describe('Sign callback', () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
 
+    const wallet = await walletFactory.create(user)
     const account = await accountFactory.create(tenant, user)
+    const route = await routeFactory.create(account, wallet)
 
     const role = await roleFactory.create(tenant, user)
     const deployment = await roleDeploymentFactory.create(user, role)
 
+    const transaction = await signedTransactionFactory.create(
+      tenant,
+      user,
+      route,
+    )
     const proposal = await transactionProposalFactory.create(
       tenant,
       user,
       account,
+      { signedTransactionId: transaction.id },
     )
 
     const step = await roleDeploymentStepFactory.create(user, deployment, {
@@ -109,15 +130,23 @@ describe('Sign callback', () => {
       const user = await userFactory.create()
       const tenant = await tenantFactory.create(user)
 
+      const wallet = await walletFactory.create(user)
       const account = await accountFactory.create(tenant, user)
+      const route = await routeFactory.create(account, wallet)
 
       const role = await roleFactory.create(tenant, user)
       const deployment = await roleDeploymentFactory.create(user, role)
 
+      const transaction = await signedTransactionFactory.create(
+        tenant,
+        user,
+        route,
+      )
       const proposal = await transactionProposalFactory.create(
         tenant,
         user,
         account,
+        { signedTransactionId: transaction.id },
       )
 
       const step = await roleDeploymentStepFactory.create(user, deployment, {
@@ -152,15 +181,23 @@ describe('Sign callback', () => {
     const user = await userFactory.create()
     const tenant = await tenantFactory.create(user)
 
+    const wallet = await walletFactory.create(user)
     const account = await accountFactory.create(tenant, user)
+    const route = await routeFactory.create(account, wallet)
 
     const role = await roleFactory.create(tenant, user)
     const deployment = await roleDeploymentFactory.create(user, role)
 
+    const transaction = await signedTransactionFactory.create(
+      tenant,
+      user,
+      route,
+    )
     const proposal = await transactionProposalFactory.create(
       tenant,
       user,
       account,
+      { signedTransactionId: transaction.id },
     )
 
     const step = await roleDeploymentStepFactory.create(user, deployment, {
@@ -183,9 +220,8 @@ describe('Sign callback', () => {
       { tenant, user },
     )
 
-    expect(response.status).toEqual(302)
-    expect(response.headers.get('location')).toEqual(
-      `/workspace/${tenant.defaultWorkspaceId}/roles/${role.id}/deployment/${deployment.id}`,
-    )
+    await expect(response.json()).resolves.toEqual({
+      redirectTo: `/workspace/${tenant.defaultWorkspaceId}/roles/${role.id}/deployment/${deployment.id}`,
+    })
   })
 })

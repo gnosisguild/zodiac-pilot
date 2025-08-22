@@ -1,7 +1,6 @@
 import { authorizedAction, authorizedLoader } from '@/auth-server'
 import { Page } from '@/components'
 import { invariantResponse } from '@epic-web/invariant'
-import { getChainId } from '@zodiac/chains'
 import {
   dbClient,
   getAccountByAddress,
@@ -17,9 +16,10 @@ import {
   proposeTransaction,
   updateRoleDeploymentStep,
 } from '@zodiac/db'
-import { getPrefixedAddress, getUUID } from '@zodiac/form-data'
+import { RoleDeploymentStep } from '@zodiac/db/schema'
+import { formData, getPrefixedAddress, getUUID } from '@zodiac/form-data'
 import { useIsPending } from '@zodiac/hooks'
-import { HexAddress, isUUID, MetaTransactionRequest } from '@zodiac/schema'
+import { isUUID } from '@zodiac/schema'
 import {
   Card,
   Collapsible,
@@ -28,13 +28,15 @@ import {
   InlineForm,
   PrimaryLinkButton,
   SecondaryButton,
-  Tag,
 } from '@zodiac/ui'
-import { ConnectWalletButton, useSendTransaction } from '@zodiac/web3'
-import { UUID } from 'crypto'
-import { Check } from 'lucide-react'
-import { href, redirect, useRevalidator } from 'react-router'
-import { ChainId, prefixAddress } from 'ser-kit'
+import {
+  ConnectWalletButton,
+  TransactionStatus,
+  useSendTransaction,
+} from '@zodiac/web3'
+import { randomUUID, UUID } from 'crypto'
+import { href, redirect } from 'react-router'
+import { prefixAddress } from 'ser-kit'
 import { Route } from './+types/deploy-role'
 import { Labels, ProvideAddressLabels } from './AddressLabelContext'
 import { Call } from './Call'
@@ -82,6 +84,7 @@ export const loader = (args: Route.LoaderArgs) =>
 
       return {
         steps,
+        roleId,
         addressLabels: {
           ...accountLabels,
           ...walletLabels,
@@ -161,6 +164,7 @@ export const action = (args: Route.ActionArgs) =>
           accountId: account.id,
           transaction: deploymentStep.transactionBundle,
           callbackUrl,
+          callbackState: randomUUID(),
         })
 
         await updateRoleDeploymentStep(tx, deploymentStep.id, {
@@ -208,6 +212,7 @@ const DeployRole = ({
     issues,
     cancelledAt,
     cancelledBy,
+    roleId,
   },
   params: { workspaceId },
 }: Route.ComponentProps) => {
@@ -244,79 +249,61 @@ const DeployRole = ({
                   Please execute one transaction after the other.
                 </Info>
 
-                {steps.map(
-                  (
-                    {
-                      id,
-                      account,
-                      chainId,
-                      transactionBundle,
-                      targetAccount,
-                      calls,
-                      proposedTransactionId,
-                      signedTransactionId,
-                    },
-                    planIndex,
-                  ) => (
-                    <Card key={`${account.prefixedAddress}-${planIndex}`}>
-                      <Collapsible
-                        header={
-                          <div className="flex flex-1 items-center justify-between gap-8">
-                            <Description account={account} />
+                {steps.map((step) => (
+                  <Card key={step.id}>
+                    <Collapsible
+                      header={
+                        <div className="flex flex-1 items-center justify-between gap-8">
+                          <Description account={step.account} />
 
-                            <div className="flex items-center gap-2">
-                              {signedTransactionId != null && (
-                                <Tag color="green" head={<Check size={16} />}>
-                                  Deployed
-                                </Tag>
-                              )}
+                          <div className="flex items-center gap-2">
+                            {step.transactionHash != null && (
+                              <TransactionStatus hash={step.transactionHash}>
+                                Deployed
+                              </TransactionStatus>
+                            )}
 
-                              <Deploy
-                                disabled={
-                                  signedTransactionId != null ||
-                                  cancelledAt != null
-                                }
-                                roleDeploymentStepId={id}
-                                chainId={chainId}
-                                transactions={transactionBundle}
-                                targetAccount={targetAccount}
-                              />
+                            <Deploy
+                              disabled={
+                                step.transactionHash != null ||
+                                cancelledAt != null
+                              }
+                              deploymentStep={step}
+                              roleId={roleId}
+                            />
 
-                              {proposedTransactionId && cancelledAt == null && (
+                            {step.proposedTransactionId &&
+                              cancelledAt == null && (
                                 <PrimaryLinkButton
                                   size="small"
                                   to={href(
                                     '/workspace/:workspaceId/submit/proposal/:proposalId',
                                     {
                                       workspaceId,
-                                      proposalId: proposedTransactionId,
+                                      proposalId: step.proposedTransactionId,
                                     },
                                   )}
                                 >
                                   Show transaction
                                 </PrimaryLinkButton>
                               )}
-                            </div>
                           </div>
-                        }
-                      >
-                        <div className="flex flex-col gap-4 divide-y divide-zinc-700 pt-4">
-                          {calls.map((call, index) => (
-                            <div
-                              key={`${account.prefixedAddress}=${planIndex}-${index}`}
-                              className="not-last:pb-4"
-                            >
-                              <Call
-                                callData={call}
-                                chainId={getChainId(account.prefixedAddress)}
-                              />
-                            </div>
-                          ))}
                         </div>
-                      </Collapsible>
-                    </Card>
-                  ),
-                )}
+                      }
+                    >
+                      <div className="flex flex-col gap-4 divide-y divide-zinc-700 pt-4">
+                        {step.calls.map((call, index) => (
+                          <div
+                            key={`${step.id}-${index}`}
+                            className="not-last:pb-4"
+                          >
+                            <Call callData={call} chainId={step.chainId} />
+                          </div>
+                        ))}
+                      </div>
+                    </Collapsible>
+                  </Card>
+                ))}
               </div>
             )}
           </ProvideAddressLabels>
@@ -329,55 +316,64 @@ const DeployRole = ({
 export default DeployRole
 
 type DeployProps = {
-  roleDeploymentStepId: UUID
-  chainId: ChainId
-  targetAccount: HexAddress | null
-  transactions: MetaTransactionRequest[]
+  deploymentStep: RoleDeploymentStep
+  roleId: UUID
   disabled: boolean
 }
 
-const Deploy = ({
-  targetAccount,
-  chainId,
-  transactions,
-  roleDeploymentStepId,
-  disabled,
-}: DeployProps) => {
-  const revalidator = useRevalidator()
-
-  const { sendTransaction, isPending } = useSendTransaction({
-    mutation: {
-      onSuccess() {
-        revalidator.revalidate()
-      },
-    },
-  })
+const Deploy = ({ deploymentStep, roleId, disabled }: DeployProps) => {
+  const { sendTransaction, isPending } = useSendTransaction()
 
   const pending = useIsPending(
     Intent.ExecuteTransaction,
-    (data) => data.get('roleDeploymentStepId') === roleDeploymentStepId,
+    (data) => data.get('roleDeploymentStepId') === deploymentStep.id,
   )
 
-  if (targetAccount == null) {
-    const [transaction] = transactions
+  if (deploymentStep.targetAccount == null) {
+    const [transaction] = deploymentStep.transactionBundle
 
     return (
-      <SecondaryButton
-        size="small"
-        disabled={disabled}
-        busy={isPending || revalidator.state === 'loading'}
-        onClick={() => sendTransaction(transaction)}
+      <InlineForm
+        intent={Intent.ExecuteTransaction}
+        context={{ roleDeploymentStepId: deploymentStep.id }}
+        action={href(
+          '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId/step/:deploymentStepId/sign-callback',
+          {
+            workspaceId: deploymentStep.workspaceId,
+            deploymentId: deploymentStep.roleDeploymentId,
+            deploymentStepId: deploymentStep.id,
+            roleId,
+          },
+        )}
       >
-        Deploy
-      </SecondaryButton>
+        {({ submit }) => (
+          <SecondaryButton
+            size="small"
+            disabled={disabled}
+            busy={pending || isPending}
+            onClick={() =>
+              sendTransaction(transaction, {
+                onSuccess(transactionHash) {
+                  submit(formData({ transactionHash }))
+                },
+              })
+            }
+          >
+            Deploy
+          </SecondaryButton>
+        )}
+      </InlineForm>
     )
   }
 
   return (
     <InlineForm
       context={{
-        roleDeploymentStepId,
-        targetAccount: prefixAddress(chainId, targetAccount),
+        roleDeploymentStepId: deploymentStep.id,
+        targetAccount: prefixAddress(
+          deploymentStep.chainId,
+          deploymentStep.targetAccount,
+        ),
       }}
     >
       <SecondaryButton

@@ -26,7 +26,7 @@ import { DateValue, Error, Form, Info, Success, Warning } from '@zodiac/ui'
 import { ConnectWallet } from '@zodiac/web3'
 import { ArrowDownToLine, ArrowLeftRight, ArrowUpFromLine } from 'lucide-react'
 import { Suspense } from 'react'
-import { Await, useSubmit } from 'react-router'
+import { Await, redirect, useSubmit } from 'react-router'
 import { planExecution, prefixAddress } from 'ser-kit'
 import { getDefaultNonces } from '../getDefaultNonces'
 import { revokeApprovalIfNeeded } from '../revokeApprovalIfNeeded'
@@ -205,8 +205,12 @@ export const action = async (args: Route.ActionArgs) =>
                 }),
               })
 
-              if (response.status === 302) {
-                return response
+              if (response.ok) {
+                const json = await response.clone().json()
+
+                if ('redirectTo' in json) {
+                  return redirect(json.redirectTo)
+                }
               }
             } catch (error) {
               console.error('Could not call callback after sign', { error })
@@ -248,6 +252,14 @@ const SubmitPage = ({
 
   return (
     <Form>
+      {signedTransaction && (
+        <Info title="Transaction bundle already signed">
+          This transaction bundle has already been signed by{' '}
+          {signedTransaction.signer.fullName} on{' '}
+          <DateValue>{signedTransaction.createdAt}</DateValue>
+        </Info>
+      )}
+
       <Form.Section
         title="Review token flows"
         description="See all token transfers associated with this transaction bundle at a glance."
@@ -343,14 +355,6 @@ const SubmitPage = ({
           pilotAddress={wallet.address}
         />
       </Form.Section>
-
-      {signedTransaction && (
-        <Info title="Transaction bundle already signed">
-          This transaction bundle has already been signed by{' '}
-          {signedTransaction.signer.fullName} on{' '}
-          <DateValue>{signedTransaction.createdAt}</DateValue>
-        </Info>
-      )}
 
       <Form.Actions>
         <SignTransaction

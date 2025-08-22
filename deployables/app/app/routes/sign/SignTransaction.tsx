@@ -1,5 +1,4 @@
 import { sentry } from '@/sentry-client'
-import { jsonRpcProvider } from '@/utils'
 import { explorerUrl } from '@zodiac/chains'
 import { useIsPending, useStableHandler } from '@zodiac/hooks'
 import { CompanionAppMessageType, companionRequest } from '@zodiac/messages'
@@ -123,11 +122,6 @@ export const SignTransaction = ({
             console.debug(
               `Transaction batch has been submitted with transaction hash ${txHash}`,
             )
-
-            const receipt =
-              await jsonRpcProvider(chainId).waitForTransaction(txHash)
-
-            console.debug(`Transaction ${txHash} has been executed`, receipt)
 
             const url = new URL(`tx/${txHash}`, explorerUrl(chainId))
 
