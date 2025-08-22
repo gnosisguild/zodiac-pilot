@@ -8,15 +8,12 @@ import {
 import { useInterceptTransactions } from './useInterceptTransactions'
 import { useSendTransaction } from './useSendTransaction'
 import { useStoreLastExecutedTransaction } from './useStoreLastExecutedTransaction'
-import { useTransactionQueue } from './useTransactionQueue'
 
 export const useExecutionTracking = () => {
   const sendTransaction = useSendTransaction()
   const rollback = useRollback()
   const refresh = useRefresh()
-  const { nextTransaction, markDone } = useTransactionQueue(
-    usePendingTransactions(),
-  )
+  const [nextTransaction] = usePendingTransactions()
 
   useStoreLastExecutedTransaction()
   useInterceptTransactions()
@@ -44,21 +41,15 @@ export const useExecutionTracking = () => {
 
     const abortController = new AbortController()
 
-    sendTransaction(nextTransaction)
-      .then(() => {
-        if (!abortController.signal.aborted) {
-          markDone()
-        }
-      })
-      .catch((error) => {
-        if (!abortController.signal.aborted) {
-          // once aborted requests may fail as the fork provider is already deleted
-          sentry.captureException(error)
-        }
-      })
+    sendTransaction(nextTransaction).catch((error) => {
+      // once aborted, requests may fail as the fork provider is already deleted
+      if (!abortController.signal.aborted) {
+        sentry.captureException(error)
+      }
+    })
 
     return () => {
       abortController.abort('Effect cancelled')
     }
-  }, [markDone, nextTransaction, refresh, rollback, sendTransaction])
+  }, [nextTransaction, refresh, rollback, sendTransaction])
 }

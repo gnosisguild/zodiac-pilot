@@ -13,7 +13,11 @@ type StartSimulationOptions = {
 
 export const startSimulation = (
   tab: Partial<chrome.tabs.Tab>,
-  { chainId = 1, rpcUrl, vnetId }: StartSimulationOptions = {},
+  {
+    chainId = 1,
+    rpcUrl = 'https://test.rpc.com',
+    vnetId = 'test-vnet-id',
+  }: StartSimulationOptions = {},
 ) => {
   const currentTab = createMockTab(tab)
 

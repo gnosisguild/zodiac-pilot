@@ -1,10 +1,9 @@
 import { ETH_ZERO_ADDRESS, ZERO_ADDRESS } from '@zodiac/chains'
-import type { Account } from '@zodiac/db/schema'
 import type { HexAddress, PrefixedAddress } from '@zodiac/schema'
 import { AddressSelect, type AddressSelectProps } from '@zodiac/web3'
 import { useEffect } from 'react'
 import { useFetcher } from 'react-router'
-import { splitPrefixedAddress, type ChainId } from 'ser-kit'
+import { splitPrefixedAddress, unprefixAddress, type ChainId } from 'ser-kit'
 
 type Props = Omit<
   AddressSelectProps<true>,
@@ -12,13 +11,13 @@ type Props = Omit<
 > & {
   chainId: ChainId
   initiator?: PrefixedAddress
-  knownAccounts?: Account[]
 }
 
 export const AvatarInput = ({
   chainId,
   initiator = ETH_ZERO_ADDRESS,
-  knownAccounts = [],
+  value,
+  defaultValue,
   ...props
 }: Props) => {
   const { load, state, data } = useFetcher<HexAddress[]>()
@@ -37,32 +36,30 @@ export const AvatarInput = ({
     load(`/${initiatorAddress}/${chainId}/available-safes`)
   }, [chainId, initiatorAddress, load])
 
+  // make sure the current value is at the top of the list
+  let options = data ?? []
+  const currentValue = value ?? defaultValue
+  const currentValueUnprefixed = currentValue && unprefixAddress(currentValue)
+  if (
+    currentValueUnprefixed != null &&
+    !options.includes(currentValueUnprefixed)
+  ) {
+    options = [currentValueUnprefixed, ...options]
+  }
+
   return (
     <AddressSelect
       key={`avatar-${state}`}
       clearLabel="Clear Safe Account"
       dropdownLabel="View all available Safes"
       placeholder="Paste an address or select from the list"
+      value={value}
+      defaultValue={defaultValue}
       {...props}
       allowCreate
       blurInputOnSelect
       isDisabled={state === 'loading'}
-      options={
-        data == null
-          ? knownAccounts.filter((account) => account.chainId === chainId)
-          : data.map((address) => {
-              const account = knownAccounts.find(
-                (account) =>
-                  account.address === address && account.chainId === chainId,
-              )
-
-              if (account == null) {
-                return address
-              }
-
-              return { label: account.label, address }
-            })
-      }
+      options={options}
     />
   )
 }

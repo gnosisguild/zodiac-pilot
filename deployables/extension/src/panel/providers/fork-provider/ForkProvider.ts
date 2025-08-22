@@ -110,6 +110,10 @@ export class ForkProvider extends EventEmitter {
     return this.destroyed
   }
 
+  private isInitialized(): boolean {
+    return this.initForkPromise !== undefined
+  }
+
   private assertNotDestroyed() {
     if (this.isDestroyed()) {
       throw new Error('ForkProvider destroyed')
@@ -319,13 +323,19 @@ export class ForkProvider extends EventEmitter {
   }
 
   waitForTransaction(transaction: MetaTransactionRequest) {
-    const { promise, resolve } = Promise.withResolvers<string>()
+    const { promise, resolve, reject } = Promise.withResolvers<string>()
 
-    const handleTransactionEnd = (tx: MetaTransactionRequest, hash: string) => {
+    const handleTransactionEnd = (
+      tx: MetaTransactionRequest,
+      { hash, error }: { hash: string | null; error?: string },
+    ) => {
       if (metaTransactionRequestEqual(tx, transaction)) {
         this.off('transactionEnd', handleTransactionEnd)
-
-        resolve(hash)
+        if (hash) {
+          resolve(hash)
+        } else {
+          reject(new Error(error ?? 'Unknown error'))
+        }
       }
     }
 
@@ -440,16 +450,20 @@ export class ForkProvider extends EventEmitter {
 
   private async initFork(): Promise<void> {
     if (this.isDestroyed()) {
+      throw new Error('ForkProvider is destroyed and can not be re-initialized')
+    }
+    if (this.isInitialized()) {
       throw new Error(
-        'ForkProvider must be uninitialized or destroyed before initialization',
+        'ForkProvider must be uninitialized before initialization',
       )
     }
+    const initializingProvider = this.provider
 
     console.debug('Initializing fork for simulation...')
     const isSafe = await this.isSafePromise
 
-    if (this.isDestroyed()) {
-      console.debug('fork destroyed, skipping initialization')
+    if (this.isDestroyed() || this.provider !== initializingProvider) {
+      console.debug('fork destroyed or re-initialized, skipping initialization')
       return
     }
 
@@ -465,8 +479,10 @@ export class ForkProvider extends EventEmitter {
     }
 
     for (const request of this.setupRequests) {
-      if (this.isDestroyed()) {
-        console.debug('fork destroyed, skipping initialization')
+      if (this.isDestroyed() || this.provider !== initializingProvider) {
+        console.debug(
+          'fork destroyed or re-initialized, skipping initialization',
+        )
         return
       }
 
@@ -474,41 +490,54 @@ export class ForkProvider extends EventEmitter {
       await this.provider.request(translateJsonRpcRequest(request))
     }
 
-    if (this.isDestroyed()) {
-      console.debug('fork destroyed, skipping initialization')
+    if (this.isDestroyed() || this.provider !== initializingProvider) {
+      console.debug('fork destroyed or re-initialized, skipping initialization')
       return
     }
 
-    // notify the background script to start intercepting JSON RPC requests in the current window
-    // we use the public RPC for requests originating from apps
-    const activeTab = await getActiveTab()
+    let simulationStarted = false
 
-    if (this.isDestroyed()) {
-      console.debug('fork destroyed, skipping initialization')
-      return
-    }
+    /**
+     * Notify the background script to start intercepting JSON RPC requests in the current window
+     */
+    const announceSimulation = async () => {
+      const { windowId } = await getActiveTab()
 
-    chrome.runtime.sendMessage<SimulationMessage>({
-      type: PilotSimulationMessageType.SIMULATE_START,
-      windowId: activeTab.windowId,
-      chainId: this.chainId,
-      rpcUrl: rpcUrl(this.provider.network, this.provider.publicRpcSlug),
-      vnetId: this.provider.vnetId,
-    })
-
-    this.provider.on('update', ({ rpcUrl, vnetId }) => {
-      // Check if destroyed before sending update messages
-      if (this.isDestroyed()) {
+      // Check if destroyed before or re-initialized before sending update messages
+      if (this.isDestroyed() || this.provider !== initializingProvider) {
         return
       }
 
-      chrome.runtime.sendMessage<SimulationMessage>({
-        type: PilotSimulationMessageType.SIMULATE_UPDATE,
-        windowId: activeTab.windowId,
-        rpcUrl,
-        vnetId,
-      })
-    })
+      const url = rpcUrl(this.provider.network, this.provider.publicRpcSlug)
+      const vnetId = this.provider.vnetId
+      invariant(vnetId != null, 'vnetId are required')
+
+      if (simulationStarted) {
+        chrome.runtime.sendMessage<SimulationMessage>({
+          type: PilotSimulationMessageType.SIMULATE_UPDATE,
+          windowId,
+          rpcUrl: url,
+          vnetId,
+        })
+      } else {
+        chrome.runtime.sendMessage<SimulationMessage>({
+          type: PilotSimulationMessageType.SIMULATE_START,
+          windowId,
+          chainId: this.chainId,
+          rpcUrl: url,
+          vnetId,
+        })
+        simulationStarted = true
+      }
+    }
+
+    // The TenderlyProvider only initialized upon the first request.
+    // So depending on the exact setup steps above, we might not have a network or publicRpcSlug yet.
+    // We need to wait for the first update event to be able to send the start message.
+    if (this.provider.network != null && this.provider.publicRpcSlug != null) {
+      announceSimulation()
+    }
+    this.provider.on('update', announceSimulation)
   }
 
   /**
@@ -530,9 +559,10 @@ export class ForkProvider extends EventEmitter {
         // we have not yet executed anything after the setup requests, nothing to reset
         console.warn('Nothing to reset')
       }
-    } else {
-      // no setup requests, we can just delete the fork
+    } else if (this.isInitialized()) {
+      // no setup requests, we can just delete the fork and reinitialize the TenderlyProvider to create a fresh fork once needed
       await this.deleteFork()
+      this.provider = new TenderlyProvider(this.chainId)
     }
   }
 

@@ -5,25 +5,27 @@ import {
 } from '@/companion'
 import {
   findAdHocRoute,
-  getLastUsedRouteId,
+  getLastUsedAccountId,
   getRoutes,
 } from '@/execution-routes'
 
 export const findActiveAccount = async (options: FetchOptions = {}) => {
+  // 1) active ad-hoc route
+  const activeAccountId = await getLastUsedAccountId()
   const adHocRoute = findAdHocRoute()
-  if (adHocRoute != null) {
+  if (adHocRoute != null && adHocRoute.id === activeAccountId) {
     return toAccount(adHocRoute)
   }
 
+  // 2) active remote account
   const activeAccount = await findRemoteActiveAccount(options)
 
   if (activeAccount != null) {
     return activeAccount
   }
 
+  // 3) active local route
   const routes = await getRoutes()
-  const activeAccountId = await getLastUsedRouteId()
-
   const route = routes.find((route) => route.id === activeAccountId)
 
   if (route == null) {

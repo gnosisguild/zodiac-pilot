@@ -9,7 +9,7 @@ export {
   isAdHocAccount,
 } from './findAdHocRoute'
 export { findRoute } from './findRoute'
-export { getLastUsedRouteId } from './getLastUsedRouteId'
+export { getLastUsedAccountId } from './getLastUsedAccountId'
 export { getRoute } from './getRoute'
 export { getRoutes } from './getRoutes'
 export { removeRoute } from './removeRoute'

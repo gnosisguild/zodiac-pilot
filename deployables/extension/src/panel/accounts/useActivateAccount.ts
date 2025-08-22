@@ -24,7 +24,6 @@ export const useActivateAccount = ({ onActivate }: OnLaunchOptions = {}) => {
 
       if (activeAccount != null) {
         const newAccount = await getAccount(accountId)
-
         if (
           prefixAddress(activeAccount.chainId, activeAccount.address) !==
           prefixAddress(newAccount.chainId, newAccount.address)
@@ -60,6 +59,7 @@ export const useActivateAccount = ({ onActivate }: OnLaunchOptions = {}) => {
     if (activeAccount == null) {
       navigate(`/${pendingUpdate.accountId}`)
     } else {
+      console.log('SWITCH CLeAR', { activeAccount, pendingUpdate })
       navigate(
         `/${activeAccount.id}/clear-transactions/${pendingUpdate.accountId}`,
       )
