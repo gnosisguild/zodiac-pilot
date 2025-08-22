@@ -149,7 +149,7 @@ const PageLayout = ({
                           value: workspace.id,
                           label: workspace.label,
                         }))}
-                        onChange={submit}
+                        onChange={() => submit()}
                       />
                     )}
                   </InlineForm>

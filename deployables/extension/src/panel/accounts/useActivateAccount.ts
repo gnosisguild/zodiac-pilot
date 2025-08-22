@@ -59,7 +59,6 @@ export const useActivateAccount = ({ onActivate }: OnLaunchOptions = {}) => {
     if (activeAccount == null) {
       navigate(`/${pendingUpdate.accountId}`)
     } else {
-      console.log('SWITCH CLeAR', { activeAccount, pendingUpdate })
       navigate(
         `/${activeAccount.id}/clear-transactions/${pendingUpdate.accountId}`,
       )

@@ -333,7 +333,7 @@ const Initiator = ({ avatar, initiator, knownRoutes }: InitiatorProps) => {
           name="initiator"
           required
           defaultValue={initiator}
-          onChange={submit}
+          onChange={() => submit()}
           knownRoutes={knownRoutes}
         />
       )}
@@ -357,7 +357,7 @@ const Avatar = ({ initiator, avatar }: AvatarProps) => {
           chainId={getChainId(avatar)}
           name="avatar"
           defaultValue={avatar}
-          onChange={submit}
+          onChange={() => submit()}
         />
       )}
     </Form>
@@ -370,7 +370,11 @@ const Chain = ({ chainId }: ChainProps) => {
   return (
     <Form intent={Intent.UpdateChain}>
       {({ submit }) => (
-        <ChainSelect defaultValue={chainId} name="chainId" onChange={submit} />
+        <ChainSelect
+          defaultValue={chainId}
+          name="chainId"
+          onChange={() => submit()}
+        />
       )}
     </Form>
   )

@@ -35,7 +35,7 @@ import {
 } from '@zodiac/test-utils'
 import { MockJsonRpcProvider } from '@zodiac/test-utils/rpc'
 import { useAccount, useConnectorClient } from '@zodiac/web3'
-import { href, redirect } from 'react-router'
+import { href } from 'react-router'
 import {
   checkPermissions,
   execute,
@@ -790,7 +790,13 @@ describe('Sign', () => {
 
           const mockFetch = vi.spyOn(global, 'fetch')
 
-          mockFetch.mockResolvedValue(redirect('/test-route'))
+          mockFetch.mockImplementation(async (url) => {
+            if (url === 'http://test.com/test-callback') {
+              return Response.json({ redirectTo: '/test-route' })
+            }
+
+            return Response.json({})
+          })
 
           await render(
             href('/workspace/:workspaceId/submit/proposal/:proposalId', {

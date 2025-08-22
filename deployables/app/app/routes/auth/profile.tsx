@@ -207,7 +207,7 @@ const Profile = ({
                               hideLabel
                               isClearable
                               clearLabel={`Remove default wallet for ${chainName(chainId)}`}
-                              onChange={submit}
+                              onChange={() => submit()}
                               name="walletId"
                               isDisabled={updatingDefaultWallet}
                               defaultValue={

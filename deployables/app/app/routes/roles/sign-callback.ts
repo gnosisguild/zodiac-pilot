@@ -4,11 +4,14 @@ import {
   completeRoleDeploymentIfNeeded,
   completeRoleDeploymentStep,
   dbClient,
+  getProposedTransaction,
   getRoleDeploymentStep,
+  getSignedTransaction,
+  getUser,
 } from '@zodiac/db'
-import { getHexString } from '@zodiac/form-data'
+import { getHexString, getUUID } from '@zodiac/form-data'
 import { isUUID } from '@zodiac/schema'
-import { href, redirect } from 'react-router'
+import { href } from 'react-router'
 import { Route } from './+types/sign-callback'
 
 export const action = (args: Route.LoaderArgs) =>
@@ -17,9 +20,6 @@ export const action = (args: Route.LoaderArgs) =>
     async ({
       request,
       params: { workspaceId, deploymentId, roleId, deploymentStepId },
-      context: {
-        auth: { user },
-      },
     }) => {
       invariantResponse(
         isUUID(deploymentStepId),
@@ -28,6 +28,22 @@ export const action = (args: Route.LoaderArgs) =>
       invariantResponse(isUUID(deploymentId), '"deploymentId" is not a UUID')
 
       const data = await request.formData()
+
+      const proposal = await getProposedTransaction(
+        dbClient(),
+        getUUID(data, 'proposalId'),
+      )
+
+      invariantResponse(
+        proposal.signedTransactionId != null,
+        'Transaction proposal has not been signed, yet.',
+      )
+
+      const transaction = await getSignedTransaction(
+        dbClient(),
+        proposal.signedTransactionId,
+      )
+      const user = await getUser(dbClient(), transaction.userId)
 
       await dbClient().transaction(async (tx) => {
         await completeRoleDeploymentStep(tx, user, {
@@ -38,20 +54,36 @@ export const action = (args: Route.LoaderArgs) =>
         await completeRoleDeploymentIfNeeded(tx, deploymentId)
       })
 
-      return redirect(
-        href('/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId', {
-          workspaceId,
-          deploymentId,
-          roleId,
-        }),
-      )
+      return Response.json({
+        redirectTo: href(
+          '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId',
+          {
+            workspaceId,
+            deploymentId,
+            roleId,
+          },
+        ),
+      })
     },
     {
-      ensureSignedIn: true,
+      ensureSignedIn: false,
       async hasAccess({
-        tenant,
+        request,
         params: { deploymentId, workspaceId, deploymentStepId },
       }) {
+        const data = await request.formData()
+
+        const proposal = await getProposedTransaction(
+          dbClient(),
+          getUUID(data, 'proposalId'),
+        )
+
+        const state = new URL(request.url).searchParams.get('state')
+
+        if (proposal.callbackState !== state) {
+          return false
+        }
+
         invariantResponse(
           isUUID(deploymentStepId),
           '"deploymentStepId" is not a UUID',
@@ -63,7 +95,7 @@ export const action = (args: Route.LoaderArgs) =>
         )
 
         return (
-          deploymentStep.tenantId === tenant.id &&
+          deploymentStep.tenantId === proposal.tenantId &&
           deploymentStep.roleDeploymentId === deploymentId &&
           deploymentStep.workspaceId === workspaceId
         )

@@ -168,10 +168,6 @@ export default [
 
         ...prefix('roles/:roleId/deployment/:deploymentId', [
           index('routes/roles/deploy-role.tsx'),
-          route(
-            'step/:deploymentStepId/sign-callback',
-            'routes/roles/sign-callback.ts',
-          ),
         ]),
 
         ...prefix('roles', [
@@ -266,6 +262,11 @@ export default [
       ]),
     ]),
   ]),
+
+  route(
+    '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId/step/:deploymentStepId/sign-callback',
+    'routes/roles/sign-callback.ts',
+  ),
 
   layout('routes/system-admin/layout.tsx', [
     ...prefix('/system-admin', [
