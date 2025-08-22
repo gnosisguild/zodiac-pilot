@@ -305,6 +305,7 @@ describe('Simulation tracking', () => {
       expect(handler).toHaveBeenCalledWith({
         chainId: Chain.ETH,
         rpcUrl: 'http://test-rpc.com',
+        vnetId: 'test-vnet-id',
       })
     })
 

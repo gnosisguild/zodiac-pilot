@@ -48,7 +48,7 @@ describe('Fork provider', () => {
     } satisfies TransactionData
 
     provider.on('transaction', () => {
-      provider.emit('transactionEnd', transaction, 'result-hash')
+      provider.emit('transactionEnd', transaction, { hash: 'result-hash' })
     })
 
     const result = await provider.request(
@@ -101,7 +101,7 @@ describe('Fork provider', () => {
       )
 
       provider.on('transaction', (transaction) => {
-        provider.emit('transactionEnd', transaction, 'test-hash')
+        provider.emit('transactionEnd', transaction, { hash: 'test-hash' })
       })
 
       // Send calls
@@ -142,7 +142,7 @@ describe('Fork provider', () => {
       const calls = [{ to: randomAddress(), data: randomHex(), value: '0x0' }]
 
       provider.on('transaction', (transaction) => {
-        provider.emit('transactionEnd', transaction, 'test-hash')
+        provider.emit('transactionEnd', transaction, { hash: 'test-hash' })
       })
 
       // First call should succeed
