@@ -10,8 +10,8 @@ interface SimulateStart {
   type: PilotSimulationMessageType.SIMULATE_START
   windowId: number
   chainId: ChainId
-  rpcUrl?: string
-  vnetId?: string
+  rpcUrl: string
+  vnetId: string
 }
 
 type SimulateUpdate = {

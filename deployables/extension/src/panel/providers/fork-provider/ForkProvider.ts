@@ -495,36 +495,49 @@ export class ForkProvider extends EventEmitter {
       return
     }
 
-    // notify the background script to start intercepting JSON RPC requests in the current window
-    // we use the public RPC for requests originating from apps
-    const activeTab = await getActiveTab()
+    let simulationStarted = false
 
-    if (this.isDestroyed() || this.provider !== initializingProvider) {
-      console.debug('fork destroyed or re-initialized, skipping initialization')
-      return
-    }
+    /**
+     * Notify the background script to start intercepting JSON RPC requests in the current window
+     */
+    const announceSimulation = async () => {
+      const { windowId } = await getActiveTab()
 
-    chrome.runtime.sendMessage<SimulationMessage>({
-      type: PilotSimulationMessageType.SIMULATE_START,
-      windowId: activeTab.windowId,
-      chainId: this.chainId,
-      rpcUrl: rpcUrl(this.provider.network, this.provider.publicRpcSlug),
-      vnetId: this.provider.vnetId,
-    })
-
-    this.provider.on('update', ({ rpcUrl, vnetId }) => {
       // Check if destroyed before or re-initialized before sending update messages
       if (this.isDestroyed() || this.provider !== initializingProvider) {
         return
       }
 
-      chrome.runtime.sendMessage<SimulationMessage>({
-        type: PilotSimulationMessageType.SIMULATE_UPDATE,
-        windowId: activeTab.windowId,
-        rpcUrl,
-        vnetId,
-      })
-    })
+      const url = rpcUrl(this.provider.network, this.provider.publicRpcSlug)
+      const vnetId = this.provider.vnetId
+      invariant(vnetId != null, 'vnetId are required')
+
+      if (simulationStarted) {
+        chrome.runtime.sendMessage<SimulationMessage>({
+          type: PilotSimulationMessageType.SIMULATE_UPDATE,
+          windowId,
+          rpcUrl: url,
+          vnetId,
+        })
+      } else {
+        chrome.runtime.sendMessage<SimulationMessage>({
+          type: PilotSimulationMessageType.SIMULATE_START,
+          windowId,
+          chainId: this.chainId,
+          rpcUrl: url,
+          vnetId,
+        })
+        simulationStarted = true
+      }
+    }
+
+    // The TenderlyProvider only initialized upon the first request.
+    // So depending on the exact setup steps above, we might not have a network or publicRpcSlug yet.
+    // We need to wait for the first update event to be able to send the start message.
+    if (this.provider.network != null && this.provider.publicRpcSlug != null) {
+      announceSimulation()
+    }
+    this.provider.on('update', announceSimulation)
   }
 
   /**
