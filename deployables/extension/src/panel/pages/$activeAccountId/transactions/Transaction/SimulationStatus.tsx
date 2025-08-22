@@ -26,9 +26,10 @@ export const SimulationStatus = ({ transactionId, mini = false }: Props) => {
   if (mini) {
     return (
       <>
-        {status === ExecutionStatus.PENDING && (
-          <Tag head={<Spinner />} color="blue"></Tag>
-        )}
+        {status === ExecutionStatus.PENDING ||
+          (status === ExecutionStatus.CONFIRMED && (
+            <Tag head={<Spinner />} color="blue"></Tag>
+          ))}
         {status === ExecutionStatus.SUCCESS && (
           <Tag head={<Compass size={16} />} color="green"></Tag>
         )}
@@ -48,6 +49,11 @@ export const SimulationStatus = ({ transactionId, mini = false }: Props) => {
           {status === ExecutionStatus.PENDING && (
             <Tag head={<Spinner />} color="blue">
               Pending...
+            </Tag>
+          )}
+          {status === ExecutionStatus.CONFIRMED && (
+            <Tag head={<Spinner />} color="blue">
+              Confirming...
             </Tag>
           )}
           {status === ExecutionStatus.SUCCESS && (
