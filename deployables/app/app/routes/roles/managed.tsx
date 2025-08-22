@@ -107,6 +107,10 @@ export const action = (args: Route.ActionArgs) =>
             return { issues, roleId }
           }
 
+          if (plan.length === 0 && intent !== Intent.AcceptWarnings) {
+            return { emptyDeployment: true }
+          }
+
           const deployment = await dbClient().transaction(async (tx) => {
             const deployment = await createRoleDeployment(tx, user, role, {
               issues,
@@ -206,8 +210,8 @@ const ManagedRoles = ({
 
   return (
     <>
+      <EmptyDeploymentModal />
       <PendingDeploymentModal workspaceId={workspaceId} />
-
       <CheckConfigurationModal />
 
       <Table>
@@ -421,6 +425,34 @@ const PendingDeploymentModal = ({ workspaceId }: { workspaceId: string }) => {
         <CancelDeployment deploymentId={actionData.pendingDeploymentId} />
 
         <Modal.CloseAction>Cancel</Modal.CloseAction>
+      </Modal.Actions>
+    </Modal>
+  )
+}
+
+const EmptyDeploymentModal = () => {
+  const actionData = useActionData<typeof action>()
+  const [dismissed, setDismissed] = useState(false)
+
+  useAfterSubmit(Intent.Deploy, () => setDismissed(false))
+
+  if (actionData == null) {
+    return null
+  }
+
+  if (actionData.emptyDeployment == null) {
+    return null
+  }
+
+  return (
+    <Modal
+      open={!dismissed}
+      onClose={() => setDismissed(true)}
+      title="Nothing to deploy"
+      description="There are no changes that need to be applied."
+    >
+      <Modal.Actions>
+        <PrimaryButton onClick={() => setDismissed(true)}>Ok</PrimaryButton>
       </Modal.Actions>
     </Modal>
   )

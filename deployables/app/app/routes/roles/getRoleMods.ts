@@ -18,16 +18,12 @@ import {
   processPermissions,
   Target,
 } from 'zodiac-roles-sdk'
-import { Labels } from './AddressLabelContext'
 import { computeSwapPermissions } from './computeSwapPermissions'
 import { getRefillPeriod } from './getRefillPeriod'
 import { predictRolesModAddress, Roles } from './predictRolesModAddress'
-import { RoleLabels } from './RoleLabelContext'
 
 type Result = {
   rolesMods: Roles[]
-  modLabels: Labels
-  roleLabels: RoleLabels
   issues: RoleDeploymentIssue[]
 }
 
@@ -50,8 +46,6 @@ export const getRoleMods = async (
   if (activeAccounts.length === 0) {
     return {
       rolesMods: [],
-      modLabels: {},
-      roleLabels: {},
       issues: [RoleDeploymentIssue.NoActiveAccounts],
     }
   }
@@ -140,15 +134,9 @@ export const getRoleMods = async (
       return {
         ...result,
         rolesMods: [...result.rolesMods, mod],
-        modLabels: {
-          ...result.modLabels,
-          [mod.address]: role.label,
-          [activeAccount.address]: activeAccount.label,
-        },
-        roleLabels: { ...result.roleLabels, [role.key]: role.label },
       }
     },
-    { rolesMods: [], modLabels: {}, roleLabels: {}, issues: [] },
+    { rolesMods: [], issues: [] },
   )
 }
 

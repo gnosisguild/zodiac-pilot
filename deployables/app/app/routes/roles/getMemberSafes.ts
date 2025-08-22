@@ -11,13 +11,11 @@ import {
   queryAccounts,
   withPredictedAddress,
 } from 'ser-kit'
-import { Labels } from './AddressLabelContext'
 
 type Safe = Extract<Account, { type: AccountType.SAFE }>
 
 type Result = {
   safes: Account[]
-  memberLabels: Labels
   issues: RoleDeploymentIssue[]
 }
 
@@ -27,7 +25,6 @@ export const getMemberSafes = async (role: Role): Promise<Result> => {
   if (members.length === 0) {
     return {
       safes: [],
-      memberLabels: {},
       issues: [RoleDeploymentIssue.NoActiveMembers],
     }
   }
@@ -37,7 +34,6 @@ export const getMemberSafes = async (role: Role): Promise<Result> => {
   if (accounts.length === 0) {
     return {
       safes: [],
-      memberLabels: {},
       issues: [RoleDeploymentIssue.NoActiveAccounts],
     }
   }
@@ -47,7 +43,6 @@ export const getMemberSafes = async (role: Role): Promise<Result> => {
   )
 
   const safes: Account[] = []
-  const memberLabels: Labels = {}
   const issues: RoleDeploymentIssue[] = []
 
   for (const member of members) {
@@ -75,10 +70,6 @@ export const getMemberSafes = async (role: Role): Promise<Result> => {
 
       const [existingSafe] = await queryAccounts([safe.prefixedAddress])
 
-      memberLabels[safe.address] = member.fullName
-      memberLabels[defaultWallets[chainId].address] =
-        defaultWallets[chainId].label
-
       if (existingSafe == null) {
         safes.push(safe)
       } else {
@@ -87,5 +78,5 @@ export const getMemberSafes = async (role: Role): Promise<Result> => {
     }
   }
 
-  return { safes, memberLabels, issues }
+  return { safes, issues }
 }
