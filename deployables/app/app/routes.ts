@@ -168,7 +168,10 @@ export default [
 
         ...prefix('roles/:roleId/deployment/:deploymentId', [
           index('routes/roles/deploy-role.tsx'),
-          route('sign-callback', 'routes/roles/sign-callback.ts'),
+          route(
+            'step/:deploymentStepId/sign-callback',
+            'routes/roles/sign-callback.ts',
+          ),
         ]),
 
         ...prefix('roles', [

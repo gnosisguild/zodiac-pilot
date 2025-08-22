@@ -43,10 +43,11 @@ describe('Sign callback', () => {
 
     await post(
       href(
-        '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId/sign-callback',
+        '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId/step/:deploymentStepId/sign-callback',
         {
           workspaceId: tenant.defaultWorkspaceId,
           deploymentId: deployment.id,
+          deploymentStepId: step.id,
           roleId: role.id,
         },
       ),
@@ -82,10 +83,11 @@ describe('Sign callback', () => {
 
     await post(
       href(
-        '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId/sign-callback',
+        '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId/step/:deploymentStepId/sign-callback',
         {
           workspaceId: tenant.defaultWorkspaceId,
           deploymentId: deployment.id,
+          deploymentStepId: step.id,
           roleId: role.id,
         },
       ),
@@ -118,7 +120,7 @@ describe('Sign callback', () => {
         account,
       )
 
-      await roleDeploymentStepFactory.create(user, deployment, {
+      const step = await roleDeploymentStepFactory.create(user, deployment, {
         proposedTransactionId: proposal.id,
       })
 
@@ -126,10 +128,11 @@ describe('Sign callback', () => {
 
       await post(
         href(
-          '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId/sign-callback',
+          '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId/step/:deploymentStepId/sign-callback',
           {
             workspaceId: tenant.defaultWorkspaceId,
             deploymentId: deployment.id,
+            deploymentStepId: step.id,
             roleId: role.id,
           },
         ),
@@ -160,7 +163,7 @@ describe('Sign callback', () => {
       account,
     )
 
-    await roleDeploymentStepFactory.create(user, deployment, {
+    const step = await roleDeploymentStepFactory.create(user, deployment, {
       proposedTransactionId: proposal.id,
     })
 
@@ -168,10 +171,11 @@ describe('Sign callback', () => {
 
     const response = await post(
       href(
-        '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId/sign-callback',
+        '/workspace/:workspaceId/roles/:roleId/deployment/:deploymentId/step/:deploymentStepId/sign-callback',
         {
           workspaceId: tenant.defaultWorkspaceId,
           deploymentId: deployment.id,
+          deploymentStepId: step.id,
           roleId: role.id,
         },
       ),
