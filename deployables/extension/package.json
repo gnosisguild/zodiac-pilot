@@ -40,7 +40,7 @@
     "@types/chrome": "0.1.4",
     "@types/events": "3.0.3",
     "@types/node": "22.14.1",
-    "@types/react": "19.1.10",
+    "@types/react": "19.1.11",
     "@types/react-dom": "19.1.7",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/test-utils": "workspace:*",
