@@ -28,11 +28,13 @@ import {
   InlineForm,
   PrimaryLinkButton,
   SecondaryButton,
-  Tag,
 } from '@zodiac/ui'
-import { ConnectWalletButton, useSendTransaction } from '@zodiac/web3'
+import {
+  ConnectWalletButton,
+  TransactionStatus,
+  useSendTransaction,
+} from '@zodiac/web3'
 import { UUID } from 'crypto'
-import { Check } from 'lucide-react'
 import { href, redirect, useRevalidator } from 'react-router'
 import { ChainId, prefixAddress } from 'ser-kit'
 import { Route } from './+types/deploy-role'
@@ -255,6 +257,7 @@ const DeployRole = ({
                       calls,
                       proposedTransactionId,
                       signedTransactionId,
+                      transactionHash,
                     },
                     planIndex,
                   ) => (
@@ -265,10 +268,10 @@ const DeployRole = ({
                             <Description account={account} />
 
                             <div className="flex items-center gap-2">
-                              {signedTransactionId != null && (
-                                <Tag color="green" head={<Check size={16} />}>
+                              {transactionHash != null && (
+                                <TransactionStatus hash={transactionHash}>
                                   Deployed
-                                </Tag>
+                                </TransactionStatus>
                               )}
 
                               <Deploy
