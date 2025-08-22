@@ -1,5 +1,5 @@
 import { useRef, type ComponentPropsWithRef } from 'react'
-import { Form } from 'react-router'
+import { Form, useFormAction } from 'react-router'
 import { AllowSubmit, type AllowSubmitChildren } from './AllowSubmit'
 import { FormContext, type Context } from './FormContext'
 
@@ -14,18 +14,24 @@ export const InlineForm = ({
   method = 'post',
   context = {},
   intent,
+  action,
 
   ...props
 }: InlineFormProps) => {
   const formRef = useRef(null)
+  const defaultAction = useFormAction()
 
   return (
-    <Form method={method} ref={formRef} {...props}>
+    <Form method={method} ref={formRef} action={action} {...props}>
       <FormContext context={context} />
 
       {intent != null && <input type="hidden" name="intent" value={intent} />}
 
-      <AllowSubmit formRef={formRef} method={method}>
+      <AllowSubmit
+        formRef={formRef}
+        method={method}
+        action={action || defaultAction}
+      >
         {children}
       </AllowSubmit>
     </Form>

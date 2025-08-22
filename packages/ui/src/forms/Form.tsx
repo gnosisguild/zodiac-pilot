@@ -1,5 +1,5 @@
 import { useRef, type ComponentProps } from 'react'
-import { Form as BaseForm } from 'react-router'
+import { Form as BaseForm, useFormAction } from 'react-router'
 import { AllowSubmit, type AllowSubmitChildren } from './AllowSubmit'
 import { FormContext, type Context } from './FormContext'
 import { FormLayout } from './FormLayout'
@@ -18,18 +18,24 @@ export const Form = ({
   children,
   context = {},
   intent,
+  action,
   ...props
 }: FormProps) => {
   const formRef = useRef(null)
+  const defaultAction = useFormAction()
 
   return (
-    <BaseForm {...props} ref={formRef} method={method}>
+    <BaseForm {...props} ref={formRef} method={method} action={action}>
       <FormLayout>
         {intent && <input type="hidden" name="intent" value={intent} />}
 
         <FormContext context={context} />
 
-        <AllowSubmit method={method} formRef={formRef}>
+        <AllowSubmit
+          method={method}
+          formRef={formRef}
+          action={action || defaultAction}
+        >
           {children}
         </AllowSubmit>
       </FormLayout>
