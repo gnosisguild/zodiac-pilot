@@ -20,7 +20,7 @@
     "rough-notation": "0.5.1"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "4.20250821.0",
+    "@cloudflare/workers-types": "4.20250822.0",
     "@react-router/dev": "7.8.1",
     "@tailwindcss/vite": "4.1.12",
     "@types/node": "22.14.1",
