@@ -1,19 +1,25 @@
 import { render } from '@/test-utils'
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Chain } from '@zodiac/chains'
 import {
   dbClient,
   getRoleDeployment,
   getRoleDeployments,
   getRoleDeploymentSteps,
+  setActiveAccounts,
+  setDefaultWallet,
+  setRoleMembers,
 } from '@zodiac/db'
 import { RoleDeploymentIssue } from '@zodiac/db/schema'
 import {
+  accountFactory,
   dbIt,
   roleDeploymentFactory,
   roleFactory,
   tenantFactory,
   userFactory,
+  walletFactory,
 } from '@zodiac/db/test-utils'
 import {
   createMockSafeAccount,
@@ -27,6 +33,7 @@ import {
 import { href } from 'react-router'
 import { AccountBuilderCall, AccountType } from 'ser-kit'
 import { beforeEach, describe, expect, vi } from 'vitest'
+import { Intent } from './intents'
 import { planRoleUpdate } from './planRoleUpdate'
 
 vi.mock('./planRoleUpdate', () => ({ planRoleUpdate: vi.fn() }))
@@ -37,9 +44,7 @@ describe('Managed roles', () => {
   beforeEach(() => {
     mockPlanRoleUpdate.mockResolvedValue({
       issues: [],
-      labels: {},
       plan: [],
-      roleLabels: {},
     })
 
     vi.setSystemTime(new Date())
@@ -51,6 +56,11 @@ describe('Managed roles', () => {
       const tenant = await tenantFactory.create(user)
 
       const role = await roleFactory.create(tenant, user)
+
+      mockPlanRoleUpdate.mockResolvedValue({
+        issues: [],
+        plan: [{ account: createMockSafeAccount(), steps: [] }],
+      })
 
       await render(
         href('/workspace/:workspaceId/roles', {
@@ -94,7 +104,6 @@ describe('Managed roles', () => {
 
       mockPlanRoleUpdate.mockResolvedValue({
         issues: [],
-        labels: {},
         plan: [
           {
             account,
@@ -107,7 +116,6 @@ describe('Managed roles', () => {
             ],
           },
         ],
-        roleLabels: {},
       })
 
       await render(
@@ -145,9 +153,7 @@ describe('Managed roles', () => {
 
           mockPlanRoleUpdate.mockResolvedValue({
             issues: [RoleDeploymentIssue.MissingDefaultWallet],
-            labels: {},
             plan: [],
-            roleLabels: {},
           })
 
           await render(
@@ -181,9 +187,7 @@ describe('Managed roles', () => {
 
         mockPlanRoleUpdate.mockResolvedValue({
           issues: [RoleDeploymentIssue.MissingDefaultWallet],
-          labels: {},
           plan: [],
-          roleLabels: {},
         })
 
         await render(
@@ -278,6 +282,87 @@ describe('Managed roles', () => {
           })
         },
       )
+    })
+
+    describe('Empty deployment', () => {
+      dbIt(
+        'does not create a deployment when there are no changes',
+        async () => {
+          const user = await userFactory.create()
+          const tenant = await tenantFactory.create(user)
+
+          const wallet = await walletFactory.create(user)
+
+          await setDefaultWallet(dbClient(), user, {
+            walletId: wallet.id,
+            chainId: Chain.ETH,
+          })
+
+          const account = await accountFactory.create(tenant, user, {
+            chainId: Chain.ETH,
+          })
+          const role = await roleFactory.create(tenant, user)
+
+          await setActiveAccounts(dbClient(), role, [account.id])
+          await setRoleMembers(dbClient(), role, [user.id])
+
+          await render(
+            href('/workspace/:workspaceId/roles', {
+              workspaceId: tenant.defaultWorkspaceId,
+            }),
+            { tenant, user },
+          )
+
+          await userEvent.click(
+            await screen.findByRole('button', { name: 'Deploy' }),
+          )
+
+          await waitForPendingActions()
+
+          await expect(
+            getRoleDeployments(dbClient(), role.id),
+          ).resolves.toHaveLength(0)
+        },
+      )
+
+      dbIt('shows a warning', async () => {
+        const user = await userFactory.create()
+        const tenant = await tenantFactory.create(user)
+
+        const wallet = await walletFactory.create(user)
+
+        await setDefaultWallet(dbClient(), user, {
+          walletId: wallet.id,
+          chainId: Chain.ETH,
+        })
+
+        const account = await accountFactory.create(tenant, user, {
+          chainId: Chain.ETH,
+        })
+        const role = await roleFactory.create(tenant, user)
+
+        await setActiveAccounts(dbClient(), role, [account.id])
+        await setRoleMembers(dbClient(), role, [user.id])
+
+        await render(
+          href('/workspace/:workspaceId/roles', {
+            workspaceId: tenant.defaultWorkspaceId,
+          }),
+          { tenant, user },
+        )
+
+        await userEvent.click(
+          await screen.findByRole('button', { name: 'Deploy' }),
+        )
+
+        await waitForPendingActions(Intent.Deploy)
+
+        expect(
+          await screen.findByRole('dialog', { name: 'Nothing to deploy' }),
+        ).toHaveAccessibleDescription(
+          'There are no changes that need to be applied.',
+        )
+      })
     })
   })
 })
