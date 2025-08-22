@@ -18,6 +18,6 @@ export const planRoleUpdate = async (roleId: UUID) => {
 
   return {
     issues: [...roleIssues, ...memberIssues],
-    plan,
+    plan: plan.filter(({ steps }) => steps.length > 0),
   }
 }
