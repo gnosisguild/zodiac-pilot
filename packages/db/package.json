@@ -62,7 +62,7 @@
     "@zodiac/modules": "workspace:*",
     "date-fns": "4.1.0",
     "drizzle-kit": "0.31.4",
-    "eslint": "9.33.0",
+    "eslint": "9.34.0",
     "eslint-plugin-drizzle": "0.2.3",
     "madge": "8.0.0",
     "vitest": "3.2.4"
