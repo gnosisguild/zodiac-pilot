@@ -654,11 +654,11 @@ importers:
         specifier: 2.1.1
         version: 2.1.1
       drizzle-orm:
-        specifier: 0.44.4
-        version: 0.44.4(@cloudflare/workers-types@4.20250823.0)(@opentelemetry/api@1.9.0)(@types/pg@8.15.4)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7)
+        specifier: 0.44.5
+        version: 0.44.5(@cloudflare/workers-types@4.20250823.0)(@opentelemetry/api@1.9.0)(@types/pg@8.15.4)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7)
       drizzle-zod:
         specifier: 0.8.3
-        version: 0.8.3(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250823.0)(@opentelemetry/api@1.9.0)(@types/pg@8.15.4)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7))(zod@4.1.1)
+        version: 0.8.3(drizzle-orm@0.44.5(@cloudflare/workers-types@4.20250823.0)(@opentelemetry/api@1.9.0)(@types/pg@8.15.4)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7))(zod@4.1.1)
       postgres:
         specifier: 3.4.7
         version: 3.4.7
@@ -6301,8 +6301,8 @@ packages:
     resolution: {integrity: sha512-tCPWVZWZqWVx2XUsVpJRnH9Mx0ClVOf5YUHerZ5so1OKSlqww4zy1R5ksEdGRcO3tM3zj0PYN6V48TbQCL1RfA==}
     hasBin: true
 
-  drizzle-orm@0.44.4:
-    resolution: {integrity: sha512-ZyzKFpTC/Ut3fIqc2c0dPZ6nhchQXriTsqTNs4ayRgl6sZcFlMs9QZKPSHXK4bdOf41GHGWf+FrpcDDYwW+W6Q==}
+  drizzle-orm@0.44.5:
+    resolution: {integrity: sha512-jBe37K7d8ZSKptdKfakQFdeljtu3P2Cbo7tJoJSVZADzIKOBo9IAJPOmMsH2bZl90bZgh8FQlD8BjxXA/zuBkQ==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=4'
@@ -17398,7 +17398,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250823.0)(@opentelemetry/api@1.9.0)(@types/pg@8.15.4)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7):
+  drizzle-orm@0.44.5(@cloudflare/workers-types@4.20250823.0)(@opentelemetry/api@1.9.0)(@types/pg@8.15.4)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7):
     optionalDependencies:
       '@cloudflare/workers-types': 4.20250823.0
       '@opentelemetry/api': 1.9.0
@@ -17407,9 +17407,9 @@ snapshots:
       pg: 8.14.1
       postgres: 3.4.7
 
-  drizzle-zod@0.8.3(drizzle-orm@0.44.4(@cloudflare/workers-types@4.20250823.0)(@opentelemetry/api@1.9.0)(@types/pg@8.15.4)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7))(zod@4.1.1):
+  drizzle-zod@0.8.3(drizzle-orm@0.44.5(@cloudflare/workers-types@4.20250823.0)(@opentelemetry/api@1.9.0)(@types/pg@8.15.4)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7))(zod@4.1.1):
     dependencies:
-      drizzle-orm: 0.44.4(@cloudflare/workers-types@4.20250823.0)(@opentelemetry/api@1.9.0)(@types/pg@8.15.4)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7)
+      drizzle-orm: 0.44.5(@cloudflare/workers-types@4.20250823.0)(@opentelemetry/api@1.9.0)(@types/pg@8.15.4)(gel@2.0.1)(pg@8.14.1)(postgres@3.4.7)
       zod: 4.1.1
 
   dset@3.1.4: {}
