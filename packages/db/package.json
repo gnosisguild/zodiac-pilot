@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@dotenvx/dotenvx": "1.49.0",
-    "@faker-js/faker": "9.9.0",
+    "@faker-js/faker": "10.0.0",
     "@types/node": "22.14.1",
     "@types/react": "19.1.11",
     "@workos-inc/node": "7.68.0",

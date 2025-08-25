@@ -676,8 +676,8 @@ importers:
         specifier: 1.49.0
         version: 1.49.0
       '@faker-js/faker':
-        specifier: 9.9.0
-        version: 9.9.0
+        specifier: 10.0.0
+        version: 10.0.0
       '@types/node':
         specifier: 22.14.1
         version: 22.14.1
@@ -882,8 +882,8 @@ importers:
         version: 3.2.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     devDependencies:
       '@faker-js/faker':
-        specifier: 9.9.0
-        version: 9.9.0
+        specifier: 10.0.0
+        version: 10.0.0
       '@zodiac/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint
@@ -2397,9 +2397,9 @@ packages:
   '@ethersproject/wordlists@5.7.0':
     resolution: {integrity: sha512-S2TFNJNfHWVHNE6cNDjbVlZ6MgE17MIxMbMg2zv3wn+3XSJGosL1m9ZVv3GXCf/2ymSsQ+hRI5IzoMJTG6aoVA==}
 
-  '@faker-js/faker@9.9.0':
-    resolution: {integrity: sha512-OEl393iCOoo/z8bMezRlJu+GlRGlsKbUAN7jKB6LhnKoqKve5DXRpalbItIIcwnCjs1k/FOPjFzcA6Qn+H+YbA==}
-    engines: {node: '>=18.0.0', npm: '>=9.0.0'}
+  '@faker-js/faker@10.0.0':
+    resolution: {integrity: sha512-UollFEUkVXutsaP+Vndjxar40Gs5JL2HeLcl8xO1QAjJgOdhc3OmBFWyEylS+RddWaaBiAzH+5/17PLQJwDiLw==}
+    engines: {node: ^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0, npm: '>=10'}
 
   '@fastify/busboy@3.1.1':
     resolution: {integrity: sha512-5DGmA8FTdB2XbDeEwc/5ZXBl6UbBAyBOOLlPuBnZ/N1SwdH9Ii+cOX3tBROlDgcTXxjOYnLMVoKk9+FXAw0CJw==}
@@ -12005,7 +12005,7 @@ snapshots:
       '@ethersproject/properties': 5.7.0
       '@ethersproject/strings': 5.7.0
 
-  '@faker-js/faker@9.9.0': {}
+  '@faker-js/faker@10.0.0': {}
 
   '@fastify/busboy@3.1.1': {}
 
