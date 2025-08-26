@@ -1,6 +1,5 @@
 import { useAccount } from '@/accounts'
 import { AD_HOC_ROUTE_ID } from '@/execution-routes'
-import { useWindowId } from '@/port-handling'
 import { useClearTransactions, useTransactions } from '@/transactions'
 import { invariant } from '@epic-web/invariant'
 import { jsonStringify, toMetaTransactionRequest } from '@zodiac/schema'
@@ -14,9 +13,6 @@ import {
 import { useState } from 'react'
 
 export const SubmitCallback = () => {
-  const account = useAccount()
-  const windowId = useWindowId()
-
   const transactions = useTransactions()
   const [pending, setPending] = useState(false)
 
@@ -29,11 +25,13 @@ export const SubmitCallback = () => {
 
     fetch(callback, {
       method: 'POST',
-      body: jsonStringify({
-        accountId: account.id,
-        windowId,
-        transactions: transactions.map(toMetaTransactionRequest),
-      }),
+      body: jsonStringify(
+        transactions.map(toMetaTransactionRequest),
+        undefined,
+        {
+          noInternalRepresentation: true,
+        },
+      ),
       headers: {
         'Content-Type': 'application/json',
       },
