@@ -84,7 +84,7 @@ export const clientAction = async ({
   if (callback) searchParams.set('callback', callback)
   if (setup) searchParams.set('setup', jsonStringify(setup))
   if (route) searchParams.set('route', jsonStringify(route))
-  const search = `?${searchParams.toString()}`
+  const search = `?${searchParams.toString()}#/${AD_HOC_ROUTE_ID}/${AD_HOC_ROUTE_ID}`
 
   // const { promise, resolve } = Promise.withResolvers()
   companionRequest(
