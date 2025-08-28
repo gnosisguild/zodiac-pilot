@@ -71,7 +71,7 @@
     "@types/node": "22.14.1",
     "@types/react": "19.1.12",
     "@types/react-dom": "19.1.8",
-    "@vercel/react-router": "1.2.2",
+    "@vercel/react-router": "1.2.3",
     "@vitest/runner": "3.2.4",
     "@zodiac/eslint-config": "workspace:*",
     "@zodiac/test-utils": "workspace:*",
