@@ -206,8 +206,8 @@ importers:
         specifier: 4.1.5
         version: 4.1.5
       zodiac-roles-sdk:
-        specifier: 3.2.3
-        version: 3.2.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+        specifier: 3.2.5
+        version: 3.2.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     devDependencies:
       '@dotenvx/dotenvx':
         specifier: 1.49.0
@@ -878,8 +878,8 @@ importers:
         specifier: 3.1.2
         version: 3.1.2
       zodiac-roles-sdk:
-        specifier: 3.2.3
-        version: 3.2.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+        specifier: 3.2.5
+        version: 3.2.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     devDependencies:
       '@faker-js/faker':
         specifier: 10.0.0
@@ -10649,17 +10649,14 @@ packages:
   zod@4.1.5:
     resolution: {integrity: sha512-rcUUZqlLJgBC33IT3PNMgsCq6TzLQEG/Ei/KTCU0PedSWRMAXoOUN+4t/0H+Q8bdnLPdqUYnvboJT0bn/229qg==}
 
-  zodiac-roles-deployments@3.1.1:
-    resolution: {integrity: sha512-6bl7+UjBtLTnuuQ+GnsHAw9gcnkCq4+OmF73bNUljDbKdzQ5oScEWMM1DU+oghGHTIlT12/2IIYZ0QLlKLaVUw==}
-
   zodiac-roles-deployments@3.1.2:
     resolution: {integrity: sha512-5QfxT9xQrZk188bbnrOkw1WGD4J5V6v3iKzoqguPHIRumIs0nz3p3mf4jAtYjbPBn3PnJBeHZ7Q8vtuOgWaHIg==}
 
-  zodiac-roles-sdk@3.2.3:
-    resolution: {integrity: sha512-wmAF52n7C03OJnsejTlK9vukkioMrQW0/x2lwl90NoM4UWuZGLkzJ5FaV9aSJWYU8uiCoOhpokBpa6nh5/MIbw==}
+  zodiac-roles-sdk@3.2.5:
+    resolution: {integrity: sha512-szhwsUkpDNfGDh7Wq/sd7BOt4Q6Fl6C/YIzrmUPOrSGYaVAD9WSOGyHpO2Y1dvdo+dWB/UFUD/cyW8SMkZBG2g==}
     peerDependencies:
       '@gnosis-guild/eth-sdk-client': ^0.1.6
-      openapi-backend: ^5.11.0
+      openapi-backend: ^5.15.0
       openapi-types: ^12.1.3
     peerDependenciesMeta:
       '@gnosis-guild/eth-sdk-client':
@@ -20909,7 +20906,7 @@ snapshots:
       '@epic-web/invariant': 1.0.0
       '@safe-global/api-kit': 3.0.2(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)
       viem: 2.35.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.22.4)
-      zodiac-roles-sdk: 3.2.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      zodiac-roles-sdk: 3.2.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - '@gnosis-guild/eth-sdk-client'
       - bufferutil
@@ -20925,7 +20922,7 @@ snapshots:
       '@epic-web/invariant': 1.0.0
       '@safe-global/api-kit': 3.0.2(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
       viem: 2.35.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
-      zodiac-roles-sdk: 3.2.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      zodiac-roles-sdk: 3.2.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - '@gnosis-guild/eth-sdk-client'
       - bufferutil
@@ -20941,7 +20938,7 @@ snapshots:
       '@epic-web/invariant': 1.0.0
       '@safe-global/api-kit': 3.0.2(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
       viem: 2.35.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
-      zodiac-roles-sdk: 3.2.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
+      zodiac-roles-sdk: 3.2.5(bufferutil@4.0.9)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - '@gnosis-guild/eth-sdk-client'
       - bufferutil
@@ -22320,14 +22317,12 @@ snapshots:
 
   zod@4.1.5: {}
 
-  zodiac-roles-deployments@3.1.1: {}
-
   zodiac-roles-deployments@3.1.2: {}
 
-  zodiac-roles-sdk@3.2.3(bufferutil@4.0.9)(utf-8-validate@5.0.10):
+  zodiac-roles-sdk@3.2.5(bufferutil@4.0.9)(utf-8-validate@5.0.10):
     dependencies:
       ethers: 6.15.0(bufferutil@4.0.9)(utf-8-validate@5.0.10)
-      zodiac-roles-deployments: 3.1.1
+      zodiac-roles-deployments: 3.1.2
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
