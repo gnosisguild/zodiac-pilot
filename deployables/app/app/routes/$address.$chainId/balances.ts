@@ -3,7 +3,11 @@ import {
   getTokenBalances,
   type TokenBalance,
 } from '@/balances-server'
-import { applyDeltaToBalances, getVnetTransactionDelta } from '@/vnet-server'
+import {
+  applyDeltaToBalances,
+  getVnetErc20Deltas,
+  getVnetNativeDelta,
+} from '@/vnet-server'
 import { invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
 import { verifyHexAddress } from '@zodiac/schema'
@@ -17,7 +21,7 @@ export const loader = async ({
 
   const chain = await getChain(verifyChainId(parseInt(chainId)))
 
-  const allBalances = await getTokenBalances(chain, verifyHexAddress(address))
+  let balances = await getTokenBalances(chain, verifyHexAddress(address))
 
   if (url.searchParams.has('fork')) {
     const fork = url.searchParams.get('fork')
@@ -26,16 +30,43 @@ export const loader = async ({
     const vnetId = url.searchParams.get('vnetId')
     invariantResponse(vnetId != null, 'vnetId is required')
 
-    const deltas = await getVnetTransactionDelta(
+    const erc20Deltas = await getVnetErc20Deltas(
       vnetId,
       fork,
       verifyHexAddress(address),
-      allBalances,
-      chain.id,
     )
 
-    return await applyDeltaToBalances(allBalances, deltas, chain.id)
+    const nativeDelta = await getVnetNativeDelta(
+      fork,
+      verifyHexAddress(address),
+      chain.native_token_id,
+      balances,
+    )
+
+    balances = await applyDeltaToBalances(
+      balances,
+      { ...nativeDelta, ...erc20Deltas },
+      chain.id,
+    )
   }
 
-  return allBalances
+  return balances.toSorted((a, b) => {
+    if (a.contractId === chain.native_token_id) {
+      return -1
+    }
+
+    if (a.usdValue != null && b.usdValue != null) {
+      return b.usdValue - a.usdValue
+    }
+
+    if (a.usdValue == null && b.usdValue != null) {
+      return -1
+    }
+
+    if (a.usdPrice != null && b.usdValue == null) {
+      return 1
+    }
+
+    return 0
+  })
 }

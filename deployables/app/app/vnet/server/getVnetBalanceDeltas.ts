@@ -1,17 +1,14 @@
-import type { TokenBalance } from '@/balances-server'
-import type { HexAddress } from '@zodiac/schema'
-import { createPublicClient, http } from 'viem'
-import { computeNativeDiff } from './computeNativeDiff'
+import { TokenBalance } from '@/balances-server'
+import { type HexAddress } from '@zodiac/schema'
+import { createPublicClient, http, parseUnits } from 'viem'
 import { getVnetTransactions } from './getVnetTransactions'
 import { getVnetTxReceipt } from './getVnetTxReceipt'
 import { processTransferLogs } from './processTransferLogs'
 
-export const getVnetTransactionDelta = async (
+export const getVnetErc20Deltas = async (
   vnetId: string,
   rpc: string,
   address: HexAddress,
-  baselineBalances: TokenBalance[],
-  chain: string,
 ) => {
   const transactions = await getVnetTransactions(vnetId)
 
@@ -40,19 +37,28 @@ export const getVnetTransactionDelta = async (
     {},
   )
 
-  const client = createPublicClient({ transport: http(rpc) })
-  const forkNativeBalance = await client.getBalance({ address })
+  return erc20Deltas
+}
 
-  const baselineNative = baselineBalances.find(
-    (b) => b.contractId.toLowerCase() === chain.toLowerCase(),
+export const getVnetNativeDelta = async (
+  rpc: string,
+  address: HexAddress,
+  nativeTokenId: string,
+  allBalances: TokenBalance[],
+) => {
+  const client = createPublicClient({ transport: http(rpc) })
+  const forkBalance = await client.getBalance({ address })
+
+  const nativeTokenBaselineBalance = parseUnits(
+    allBalances.find(
+      (b) => b.contractId.toLowerCase() === nativeTokenId.toLowerCase(),
+    )?.amount ?? '0',
+    18,
   )
 
-  if (baselineNative) {
-    const diff = computeNativeDiff(baselineNative, forkNativeBalance)
-    if (diff !== 0n) {
-      erc20Deltas[chain.toLowerCase()] =
-        (erc20Deltas[chain.toLowerCase()] ?? 0n) + diff
-    }
+  if (nativeTokenBaselineBalance == null) {
+    return { [nativeTokenId]: forkBalance }
   }
-  return erc20Deltas
+
+  return { [nativeTokenId]: forkBalance - nativeTokenBaselineBalance }
 }
