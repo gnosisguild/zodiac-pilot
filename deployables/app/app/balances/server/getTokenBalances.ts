@@ -16,35 +16,15 @@ export const getTokenBalances = async (
     },
   })
 
-  return rawData
-    .map((data) => ({
-      contractId: data.id,
-      name: data.name,
-      amount: formatUnits(data.raw_amount, data.decimals || 18) as `${number}`,
-      logoUrl: data.logo_url,
-      symbol: data.optimized_symbol || data.display_symbol || data.symbol,
-      usdValue: data.price == null ? null : data.amount * data.price,
-      usdPrice: data.price,
-      decimals: data.decimals || 18,
-      chain: data.chain,
-    }))
-    .toSorted((a, b) => {
-      if (a.contractId === chain.native_token_id) {
-        return -1
-      }
-
-      if (a.usdValue != null && b.usdValue != null) {
-        return b.usdValue - a.usdValue
-      }
-
-      if (a.usdValue == null && b.usdValue != null) {
-        return -1
-      }
-
-      if (a.usdPrice != null && b.usdValue == null) {
-        return 1
-      }
-
-      return 0
-    })
+  return rawData.map((data) => ({
+    contractId: data.id,
+    name: data.name,
+    amount: formatUnits(data.raw_amount, data.decimals || 18) as `${number}`,
+    logoUrl: data.logo_url,
+    symbol: data.optimized_symbol || data.display_symbol || data.symbol,
+    usdValue: data.price == null ? null : data.amount * data.price,
+    usdPrice: data.price,
+    decimals: data.decimals || 18,
+    chain: data.chain,
+  }))
 }

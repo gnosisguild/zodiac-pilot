@@ -21,7 +21,7 @@ export const loader = async ({
 
   const chain = await getChain(verifyChainId(parseInt(chainId)))
 
-  const allBalances = await getTokenBalances(chain, verifyHexAddress(address))
+  let balances = await getTokenBalances(chain, verifyHexAddress(address))
 
   if (url.searchParams.has('fork')) {
     const fork = url.searchParams.get('fork')
@@ -39,16 +39,34 @@ export const loader = async ({
     const nativeDelta = await getVnetNativeDelta(
       fork,
       verifyHexAddress(address),
-      chain.id,
-      allBalances,
+      chain.native_token_id,
+      balances,
     )
 
-    return await applyDeltaToBalances(
-      allBalances,
+    balances = await applyDeltaToBalances(
+      balances,
       { ...nativeDelta, ...erc20Deltas },
       chain.id,
     )
   }
 
-  return allBalances
+  return balances.toSorted((a, b) => {
+    if (a.contractId === chain.native_token_id) {
+      return -1
+    }
+
+    if (a.usdValue != null && b.usdValue != null) {
+      return b.usdValue - a.usdValue
+    }
+
+    if (a.usdValue == null && b.usdValue != null) {
+      return -1
+    }
+
+    if (a.usdPrice != null && b.usdValue == null) {
+      return 1
+    }
+
+    return 0
+  })
 }
