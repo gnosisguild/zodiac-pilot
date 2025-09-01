@@ -22,10 +22,12 @@ export const loader = async ({
     return { defaultToken: null }
   }
 
-  const isValid = await isValidToken(chain, token)
+  const tokenLowerCase = token.toLowerCase()
+
+  const isValid = await isValidToken(chain, tokenLowerCase)
 
   if (isValid) {
-    return { defaultToken: token }
+    return { defaultToken: tokenLowerCase }
   }
 
   return { defaultToken: null }
