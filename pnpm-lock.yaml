@@ -197,8 +197,8 @@ importers:
         specifier: 8.8.0
         version: 8.8.0(react-router@7.8.2(react-dom@19.1.1(react@19.1.1))(react@19.1.1))(react@19.1.1)(zod@4.1.5)
       ser-kit:
-        specifier: 3.11.1
-        version: 3.11.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
+        specifier: 3.12.0
+        version: 3.12.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
       viem:
         specifier: 2.35.1
         version: 2.35.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
@@ -369,8 +369,8 @@ importers:
         specifier: 5.0.7
         version: 5.0.7(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       ser-kit:
-        specifier: 3.11.1
-        version: 3.11.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
+        specifier: 3.12.0
+        version: 3.12.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
       viem:
         specifier: 2.35.1
         version: 2.35.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
@@ -633,8 +633,8 @@ importers:
         specifier: 9.34.0
         version: 9.34.0(jiti@2.5.1)
       ser-kit:
-        specifier: 3.11.1
-        version: 3.11.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
+        specifier: 3.12.0
+        version: 3.12.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
 
   packages/db:
     dependencies:
@@ -666,8 +666,8 @@ importers:
         specifier: 19.1.1
         version: 19.1.1
       ser-kit:
-        specifier: 3.11.1
-        version: 3.11.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
+        specifier: 3.12.0
+        version: 3.12.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
       zod:
         specifier: 4.1.5
         version: 4.1.5
@@ -869,8 +869,8 @@ importers:
         specifier: 5.1.5
         version: 5.1.5
       ser-kit:
-        specifier: 3.11.1
-        version: 3.11.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
+        specifier: 3.12.0
+        version: 3.12.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
       zod:
         specifier: 4.1.5
         version: 4.1.5
@@ -918,8 +918,8 @@ importers:
         specifier: workspace:*
         version: link:../schema
       ser-kit:
-        specifier: 3.11.1
-        version: 3.11.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
+        specifier: 3.12.0
+        version: 3.12.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
     devDependencies:
       '@types/node':
         specifier: 22.14.1
@@ -943,8 +943,8 @@ importers:
         specifier: 3.0.0
         version: 3.0.0(typescript@5.9.2)(zod@4.1.5)
       ser-kit:
-        specifier: 3.11.1
-        version: 3.11.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
+        specifier: 3.12.0
+        version: 3.12.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
       viem:
         specifier: 2.35.1
         version: 2.35.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
@@ -1032,8 +1032,8 @@ importers:
         specifier: 9.34.0
         version: 9.34.0(jiti@2.5.1)
       ser-kit:
-        specifier: 3.11.1
-        version: 3.11.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)
+        specifier: 3.12.0
+        version: 3.12.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)
 
   packages/ui:
     dependencies:
@@ -1071,8 +1071,8 @@ importers:
         specifier: 11.0.5
         version: 11.0.5(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       ser-kit:
-        specifier: 3.11.1
-        version: 3.11.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
+        specifier: 3.12.0
+        version: 3.12.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
       viem:
         specifier: 2.35.1
         version: 2.35.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
@@ -1144,8 +1144,8 @@ importers:
         specifier: 19.1.1
         version: 19.1.1
       ser-kit:
-        specifier: 3.11.1
-        version: 3.11.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
+        specifier: 3.12.0
+        version: 3.12.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
       viem:
         specifier: 2.35.1
         version: 2.35.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
@@ -9381,8 +9381,8 @@ packages:
   sentence-case@3.0.4:
     resolution: {integrity: sha512-8LS0JInaQMCRoQ7YUytAo/xUu5W2XnQxV2HI/6uM6U7CITS1RqPElr30V6uIqyMKM9lJGRVFy5/4CuzcixNYSg==}
 
-  ser-kit@3.11.1:
-    resolution: {integrity: sha512-Ix4r4KoFYqwlPGO1Rcc5w97vCRoznWTaj+enpcxCbDAfP8V4hJSykK8YjZ6fYhECId4uJX06G9ZocCmGEWCPAA==}
+  ser-kit@3.12.0:
+    resolution: {integrity: sha512-NCtv2cO6CMI/YIONgF52lweeUIO/m68UAovyi7nzeUhtapl57S+XenO/mQ1AeIIxem53SJCjwFZGVDxhncURlQ==}
 
   serve-static@1.16.2:
     resolution: {integrity: sha512-VqpjJZKadQB/PEbEwvFdO43Ax5dFBZ2UECszz8bQ7pi7wt//PWe1P6MN7eCnjsatYtBT6EuiClbjSWP2WrIoTw==}
@@ -20901,7 +20901,7 @@ snapshots:
       tslib: 2.8.1
       upper-case-first: 2.0.2
 
-  ser-kit@3.11.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10):
+  ser-kit@3.12.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10):
     dependencies:
       '@epic-web/invariant': 1.0.0
       '@safe-global/api-kit': 3.0.2(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)
@@ -20917,7 +20917,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  ser-kit@3.11.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76):
+  ser-kit@3.12.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76):
     dependencies:
       '@epic-web/invariant': 1.0.0
       '@safe-global/api-kit': 3.0.2(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@3.25.76)
@@ -20933,7 +20933,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  ser-kit@3.11.1(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5):
+  ser-kit@3.12.0(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5):
     dependencies:
       '@epic-web/invariant': 1.0.0
       '@safe-global/api-kit': 3.0.2(bufferutil@4.0.9)(typescript@5.9.2)(utf-8-validate@5.0.10)(zod@4.1.5)
