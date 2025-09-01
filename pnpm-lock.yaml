@@ -875,8 +875,8 @@ importers:
         specifier: 4.1.5
         version: 4.1.5
       zodiac-roles-deployments:
-        specifier: 3.1.1
-        version: 3.1.1
+        specifier: 3.1.2
+        version: 3.1.2
       zodiac-roles-sdk:
         specifier: 3.2.3
         version: 3.2.3(bufferutil@4.0.9)(utf-8-validate@5.0.10)
@@ -10643,6 +10643,9 @@ packages:
 
   zodiac-roles-deployments@3.1.1:
     resolution: {integrity: sha512-6bl7+UjBtLTnuuQ+GnsHAw9gcnkCq4+OmF73bNUljDbKdzQ5oScEWMM1DU+oghGHTIlT12/2IIYZ0QLlKLaVUw==}
+
+  zodiac-roles-deployments@3.1.2:
+    resolution: {integrity: sha512-5QfxT9xQrZk188bbnrOkw1WGD4J5V6v3iKzoqguPHIRumIs0nz3p3mf4jAtYjbPBn3PnJBeHZ7Q8vtuOgWaHIg==}
 
   zodiac-roles-sdk@3.2.3:
     resolution: {integrity: sha512-wmAF52n7C03OJnsejTlK9vukkioMrQW0/x2lwl90NoM4UWuZGLkzJ5FaV9aSJWYU8uiCoOhpokBpa6nh5/MIbw==}
@@ -22294,6 +22297,8 @@ snapshots:
   zod@4.1.5: {}
 
   zodiac-roles-deployments@3.1.1: {}
+
+  zodiac-roles-deployments@3.1.2: {}
 
   zodiac-roles-sdk@3.2.3(bufferutil@4.0.9)(utf-8-validate@5.0.10):
     dependencies:
