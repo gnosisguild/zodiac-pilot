@@ -1,5 +1,5 @@
 import type { TokenBalance } from '@/balances-server'
-import type { HexAddress } from '@zodiac/schema'
+import { type HexAddress } from '@zodiac/schema'
 import { createPublicClient, http } from 'viem'
 import { computeNativeDiff } from './computeNativeDiff'
 import { getVnetTransactions } from './getVnetTransactions'
