@@ -3,7 +3,11 @@ import {
   getTokenBalances,
   type TokenBalance,
 } from '@/balances-server'
-import { applyDeltaToBalances, getVnetTransactionDelta } from '@/vnet-server'
+import {
+  applyDeltaToBalances,
+  getVnetErc20Deltas,
+  getVnetNativeDelta,
+} from '@/vnet-server'
 import { invariantResponse } from '@epic-web/invariant'
 import { verifyChainId } from '@zodiac/chains'
 import { verifyHexAddress } from '@zodiac/schema'
@@ -26,15 +30,24 @@ export const loader = async ({
     const vnetId = url.searchParams.get('vnetId')
     invariantResponse(vnetId != null, 'vnetId is required')
 
-    const deltas = await getVnetTransactionDelta(
+    const erc20Deltas = await getVnetErc20Deltas(
       vnetId,
       fork,
       verifyHexAddress(address),
-      allBalances,
-      chain.id,
     )
 
-    return await applyDeltaToBalances(allBalances, deltas, chain.id)
+    const nativeDelta = await getVnetNativeDelta(
+      fork,
+      verifyHexAddress(address),
+      chain.id,
+      allBalances,
+    )
+
+    return await applyDeltaToBalances(
+      allBalances,
+      { ...nativeDelta, ...erc20Deltas },
+      chain.id,
+    )
   }
 
   return allBalances
