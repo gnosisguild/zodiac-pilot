@@ -56,7 +56,7 @@
     "remix-utils": "8.8.0",
     "ser-kit": "3.12.0",
     "zodiac-roles-sdk": "3.2.5",
-    "viem": "2.35.1",
+    "viem": "2.37.3",
     "zod": "4.1.5"
   },
   "devDependencies": {
