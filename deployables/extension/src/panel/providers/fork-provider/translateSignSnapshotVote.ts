@@ -6,9 +6,9 @@ import type { MetaTransactionRequest } from 'ser-kit'
 const SNAPSHOT_SIGNER_ADDRESS = '0xd88504b3e646454d6d458dd610b6c351d7bcaa0f'
 
 const SnapshotSignerInterface = new Interface([
-  'function signSnapshotArrayVote(tuple(address from, string space, uint64 timestamp, bytes32 proposal, uint32[] choice, string reason, string app, string metadata) vote, tuple(string name, string version) domain)',
-  'function signSnapshotStringVote(tuple(address from, string space, uint64 timestamp, bytes32 proposal, string choice, string reason, string app, string metadata) vote, tuple(string name, string version) domain)',
-  'function signSnapshotVote(tuple(address from, string space, uint64 timestamp, bytes32 proposal, uint32 choice, string reason, string app, string metadata) vote, tuple(string name, string version) domain)',
+  'function signSnapshotArrayVote(tuple(string from, string space, uint64 timestamp, bytes32 proposal, uint32[] choice, string reason, string app, string metadata) vote, tuple(string name, string version) domain)',
+  'function signSnapshotStringVote(tuple(string from, string space, uint64 timestamp, bytes32 proposal, string choice, string reason, string app, string metadata) vote, tuple(string name, string version) domain)',
+  'function signSnapshotVote(tuple(string from, string space, uint64 timestamp, bytes32 proposal, uint32 choice, string reason, string app, string metadata) vote, tuple(string name, string version) domain)',
 ])
 
 // This is not strictly a transaction translation but a similar concept: Given the parameters of an eth_signTypedData_v4 call, it return a meta transaction for producing the signature through the snapshot-signer adapter contract.
